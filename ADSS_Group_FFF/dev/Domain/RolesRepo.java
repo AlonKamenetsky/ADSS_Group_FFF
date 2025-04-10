@@ -14,7 +14,7 @@ public class RolesRepo {
         roles.add(new RoleDL("Warehouse"));
         roles.add(new RoleDL("Driver"));
         roles.add(new RoleDL("ShiftManager"));
-        roles.add(new RoleDL("Cleanerr"));
+        roles.add(new RoleDL("Cleaner"));
     }
 
     public static RolesRepo getInstance() {
@@ -39,6 +39,14 @@ public class RolesRepo {
             roles.add(role);
         } else {
             System.out.println("Role already exists.");
+        }
+    }
+
+    public void removeRole(RoleDL role) {
+        if (roles.contains(role)) {
+            roles.remove(role);
+        } else {
+            System.out.println("Role not found.");
         }
     }
 

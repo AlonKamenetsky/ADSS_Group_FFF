@@ -12,4 +12,8 @@ public class RoleDL {
         return Name;
     }
 
+    public Boolean equals(RoleDL role) {
+        return this.Name.equals(role.getName());
+    }
+
 }

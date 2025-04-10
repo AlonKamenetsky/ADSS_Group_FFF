@@ -20,4 +20,11 @@ public class UserDL {
 
     public List<RoleDL> getRoles() { return roles; }
 
+    public Object getPassword() {
+        return password;
+    }
+
+    public void setPassword(String number) {
+        this.password = number;
+    }
 }

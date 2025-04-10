@@ -3,6 +3,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import Domain.*;
+import Presentation.EmployeeInterface;
 import Presentation.HRInterface;
 import Presentation.LoginScreen;
 
@@ -11,60 +12,78 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         RolesRepo rolesRepo = RolesRepo.getInstance();
-
         RoleDL hrRole = rolesRepo.getRoleByName("HR");
+        RoleDL managerRole = rolesRepo.getRoleByName("Shift Manager");
         RoleDL cashierRole = rolesRepo.getRoleByName("Cashier");
         RoleDL warehouseRole = rolesRepo.getRoleByName("Warehouse");
 
-        List<RoleDL> rolesDana = Arrays.asList(hrRole, cashierRole);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date employmentDate = dateFormat.parse("01-01-2020");
 
-        EmployeeDL dana = new EmployeeDL(
-                "1",
-                rolesDana,
-                "Dana",
-                "123456789",
-                "IL123BANK",
-                5000f,
-                employmentDate
-        );
+        EmployeeDL dana = new EmployeeDL("1", new LinkedList<>(Arrays.asList(hrRole, cashierRole)), "Dana", "123", "IL123BANK", 5000f, employmentDate);
+        dana.setPassword("123");
 
-        List<UserDL> users = Arrays.asList(dana);
+        EmployeeDL john = new EmployeeDL("2", new LinkedList<>(Arrays.asList(warehouseRole)), "John", "456", "IL456BANK", 4500f, employmentDate);
+        john.setPassword("456");
 
-        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date shiftDate1 = null;
-        Date shiftDate2 = null;
-        try {
-            shiftDate1 = dateFormat.parse("01-05-2025");
-            shiftDate2 = dateFormat.parse("02-05-2025");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        List<EmployeeDL> employees = Arrays.asList(dana, john);
 
-        ShiftDL morningShift = new ShiftDL("S1", shiftDate1, ShiftDL.ShiftTime.Morning, Map.of(hrRole, Arrays.asList(dana)));
-        ShiftDL eveningShift = new ShiftDL("S2", shiftDate2, ShiftDL.ShiftTime.Evening, Map.of(warehouseRole, Arrays.asList(dana)));
+        // Create Shifts
+        Date shiftDate1 = dateFormat.parse("01-05-2025");
+        Date shiftDate2 = dateFormat.parse("02-05-2025");
+
+        ShiftDL morningShift = new ShiftDL("S1", shiftDate1, ShiftDL.ShiftTime.Morning, Map.of(cashierRole, new ArrayList<>()));
+        ShiftDL eveningShift = new ShiftDL("S2", shiftDate2, ShiftDL.ShiftTime.Evening, Map.of(warehouseRole, new ArrayList<>()));
 
         List<ShiftDL> shifts = Arrays.asList(morningShift, eveningShift);
 
-        // Start Login Process
-        LoginScreen loginScreen = new LoginScreen(users);
-        UserDL user = loginScreen.login(scanner);
+        boolean exitSystem = false;
+        while (!exitSystem) {
+            System.out.println("Welcome! Enter your ID:");
+            String inputId = scanner.nextLine();
 
-        if (user != null) {
-            if (user.getRoles().stream().anyMatch(r -> r.getName().equals("HR"))) {
-                HRInterface hrInterface = new HRInterface(user.getId());
-                hrInterface.assignEmployeeToShift(scanner, Arrays.asList(dana), shifts);
-                System.out.println("Would you like to add a new role? (yes/no)");
-                if (scanner.nextLine().equalsIgnoreCase("yes")) {
-                    System.out.println("Enter new role name:");
-                    String newRoleName = scanner.nextLine();
-                    rolesRepo.addRole(new RoleDL(newRoleName));
-                    System.out.println("New Role Added Successfully!");
+            System.out.println("Enter your Password:");
+            String inputPassword = scanner.nextLine();
+
+            EmployeeDL loggedInUser = null;
+            for (EmployeeDL e : employees) {
+                if (e.getId().equals(inputId) && e.getPassword() != null && e.getPassword().equals(inputPassword)) {
+                    loggedInUser = e;
+                    break;
                 }
+            }
+
+            if (loggedInUser == null) {
+                System.out.println("Invalid ID or Password. Try again.");
+                continue;
+            }
+
+            System.out.println("Select Role to Login:");
+            for (int i = 0; i < loggedInUser.getRoles().size(); i++) {
+                System.out.println(i + 1 + ". " + loggedInUser.getRoles().get(i).getName());
+            }
+
+            int roleIndex = scanner.nextInt() - 1;
+            scanner.nextLine();
+
+            RoleDL selectedRole = loggedInUser.getRoles().get(roleIndex);
+
+            if (selectedRole.getName().equals("HR") || selectedRole.getName().equals("Shift Manager")) {
+                HRInterface hrInterface = new HRInterface(loggedInUser.getId());
+                hrInterface.setCurrentUserRole(selectedRole);
+                hrInterface.managerMainMenu(scanner, employees, shifts);
             } else {
-                System.out.println("Logged in as Employee. No HR permissions.");
+                EmployeeInterface employeeInterface = new EmployeeInterface(loggedInUser);
+                employeeInterface.employeeMainMenu(scanner, shifts);
+            }
+
+            System.out.println("Would you like to switch user? (yes/no)");
+            String choice = scanner.nextLine();
+            if (!choice.equalsIgnoreCase("yes")) {
+                exitSystem = true;
             }
         }
+
+        System.out.println("Exiting system. Goodbye!");
     }
 }

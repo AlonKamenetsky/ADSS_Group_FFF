@@ -8,8 +8,9 @@ import java.util.Map;
 public class ManagerDL extends EmployeeDL{
 
 
-    public ManagerDL(String ID, LinkedList<RoleDL> roles, String name, String Password, String BankAccount, Float Salary, Date EmploymentDate) {
-        super(ID,roles,name,Password,BankAccount,Salary,EmploymentDate);
+    public ManagerDL(String ID, LinkedList<RoleDL> roles, String name, String password,
+                     String bankAccount, Float salary, Date employmentDate) {
+        super(ID, roles, name, password, bankAccount, salary, employmentDate);
     }
 
 
@@ -19,12 +20,24 @@ public class ManagerDL extends EmployeeDL{
     }
 
 
+    private void RemoveRole(RoleDL role){
+        RolesRepo roles = RolesRepo.getInstance();
+        roles.getRoles().remove(role);
+    }
+
+    private void AddEmployee(String ID, List<RoleDL> roles, String name, String Password, String BankAccount, Float Salary, Date EmploymentDate){
+        EmployeesRepo employees = EmployeesRepo.getInstance();
+        employees.addEmployee(new EmployeeDL(ID,roles,name,Password,BankAccount,Salary,EmploymentDate));
+    }
 
 
 
+    private void RemoveEmployee(EmployeeDL employee){
+        EmployeesRepo employees = EmployeesRepo.getInstance();
+        employees.getEmployees().remove(employee);
+    }
 
-
-    public void swapShifts(EmployeeDL emp1, EmployeeDL emp2, ShiftDL shift1, ShiftDL shift2, RoleDL role) {
+    private void swapShifts(EmployeeDL emp1, EmployeeDL emp2, ShiftDL shift1, ShiftDL shift2, RoleDL role) {
         // Retrieve the required roles dictionary from each shift.
         Map<RoleDL, List<EmployeeDL>> roles1 = shift1.getRequiredRoles();
         Map<RoleDL, List<EmployeeDL>> roles2 = shift2.getRequiredRoles();
@@ -52,5 +65,6 @@ public class ManagerDL extends EmployeeDL{
         System.out.println("Swapped employees " + emp1.getName() + " and " + emp2.getName() + " for role " +
                 role.getName() + " between shifts " + shift1.getID() + " and " + shift2.getID());
     }
+
 }
 
