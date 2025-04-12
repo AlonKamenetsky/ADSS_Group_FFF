@@ -7,19 +7,19 @@ import Domain.*;
 public class LoginScreen {
     private String id;
     private String role;
-    private List<UserDL> users;
+    private List<User> users;
 
-    public LoginScreen(List<UserDL> users) {
+    public LoginScreen(List<User> users) {
         this.users = users;
     }
 
-    public UserDL login(Scanner scanner) {
+    public User login(Scanner scanner) {
         System.out.println("Enter your ID:");
         String id = scanner.nextLine();
-        for (UserDL user : users) {
+        for (User user : users) {
             if (user.getId().equals(id)) {
                 System.out.println("Select Role:");
-                List<RoleDL> roles = user.getRoles();
+                List<Role> roles = user.getRoles();
                 for (int i = 0; i < roles.size(); i++) {
                     System.out.println(i + 1 + ". " + roles.get(i).getName());
                 }

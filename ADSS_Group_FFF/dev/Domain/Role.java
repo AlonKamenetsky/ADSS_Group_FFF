@@ -1,10 +1,10 @@
 package Domain;
 
-public class RoleDL {
+public class Role {
 
     private final String Name;
 
-    public RoleDL(String name) {
+    public Role(String name) {
         Name = name;
     }
 
@@ -12,7 +12,7 @@ public class RoleDL {
         return Name;
     }
 
-    public Boolean equals(RoleDL role) {
+    public Boolean equals(Role role) {
         return this.Name.equals(role.getName());
     }
 

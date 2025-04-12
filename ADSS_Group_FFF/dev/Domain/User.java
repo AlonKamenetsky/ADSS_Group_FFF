@@ -2,15 +2,16 @@ package Domain;
 
 import java.util.List;
 
-public class UserDL {
+public class User {
     private String id;
     private String name;
-    private List<RoleDL> roles;
+    private List<Role> roles;
     private String password;
 
-    public UserDL(String id, String name, String password, List<RoleDL> roles) {
+    public User(String id, String name, String password, List<Role> roles) {
         this.id = id;
         this.name = name;
+        this.password = password;
         this.roles = roles;
     }
 
@@ -18,7 +19,7 @@ public class UserDL {
 
     public String getName() { return name; }
 
-    public List<RoleDL> getRoles() { return roles; }
+    public List<Role> getRoles() { return roles; }
 
     public Object getPassword() {
         return password;

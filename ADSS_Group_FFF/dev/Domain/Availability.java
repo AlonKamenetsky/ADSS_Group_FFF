@@ -2,12 +2,12 @@ package Domain;
 
 import java.util.Date;
 
-public class AvailabilityDL {
+public class Availability {
     private Date date;
-    private ShiftDL.ShiftTime Type;
+    private Shift.ShiftTime Type;
 
 
-    public AvailabilityDL(Date date, ShiftDL.ShiftTime Type) {
+    public Availability(Date date, Shift.ShiftTime Type) {
         this.date = date;
         this.Type = Type;
     }
@@ -17,7 +17,7 @@ public class AvailabilityDL {
         return date;
     }
 
-    public ShiftDL.ShiftTime getType() {
+    public Shift.ShiftTime getType() {
         return Type;
     }
 

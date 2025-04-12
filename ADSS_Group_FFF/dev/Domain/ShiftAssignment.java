@@ -1,11 +1,11 @@
 package Domain;
 
-public class ShiftAssignmentDL {
+public class ShiftAssignment {
     private String employeeId;
     private String shiftId;
-    private RoleDL role;
+    private Role role;
 
-    public ShiftAssignmentDL(String employeeId, String shiftId, RoleDL role) {
+    public ShiftAssignment(String employeeId, String shiftId, Role role) {
         this.employeeId = employeeId;
         this.shiftId = shiftId;
         this.role = role;
@@ -13,7 +13,7 @@ public class ShiftAssignmentDL {
 
     public String getEmployeeId() { return employeeId; }
     public String getShiftId() { return shiftId; }
-    public RoleDL getRole() { return role; }
+    public Role getRole() { return role; }
 
 
 

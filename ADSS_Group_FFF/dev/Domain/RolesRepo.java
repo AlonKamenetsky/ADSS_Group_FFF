@@ -5,16 +5,10 @@ import java.util.List;
 
 public class RolesRepo {
     private static RolesRepo instance = null;
-    private List<RoleDL> roles;
+    private List<Role> roles;
 
     private RolesRepo() {
         roles = new ArrayList<>();
-        roles.add(new RoleDL("HR"));
-        roles.add(new RoleDL("Cashier"));
-        roles.add(new RoleDL("Warehouse"));
-        roles.add(new RoleDL("Driver"));
-        roles.add(new RoleDL("ShiftManager"));
-        roles.add(new RoleDL("Cleaner"));
     }
 
     public static RolesRepo getInstance() {
@@ -24,17 +18,17 @@ public class RolesRepo {
         return instance;
     }
 
-    public List<RoleDL> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public RoleDL getRoleByName(String name) {
+    public Role getRoleByName(String name) {
         return roles.stream()
                 .filter(role -> role.getName().equals(name))
                 .findFirst()
                 .orElse(null);
     }
-    public void addRole(RoleDL role) {
+    public void addRole(Role role) {
         if (getRoleByName(role.getName()) == null) {
             roles.add(role);
         } else {
@@ -42,7 +36,7 @@ public class RolesRepo {
         }
     }
 
-    public void removeRole(RoleDL role) {
+    public void removeRole(Role role) {
         if (roles.contains(role)) {
             roles.remove(role);
         } else {
