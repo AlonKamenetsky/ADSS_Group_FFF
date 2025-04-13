@@ -13,6 +13,10 @@ public class Main {
         System.out.println("Would you like to load example data? (yes/no)");
         String choice = scanner.nextLine();
 
+        while (!choice.equalsIgnoreCase("yes") && !choice.equalsIgnoreCase("no")) {
+            System.out.println("Invalid choice. Please enter 'yes' or 'no'.");
+            choice = scanner.nextLine();
+        }
         if (choice.equalsIgnoreCase("yes")) {
             DataInitializer.initializeExampleData();
         }
@@ -57,6 +61,11 @@ public class Main {
 
             System.out.println("Would you like to switch user? (yes/no)");
             String again = scanner.nextLine();
+
+            while (!choice.equalsIgnoreCase("yes") && !choice.equalsIgnoreCase("no")) {
+                System.out.println("Invalid choice. Please enter 'yes' or 'no'.");
+                choice = scanner.nextLine();
+            }
 
             if (!again.equalsIgnoreCase("yes")) {
                 exitSystem = true;

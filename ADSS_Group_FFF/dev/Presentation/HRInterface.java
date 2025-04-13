@@ -26,7 +26,7 @@ public class HRInterface {
             return;
         }
 
-        // Display the list of available shifts
+        // Display available shifts and let the user select one.
         System.out.println("Available Shifts:");
         for (int i = 0; i < shifts.size(); i++) {
             System.out.println((i + 1) + ". " + shifts.get(i).getID() + " on " + shifts.get(i).getDate());
@@ -40,69 +40,133 @@ public class HRInterface {
         }
         Shift shift = shifts.get(shiftIndex);
 
-        // Display the roles required in this shift with numbers
-        List<Role> rolesList = new ArrayList<>(shift.getRequiredRoles().keySet());
-        if (rolesList.isEmpty()) {
-            System.out.println("No roles defined for this shift.");
-            return;
-        }
-        System.out.println("Available roles required in this shift:");
-        for (int i = 0; i < rolesList.size(); i++) {
-            System.out.println((i + 1) + ". " + rolesList.get(i).getName());
-        }
-        System.out.println("Enter the number corresponding to the role to assign:");
-        int roleChoice = scanner.nextInt() - 1;
-        scanner.nextLine();
-        if (roleChoice < 0 || roleChoice >= rolesList.size()) {
-            System.out.println("Invalid role selection.");
-            return;
-        }
-        Role selectedRole = rolesList.get(roleChoice);
+        // Begin a loop to repeatedly assign employees.
+        boolean exitLoop = false;
+        while (!exitLoop) {
+            // Check if all roles are complete.
+            boolean allComplete = true;
+            Map<Role, Integer> requiredCounts = shift.getRequiredCounts();
+            Map<Role, List<Employee>> assignedMap = shift.getRequiredRoles();
+            for (Role role : requiredCounts.keySet()) {
+                int required = requiredCounts.get(role);
+                int assigned = (assignedMap.get(role) != null) ? assignedMap.get(role).size() : 0;
+                if (assigned < required) {
+                    allComplete = false;
+                    break;
+                }
+            }
+            if (allComplete) {
+                System.out.println("All roles for shift " + shift.getID() + " have been fully assigned.");
+                break;
+            }
 
-        // Filter for employees who have the required role and are available.
-        List<Employee> qualifiedEmployees = new ArrayList<>();
-        for (Employee e : employees) {
-            if (e.getRoles().contains(selectedRole)) {
-                boolean available = false;
-                if (e.getWeeklyAvailability().isEmpty()) {
-                    available = true;
-                } else {
-                    for (Availability avail : e.getWeeklyAvailability()) {
-                        if (shift.getDate().equals(avail.getDate()) && shift.getType().equals(avail.getType())) {
-                            available = true;
+            // Display the current status for each role.
+            System.out.println("\nRole assignment status for shift " + shift.getID() + ":");
+            List<Role> rolesList = new ArrayList<>(requiredCounts.keySet());
+            for (int i = 0; i < rolesList.size(); i++) {
+                Role role = rolesList.get(i);
+                int required = requiredCounts.get(role);
+                int assigned = (assignedMap.get(role) != null) ? assignedMap.get(role).size() : 0;
+                int missing = required - assigned;
+                String status = (missing == 0) ? "Full" : "Missing: " + missing;
+                System.out.println((i + 1) + ". " + role.getName() + " (" + status + ")");
+            }
+            System.out.println("0. Quit assignment for this shift");
+
+            System.out.println("Enter the number corresponding to the role you want to fill:");
+            int roleChoice = scanner.nextInt() - 1;
+            scanner.nextLine();
+            if (roleChoice == -1) {  // User entered 0.
+                exitLoop = true;
+                break;
+            }
+            if (roleChoice < 0 || roleChoice >= rolesList.size()) {
+                System.out.println("Invalid role selection.");
+                continue;
+            }
+
+            Role selectedRole = rolesList.get(roleChoice);
+            // Check if the selected role still needs employees.
+            int required = requiredCounts.get(selectedRole);
+            int assigned = (assignedMap.get(selectedRole) != null) ? assignedMap.get(selectedRole).size() : 0;
+            if (assigned >= required) {
+                System.out.println("This role has already been fully assigned.");
+                continue;
+            }
+
+            // Filter for qualified employees:
+            // They must have the selected role and be available
+            // (an empty availability list counts as available)
+            // and they must not already be assigned to this shift.
+            List<Employee> qualifiedEmployees = new ArrayList<>();
+            for (Employee e : employees) {
+                if (e.getRoles().contains(selectedRole)) {
+                    // Check if the employee is already assigned to this shift:
+                    boolean alreadyAssigned = false;
+                    for (ShiftAssignment sa : shift.getAssignedEmployees()) {
+                        if (sa.getEmployeeId().equals(e.getId())) {
+                            alreadyAssigned = true;
                             break;
                         }
                     }
-                }
-                if (available) {
-                    qualifiedEmployees.add(e);
+                    if (alreadyAssigned) {
+                        continue;
+                    }
+                    boolean available = false;
+                    if (e.getWeeklyAvailability().isEmpty()) {
+                        available = true;
+                    } else {
+                        for (Availability avail : e.getWeeklyAvailability()) {
+                            if (shift.getDate().equals(avail.getDate()) && shift.getType().equals(avail.getType())) {
+                                available = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (available) {
+                        qualifiedEmployees.add(e);
+                    }
                 }
             }
+
+            if (qualifiedEmployees.isEmpty()) {
+                System.out.println("No qualified employees available for role " + selectedRole.getName());
+                continue;
+            }
+
+            // Display the qualified employees.
+            System.out.println("Qualified Employees for role " + selectedRole.getName() + ":");
+            for (int i = 0; i < qualifiedEmployees.size(); i++) {
+                System.out.println((i + 1) + ". " + qualifiedEmployees.get(i).getName());
+            }
+            System.out.println("Select employee to assign:");
+            int employeeIndex = scanner.nextInt() - 1;
+            scanner.nextLine();
+            if (employeeIndex < 0 || employeeIndex >= qualifiedEmployees.size()) {
+                System.out.println("Invalid employee selection.");
+                continue;
+            }
+
+            Employee selectedEmployee = qualifiedEmployees.get(employeeIndex);
+            shift.assignEmployee(selectedEmployee, selectedRole);
+            System.out.println("Employee " + selectedEmployee.getName() + " assigned to role " +
+                    selectedRole.getName() + " in shift " + shift.getID());
         }
 
-        if (qualifiedEmployees.isEmpty()) {
-            System.out.println("No qualified employees available based on availability.");
-            return;
+        // After the assignment loop, output the final completion status.
+        System.out.println("\nFinal shift completion status for shift " + shift.getID() + ":");
+        Map<Role, Integer> finalRequiredCounts = shift.getRequiredCounts();
+        Map<Role, List<Employee>> finalAssignedMap = shift.getRequiredRoles();
+        for (Role role : finalRequiredCounts.keySet()) {
+            int req = finalRequiredCounts.get(role);
+            int asg = (finalAssignedMap.get(role) != null) ? finalAssignedMap.get(role).size() : 0;
+            int missing = req - asg;
+            String status = (missing == 0) ? "Full" : "Missing " + missing + " employee(s).";
+            System.out.println("Role " + role.getName() + ": " + status);
         }
-
-        // Display the qualified employees for assignment
-        System.out.println("Qualified Employees:");
-        for (int i = 0; i < qualifiedEmployees.size(); i++) {
-            System.out.println((i + 1) + ". " + qualifiedEmployees.get(i).getName());
-        }
-        System.out.println("Select employee to assign:");
-        int employeeIndex = scanner.nextInt() - 1;
-        scanner.nextLine();
-        if (employeeIndex < 0 || employeeIndex >= qualifiedEmployees.size()) {
-            System.out.println("Invalid employee selection.");
-            return;
-        }
-        Employee selectedEmployee = qualifiedEmployees.get(employeeIndex);
-        shift.assignEmployee(selectedEmployee, selectedRole);
-
-        System.out.println("Employee " + selectedEmployee.getName() + " assigned to role " +
-                selectedRole.getName() + " in shift " + shift.getID());
     }
+
+
 
     public void addNewRole(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
@@ -266,6 +330,12 @@ public class HRInterface {
             System.out.println("Invalid selection.");
             return;
         }
+        System.out.println("Are you sure you want to remove " + employees.get(index).getName() + "? (yes/no)");
+        String confirmation = scanner.nextLine();
+        if (!confirmation.equalsIgnoreCase("yes")) {
+            System.out.println("Employee removal cancelled.");
+            return;
+        }
         Employee employee = employees.get(index);
         employees.remove(index);
         System.out.println("Employee " + employee.getName() + " removed successfully.");
@@ -395,7 +465,7 @@ public class HRInterface {
      */
     public void createShift(Scanner scanner) {
         try {
-            // Automatically generate shift ID based on number of existing shifts.
+            // Automatically generate shift ID based on the number of existing shifts.
             String shiftId = "SHIFT" + (ShiftsRepo.getInstance().getShifts().size() + 1);
             System.out.println("Generating Shift ID: " + shiftId);
 
@@ -416,20 +486,30 @@ public class HRInterface {
                 shiftType = Shift.ShiftTime.Morning;
             }
 
-            // Build the mapping for required roles.
+            // Build mapping for required roles and required counts.
             Map<Role, List<Employee>> requiredRoles = new HashMap<>();
             Map<Role, Integer> requiredCounts = new HashMap<>();
             List<Role> roles = RolesRepo.getInstance().getRoles();
             for (Role role : roles) {
-                System.out.println("Enter the number of required employees for role: " + role.getName());
-                int requiredCount = scanner.nextInt();
-                scanner.nextLine();
-                requiredCounts.put(role, requiredCount);
-                // Initialize an empty ArrayList for employee assignments.
-                requiredRoles.put(role, new ArrayList<>());
+                // Skip the HR role entirely.
+                if (role.getName().equalsIgnoreCase("HR")) {
+                    continue;
+                }
+                // For Shift Manager role, automatically set to 1.
+                else if (role.getName().equalsIgnoreCase("Shift Manager") || role.getName().equalsIgnoreCase("ShiftManager")) {
+                    requiredCounts.put(role, 1);
+                    requiredRoles.put(role, new ArrayList<>());}
+                // For other roles, prompt the HR manager to enter the required count.
+                else {
+                    System.out.println("Enter the number of required employees for role: " + role.getName());
+                    int requiredCount = scanner.nextInt();
+                    scanner.nextLine();
+                    requiredCounts.put(role, requiredCount);
+                    requiredRoles.put(role, new ArrayList<>());
+                }
             }
 
-            // Create the new shift using the automatically generated ID.
+            // Create the new shift with the generated ID, given date, type, required roles map, and required counts.
             Shift newShift = new Shift(shiftId, shiftDate, shiftType, requiredRoles, requiredCounts);
             ShiftsRepo.getInstance().addShift(newShift);
             System.out.println("Shift created successfully: " + newShift.getID());

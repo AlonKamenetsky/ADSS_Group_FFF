@@ -36,6 +36,7 @@ public class EmployeeInterface {
                     break;
                 case 3:
                     chooseAvailableShifts(scanner, shifts);
+                    break;
                 case 4:
                     exit = true;
                     break;
@@ -97,18 +98,28 @@ public class EmployeeInterface {
     }
 
     public void sendSwapRequest(Scanner scanner) {
-        List<Shift> assignedShifts = employee.getShifts();
-        if (assignedShifts == null || assignedShifts.isEmpty()) {
-            System.out.println("No assigned shifts available for swap.");
+        // Build a list of shifts the employee is actually assigned to.
+        List<Shift> assignedShifts = new ArrayList<>();
+        for (Shift shift : employee.getShifts()) {
+            for (ShiftAssignment sa : shift.getAssignedEmployees()) {
+                if (sa.getEmployeeId().equals(employee.getId())) {
+                    assignedShifts.add(shift);
+                    break;  // Move to the next shift if the employee is found.
+                }
+            }
+        }
+
+        if (assignedShifts.isEmpty()) {
+            System.out.println("You are not assigned to any shifts, so you cannot create a swap request.");
             return;
         }
 
+        // Display only the shifts to which the employee is assigned.
         System.out.println("Your Assigned Shifts:");
         int displayIndex = 1;
-        // Display each shift with its assigned role.
         for (Shift shift : assignedShifts) {
+            // Determine the role for the employee in the shift by checking assignments.
             Role roleForThisShift = null;
-            // Determine the role by checking shift assignments.
             for (ShiftAssignment assignment : shift.getAssignedEmployees()) {
                 if (assignment.getEmployeeId().equals(employee.getId())) {
                     roleForThisShift = assignment.getRole();
@@ -119,12 +130,12 @@ public class EmployeeInterface {
                 System.out.println(displayIndex + ". Shift ID: " + shift.getID() + " on " + shift.getDate() +
                         " (Role: " + roleForThisShift.getName() + ")");
             } else {
-                System.out.println(displayIndex + ". Shift ID: " + shift.getID() + " on " + shift.getDate() +
-                        " (Role: Not assigned)");
+                System.out.println(displayIndex + ". Shift ID: " + shift.getID() + " on " + shift.getDate());
             }
             displayIndex++;
         }
-        System.out.println("Select the shift number you want to request a swap for:");
+
+        System.out.println("Select the shift number for which you want to request a swap:");
         int shiftChoice = scanner.nextInt() - 1;
         scanner.nextLine();
         if (shiftChoice < 0 || shiftChoice >= assignedShifts.size()) {
@@ -146,20 +157,28 @@ public class EmployeeInterface {
             return;
         }
 
+        // Create and upload the swap request to the dedicated repository.
         SwapRequest newRequest = new SwapRequest(employee, selectedShift, role);
-        // Upload the new swap request to the dedicated repository.
         SwapRequestsRepo.getInstance().addSwapRequest(newRequest);
         System.out.println("Your swap request has been sent: " + newRequest.toString());
     }
+
+
     public void viewAssignedShifts(List<Shift> shifts) {
+        boolean hasAssignments = false;
         System.out.println("Your Assigned Shifts:");
         for (Shift shift : shifts) {
             for (ShiftAssignment assignment : shift.getAssignedEmployees()) {
                 if (assignment.getEmployeeId().equals(employee.getId())) {
                     System.out.println("Shift ID: " + shift.getID() + ", Date: " + shift.getDate() + ", Role: " + assignment.getRole().getName());
+                    hasAssignments = true;
                 }
             }
         }
+        if (!hasAssignments) {
+            System.out.println("You are not assigned to any shifts.");
+        }
     }
+
 }
 

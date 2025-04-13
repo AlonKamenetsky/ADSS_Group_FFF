@@ -18,7 +18,7 @@ public class Employee extends User {
         this.BankAccount = BankAccount;
         this.Salary = Salary;
         this.EmploymentDate = EmploymentDate;
-        this.WeeklyAvailability = new ArrayList<Availability>();
+        this.WeeklyAvailability = new ArrayList<>();
         this.Shifts = ShiftsRepo.getInstance().getShifts();
     }
 
