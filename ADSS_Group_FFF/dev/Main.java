@@ -26,11 +26,20 @@ public class Main {
 
         while (!exitSystem) {
             // LOGIN FLOW
+            System.out.println("Write 'Exit' to exit the system.");
             System.out.println("Welcome! Enter your ID:");
             String inputId = scanner.nextLine();
 
+            if(inputId.equalsIgnoreCase("exit")) {
+                break;
+            }
+
             System.out.println("Enter your Password:");
             String inputPassword = scanner.nextLine();
+
+            if(inputPassword.equalsIgnoreCase("exit")) {
+                break;
+            }
 
             Employee loggedInUser = employeesRepo.getEmployeeById(inputId);
 
