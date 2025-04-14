@@ -29,7 +29,7 @@ class ShiftTest {
         employee1 = new Employee("1", new LinkedList<>(List.of(hrRole)), "Dana", "123", "IL123BANK", 5000f, shiftDate);
         employee2 = new Employee("2", new LinkedList<>(List.of(cashierRole)), "John", "456", "IL456BANK", 4500f, shiftDate);
 
-        Map<Role, List<Employee>> requiredRoles = new HashMap<>();
+        Map<Role, ArrayList<Employee>> requiredRoles = new HashMap<>();
         requiredRoles.put(hrRole, new ArrayList<>());
         requiredRoles.put(cashierRole, new ArrayList<>());
 

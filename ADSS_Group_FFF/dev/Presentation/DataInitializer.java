@@ -61,7 +61,7 @@ public class DataInitializer {
         Date shiftDate2 = shiftDateFormat.parse("16-09-2023");
 
         // Build required roles and required counts for Shift 1.
-        Map<Role, List<Employee>> requiredRoles1 = new HashMap<>();
+        Map<Role, ArrayList<Employee>> requiredRoles1 = new HashMap<>();
         Map<Role, Integer> requiredCounts1 = new HashMap<>();
         // Get all roles from RolesRepo.
         for (Role role : rolesRepo.getRoles()) {
@@ -84,7 +84,7 @@ public class DataInitializer {
         Shift shift1 = new Shift("SHIFT1", shiftDate1, Shift.ShiftTime.Morning, requiredRoles1, requiredCounts1);
 
         // Build required roles and required counts for Shift 2.
-        Map<Role, List<Employee>> requiredRoles2 = new HashMap<>();
+        Map<Role, ArrayList<Employee>> requiredRoles2 = new HashMap<>();
         Map<Role, Integer> requiredCounts2 = new HashMap<>();
         for (Role role : rolesRepo.getRoles()) {
             if (role.getName().equalsIgnoreCase("HR")) {

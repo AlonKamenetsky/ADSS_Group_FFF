@@ -46,7 +46,7 @@ public class HRInterface {
             // Check if all roles are complete.
             boolean allComplete = true;
             Map<Role, Integer> requiredCounts = shift.getRequiredCounts();
-            Map<Role, List<Employee>> assignedMap = shift.getRequiredRoles();
+            Map<Role, ArrayList<Employee>> assignedMap = shift.getRequiredRoles();
             for (Role role : requiredCounts.keySet()) {
                 int required = requiredCounts.get(role);
                 int assigned = (assignedMap.get(role) != null) ? assignedMap.get(role).size() : 0;
@@ -172,7 +172,7 @@ public class HRInterface {
         // After the assignment loop, output the final completion status.
         System.out.println("\nFinal shift completion status for shift " + shift.getID() + ":");
         Map<Role, Integer> finalRequiredCounts = shift.getRequiredCounts();
-        Map<Role, List<Employee>> finalAssignedMap = shift.getRequiredRoles();
+        Map<Role, ArrayList<Employee>> finalAssignedMap = shift.getRequiredRoles();
         for (Role role : finalRequiredCounts.keySet()) {
             int req = finalRequiredCounts.get(role);
             int asg = (finalAssignedMap.get(role) != null) ? finalAssignedMap.get(role).size() : 0;
@@ -430,8 +430,8 @@ public class HRInterface {
         Role role = req1.getRole(); // Both requests have the same role after filtering
 
         // Retrieve the required roles mappings from each shift.
-        Map<Role, List<Employee>> rolesMap1 = shift1.getRequiredRoles();
-        Map<Role, List<Employee>> rolesMap2 = shift2.getRequiredRoles();
+        Map<Role, ArrayList<Employee>> rolesMap1 = shift1.getRequiredRoles();
+        Map<Role, ArrayList<Employee>> rolesMap2 = shift2.getRequiredRoles();
 
         // From shift1: remove emp1 and add emp2 for the role.
         List<Employee> employeesForRole1 = rolesMap1.get(role);
@@ -503,7 +503,7 @@ public class HRInterface {
             }
 
             // Build mapping for required roles and required counts.
-            Map<Role, List<Employee>> requiredRoles = new HashMap<>();
+            Map<Role, ArrayList<Employee>> requiredRoles = new HashMap<>();
             Map<Role, Integer> requiredCounts = new HashMap<>();
             List<Role> roles = RolesRepo.getInstance().getRoles();
             for (Role role : roles) {

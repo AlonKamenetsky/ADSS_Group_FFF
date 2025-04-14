@@ -11,13 +11,13 @@ public class Shift {
     private final String ID;
     private final Date date;
     private final ShiftTime Type;
-    private final Map<Role, List<Employee>> requiredRoles;
+    private final Map<Role, ArrayList<Employee>> requiredRoles;
     // New mapping: Required count for each role.
     private final Map<Role, Integer> requiredCounts;
     private final List<ShiftAssignment> assignedEmployees;
 
     // Updated constructor to include requiredCounts mapping.
-    public Shift(String ID, Date date, ShiftTime type, Map<Role, List<Employee>> requiredRoles, Map<Role, Integer> requiredCounts) {
+    public Shift(String ID, Date date, ShiftTime type, Map<Role, ArrayList<Employee>> requiredRoles, Map<Role, Integer> requiredCounts) {
         this.ID = ID;
         this.date = date;
         this.Type = type;
@@ -38,7 +38,7 @@ public class Shift {
         return Type;
     }
 
-    public Map<Role, List<Employee>> getRequiredRoles() {
+    public Map<Role, ArrayList<Employee>> getRequiredRoles() {
         return requiredRoles;
     }
 
