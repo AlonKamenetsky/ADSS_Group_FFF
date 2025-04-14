@@ -1,9 +1,8 @@
-package tests;
+package tests.DomainTests;
 
 import Domain.Employee;
 import Domain.Role;
 import Domain.Shift;
-import Domain.ShiftAssignment;
 import Domain.SwapRequest;
 import org.junit.jupiter.api.Test;
 

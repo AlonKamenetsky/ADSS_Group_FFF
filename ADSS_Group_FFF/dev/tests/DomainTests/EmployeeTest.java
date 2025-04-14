@@ -1,10 +1,8 @@
-package tests;
+package tests.DomainTests;
 
-import Domain.Availability;
 import Domain.Employee;
 import Domain.Role;
 import Domain.Shift;
-import Domain.ShiftsRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

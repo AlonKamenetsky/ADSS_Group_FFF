@@ -1,4 +1,4 @@
-package tests;
+package tests.DomainTests;
 
 import Domain.Role;
 import Domain.User;

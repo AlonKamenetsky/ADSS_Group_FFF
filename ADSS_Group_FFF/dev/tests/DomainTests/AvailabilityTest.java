@@ -1,4 +1,4 @@
-package tests;
+package tests.DomainTests;
 
 import org.junit.jupiter.api.Test;
 import Domain.*;
