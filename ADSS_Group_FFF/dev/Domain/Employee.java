@@ -12,6 +12,7 @@ public class Employee extends User {
     private Date EmploymentDate;
     private List<Availability> WeeklyAvailability;
     private List<Shift> Shifts;
+    private List<Date> Holidays;
 
     public Employee(String ID, List<Role> roles, String name, String Password, String BankAccount, Float Salary, Date EmploymentDate) {
         super(ID, name, Password, roles);
@@ -20,6 +21,7 @@ public class Employee extends User {
         this.EmploymentDate = EmploymentDate;
         this.WeeklyAvailability = new ArrayList<>();
         this.Shifts = ShiftsRepo.getInstance().getShifts();
+        this.Holidays = new ArrayList<>();
     }
 
     public Float getSalary() {
@@ -40,6 +42,10 @@ public class Employee extends User {
 
     public List<Shift> getShifts() {
         return Shifts;
+    }
+
+    public List<Date> getHolidays() {
+        return Holidays;
     }
 
     public void setBankAccount(String bankAccount) {

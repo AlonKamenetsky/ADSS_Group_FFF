@@ -2,7 +2,10 @@ package Presentation;
 
 import Domain.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,7 +25,10 @@ public class EmployeeInterface {
             System.out.println("1. View My Shifts");
             System.out.println("2. Send Swap Request");
             System.out.println("3. Send Weekly Availability");
-            System.out.println("4. Exit");
+            System.out.println("4. View Weekly Availability");
+            System.out.println("5. Add Vacation");
+            System.out.println("6. View Vacation Dates");
+            System.out.println("7. Exit");
 
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -38,6 +44,15 @@ public class EmployeeInterface {
                     chooseAvailableShifts(scanner, shifts);
                     break;
                 case 4:
+                    viewWeeklyAvailability();
+                    break;
+                case 5:
+                    addVacation(scanner);
+                    break;
+                case 6:
+                    viewHolidays();
+                    break;
+                case 7:
                     exit = true;
                     break;
                 default:
@@ -163,6 +178,39 @@ public class EmployeeInterface {
         System.out.println("Your swap request has been sent: " + newRequest.toString());
     }
 
+    public void viewWeeklyAvailability() {
+        System.out.println("Your Weekly Availability:");
+        for (Availability availability : employee.getWeeklyAvailability()) {
+            System.out.println("Date: " + availability.getDate() + ", Type: " + availability.getType());
+        }
+    }
+
+    public void addVacation(Scanner scanner) {
+
+        // Check if the employee already has 5 vacations.
+        if (employee.getHolidays().size() >= 5) {
+            System.out.println("You have reached the maximum number of vacations (5).");
+            return;
+        }
+
+        System.out.println("Enter vacation date (format yyyy-MM-dd):");
+        String dateStr = scanner.nextLine();
+        try {
+            Date vacationDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+            employee.getHolidays().add(vacationDate);
+            System.out.println("Vacation added successfully: " + vacationDate);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Vacation not added.");
+        }
+    }
+
+
+    public void viewHolidays() {
+        System.out.println("Your Holidays:");
+        for (Date holiday : employee.getHolidays()) {
+            System.out.println("Holiday Date: " + holiday);
+        }
+    }
 
     public void viewAssignedShifts(List<Shift> shifts) {
         boolean hasAssignments = false;

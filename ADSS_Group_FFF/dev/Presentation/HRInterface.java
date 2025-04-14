@@ -95,13 +95,13 @@ public class HRInterface {
             }
 
             // Filter for qualified employees:
-            // They must have the selected role and be available
-            // (an empty availability list counts as available)
-            // and they must not already be assigned to this shift.
+            // They must have the selected role,
+            // be available (either their availability list is empty or it contains an entry matching the shift),
+            // and not be on vacation on the shift’s date.
             List<Employee> qualifiedEmployees = new ArrayList<>();
             for (Employee e : employees) {
                 if (e.getRoles().contains(selectedRole)) {
-                    // Check if the employee is already assigned to this shift:
+                    // Skip employee if already assigned to this shift.
                     boolean alreadyAssigned = false;
                     for (ShiftAssignment sa : shift.getAssignedEmployees()) {
                         if (sa.getEmployeeId().equals(e.getId())) {
@@ -112,6 +112,22 @@ public class HRInterface {
                     if (alreadyAssigned) {
                         continue;
                     }
+
+                    // Check if the employee is on vacation on the shift date.
+                    boolean onVacation = false;
+                    if (e.getHolidays() != null) {
+                        for (Date vacDate : e.getHolidays()) {
+                            if (vacDate.equals(shift.getDate())) {
+                                onVacation = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (onVacation) {
+                        continue;
+                    }
+
+                    // Check availability.
                     boolean available = false;
                     if (e.getWeeklyAvailability().isEmpty()) {
                         available = true;
