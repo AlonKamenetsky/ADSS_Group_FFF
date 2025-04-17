@@ -3,6 +3,7 @@ package DomainLayer;
 import DomainLayer.Enums.SupplyMethod;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Order {
     int orderID;
@@ -15,4 +16,6 @@ public class Order {
     double totalPrice;
 
     SupplyMethod supplyMethod;
+
+    ArrayList<Product> productArrayList;
 }
