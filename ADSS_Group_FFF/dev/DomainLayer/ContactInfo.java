@@ -1,4 +1,4 @@
-package suppliers;
+package DomainLayer;
 
 public class ContactInfo {
     String phoneNumber;
