@@ -1,6 +1,6 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
-import DomainLayer.Enums.ProductCategory;
+import SuppliersModule.DomainLayer.Enums.ProductCategory;
 
 public class Product {
     String productId;

@@ -1,6 +1,6 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
-import DomainLayer.Enums.PaymentMethod;
+import SuppliersModule.DomainLayer.Enums.PaymentMethod;
 
 public class PaymentInfo {
     String supplierBankAccount;

@@ -1,4 +1,4 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
 import java.util.ArrayList;
 

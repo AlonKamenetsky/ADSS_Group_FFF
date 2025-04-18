@@ -1,6 +1,6 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
-import DomainLayer.Enums.SupplyMethod;
+import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.util.ArrayList;
 

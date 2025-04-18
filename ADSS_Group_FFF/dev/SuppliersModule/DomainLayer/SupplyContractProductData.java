@@ -1,4 +1,4 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
 public class SupplyContractProductData {
     double productPrice;

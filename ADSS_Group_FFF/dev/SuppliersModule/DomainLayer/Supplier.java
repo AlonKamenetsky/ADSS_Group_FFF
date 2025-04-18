@@ -1,6 +1,6 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
-import DomainLayer.Enums.DeliveringMethod;
+import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 
 public abstract class Supplier {
     String supplierName;

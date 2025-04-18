@@ -1,6 +1,6 @@
-package DomainLayer;
+package SuppliersModule.DomainLayer;
 
-import DomainLayer.Enums.WeekDay;
+import SuppliersModule.DomainLayer.Enums.WeekDay;
 
 import java.util.EnumSet;
 
