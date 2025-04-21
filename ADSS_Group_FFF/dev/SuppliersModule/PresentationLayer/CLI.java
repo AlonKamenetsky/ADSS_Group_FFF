@@ -315,7 +315,7 @@ public class CLI {
         System.out.println("5. print all contracts");
         System.out.println("6. Exit");
     }
-    
+
 
     public void printOrderOptions() {
         System.out.println("1. Add order");
