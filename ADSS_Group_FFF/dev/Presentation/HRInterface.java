@@ -13,7 +13,7 @@ public class HRInterface {
     private Role currentUserRole;
     private final List<SwapRequest> swapRequests = SwapRequestsRepo.getInstance().getSwapRequests();
     private final List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
-    private final List<Shift> shifts = ShiftsRepo.getInstance().getShifts();
+    private final List<Shift> shifts = ShiftsRepo.getInstance().getSchedule().getCurrentWeek();
 
 
     public HRInterface(String currentUserId) {
@@ -128,20 +128,10 @@ public class HRInterface {
                     }
 
                     // Check availability.
-                    boolean available = false;
-                    if (e.getWeeklyAvailability().isEmpty()) {
-                        available = true;
-                    } else {
-                        for (Availability avail : e.getWeeklyAvailability()) {
-                            if (shift.getDate().equals(avail.getDate()) && shift.getType().equals(avail.getType())) {
-                                available = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (available) {
+                    if (e.getAvailabilityThisWeek().isEmpty() || e.isAvailable(shift.getDate(), shift.getType())) {
                         qualifiedEmployees.add(e);
                     }
+
                 }
             }
 
@@ -356,63 +346,7 @@ public class HRInterface {
         employees.remove(index);
         System.out.println("Employee " + employee.getName() + " removed successfully.");
     }
-    public void processSwapRequests(Scanner scanner) {
-        if (swapRequests.isEmpty()) {
-            System.out.println("No swap requests available.");
-            return;
-        }
 
-        // 1. Display all swap requests
-        System.out.println("Current Swap Requests:");
-        for (int i = 0; i < swapRequests.size(); i++) {
-            System.out.println((i + 1) + ". " + swapRequests.get(i).toString());
-        }
-        System.out.println("Select a swap request to process (enter number):");
-        int chosenIndex = scanner.nextInt() - 1;
-        scanner.nextLine();
-        if (chosenIndex < 0 || chosenIndex >= swapRequests.size()) {
-            System.out.println("Invalid selection.");
-            return;
-        }
-        SwapRequest selectedRequest = swapRequests.get(chosenIndex);
-
-        // 2. Filter for compatible requests:
-        // Must have a different employee, a different shift, but the same role.
-        List<SwapRequest> compatibleRequests = new ArrayList<>();
-        for (SwapRequest sr : swapRequests) {
-            if (sr == selectedRequest) continue;
-            if (!sr.getEmployee().equals(selectedRequest.getEmployee()) &&
-                    !sr.getShift().equals(selectedRequest.getShift()) &&
-                    sr.getRole().equals(selectedRequest.getRole())) {
-                compatibleRequests.add(sr);
-            }
-        }
-        if (compatibleRequests.isEmpty()) {
-            System.out.println("No compatible swap requests found for the selected request.");
-            return;
-        }
-
-        // 3. Display compatible swap requests and prompt for selection.
-        System.out.println("Compatible Swap Requests:");
-        for (int i = 0; i < compatibleRequests.size(); i++) {
-            System.out.println((i + 1) + ". " + compatibleRequests.get(i).toString());
-        }
-        System.out.println("Select one of the compatible swap requests (enter number):");
-        int candidateIndex = scanner.nextInt() - 1;
-        scanner.nextLine();
-        if (candidateIndex < 0 || candidateIndex >= compatibleRequests.size()) {
-            System.out.println("Invalid selection.");
-            return;
-        }
-        SwapRequest candidateRequest = compatibleRequests.get(candidateIndex);
-
-        // 4. Perform the swap between the two selected requests.
-        swapShifts(selectedRequest, candidateRequest);
-
-        // 5. Remove both swap requests from the list.
-        swapRequests.remove(selectedRequest);
-        swapRequests.remove(candidateRequest);
-    }
 
     /**
      * Helper method that swaps employees between two shifts for the same role.
@@ -479,59 +413,138 @@ public class HRInterface {
      *
      * @param scanner A Scanner object for user input.
      */
-    public void createShift(Scanner scanner) {
-        try {
-            // Automatically generate shift ID based on the number of existing shifts.
-            String shiftId = "SHIFT" + (ShiftsRepo.getInstance().getShifts().size() + 1);
-            System.out.println("Generating Shift ID: " + shiftId);
-
-            System.out.println("Enter shift date (format yyyy-MM-dd):");
-            String dateStr = scanner.nextLine();
-            Date shiftDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
-
-            System.out.println("Enter shift type (1 for Morning, 2 for Evening):");
-            int typeChoice = scanner.nextInt();
-            scanner.nextLine();
-            Shift.ShiftTime shiftType;
-            if (typeChoice == 1) {
-                shiftType = Shift.ShiftTime.Morning;
-            } else if (typeChoice == 2) {
-                shiftType = Shift.ShiftTime.Evening;
-            } else {
-                System.out.println("Invalid shift type; defaulting to Morning.");
-                shiftType = Shift.ShiftTime.Morning;
-            }
-
-            // Build mapping for required roles and required counts.
-            Map<Role, ArrayList<Employee>> requiredRoles = new HashMap<>();
-            Map<Role, Integer> requiredCounts = new HashMap<>();
-            List<Role> roles = RolesRepo.getInstance().getRoles();
-            for (Role role : roles) {
-                // Skip the HR role entirely.
-                if (role.getName().equalsIgnoreCase("HR")) {
-                    continue;
-                }
-                // For Shift Manager role, automatically set to 1.
-                else if (role.getName().equalsIgnoreCase("Shift Manager") || role.getName().equalsIgnoreCase("ShiftManager")) {
-                    requiredCounts.put(role, 1);
-                    requiredRoles.put(role, new ArrayList<>());}
-                // For other roles, prompt the HR manager to enter the required count.
-                else {
-                    System.out.println("Enter the number of required employees for role: " + role.getName());
-                    int requiredCount = scanner.nextInt();
-                    scanner.nextLine();
-                    requiredCounts.put(role, requiredCount);
-                    requiredRoles.put(role, new ArrayList<>());
-                }
-            }
-
-            // Create the new shift with the generated ID, given date, type, required roles map, and required counts.
-            Shift newShift = new Shift(shiftId, shiftDate, shiftType, requiredRoles, requiredCounts);
-            ShiftsRepo.getInstance().addShift(newShift);
-            System.out.println("Shift created successfully: " + newShift.getID());
-        } catch (ParseException e) {
-            System.out.println("Invalid date format. Shift creation aborted.");
+    /** Instead of creating a new Shift, pick one of this/next week and set its required roles. */
+    public void configureShiftRoles(Scanner scanner) {
+        if (!currentUserRole.equals(HR_ROLE)) {
+            System.out.println("Access Denied: Only HR can configure shift roles.");
+            return;
         }
+
+        ShiftsRepo repo = ShiftsRepo.getInstance();
+
+        System.out.println("Configure roles for: 1) Current week   2) Next week");
+        int wk = scanner.nextInt();
+        scanner.nextLine();
+
+        // let the getters themselves ensure up‐to‐date / lazy build next week
+        List<Shift> weekShifts = (wk == 1)
+                ? repo.getCurrentWeekShifts()
+                : repo.getNextWeekShifts();
+
+        if (weekShifts.isEmpty()) {
+            System.out.println("No shifts available to configure.");
+            return;
+        }
+
+        for (int i = 0; i < weekShifts.size(); i++) {
+            Shift s = weekShifts.get(i);
+            System.out.printf("%d) %s %s%n", i + 1, s.getID(), s.getType());
+        }
+        System.out.println("0) Exit");
+        System.out.print("Select shift to configure: ");
+        int idx = scanner.nextInt() - 1;
+        scanner.nextLine();
+
+        if (idx == -1) {
+            System.out.println("Exiting configuration.");
+            return;
+        }
+        if (idx < 0 || idx >= weekShifts.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+
+        Shift shift = weekShifts.get(idx);
+
+        // Always ensure exactly 1 Shift Manager slot
+        Role managerRole = RolesRepo.getInstance().getRoleByName("Shift Manager");
+        shift.getRequiredCounts().put(managerRole, 1);
+        shift.getRequiredRoles().putIfAbsent(managerRole, new ArrayList<>());
+
+        // Now prompt only for the other roles
+        for (Role role : RolesRepo.getInstance().getRoles()) {
+            if (role.equals(HR_ROLE) || role.equals(managerRole)) {
+                continue;
+            }
+            int current = shift.getRequiredCounts().getOrDefault(role, 0);
+            System.out.printf("Required # for role %s (currently %d): ",
+                    role.getName(), current);
+            int cnt = scanner.nextInt();
+            scanner.nextLine();
+            shift.getRequiredCounts().put(role, cnt);
+            shift.getRequiredRoles().put(role, new ArrayList<>(cnt));
+        }
+
+        System.out.println("Shift roles updated successfully.");
+    }
+
+
+    /**
+     * Processes two swap requests and updates both shifts' assignedEmployees lists.
+     */
+    public void processSwapRequests(Scanner scanner) {
+        if (swapRequests.isEmpty()) {
+            System.out.println("No swap requests available.");
+            return;
+        }
+
+        System.out.println("Current Swap Requests:");
+        for (int i = 0; i < swapRequests.size(); i++) {
+            System.out.println((i+1) + ". " + swapRequests.get(i));
+        }
+        System.out.print("Select a swap request to process: ");
+        int first = scanner.nextInt() - 1; scanner.nextLine();
+        if (first < 0 || first >= swapRequests.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+        SwapRequest req1 = swapRequests.get(first);
+
+        // Find compatible requests
+        List<SwapRequest> compat = new ArrayList<>();
+        for (SwapRequest r : swapRequests) {
+            if (r == req1) continue;
+            if (!r.getEmployee().equals(req1.getEmployee())
+                    && !r.getShift().equals(req1.getShift())
+                    && r.getRole().equals(req1.getRole())) {
+                compat.add(r);
+            }
+        }
+        if (compat.isEmpty()) {
+            System.out.println("No compatible swap requests found.");
+            return;
+        }
+
+        System.out.println("Compatible Swap Requests:");
+        for (int i = 0; i < compat.size(); i++) {
+            System.out.println((i+1) + ". " + compat.get(i));
+        }
+        System.out.print("Select one to swap with: ");
+        int second = scanner.nextInt() - 1; scanner.nextLine();
+        if (second < 0 || second >= compat.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+        SwapRequest req2 = compat.get(second);
+
+        Employee e1 = req1.getEmployee();
+        Employee e2 = req2.getEmployee();
+        Shift  s1 = req1.getShift();
+        Shift  s2 = req2.getShift();
+        Role   r  = req1.getRole();
+
+        // Update assignedEmployees lists:
+        s1.getAssignedEmployees().removeIf(sa -> sa.getEmployeeId().equals(e1.getId()) && sa.getRole().equals(r));
+        s2.getAssignedEmployees().removeIf(sa -> sa.getEmployeeId().equals(e2.getId()) && sa.getRole().equals(r));
+        s1.assignEmployee(e2, r);
+        s2.assignEmployee(e1, r);
+
+        System.out.printf("Swapped %s and %s for role %s between shifts %s and %s.%n",
+                e1.getName(), e2.getName(), r.getName(), s1.getID(), s2.getID());
+
+        // Remove processed requests
+        swapRequests.remove(req1);
+        swapRequests.remove(req2);
     }
 
 
@@ -547,43 +560,23 @@ public class HRInterface {
             System.out.println("5. Remove Role");
             System.out.println("6. Assign Employee to Shift");
             System.out.println("7. Process Swap Requests");
-            System.out.println("8. Create Shift");
+            System.out.println("8. Set Roles For Shift");
             System.out.println("9. Exit");
 
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             switch (choice) {
-                case 1:
-                    addEmployee(scanner, employees);
-                    break;
-                case 2:
-                    removeEmployee(scanner, employees);
-                    break;
-                case 3:
-                    updateEmployeeData(scanner, employees);
-                    break;
-                case 4:
-                    addNewRole(scanner);
-                    break;
-                case 5:
-                    removeRole(scanner);
-                    break;
-                case 6:
-                    assignEmployeeToShift(scanner, employees, shifts);
-                    break;
-                case 7:
-                    processSwapRequests(scanner);
-                    break;
-                case 8:
-                    createShift(scanner);
-                    break;
-                case 9:
-                    exit = true;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-                    break;
+                case 1 -> addEmployee(scanner, employees);
+                case 2 -> removeEmployee(scanner, employees);
+                case 3 -> updateEmployeeData(scanner, employees);
+                case 4 -> addNewRole(scanner);
+                case 5 -> removeRole(scanner);
+                case 6 -> assignEmployeeToShift(scanner, employees, shifts);
+                case 7 -> processSwapRequests(scanner);
+                case 8 -> configureShiftRoles(scanner);
+                case 9 -> exit = true;
+
             }
         }
     }

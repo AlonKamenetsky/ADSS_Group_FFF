@@ -1,109 +1,76 @@
 package Presentation;
-import Domain.*;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import Domain.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
 
 public class DataInitializer {
     public static void initializeExampleData() throws ParseException {
-        RolesRepo rolesRepo = RolesRepo.getInstance();
-        EmployeesRepo employeesRepo = EmployeesRepo.getInstance();
+        // ——— 1) Seed Roles & Employees (unchanged) ———
+        RolesRepo rolesRepo     = RolesRepo.getInstance();
+        EmployeesRepo empRepo   = EmployeesRepo.getInstance();
 
         // Add Roles
-        rolesRepo.addRole(new Role("HR"));
-        rolesRepo.addRole(new Role("Shift Manager"));
-        rolesRepo.addRole(new Role("Cashier"));
-        rolesRepo.addRole(new Role("Warehouse"));
-        rolesRepo.addRole(new Role("Cleaner"));
-        rolesRepo.addRole(new Role("Driver"));
+        Arrays.asList("HR", "Shift Manager", "Cashier", "Warehouse", "Cleaner", "Driver")
+                .forEach(name -> rolesRepo.addRole(new Role(name)));
 
-        // Get Roles
-        Role hrRole = rolesRepo.getRoleByName("HR");
-        Role managerRole = rolesRepo.getRoleByName("Shift Manager");
-        Role cashierRole = rolesRepo.getRoleByName("Cashier");
-        Role warehouseRole = rolesRepo.getRoleByName("Warehouse");
-        Role cleanerRole = rolesRepo.getRoleByName("Cleaner");
-        Role driverRole = rolesRepo.getRoleByName("Driver");
+        // Lookup Roles
+        Role hrRole       = rolesRepo.getRoleByName("HR");
+        Role cashierRole  = rolesRepo.getRoleByName("Cashier");
+        Role warehouseRole= rolesRepo.getRoleByName("Warehouse");
 
-        // Add Employees
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        dateFormat.setLenient(false);
-        Date employmentDate = dateFormat.parse("01-01-2020");
+        // Parse a common hire date
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        df.setLenient(false);
+        Date hireDate = df.parse("2020-01-01");
 
-        Employee dana = new Employee("1",
+        // Create two example employees
+        Employee dana = new Employee(
+                "1",
                 new LinkedList<>(Arrays.asList(hrRole, cashierRole)),
                 "Dana",
-                "123",
+                "123",         // user‑facing password
                 "IL123BANK",
-                5000f,
-                employmentDate);
+                5_000f,
+                hireDate
+        );
         dana.setPassword("123");
+        empRepo.addEmployee(dana);
 
-        Employee john = new Employee("2",
-                new LinkedList<>(Arrays.asList(warehouseRole)),
+        Employee john = new Employee(
+                "2",
+                new LinkedList<>(Arrays.asList(warehouseRole,cashierRole)),
                 "John",
                 "456",
                 "IL456BANK",
-                4500f,
-                employmentDate);
+                4_500f,
+                hireDate
+        );
         john.setPassword("456");
+        empRepo.addEmployee(john);
 
-        employeesRepo.addEmployee(dana);
-        employeesRepo.addEmployee(john);
-
-        // Create two example shifts
-
-        // Prepare a date format for shift dates.
-        SimpleDateFormat shiftDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        shiftDateFormat.setLenient(false);
-        Date shiftDate1 = shiftDateFormat.parse("15-09-2023");
-        Date shiftDate2 = shiftDateFormat.parse("16-09-2023");
-
-        // Build required roles and required counts for Shift 1.
-        Map<Role, ArrayList<Employee>> requiredRoles1 = new HashMap<>();
-        Map<Role, Integer> requiredCounts1 = new HashMap<>();
-        // Get all roles from RolesRepo.
-        for (Role role : rolesRepo.getRoles()) {
-            // Skip HR role entirely.
-            if (role.getName().equalsIgnoreCase("HR")) {
-                continue;
-            }
-            // Automatically set Shift Manager required count to 1.
-            else if (role.getName().equalsIgnoreCase("Shift Manager") || role.getName().equalsIgnoreCase("ShiftManager")) {
-                requiredCounts1.put(role, 1);
-                requiredRoles1.put(role, new ArrayList<>());
-            }
-            // For other roles, set required count to 1 (you can adjust these numbers as needed).
-            else {
-                requiredCounts1.put(role, 1);
-                requiredRoles1.put(role, new ArrayList<>());
-            }
+        // ——— 2) Define the two‐daily recurring templates ———
+        ShiftsRepo shiftsRepo = ShiftsRepo.getInstance();
+        for (DayOfWeek dow : DayOfWeek.values()) {
+            shiftsRepo.addTemplate(new RecurringShift(dow, Shift.ShiftTime.Morning));
+            shiftsRepo.addTemplate(new RecurringShift(dow, Shift.ShiftTime.Evening));
         }
-        // Create Shift 1 (Morning shift).
-        Shift shift1 = new Shift("SHIFT1", shiftDate1, Shift.ShiftTime.Morning, requiredRoles1, requiredCounts1);
 
-        // Build required roles and required counts for Shift 2.
-        Map<Role, ArrayList<Employee>> requiredRoles2 = new HashMap<>();
-        Map<Role, Integer> requiredCounts2 = new HashMap<>();
-        for (Role role : rolesRepo.getRoles()) {
-            if (role.getName().equalsIgnoreCase("HR")) {
-                continue;
-            } else if (role.getName().equalsIgnoreCase("Shift Manager") || role.getName().equalsIgnoreCase("ShiftManager")) {
-                requiredCounts2.put(role, 1);
-                requiredRoles2.put(role, new ArrayList<>());
-            } else {
-                requiredCounts2.put(role, 1);
-                requiredRoles2.put(role, new ArrayList<>());
-            }
-        }
-        // Create Shift 2 (Evening shift).
-        Shift shift2 = new Shift("SHIFT2", shiftDate2, Shift.ShiftTime.Evening, requiredRoles2, requiredCounts2);
+        // ——— 3) Bootstrap the rolling schedule ———
+        // Find the most recent Saturday (today if it is Saturday)
+        LocalDate lastSat = LocalDate.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
+        // Build “nextWeek” from our templates starting that Saturday…
+        shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), lastSat);
+        // …then roll it into “currentWeek”
+        shiftsRepo.getSchedule().swapWeeks();
 
-        // Add the shifts to ShiftsRepo.
-        ShiftsRepo.getInstance().addShift(shift1);
-        ShiftsRepo.getInstance().addShift(shift2);
-
-        System.out.println("Example data loaded successfully.");
+        System.out.println("Example data and recurring‑shift templates loaded successfully.");
     }
 }

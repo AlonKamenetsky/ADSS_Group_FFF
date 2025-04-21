@@ -1,166 +1,147 @@
 package tests.PresentationTests;
 
-import Domain.Availability;
 import Domain.Employee;
 import Domain.Role;
+import Domain.RecurringShift;
 import Domain.Shift;
 import Domain.ShiftAssignment;
 import Domain.ShiftsRepo;
 import Domain.SwapRequest;
 import Domain.SwapRequestsRepo;
 import Presentation.EmployeeInterface;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EmployeeInterfaceTest {
 
     private Employee employee;
-    private EmployeeInterface employeeInterface;
-    private SimpleDateFormat dateFormat;
+    private EmployeeInterface ui;
+    private SimpleDateFormat df;
+    private ShiftsRepo repo;
 
     @BeforeEach
     void setUp() throws Exception {
-        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date employmentDate = dateFormat.parse("01-01-2020");
+        df = new SimpleDateFormat("yyyy-MM-dd");
+        Date employmentDate = df.parse("2020-01-01");
         Role cashierRole = new Role("Cashier");
-        // Create employee with an empty weekly availability and holidays list.
-        employee = new Employee("1", List.of(cashierRole), "Dana", "123", "Bank", 5000f, employmentDate);
-        // Ensure holidays list is empty.
-        employee.getHolidays().clear();
-        employee.getWeeklyAvailability().clear();
-        // Reset assigned shifts by clearing ShiftsRepo.
-        ShiftsRepo.getInstance().getShifts().clear();
-        // Create EmployeeInterface with the employee.
-        employeeInterface = new EmployeeInterface(employee);
-        // Also clear swap requests.
+
+        employee = new Employee(
+                "1",
+                List.of(cashierRole),
+                "Dana",
+                "pass1",
+                "BANK123",
+                5000f,
+                employmentDate
+        );
+
+        ui = new EmployeeInterface(employee);
+        repo = ShiftsRepo.getInstance();
+
+        // clear out any previous schedule/templates/history
+        repo.getTemplates().clear();
+        repo.getSchedule().getCurrentWeek().clear();
+        repo.getSchedule().getNextWeek().clear();
+        repo.getHistory().clear();
+        // clear swap‐requests
         SwapRequestsRepo.getInstance().getSwapRequests().clear();
     }
 
     @AfterEach
     void tearDown() {
-        // Clear the ShiftsRepo and SwapRequestsRepo after each test.
-        ShiftsRepo.getInstance().getShifts().clear();
+        // reset again
+        repo.getTemplates().clear();
+        repo.getSchedule().getCurrentWeek().clear();
+        repo.getSchedule().getNextWeek().clear();
+        repo.getHistory().clear();
         SwapRequestsRepo.getInstance().getSwapRequests().clear();
     }
 
     @Test
-    void testEmployeeMainMenuReceivesExit() {
-        // For the main menu, we only test that the method consumes the exit command.
-        // Options: 7 (exit) is the last option.
-        String simulatedInput = "7\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
-        Scanner scanner = new Scanner(in);
-        // When choosing exit, the method should complete without error.
-        // (Since the method itself writes to System.out, we can only check that no exception is thrown.)
-        employeeInterface.employeeMainMenu(scanner);
+    void testAddVacationViaMenu() throws Exception {
+        // simulate: "5. Add Vacation" → enter date → "7. Exit"
+        String input = String.join("\n",
+                "5",
+                "2025-08-15", // vacation date
+                "7"
+        ) + "\n";
+
+        Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));
+        ui.employeeMainMenu(sc);
+
+        assertEquals(1, employee.getHolidays().size(), "Should have exactly one holiday");
+        assertEquals(df.parse("2025-08-15"), employee.getHolidays().get(0), "Should be the same date");
     }
 
     @Test
-    void testAddVacation() {
-        // Simulate input for addVacation.
-        String input = "15-08-2025\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        int initialSize = employee.getHolidays().size();
-        employeeInterface.addVacation(scanner);
-        assertEquals(initialSize + 1, employee.getHolidays().size(), "Vacation should be added");
+    void testSendWeeklyAvailabilityViaMenu() {
+        // first add a single RecurringShift template for next week
+        RecurringShift tmpl = new RecurringShift(DayOfWeek.MONDAY, Shift.ShiftTime.Morning);
+        tmpl.setDefaultCount(new Role("Cashier"), 1);
+        repo.addTemplate(tmpl);
+
+        // force-building next‐week from template, using last Saturday as ref
+        LocalDate saturday = LocalDate.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
+        repo.getSchedule().resetNextWeek(repo.getTemplates(), saturday);
+
+        // simulate: "3. Send Weekly Availability" → pick slot 1 → done (0) → exit (7)
+        String input = String.join("\n",
+                "3",
+                "1",
+                "0",
+                "7"
+        ) + "\n";
+
+        Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));
+        ui.employeeMainMenu(sc);
+
+        // availabilityNextWeek should now contain exactly one entry for Monday/Morning
+        var next = employee.getAvailabilityNextWeek();
+        assertEquals(1, next.size(), "Should have picked exactly one slot");
+        assertEquals(DayOfWeek.MONDAY, next.get(0).getDay());
+        assertEquals(Shift.ShiftTime.Morning, next.get(0).getTime());
     }
 
     @Test
-    void testChooseAvailableShifts() throws Exception {
-        // For chooseAvailableShifts, simulate input to mark availability.
-        // Create two shifts in ShiftsRepo.
-        ShiftsRepo.getInstance().getShifts().clear();
-        Date shiftDate1 = dateFormat.parse("10-05-2025");
-        Map<Role, ArrayList<Employee>> reqRoles = new HashMap<>();
-        Map<Role, Integer> reqCounts = new HashMap<>();
-        // For testing, use a dummy role.
-        Role testRole = new Role("Cashier");
-        reqRoles.put(testRole, new ArrayList<>());
-        reqCounts.put(testRole, 1);
-        Shift shift = new Shift("SHIFT1", shiftDate1, Shift.ShiftTime.Morning, reqRoles, reqCounts);
-        ShiftsRepo.getInstance().addShift(shift);
+    void testSendSwapRequestViaMenu() throws Exception {
+        // prepare one shift in current week and assign the employee
+        Date shiftDate = df.parse("2025-10-01");
+        var role = new Role("Cashier");
+        var reqRoles = new java.util.HashMap<Role, java.util.ArrayList<Employee>>();
+        var reqCounts = new java.util.HashMap<Role, Integer>();
+        reqRoles.put(role, new java.util.ArrayList<>());
+        reqCounts.put(role, 1);
+        Shift s = new Shift("S1", shiftDate, Shift.ShiftTime.Evening, reqRoles, reqCounts);
+        // attach assignment
+        s.assignEmployee(employee, role);
+        repo.getSchedule().getCurrentWeek().clear();
+        repo.getSchedule().getCurrentWeek().add(s);
 
-        // Simulate input: choose shift (since availability is empty, the only shift will be shown),
-        // then finish selection by entering 0.
-        String simulatedInput = "1\n0\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
-        Scanner scanner = new Scanner(in);
-        employeeInterface.chooseAvailableShifts(scanner, ShiftsRepo.getInstance().getShifts());
+        // simulate: "2. Send Swap Request" → choose 1 → exit 7
+        String input = String.join("\n",
+                "2",
+                "1",
+                "7"
+        ) + "\n";
 
-        // After choosing the shift, the employee's weekly availability should now include an entry.
-        assertFalse(employee.getWeeklyAvailability().isEmpty(), "Weekly availability should be updated");
-        // Optionally check that the availability matches the shift's date and type.
-        Availability avail = employee.getWeeklyAvailability().get(0);
-        assertEquals(shiftDate1, avail.getDate());
-        assertEquals(Shift.ShiftTime.Morning, avail.getType());
-    }
+        Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));
+        ui.employeeMainMenu(sc);
 
-    @Test
-    void testSendSwapRequest() throws Exception {
-        // Create a shift to which the employee is assigned.
-        ShiftsRepo.getInstance().getShifts().clear();
-        Date shiftDate = dateFormat.parse("10-05-2025");
-        Map<Role, ArrayList<Employee>> reqRoles = new HashMap<>();
-        Map<Role, Integer> reqCounts = new HashMap<>();
-        Role cashier = new Role("Cashier");
-        reqRoles.put(cashier, new ArrayList<>());
-        reqCounts.put(cashier, 1);
-        Shift shift = new Shift("SHIFT1", shiftDate, Shift.ShiftTime.Morning, reqRoles, reqCounts);
-        // Simulate assignment: add a ShiftAssignment for the employee.
-        shift.assignEmployee(employee, cashier);
-        // Ensure the employee is assigned to the shift (via ShiftsRepo).
-        ShiftsRepo.getInstance().addShift(shift);
-
-        // Simulate input for sendSwapRequest:
-        // The method should display the shifts the employee is assigned to (only one) and then ask for a selection.
-        // For simplicity, we select option 1.
-        String simulatedInput = "1\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
-        Scanner scanner = new Scanner(in);
-        // Before sending the swap request, clear the repository.
-        SwapRequestsRepo.getInstance().getSwapRequests().clear();
-        employeeInterface.sendSwapRequest(scanner);
-        // Verify that a swap request was added.
-        assertEquals(1, SwapRequestsRepo.getInstance().getSwapRequests().size(), "A swap request should be created");
-        SwapRequest req = SwapRequestsRepo.getInstance().getSwapRequests().get(0);
-        assertEquals("SHIFT1", req.getShift().getID());
-        // And the employee should be the one sending it.
-        assertEquals(employee, req.getEmployee());
-    }
-
-    @Test
-    void testViewAssignedShiftsWhenNone() {
-        // Clear any assignments from all shifts (if any).
-        // For this test, ensure the employee is not assigned to any shift.
-        ShiftsRepo.getInstance().getShifts().clear();
-        // Capture output if necessary (here we simply call the method).
-        employeeInterface.viewAssignedShifts(ShiftsRepo.getInstance().getShifts());
-        // No assertion here; in a more advanced test, you could capture System.out to verify the message.
-    }
-
-    @Test
-    void testViewWeeklyAvailability() throws Exception {
-        // Add an availability, then call viewWeeklyAvailability.
-        Date testDate = dateFormat.parse("10-05-2025");
-        employee.addAvailability(testDate, Shift.ShiftTime.Morning);
-        // Call the method; for now we'll assume it prints the output.
-        employeeInterface.viewWeeklyAvailability();
-        // No assertion is made; advanced testing may capture System.out.
-    }
-
-    @Test
-    void testViewHolidays() throws Exception {
-        // Add a holiday and then call viewHolidays.
-        Date holiday = dateFormat.parse("15-08-2025");
-        employee.getHolidays().add(holiday);
-        employeeInterface.viewHolidays();
+        var swaps = SwapRequestsRepo.getInstance().getSwapRequests();
+        assertEquals(1, swaps.size(), "One swap request should be created");
+        SwapRequest r = swaps.get(0);
+        assertEquals("S1", r.getShift().getID());
+        assertEquals(employee, r.getEmployee());
     }
 }

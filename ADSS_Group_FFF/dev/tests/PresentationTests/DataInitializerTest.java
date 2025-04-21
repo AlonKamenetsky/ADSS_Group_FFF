@@ -16,7 +16,7 @@ class DataInitializerTest {
         // Clear repositories before each test.
         RolesRepo.getInstance().getRoles().clear();
         EmployeesRepo.getInstance().getEmployees().clear();
-        ShiftsRepo.getInstance().getShifts().clear();
+        ShiftsRepo.getInstance().getCurrentWeekShifts().clear();
     }
 
     @Test
@@ -27,6 +27,6 @@ class DataInitializerTest {
         // Expect at least two employees.
         assertTrue(EmployeesRepo.getInstance().getEmployees().size() >= 2, "At least two employees should be loaded");
         // Expect two shifts to be loaded.
-        assertEquals(2, ShiftsRepo.getInstance().getShifts().size(), "Two shifts should be created");
+        assertEquals(14, ShiftsRepo.getInstance().getCurrentWeekShifts().size(), "Two shifts should be created for each day of the week");
     }
 }

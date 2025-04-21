@@ -1,256 +1,235 @@
 package tests.PresentationTests;
 
-import Domain.Employee;
-import Domain.Role;
-import Domain.Shift;
-import Domain.ShiftsRepo;
-import Domain.EmployeesRepo;
-import Domain.SwapRequest;
+import Domain.*;
 import Presentation.HRInterface;
-import Domain.RolesRepo;
-import Domain.SwapRequestsRepo;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class HRInterfaceTest {
 
-    private HRInterface hrInterface;
-    private SimpleDateFormat dateFormat;
+    private HRInterface ui;
+    private SimpleDateFormat df;
 
     @BeforeEach
     void setUp() throws Exception {
-        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        // Clear repositories
+        df = new SimpleDateFormat("dd-MM-yyyy");
+
+        // clear out all singletons
         RolesRepo.getInstance().getRoles().clear();
         EmployeesRepo.getInstance().getEmployees().clear();
-        ShiftsRepo.getInstance().getShifts().clear();
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().clear();
+        ShiftsRepo.getInstance().getSchedule().getNextWeek().clear();
+        ShiftsRepo.getInstance().getTemplates().clear();
+        ShiftsRepo.getInstance().getHistory().clear();
         SwapRequestsRepo.getInstance().getSwapRequests().clear();
 
-        // Set up roles.
-        RolesRepo.getInstance().addRole(new Role("Shift Manager"));
-        RolesRepo.getInstance().addRole(new Role("Cashier"));
-        RolesRepo.getInstance().addRole(new Role("HR"));
+        // seed roles
+        RolesRepo rs = RolesRepo.getInstance();
+        rs.addRole(new Role("HR"));
+        rs.addRole(new Role("Shift Manager"));
+        rs.addRole(new Role("Cashier"));
 
-        // Set up employees.
-        Role cashier = RolesRepo.getInstance().getRoleByName("Cashier");
-        Employee emp1 = new Employee("1", List.of(cashier), "Dana", "pass", "Bank", 5000f, dateFormat.parse("01-01-2020"));
-        Employee emp2 = new Employee("2", List.of(cashier), "John", "pass", "Bank", 4500f, dateFormat.parse("01-01-2020"));
-        EmployeesRepo.getInstance().addEmployee(emp1);
-        EmployeesRepo.getInstance().addEmployee(emp2);
+        // seed employees
+        Role cashier = rs.getRoleByName("Cashier");
+        Employee e1 = new Employee("1", List.of(cashier), "Alice", "p1", "B1", 4000f, df.parse("01-01-2020"));
+        Employee e2 = new Employee("2", List.of(cashier), "Bob",   "p2", "B2", 3500f, df.parse("01-01-2020"));
+        EmployeesRepo.getInstance().addEmployee(e1);
+        EmployeesRepo.getInstance().addEmployee(e2);
 
-        hrInterface = new HRInterface("HRUser");
-        // For testing, set current user role to HR.
-        hrInterface.setCurrentUserRole(new Role("HR"));
-
-        // Create one shift for assignment tests.
+        // seed one shift
         Map<Role, ArrayList<Employee>> reqRoles = new HashMap<>();
-        Map<Role, Integer> reqCounts = new HashMap<>();
-        Role shiftManager = RolesRepo.getInstance().getRoleByName("Shift Manager");
-        Role cashierRole = RolesRepo.getInstance().getRoleByName("Cashier");
-        // For testing, set required count for Shift Manager to 1 and Cashier to 2.
-        reqRoles.put(shiftManager, new ArrayList<>());
-        reqCounts.put(shiftManager, 1);
-        reqRoles.put(cashierRole, new ArrayList<>());
-        reqCounts.put(cashierRole, 2);
-        Date shiftDate = dateFormat.parse("15-09-2025");
-        Shift shift = new Shift("SHIFT1", shiftDate, Shift.ShiftTime.Morning, reqRoles, reqCounts);
-        ShiftsRepo.getInstance().addShift(shift);
+        Map<Role, Integer>           reqCnts  = new HashMap<>();
+        Role mgr = rs.getRoleByName("Shift Manager");
+        reqRoles.put(mgr,       new ArrayList<>());
+        reqCnts .put(mgr,       1);
+        reqRoles.put(cashier,   new ArrayList<>());
+        reqCnts .put(cashier,   2);
+        Date shiftDate = df.parse("15-09-2025");
+        Shift s = new Shift("SHIFT1", shiftDate, Shift.ShiftTime.Morning, reqRoles, reqCnts);
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().add(s);
+
+        // construct UI and give it HR privileges
+        ui = new HRInterface("HRUser");
+        ui.setCurrentUserRole(rs.getRoleByName("HR"));
     }
 
     @AfterEach
     void tearDown() {
-        // Clear repositories after each test.
         RolesRepo.getInstance().getRoles().clear();
         EmployeesRepo.getInstance().getEmployees().clear();
-        ShiftsRepo.getInstance().getShifts().clear();
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().clear();
+        ShiftsRepo.getInstance().getSchedule().getNextWeek().clear();
+        ShiftsRepo.getInstance().getTemplates().clear();
+        ShiftsRepo.getInstance().getHistory().clear();
         SwapRequestsRepo.getInstance().getSwapRequests().clear();
     }
 
+    @Test void managerMenuExitImmediately() {
+        assertDoesNotThrow(() ->
+                ui.managerMainMenu(new Scanner(new ByteArrayInputStream("9\n".getBytes())))
+        );
+    }
     @Test
-    void testCreateShift() {
-        // Simulate input for createShift.
-        // Input: shift date, shift type, and required count for "Cashier" (since "Shift Manager" is auto-set).
-        String input = "16-09-2025\n" +  // shift date
-                "2\n" +           // shift type: 2 for Evening
-                "3\n";            // required number for Cashier
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        hrInterface.createShift(scanner);
-
-        // Expect now 2 shifts in ShiftsRepo.
-        assertEquals(2, ShiftsRepo.getInstance().getShifts().size());
-        Shift createdShift = ShiftsRepo.getInstance().getShifts().get(1);
-        assertEquals("SHIFT2", createdShift.getID());
-        Role cashier = RolesRepo.getInstance().getRoleByName("Cashier");
-        assertEquals(3, createdShift.getRequiredCounts().get(cashier));
+    void addNewRoleViaMenu() {
+        int before = RolesRepo.getInstance().getRoles().size();
+        String in = String.join("\n",
+                "4",            // Add New Role
+                "TempRole",     // role name
+                "9"             // Exit
+        ) + "\n";
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        assertEquals(before + 1, RolesRepo.getInstance().getRoles().size());
+        assertNotNull(RolesRepo.getInstance().getRoleByName("TempRole"));
     }
 
     @Test
-    void testAssignEmployeeToShift() throws Exception {
-        // For assignEmployeeToShift, simulate input for:
-        //  - selecting a shift,
-        //  - choosing a role (from the printed list),
-        //  - selecting a qualified employee.
-        // For this test, we need to ensure that one employee is available.
-        // We already have two employees with role Cashier.
-
-        // Simulate input:
-        // First, select the only shift: "1"
-        // Then, in the role menu, choose "1" (assume that role 1 is Shift Manager or Cashier depending on order)
-        // Since the test has two roles (Shift Manager and Cashier), we assume the printed order is defined by keySet iteration.
-        // For our test, we wish to assign a Cashier. Let’s assume that Cashier is option 2.
-        // Then, select employee "1".
-        String input = "1\n" +  // select shift SHIFT1
-                "2\n" +  // select role option 2 (Cashier)
-                "1\n"+
-                "2\n"+
-                "1\n"+
-                "0\n";  // select employee option 2 (John)
-
-
-
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-
-        // Call method.
-        hrInterface.assignEmployeeToShift(scanner, EmployeesRepo.getInstance().getEmployees(), ShiftsRepo.getInstance().getShifts());
-
-        // Verify that the chosen employee is now assigned to the shift for the Cashier role.
-        Shift shift = ShiftsRepo.getInstance().getShifts().get(0);
-        Role cashier = RolesRepo.getInstance().getRoleByName("Cashier");
-        List<Employee> assignedForCashier = shift.getRequiredRoles().get(cashier);
-        assertNotNull(assignedForCashier);
-        // Since required count for cashier is 2, and we just assigned one employee, the list should have size 1.
-        assertEquals(2, assignedForCashier.size());
+    void updateEmployeeDataViaMenu() {
+        // we'll update bank account of employee #1
+        String in = String.join("\n",
+                "3",    // Update Employee Data
+                "1",    // choose employee #1 (Alice)
+                "1",    // choose Bank Account
+                "NEWACC",
+                "3",    // exit update
+                "9"     // exit manager
+        ) + "\n";
+        List<Employee> emps = EmployeesRepo.getInstance().getEmployees();
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        assertEquals("NEWACC", emps.get(0).getBankAccount());
     }
 
     @Test
-    void testProcessSwapRequests() throws Exception {
-        // Create two swap requests with compatible data.
-        // For testing, create a dummy shift and assign two different employees to it.
-        Role cashier = RolesRepo.getInstance().getRoleByName("Cashier");
-        Employee emp1 = EmployeesRepo.getInstance().getEmployeeById("1");
-        Employee emp2 = EmployeesRepo.getInstance().getEmployeeById("2");
-        Date shiftDate = dateFormat.parse("20-09-2025");
-        Map<Role, ArrayList<Employee>> reqRoles = new HashMap<>();
-        Map<Role, Integer> reqCounts = new HashMap<>();
-        reqRoles.put(cashier, new ArrayList<>());
-        reqCounts.put(cashier, 2);
-        Shift shift = new Shift("SHIFT3", shiftDate, Shift.ShiftTime.Morning, reqRoles, reqCounts);
-        Shift shift2 = new Shift("SHIFT4", shiftDate, Shift.ShiftTime.Evening, reqRoles, reqCounts);
-        shift.assignEmployee(emp1, cashier);
-        shift2.assignEmployee(emp2, cashier);
-        ShiftsRepo.getInstance().addShift(shift);
+    void removeRoleViaMenu() {
+        RolesRepo.getInstance().addRole(new Role("ToRemove"));
+        int before = RolesRepo.getInstance().getRoles().size();
+        // “ToRemove” will be the last in the list—pick its index
+        int idx = before; // 1-based
+        String in = String.join("\n",
+                "5",            // Remove Role
+                String.valueOf(idx),
+                "9"
+        ) + "\n";
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        assertNull(RolesRepo.getInstance().getRoleByName("ToRemove"));
+    }
 
-        // Create two swap requests manually.
-        SwapRequest req1 = new SwapRequest(emp1, shift, cashier);
-        SwapRequest req2 = new SwapRequest(emp2, shift2, cashier);
+    @Test
+    void ConfigureShiftRolesViaMenu() {
+        // add one template so next week exists
+        RecurringShift tmpl = new RecurringShift(DayOfWeek.MONDAY, Shift.ShiftTime.Evening);
+        tmpl.setDefaultCount(RolesRepo.getInstance().getRoleByName("Cashier"), 3);
+        ShiftsRepo.getInstance().addTemplate(tmpl);
+        // force‐build next‐week
+        LocalDate sat = LocalDate.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
+        ShiftsRepo.getInstance()
+                .getSchedule()
+                .resetNextWeek(ShiftsRepo.getInstance().getTemplates(), sat);
+
+
+        String in = String.join("\n",
+                "8",    // Set Roles For Shift
+                "2",    // Next week
+                "1",    // choose shift #1
+                "5",    // for Cashier Manager → set 2
+                "9"
+        ) + "\n";
+
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        Shift updated = ShiftsRepo.getInstance().getSchedule().getNextWeek().get(0);
+        assertEquals(1,
+                updated.getRequiredCounts()
+                        .get(RolesRepo.getInstance().getRoleByName("Shift Manager"))
+        );
+        assertEquals(5,
+                updated.getRequiredCounts()
+                        .get(RolesRepo.getInstance().getRoleByName("Cashier"))
+        );
+    }
+
+    @Test
+    void addAndRemoveEmployeeViaMenu() {
+        int before = EmployeesRepo.getInstance().getEmployees().size();
+        String in = String.join("\n",
+                "1",            // Add Employee
+                "99",           // ID
+                "NewEmp",       // Name
+                "pw",           // Password
+                "BA99",         // Bank
+                "7000",         // Salary
+                "01-07-2025",   // Date
+                "Cashier",      // Role
+                "2",            // Remove Employee
+                String.valueOf(EmployeesRepo.getInstance().getEmployees().size()+1), // index of NewEmp
+                "yes",
+                "9"
+        ) + "\n";
+
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        assertEquals(before, EmployeesRepo.getInstance().getEmployees().size(),
+                "we added then removed, net should be unchanged");
+    }
+
+    @Test
+    void assignEmployeeToShiftViaMenu() {
+        /*
+         * We must quit the inner assignment loop with "0"
+         * before sending the outer "9" to exit.
+         */
+        String in = String.join("\n",
+                "6",  // Assign Employee to Shift
+                "1",  // pick SHIFT1
+                "2",  // pick Cashier
+                "1",  // assign Alice
+                "0",  // quit assignment loop
+                "9"   // exit manager menu
+        ) + "\n";
+
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        Shift s = ShiftsRepo.getInstance().getSchedule().getCurrentWeek().get(0);
+        assertEquals(1,
+                s.getRequiredRoles()
+                        .get(RolesRepo.getInstance().getRoleByName("Cashier"))
+                        .size()
+        );
+    }
+
+    @Test
+    void processSwapRequestsViaMenu() throws Exception {
+        // prepare two swap requests
+        Role cashier = RolesRepo.getInstance().getRoleByName("Cashier");
+        Employee a = EmployeesRepo.getInstance().getEmployeeById("1");
+        Employee b = EmployeesRepo.getInstance().getEmployeeById("2");
+        Date d = df.parse("20-09-2025");
+        Map<Role,ArrayList<Employee>> rR = new HashMap<>();
+        Map<Role,Integer>           rC = new HashMap<>();
+        rR.put(cashier, new ArrayList<>()); rC.put(cashier, 1);
+        Shift s1 = new Shift("X1", d, Shift.ShiftTime.Morning, rR, rC);
+        Shift s2 = new Shift("X2", d, Shift.ShiftTime.Evening, rR, rC);
+        s1.assignEmployee(a, cashier);
+        s2.assignEmployee(b, cashier);
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().add(s1);
+
         SwapRequestsRepo.getInstance().getSwapRequests().clear();
-        SwapRequestsRepo.getInstance().addSwapRequest(req1);
-        SwapRequestsRepo.getInstance().addSwapRequest(req2);
+        SwapRequestsRepo.getInstance().addSwapRequest(new SwapRequest(a, s1, cashier));
+        SwapRequestsRepo.getInstance().addSwapRequest(new SwapRequest(b, s2, cashier));
 
-        // Simulate input for processSwapRequests:
-        // The method should display two requests, let you choose one (choose option 1),
-        // then show compatible ones (the other one, option 1) and then choose that.
-        String input = "1\n1\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        hrInterface.processSwapRequests(scanner);
-        // After processing, both swap requests should be removed.
-        assertEquals(0, SwapRequestsRepo.getInstance().getSwapRequests().size());
-    }
+        String in = String.join("\n",
+                "7",    // Process Swap Requests
+                "1",    // pick first request
+                "1",    // pick compatible request
+                "9"
+        ) + "\n";
 
-    @Test
-    void testManagerMainMenuReceivesExit() {
-        // Test that the manager main menu consumes input "9" to exit.
-        // We simulate input "9" (exit) and verify that the method completes.
-        String simulatedInput = "9\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
-        Scanner scanner = new Scanner(in);
-        hrInterface.managerMainMenu(scanner);
-        // No exceptions thrown means the input was received.
-    }
-
-    @Test
-    void testAddNewRole() {
-        // Simulate input for addNewRole.
-        String roleName = "TestRole";
-        String input = roleName + "\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        int initialSize = RolesRepo.getInstance().getRoles().size();
-        hrInterface.addNewRole(scanner);
-        assertEquals(initialSize + 1, RolesRepo.getInstance().getRoles().size());
-        assertNotNull(RolesRepo.getInstance().getRoleByName(roleName));
-    }
-
-    @Test
-    void testUpdateEmployeeData() {
-        // For testing updateEmployeeData, simulate input to update bank account.
-        // For simplicity, we use the first employee from EmployeesRepo.
-        List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
-        if (employees.isEmpty()) {
-            fail("No employees available for update test.");
-        }
-        // Simulate: choose employee 1, choose option 1 (bank account), enter new bank account, then 3 to exit.
-        String input = "1\n1\nNEWBANK\n3\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        hrInterface.updateEmployeeData(scanner, employees);
-        assertEquals("NEWBANK", employees.get(0).getBankAccount());
-    }
-
-    @Test
-    void testRemoveRole() {
-        // Simulate input for removeRole.
-        // First, add a role to ensure there is one to remove.
-        Role roleToRemove = new Role("TempRole");
-        RolesRepo.getInstance().addRole(roleToRemove);
-        int initialSize = RolesRepo.getInstance().getRoles().size();
-
-        String input = "4\n"; // choosing the last role and confirming removal.
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        hrInterface.removeRole(scanner);
-        assertEquals(initialSize - 1, RolesRepo.getInstance().getRoles().size());
-        assertNull(RolesRepo.getInstance().getRoleByName("TempRole"));
-    }
-
-    @Test
-    void testAddEmployee() throws Exception {
-        // Simulate input for addEmployee.
-        // Inputs: Employee ID, Name, Password, Bank Account, Salary, Employment Date, and Role.
-        String input = "3\nNewEmployee\npass\nNewBank\n6000\n01-06-2020\nCashier\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        int initialSize = EmployeesRepo.getInstance().getEmployees().size();
-        hrInterface.addEmployee(scanner, EmployeesRepo.getInstance().getEmployees());
-        assertEquals(initialSize + 1, EmployeesRepo.getInstance().getEmployees().size());
-        assertNotNull(EmployeesRepo.getInstance().getEmployeeById("3"));
-    }
-
-    @Test
-    void testRemoveEmployee() {
-        // First, add an employee to remove.
-        Employee tempEmployee = new Employee("temp", List.of(new Role("Cashier")), "Temp", "pass", "Bank", 3000f, new Date());
-        EmployeesRepo.getInstance().addEmployee(tempEmployee);
-        int initialSize = EmployeesRepo.getInstance().getEmployees().size();
-
-        String input = """
-                3
-                yes
-                """; // choosing the first employee and confirming removal.
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        Scanner scanner = new Scanner(in);
-        hrInterface.removeEmployee(scanner, EmployeesRepo.getInstance().getEmployees());
-        assertEquals(initialSize - 1, EmployeesRepo.getInstance().getEmployees().size());
-        assertNull(EmployeesRepo.getInstance().getEmployeeById("temp"));
+        ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
+        assertTrue(SwapRequestsRepo.getInstance().getSwapRequests().isEmpty());
     }
 }
