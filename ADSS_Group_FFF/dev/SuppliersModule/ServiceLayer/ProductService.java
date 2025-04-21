@@ -1,14 +1,10 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Product;
 import SuppliersModule.DomainLayer.ProductController;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 public class ProductService {
     ProductController productController;
@@ -20,11 +16,18 @@ public class ProductService {
     public void RegisterNewProduct(Product product){
         this.productController.RegisterNewProduct(product);
     }
+    public void UpdateProduct(int productID, Product newProduct){
+        this.productController.UpdateProduct(productID, newProduct);
+    }
     public void DeleteProduct(int productID){
         this.productController.DeleteProduct(productID);
     }
+
     public ArrayList<Product> GetAllProducts() {
         return this.productController.GetAllProducts();
+    }
+    public Product GetProduct(int productID){
+        return this.productController.GetProduct(productID);
     }
 }
 

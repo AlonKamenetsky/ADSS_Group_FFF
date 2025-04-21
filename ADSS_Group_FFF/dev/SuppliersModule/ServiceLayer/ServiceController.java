@@ -2,6 +2,7 @@ package SuppliersModule.ServiceLayer;
 
 import SuppliersModule.DomainLayer.*;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
+import SuppliersModule.DomainLayer.Enums.PaymentMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import SuppliersModule.PresentationLayer.CLI;
@@ -16,13 +17,16 @@ public class ServiceController {
     SupplierService supplierService;
     ProductService productService;
 
-    int numberOfSuppliers = 0;
-    int numberOfProducts = 0;
+    int numberOfSuppliers = -1;
+    int numberOfProducts = -1;
 
     public ServiceController() {
         supplierService = new SupplierService();
         productService = new ProductService();
     }
+
+    // --------------------------- PRODUCT FUNCTIONS ---------------------------
+
     public void ReadProductsFromCSVFile(String filePath) {
         InputStream in = CLI.class.getResourceAsStream("/products_data.csv");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
@@ -61,17 +65,64 @@ public class ServiceController {
         Product product = new Product(this.numberOfProducts, productName, productCompanyName, productCategory);
         this.productService.RegisterNewProduct(product);
     }
+    public void UpdateProduct(int productID, Product newProduct) {
+        this.productService.UpdateProduct(productID, newProduct);
+    }
     public void DeleteProduct(int productID){
         this.productService.DeleteProduct(productID);
     }
+
     public ArrayList<Product> GetAllProducts(){
         return this.productService.GetAllProducts();
     }
-    public void RegisterNewSupplier(String supplierName, SupplyMethod supplyMethod, DeliveringMethod deliveringMethod, SupplyContract supplyContract, PaymentInfo paymentInfo){
-        this.numberOfSuppliers++;
-    }
-    public void DeleteSupplier(int supplierID){}
 
+    public Product GetProduct(int productID) {
+        return this.productService.GetProduct(productID);
+    }
+
+    // --------------------------- SUPPLIER FUNCTIONS ---------------------------
+
+    public void RegisterNewSupplier(String supplierName, ProductCategory productCategory ,SupplyMethod supplyMethod, DeliveringMethod deliveringMethod, SupplyContract supplyContract, PaymentInfo paymentInfo, ContactInfo supplierContactInfo){
+        this.numberOfSuppliers++;
+        Supplier supplier = null;
+        if (supplyMethod == SupplyMethod.ON_DEMAND)
+            supplier = new OnDemandSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplyContract, supplierContactInfo, paymentInfo);
+        else if (supplyMethod == SupplyMethod.SCHEDULED)
+            supplier = new ScheduledSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplyContract, supplierContactInfo, paymentInfo);
+
+        this.supplierService.RegisterNewSupplier(supplier);
+
+    }
+    public void UpdateSupplier(int supplierID, String supplierName, PaymentInfo paymentInfo , DeliveringMethod deliveringMethod, ContactInfo contactInfo) {
+        this.supplierService.UpdateSupplier(supplierID, supplierName, paymentInfo, deliveringMethod, contactInfo);
+    }
+    public void DeleteSupplier(int supplierID){
+        supplierService.DeleteSupplier(supplierID);
+    }
+
+    public ArrayList<Supplier> GetAllSuppliers() {
+        return this.supplierService.GetAllSuppliers();
+    }
+
+    public Supplier GetSupplier(int supplierID) {
+        return supplierService.GetSupplier(supplierID);
+    }
+
+
+//    }
+//    public SupplyContract findSupplyContract(int contractID){
+//
+//    }
+//    public ContactInfo findContact(int contractID){
+//
+//    }
+//
+//    public Supplier findSupplier(int supplierID){
+//
+//    }
+//    public ArrayList<Supplier> getAllSuppliers() {
+//
+//    }
 
 
 }

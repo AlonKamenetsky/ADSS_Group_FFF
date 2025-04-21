@@ -18,6 +18,9 @@ public class Product {
     public int getProductId() {
         return productId;
     }
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
     public String getProductName() {
         return productName;
     }
@@ -33,6 +36,4 @@ public class Product {
     public String toString() {
         return productId + "\t" + productName + "\t" + productCompanyName + "\t" + productCategory;
     }
-
-
 }

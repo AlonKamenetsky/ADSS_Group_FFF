@@ -23,6 +23,7 @@ public class Main {
                 case 2:
                     cli.printSupplierOptions();
                     userInput = sc.nextInt();
+                    sc.nextLine();
                     cli.chooseSupplierOption(userInput);
                     break;
                 case 3:
