@@ -29,24 +29,70 @@ public class InventoryItem {
     }
 
     // Getters
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public String getManufacturer() { return manufacturer; }
-    public int getShelfQuantity() { return shelfQuantity; }
-    public int getBackroomQuantity() { return backroomQuantity; }
-    public int getMinThreshold() { return minThreshold; }
-    public double getPurchasePrice() { return purchasePrice; }
-    public double getSalePrice() { return salePrice; }
-    public ItemStatus getStatus() { return status; }
-    public Category getCategory() { return category; }
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public int getShelfQuantity() {
+        return shelfQuantity;
+    }
+
+    public int getBackroomQuantity() {
+        return backroomQuantity;
+    }
+
+    public int getMinThreshold() {
+        return minThreshold;
+    }
+
+    public double getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public double getSalePrice() {
+        return salePrice;
+    }
+
+    public ItemStatus getStatus() {
+        return status;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
 
     // Setters
-    public void setShelfQuantity(int shelfQuantity) { this.shelfQuantity = shelfQuantity; }
-    public void setBackroomQuantity(int backroomQuantity) { this.backroomQuantity = backroomQuantity; }
-    public void setMinThreshold(int minThreshold) { this.minThreshold = minThreshold; }
-    public void setSalePrice(double salePrice) { this.salePrice = salePrice; }
-    public void setStatus(ItemStatus status) { this.status = status; }
-    public void setCategory(Category category) { this.category = category; }
+    public void setShelfQuantity(int shelfQuantity) {
+        this.shelfQuantity = shelfQuantity;
+    }
+
+    public void setBackroomQuantity(int backroomQuantity) {
+        this.backroomQuantity = backroomQuantity;
+    }
+
+    public void setMinThreshold(int minThreshold) {
+        this.minThreshold = minThreshold;
+    }
+
+    public void setSalePrice(double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public void setStatus(ItemStatus status) {
+        this.status = status;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     @Override
     public String toString() {

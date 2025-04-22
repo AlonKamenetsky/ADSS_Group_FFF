@@ -63,18 +63,35 @@ public class InventoryService {
         return categories;
     }
 
-    public InventoryReport generateReport(String reportId, List<Category> filterCategories) {
+    public InventoryReport generateReport(String reportId, List<Category> filterCategories, ItemStatus statusFilter) {
         List<InventoryItem> filtered = new ArrayList<>();
         for (InventoryItem item : items) {
-            if (filterCategories == null || filterCategories.contains(item.getCategory())) {
+            boolean matchesCategory = filterCategories == null || filterCategories.contains(item.getCategory());
+            boolean matchesStatus = statusFilter == null || item.getStatus() == statusFilter;
+            if (matchesCategory && matchesStatus) {
                 filtered.add(item);
             }
         }
-
         InventoryReport report = new InventoryReport(reportId, new Date(), filtered);
         reports.add(report);
         return report;
     }
+
+
+    public void updateQuantities(String itemId, int shelfDelta, int backroomDelta) {
+        for (InventoryItem item : items) {
+            if (item.getId().equals(itemId)) {
+                item.setShelfQuantity(item.getShelfQuantity() + shelfDelta);
+                item.setBackroomQuantity(item.getBackroomQuantity() + backroomDelta);
+                return;
+            }
+        }
+    }
+
+    public void addDiscount(Discount discount) {
+        discounts.add(discount);
+    }
+
 
 
 }

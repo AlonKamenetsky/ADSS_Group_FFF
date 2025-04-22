@@ -6,26 +6,22 @@ public class Main {
     public static void main(String[] args) {
         InventoryService service = new InventoryService();
 
-        // Create category
-        Category dairy = new Category("Dairy", null);
-        Category milk = new Category("Milk", dairy);
-        service.addCategory(dairy);
-        dairy.addSubCategory(milk);
+        // Load sample data into memory (outside domain layer)
+        AppInitializer.loadSampleData(service);
 
-        // Create item
-        InventoryItem item = new InventoryItem(
-                "001", "Tnuva 1L Milk", "Tnuva",
-                3, 1, 10, 2.50, 4.90, ItemStatus.NORMAL, milk
-        );
-        service.addItem(item);
-
-        // Create UI and use it
+        // Basic usage demo
         InventoryManagerUI ui = new InventoryManagerUI(service);
+
         ui.printAllItems();
         ui.printLowStockItems();
+        ui.printCategories();
 
-        // Generate and print a report
-        InventoryReport report = service.generateReport("RPT001", Arrays.asList(milk));
+        // Generate a report for a specific category and status
+        InventoryReport report = service.generateReport(
+                "RPT001",
+                Arrays.asList(service.getAllCategories().get(0)), // filter by "Dairy"
+                null // no status filter
+        );
         System.out.println(report);
     }
 }
