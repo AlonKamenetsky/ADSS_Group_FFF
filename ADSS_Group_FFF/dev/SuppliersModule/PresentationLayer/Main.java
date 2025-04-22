@@ -29,7 +29,7 @@ public class Main {
                 case 3:
                     cli.printContractOptions();
                     userInput = sc.nextInt();
-                    cli.chooseContractOption(userInput);
+                    //cli.chooseContractOption(userInput);
                     break;
                 case 4:
                     cli.printOrderOptions();

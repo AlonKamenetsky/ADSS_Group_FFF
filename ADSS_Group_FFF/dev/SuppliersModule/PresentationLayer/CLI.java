@@ -10,6 +10,8 @@ import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import SuppliersModule.ServiceLayer.ServiceController;
 
+import java.time.LocalDate;
+
 public class CLI {
     ServiceController serviceController;
     Scanner sc;
@@ -18,7 +20,9 @@ public class CLI {
         this.sc = sc;
         this.serviceController = new ServiceController();
 
-        this.serviceController.ReadProductsFromCSVFile("/products_data.csv");
+        this.serviceController.ReadProductsFromCSVFile();
+        this.serviceController.ReadSuppliersFromCSVFile();
+        this.serviceController.ReadSupplierContractDataFromCSV();
     }
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
@@ -102,10 +106,11 @@ public class CLI {
         System.out.println("Enter name");
         String name = sc.nextLine();
         ContactInfo contactInfo = new ContactInfo(phoneNumber, address, email, name);
+        System.out.println("which type of supplier? \n 0. SCHEDULED supplier \n 1. ON_DEMAND supplier");
+        SupplyMethod supplyMethod = SupplyMethod.values()[sc.nextInt()];
+        serviceController.RegisterNewSupplier(supplierName, productCategory, supplyMethod,deliveringMethod, paymentInfo, contactInfo);
         System.out.println("Register new contract section: \n");
-        SupplyContract contract = RegisterNewContract();
-
-        serviceController.RegisterNewSupplier(supplierName, productCategory, contract.getSupplierSupplyMethod(), deliveringMethod, contract, paymentInfo, contactInfo);
+        this.RegisterNewContract(serviceController.getNumberOfSuppliers(), supplyMethod);
         System.out.println("Supplier added successfully.");
     }
 
@@ -121,14 +126,14 @@ public class CLI {
         System.out.println("Do you want to update supplier name? \n 1. yes \n 2. no");
         int updateSupplierName = sc.nextInt();
         sc.nextLine();
-        if(updateSupplierName == 1) {
+        if (updateSupplierName == 1) {
             System.out.println("Enter new supplier name: ");
             SupplierName = sc.nextLine();
         }
         System.out.println("Do you want to update payment method? \n 1. yes \n 2. no");
         int updatePaymentMethod = sc.nextInt();
         sc.nextLine();
-        if(updatePaymentMethod == 1) {
+        if (updatePaymentMethod == 1) {
             System.out.println("Enter bank account info");
             String bankAccountInfo = sc.nextLine();
             PrintPaymentMethods();
@@ -139,7 +144,7 @@ public class CLI {
         System.out.println("Do you want to update delivery method? \n 1. yes \n 2. no");
         int updateDeliveryMethod = sc.nextInt();
         sc.nextLine();
-        if(updateDeliveryMethod == 1) {
+        if (updateDeliveryMethod == 1) {
             PrintDeliveryMethod();
             deliveringMethod = DeliveringMethod.values()[sc.nextInt()];
         }
@@ -147,7 +152,7 @@ public class CLI {
         System.out.println("Do you want to update contact info? \n 1. yes \n 2. no");
         int updateContactInfo = sc.nextInt();
         sc.nextLine();
-        if(updateContactInfo == 1) {
+        if (updateContactInfo == 1) {
             System.out.println("Enter phone number");
             String phoneNumber = sc.nextLine();
             System.out.println("Enter address");
@@ -161,8 +166,6 @@ public class CLI {
         serviceController.UpdateSupplier(supplierId, SupplierName, paymentInfo, deliveringMethod, contactInfo);
     }
 
-
-
     private void DeleteSupplier() {
         System.out.println("Which supplier you want to delete? Enter supplier ID");
         int supplierId = sc.nextInt();
@@ -170,7 +173,7 @@ public class CLI {
     }
 
     private void printSupplier() {
-        System.out.println("Which supplier you want to delete? Enter supplier ID");
+        System.out.println("Which supplier you want to search? Enter supplier ID");
         int supplierId = sc.nextInt();
         Supplier supplier = serviceController.GetSupplier(supplierId);
         System.out.println(supplier);
@@ -188,35 +191,41 @@ public class CLI {
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
-    private SupplyContract RegisterNewContract() {
-        System.out.println("which type of supplier? \n 0. SCHEDULED supplier \n 1. ON_DEMAND supplier");
-        SupplyMethod supplyMethod = SupplyMethod.values()[sc.nextInt()];
-
-        SupplyContract supplyContract = new SupplyContract(supplyMethod);
+    private void RegisterNewContract(int supplierId, SupplyMethod supplyMethod) {
+        if(supplyMethod != null) {
+            System.out.println("which type of supplier? \n 0. SCHEDULED supplier \n 1. ON_DEMAND supplier");
+            supplyMethod = SupplyMethod.values()[sc.nextInt()];
+        }
 
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
             int productID = sc.nextInt();
             if (productID == -1)
                 break;
-            Product product = serviceController.GetProduct(productID);
+//            Product product = serviceController.GetProduct(productID); to change
             System.out.println("Enter product price: ");
             int price = sc.nextInt();
             System.out.println("Enter quantity for discount: ");
             int quantityForDiscount = sc.nextInt();
             System.out.println("Enter discount percentage: ");
             int discountPercentage = sc.nextInt();
-
-            SupplyContractProductData data = new SupplyContractProductData(price, quantityForDiscount, discountPercentage, product);
-            supplyContract.AddSupplyContractProductData(data);
+//
         }
+    }
 
-        return supplyContract;
+    private void PrintSupplierContract(int supplierId) {
+        serviceController.PrintSupplierContracts(supplierId);
     }
 
     // ------------------- Order FUNCTIONS -----------------------------
 
     private void RegisterNewOrder() {
+        LocalDate today = LocalDate.now();
+        this.PrintAllSuppliers();
+        System.out.println("Which supplier you want to register? Enter supplier ID");
+        int supplierId = sc.nextInt();
+        sc.nextLine();
+        this.PrintSupplierContract(supplierId);
 
     }
 
@@ -266,6 +275,7 @@ public class CLI {
                 break;
             case 4:
                 this.printProduct();
+                break;
             case 5:
                 this.PrintAllProducts();
                 break;
@@ -297,6 +307,7 @@ public class CLI {
                 break;
             case 4:
                 this.printSupplier();
+                break;
             case 5:
                 this.PrintAllSuppliers();
                 break;

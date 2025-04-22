@@ -1,10 +1,7 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.ContactInfo;
+import SuppliersModule.DomainLayer.*;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
-import SuppliersModule.DomainLayer.PaymentInfo;
-import SuppliersModule.DomainLayer.Supplier;
-import SuppliersModule.DomainLayer.SupplierController;
 
 import java.util.ArrayList;
 
@@ -33,5 +30,13 @@ public class SupplierService {
 
     public Supplier GetSupplier(int supplierID) {
         return this.supplierController.GetSupplier(supplierID);
+    }
+
+    public void PrintAllSupplierContracts(int supplierID) {
+        supplierController.PrintSupplierContracts(supplierID);
+    }
+
+    public void RegisterNewSupplierContract(int suppplierID, SupplyContract supplyContract) {
+        this.supplierController.RegisterNewSupplierContract(suppplierID, supplyContract);
     }
 }

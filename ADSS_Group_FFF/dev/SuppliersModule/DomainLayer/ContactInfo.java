@@ -1,19 +1,15 @@
 package SuppliersModule.DomainLayer;
 
 public class ContactInfo {
-    public static int numberOfContacts = 0;
     String phoneNumber;
     String address;
     String email;
     String name;
-    int contactId;
     public ContactInfo(String phoneNumber, String address, String email, String name) {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.email = email;
-        this.name = name;
-        this.contactId = numberOfContacts;
-        numberOfContacts++;
+        this.name = name;;
     }
     public String getPhoneNumber() {
         return phoneNumber;

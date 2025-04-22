@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class OnDemandSupplier extends Supplier {
 
-    public OnDemandSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, SupplyContract supplierContract, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
-        super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContract, supplierContactInfo, supplierPaymentInfo);
+    public OnDemandSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
+        super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContactInfo, supplierPaymentInfo);
     }
 }

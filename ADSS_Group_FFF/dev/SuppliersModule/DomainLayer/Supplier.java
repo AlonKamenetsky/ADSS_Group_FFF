@@ -19,14 +19,13 @@ public abstract class Supplier {
 
     PaymentInfo supplierPaymentInfo;
 
-    public Supplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, SupplyContract supplierContract, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
+    public Supplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod,  ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
         this.supplierId = supplierId;
         this.supplierName = supplierName;
         this.productCategory = productCategory;
         this.supplierDeliveringMethod = supplierDeliveringMethod;
 
         this.supplierContracts = new ArrayList<SupplyContract>();
-        this.supplierContracts.add(supplierContract);
 
         this.supplierContactInfo = supplierContactInfo;
 
@@ -61,6 +60,9 @@ public abstract class Supplier {
     }
     public void setSupplierPaymentInfo(PaymentInfo supplierPaymentInfo) {
         this.supplierPaymentInfo = supplierPaymentInfo;
+    }
+    public void AddNewContract(SupplyContract supplyContract) {
+        this.supplierContracts.add(supplyContract);
     }
     public String toString() {
         return String.format(
