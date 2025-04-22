@@ -73,6 +73,13 @@ public class Employee extends User {
         }
     }
 
+    public void removeAvailability(DayOfWeek day, Shift.ShiftTime time) {
+        availabilityNextWeek.removeIf(av ->
+                av.getDay() == day && av.getTime() == time
+        );
+    }
+
+
     /**
      * Checks if the employee is available THIS WEEK for the date+time slot.
      */

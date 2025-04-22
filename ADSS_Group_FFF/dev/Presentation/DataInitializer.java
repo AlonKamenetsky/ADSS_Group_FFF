@@ -24,6 +24,9 @@ public class DataInitializer {
         Role hrRole       = rolesRepo.getRoleByName("HR");
         Role cashierRole  = rolesRepo.getRoleByName("Cashier");
         Role warehouseRole= rolesRepo.getRoleByName("Warehouse");
+        Role cleanerRole  = rolesRepo.getRoleByName("Cleaner");
+        Role driverRole   = rolesRepo.getRoleByName("Driver");
+        Role shiftMgrRole = rolesRepo.getRoleByName("Shift Manager");
 
         // Parse a common hire date
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -33,7 +36,7 @@ public class DataInitializer {
         // Create two example employees
         Employee dana = new Employee(
                 "1",
-                new LinkedList<>(Arrays.asList(hrRole, cashierRole)),
+                new LinkedList<>(Arrays.asList(shiftMgrRole, cashierRole)),
                 "Dana",
                 "123",         // user‑facing password
                 "IL123BANK",
@@ -54,6 +57,17 @@ public class DataInitializer {
         );
         john.setPassword("456");
         empRepo.addEmployee(john);
+        Employee HR = new Employee(
+                "hr",
+                new LinkedList<>(Arrays.asList(hrRole)),
+                "HR Manager",
+                "123",
+                "IL456BANK",
+                4_500f,
+                hireDate
+        );
+        HR.setPassword("123");
+        empRepo.addEmployee(HR);
 
         // ——— 2) Define the two‐daily recurring templates ———
         ShiftsRepo shiftsRepo = ShiftsRepo.getInstance();
@@ -71,6 +85,6 @@ public class DataInitializer {
         // …then roll it into “currentWeek”
         shiftsRepo.getSchedule().swapWeeks();
 
-        System.out.println("Example data and recurring‑shift templates loaded successfully.");
+        ConsoleUtils.typewriterPrint("Example data and recurring‑shift templates loaded successfully.", 20);
     }
 }

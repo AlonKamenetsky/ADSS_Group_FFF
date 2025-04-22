@@ -1,86 +1,31 @@
 import java.text.ParseException;
-import java.util.*;
-
-import Domain.*;
+import java.util.Scanner;
+import Domain.EmployeesRepo;
+import Presentation.ConsoleUtils;
 import Presentation.DataInitializer;
-import Presentation.EmployeeInterface;
-import Presentation.HRInterface;
+import Presentation.LoginScreen;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Would you like to load example data? (yes/no)");
-        String choice = scanner.nextLine();
-
-        while (!choice.equalsIgnoreCase("yes") && !choice.equalsIgnoreCase("no")) {
-            System.out.println("Invalid choice. Please enter 'yes' or 'no'.");
-            choice = scanner.nextLine();
+        // example‑data prompt
+        ConsoleUtils.typewriterPrint("Load example data? (yes/no) ", 20);
+        String c = scanner.nextLine().trim();
+        while (!c.equalsIgnoreCase("yes") && !c.equalsIgnoreCase("no")) {
+            ConsoleUtils.typewriterPrint("Please enter 'yes' or 'no': ", 20);
+            c = scanner.nextLine().trim();
         }
-        if (choice.equalsIgnoreCase("yes")) {
+        if (c.equalsIgnoreCase("yes")) {
             DataInitializer.initializeExampleData();
         }
 
-        EmployeesRepo employeesRepo = EmployeesRepo.getInstance();
-        boolean exitSystem = false;
+        // hand off everything else to LoginScreen
+        LoginScreen login = new LoginScreen(
+                EmployeesRepo.getInstance().getEmployees()
+        );
+        login.run(scanner);
 
-        while (!exitSystem) {
-            // LOGIN FLOW
-            System.out.println("Write 'Exit' to exit the system.");
-            System.out.println("Welcome! Enter your ID:");
-            String inputId = scanner.nextLine();
-
-            if(inputId.equalsIgnoreCase("exit")) {
-                break;
-            }
-
-            System.out.println("Enter your Password:");
-            String inputPassword = scanner.nextLine();
-
-            if(inputPassword.equalsIgnoreCase("exit")) {
-                break;
-            }
-
-            Employee loggedInUser = employeesRepo.getEmployeeById(inputId);
-
-            if (loggedInUser == null || loggedInUser.getPassword() == null ||
-                    !loggedInUser.getPassword().equals(inputPassword)) {
-                System.out.println("Invalid ID or Password. Try again.");
-                continue;
-            }
-
-            System.out.println("Select Role to Login:");
-            for (int i = 0; i < loggedInUser.getRoles().size(); i++) {
-                System.out.println((i + 1) + ". " + loggedInUser.getRoles().get(i).getName());
-            }
-
-            int roleIndex = scanner.nextInt() - 1;
-            scanner.nextLine();
-
-            Role selectedRole = loggedInUser.getRoles().get(roleIndex);
-
-            if (selectedRole.getName().equals("HR")) {
-                HRInterface hrInterface = new HRInterface(loggedInUser.getId());
-                hrInterface.setCurrentUserRole(selectedRole);
-                hrInterface.managerMainMenu(scanner);
-            } else {
-                EmployeeInterface employeeInterface = new EmployeeInterface(loggedInUser);
-                employeeInterface.employeeMainMenu(scanner);
-            }
-
-            System.out.println("Would you like to switch user? (yes/no)");
-            String again = scanner.nextLine();
-
-            while (!choice.equalsIgnoreCase("yes") && !choice.equalsIgnoreCase("no")) {
-                System.out.println("Invalid choice. Please enter 'yes' or 'no'.");
-                choice = scanner.nextLine();
-            }
-
-            if (!again.equalsIgnoreCase("yes")) {
-                exitSystem = true;
-            }
-        }
-
-        System.out.println("Exiting system. Goodbye!");
+        scanner.close();
     }
 }
