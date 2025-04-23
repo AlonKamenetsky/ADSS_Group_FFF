@@ -7,18 +7,20 @@ import java.util.ArrayList;
 public class SupplyContract {
    SupplyMethod supplierSupplyMethod;
    ArrayList<SupplyContractProductData> supplyContractProductsDataArray;
+   int contractId;
 
    public SupplyContract(SupplyMethod supplierSupplyMethod) {
       this.supplierSupplyMethod = supplierSupplyMethod;
       this.supplyContractProductsDataArray = new ArrayList<>();
    }
 
-   public SupplyContract(SupplyMethod supplierSupplyMethod, ArrayList<SupplyContractProductData> supplyContractProductsDataArray) {
+   public SupplyContract(SupplyMethod supplierSupplyMethod, ArrayList<SupplyContractProductData> supplyContractProductsDataArray, int contractId) {
       this.supplierSupplyMethod = supplierSupplyMethod;
       this.supplyContractProductsDataArray = supplyContractProductsDataArray;
+      this.contractId = contractId;
    }
 
-   public void AddSupplyContractProductData(SupplyContractProductData data) {
+   public void addSupplyContractProductData(SupplyContractProductData data) {
       this.supplyContractProductsDataArray.add(data);
    }
 
@@ -40,5 +42,11 @@ public class SupplyContract {
       }
       sb.append("}");
       return sb.toString();
+   }
+   public ArrayList<SupplyContractProductData> getSupplyContractProductData() {
+      return this.supplyContractProductsDataArray;
+   }
+   public int getContractId() {
+      return contractId;
    }
 }

@@ -1,7 +1,6 @@
 package SuppliersModule.PresentationLayer;
 import java.util.Scanner;
 
-import SuppliersModule.ServiceLayer.ServiceController;
 
 public class Main {
     public static void main(String[] args) {
