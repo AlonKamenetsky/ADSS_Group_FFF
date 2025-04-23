@@ -15,10 +15,10 @@ public class ProductController {
     public ProductController() {
         this.numberOfProducts = 0;
         this.productsArrayList = new ArrayList<>();
-        this.ReadProductsFromCSVFile();
+        this.readProductsFromCSVFile();
     }
 
-    public void ReadProductsFromCSVFile() {
+    public void readProductsFromCSVFile() {
         InputStream in = ProductController.class.getResourceAsStream("/products_data.csv");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String line;
@@ -42,20 +42,20 @@ public class ProductController {
                 String categoryStr = parts[2].toUpperCase();
                 ProductCategory productCategory = ProductCategory.valueOf(categoryStr);
 
-                this.RegisterNewProduct(productName, productCompanyName, productCategory);
+                this.registerNewProduct(productName, productCompanyName, productCategory);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public int RegisterNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
         Product product = new Product(this.numberOfProducts++, productName, productCompanyName, productCategory);
         this.productsArrayList.add(product);
         return product.getProductId();
     }
 
-    public boolean UpdateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
         for (Product product : this.productsArrayList) {
             if (product.getProductId() == productID) {
                 product.setProductName(productName);
@@ -68,11 +68,11 @@ public class ProductController {
         return false;
     }
 
-    public boolean DeleteProduct(int productID) {
+    public boolean deleteProduct(int productID) {
         return this.productsArrayList.removeIf(product -> product.productId == productID);
     }
 
-    public String[] GetAllProductsAsString() {
+    public String[] getAllProductsAsString() {
         String[] productsAsString = new String[this.productsArrayList.size()];
         for (int i = 0; i < this.productsArrayList.size(); i++)
             productsAsString[i] = this.productsArrayList.get(i).toString();
@@ -80,7 +80,7 @@ public class ProductController {
         return productsAsString;
     }
 
-    public String GetProductAsString(int productID) {
+    public String getProductAsString(int productID) {
         for (Product product : this.productsArrayList)
             if (product.getProductId() == productID)
                 return product.toString();
@@ -88,7 +88,7 @@ public class ProductController {
         return null;
     }
 
-    public ProductCategory GetProductCategory(int productID) {
+    public ProductCategory getProductCategory(int productID) {
         for (Product product : this.productsArrayList)
             if (product.getProductId() == productID)
                 return product.getProductCategory();

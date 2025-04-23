@@ -11,28 +11,28 @@ public class ProductService {
         this.productController = new ProductController();
     }
 
-    public int RegisterNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
-        return this.productController.RegisterNewProduct(productName, productCompanyName, productCategory);
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
+        return this.productController.registerNewProduct(productName, productCompanyName, productCategory);
     }
 
-    public boolean UpdateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
-        return this.productController.UpdateProduct(productID, productName, productCompanyName, productCategory);
+    public boolean updateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
+        return this.productController.updateProduct(productID, productName, productCompanyName, productCategory);
     }
 
-    public boolean DeleteProduct(int productID) {
-        return this.productController.DeleteProduct(productID);
+    public boolean deleteProduct(int productID) {
+        return this.productController.deleteProduct(productID);
     }
 
-    public String[] GetProductsAsString() {
-        return this.productController.GetAllProductsAsString();
+    public String[] getProductsAsString() {
+        return this.productController.getAllProductsAsString();
     }
 
-    public String GetProductAsString(int productID) {
-        return this.productController.GetProductAsString(productID);
+    public String getProductAsString(int productID) {
+        return this.productController.getProductAsString(productID);
     }
 
-    public ProductCategory GetProductCategory(int productID) {
-        return this.productController.GetProductCategory(productID);
+    public ProductCategory getProductCategory(int productID) {
+        return this.productController.getProductCategory(productID);
     }
 }
 

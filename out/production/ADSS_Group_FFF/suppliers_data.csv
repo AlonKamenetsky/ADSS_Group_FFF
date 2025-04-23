@@ -1,26 +1,26 @@
 supplyMethod,supplierName,productCategory,supplierDeliveringMethod,phoneNumber,address,email,name,supplierBankAccount,supplierPaymentMethod
-ON_DEMAND,Campbell Inc,DRIED,SELF_DELIVERING,+972-56-8036103,147 Howard Forge- Ashdod- 66651,ysullivan@yahoo.com,Norma Fisher,IL465320537477560636,CASH
-ON_DEMAND,Green Trujillo and Dunn,DRINKS,PICK_UP,+972-50-5414010,167 Tammy Neck- Netanya- 58525,corey15@castro-gomez.com,Danielle Browning,IL993550774502235239,BANK_TRANSACTION
-SCHEDULED,Pratt Group,MISCELLANEOUS,SELF_DELIVERING,+972-58-6743821,11 Sally Forges- Petah Tikva- 31776,vclayton@cross.com,Nathan Ross,IL772021117665286881,CHECK
-ON_DEMAND,Payne Roberts and Davis,MEATS,SELF_DELIVERING,+972-57-8154443,56 Olsen Plains- Be'er Sheva- 27135,turnerkelly@gmail.com,Willie Golden,IL518206887280589468,CASH
-ON_DEMAND,Leblanc Fernandez and Myers,DRINKS,SELF_DELIVERING,+972-54-2918088,137 Sandra Ville- Be'er Sheva- 11019,lorijohnson@green.com,Emily Allen,IL720885086124993885,BANK_TRANSACTION
-ON_DEMAND,Mccoy Bruce and Sanchez,FROZEN,SELF_DELIVERING,+972-50-9840126,7 Mark Crescent- Holon- 64260,criley@keller-davies.com,Desiree Cain,IL349289282005860133,CHECK
-ON_DEMAND,Greer Wilson and Davis,FRUITS_AND_VEGETABLES,SELF_DELIVERING,+972-53-5063685,91 Anthony Roads- Tel Aviv- 25210,ronald01@wyatt.com,Autumn Robinson,IL724271566838799130,CASH
-ON_DEMAND,Lucas LLC,MISCELLANEOUS,PICK_UP,+972-58-2216911,147 Mary Cliff- Haifa- 29445,jennifermendoza@owen.biz,Audrey Jacobs,IL500833116654515807,CASH
-SCHEDULED,Moreno-Wilson,DRIED,PICK_UP,+972-53-7181423,57 Kristina Estate- Haifa- 21728,wgonzalez@harrison.com,Antonio Mcdonald,IL578956128229664266,CASH
-ON_DEMAND,Williams Campbell and Allen,FRUITS_AND_VEGETABLES,SELF_DELIVERING,+972-57-7253469,134 Stephen Common- Holon- 44530,deborah64@gmail.com,Mary Smith,IL204933093653561656,BANK_TRANSACTION
-ON_DEMAND,Moore-Walker,MISCELLANEOUS,SELF_DELIVERING,+972-52-9947885,31 Aaron Fields- Petah Tikva- 92065,jenniferhughes@yahoo.com,Heather Roberts,IL372713787380984180,CHECK
-SCHEDULED,Moore Rose and Freeman,MEATS,SELF_DELIVERING,+972-50-8623931,167 Gabriel Circles- Be'er Sheva- 34478,moralesjacqueline@yahoo.com,Michael Nunez,IL912020010573298601,CHECK
-ON_DEMAND,Anderson Smith and Herring,MEATS,SELF_DELIVERING,+972-50-6412091,172 Amy Roads- Jerusalem- 11441,larry70@yahoo.com,Nicole Henson,IL601387761106402853,BANK_TRANSACTION
-ON_DEMAND,Johnson Group,MEATS,SELF_DELIVERING,+972-57-8363312,29 Thomas Locks- Petah Tikva- 82766,leecharlene@russo.com,Aaron Smith,IL743429008089163684,BANK_TRANSACTION
-ON_DEMAND,Edwards Richardson and Bradley,FRUITS_AND_VEGETABLES,SELF_DELIVERING,+972-57-3520854,151 Billy Springs- Rishon LeZion- 34536,wigginsjoshua@gmail.com,Ashley Scott,IL724356210248447948,CHECK
-SCHEDULED,Taylor LLC,DRINKS,PICK_UP,+972-51-5154021,198 Jared Radial- Ashdod- 38647,xbowman@hotmail.com,Sarah Ali,IL756106089411336013,CASH
-ON_DEMAND,Wilson-Cross,DAIRY,PICK_UP,+972-57-2803385,185 Ward Plaza- Eilat- 17493,williamsfrank@hotmail.com,Richard Higgins,IL196875117184105439,CHECK
-ON_DEMAND,Mendoza Ltd,FROZEN,PICK_UP,+972-55-2541009,7 Rogers Union- Rishon LeZion- 45544,richard54@rodriguez-hoffman.info,Elizabeth Vincent,IL558829255471603350,CASH
-SCHEDULED,Hawkins-Roberts,MEATS,SELF_DELIVERING,+972-54-7316052,59 Bruce Branch- Rishon LeZion- 13356,odrake@jones.com,Mr. George Mcdaniel Jr.,IL419852502899947301,CASH
-SCHEDULED,Leach Group,FRUITS_AND_VEGETABLES,PICK_UP,+972-57-7740784,159 Wilson View- Jerusalem- 92514,omiller@richards-jackson.com,Rachel Klein,IL900650928546143099,CASH
-SCHEDULED,Payne-Hernandez,MISCELLANEOUS,SELF_DELIVERING,+972-50-4834634,176 Daniel Mount- Rishon LeZion- 50050,danielleshea@gmail.com,Christina Crawford,IL636090516747093144,BANK_TRANSACTION
-ON_DEMAND,Lynch Robinson and Peterson,FRUITS_AND_VEGETABLES,SELF_DELIVERING,+972-59-6936101,123 Reid Well- Holon- 26976,ushelton@yahoo.com,Victoria Hernandez MD,IL747254517833351658,BANK_TRANSACTION
-SCHEDULED,Jones and Sons,FRUITS_AND_VEGETABLES,PICK_UP,+972-53-6125134,38 Jones Corner- Holon- 68203,nancymorrison@kirby.com,Stephanie Meyers,IL128224367285346158,CASH
-ON_DEMAND,Berry Ltd,DRIED,PICK_UP,+972-51-5789130,193 Wagner Pines- Ashdod- 66355,laurenmelton@yahoo.com,Adrian Anthony,IL627206133940184388,CHECK
-ON_DEMAND,Mcclure Yang and Turner,DRIED,PICK_UP,+972-55-2668818,200 Lawson Fort- Ashdod- 03185,nbullock@nichols-george.info,Kelly Greene,IL754137101715997587,BANK_TRANSACTION
+ON_DEMAND,Tavlinim Haaretz,DRIED,SELF_DELIVERING,050-123-4567,Herzl 12 - Tel Aviv,Maya Sharabi,mayasharabi50@gmail.com,IL465320537477560636,CASH
+ON_DEMAND,Ochel Barak,DRINKS,PICK_UP,052-987-6543,Ben Gurion 45 - Ramat Gan,Yarden Alfasi,yardenalfasi89@bezeq.co.il,IL993550774502235239,BANK_TRANSACTION
+SCHEDULED,Yevul Tov,MISCELLANEOUS,SELF_DELIVERING,054-321-7890,Dizengoff 101 - Tel Aviv,Or Mor,ormor28@outlook.com,IL772021117665286881,CHECK
+ON_DEMAND,Shulchan Malachim,MEATS,SELF_DELIVERING,058-246-1357,HaPalmach 17 - Jerusalem,Noa Levi,noalevi92@yahoo.com,IL518206887280589468,CASH
+ON_DEMAND,TzabarFresh,DRINKS,SELF_DELIVERING,053-369-2581,Weizmann 8 - Haifa,Yarden Shalom,yardenshalom95@gmail.com,IL720885086124993885,BANK_TRANSACTION
+ON_DEMAND,Ma’adanot MeHaLev,FROZEN,SELF_DELIVERING,050-741-8529,Jabotinsky 66 - Petah Tikva,Tal Dahan,taldahan21@bezeq.co.il,IL349289282005860133,CHECK
+ON_DEMAND,Ochel Eretz,FRUITS_AND_VEGETABLES,SELF_DELIVERING,052-963-1478,Rothschild 34 - Rishon LeZion,Bar Malka,barmalka62@walla.co.il,IL724271566838799130,CASH
+ON_DEMAND,Adama Supply,MISCELLANEOUS,PICK_UP,054-789-6541,Hativat Golani 22 - Be'er Sheva,Omer Turgeman,omerturgeman81@gmail.com,IL500833116654515807,CASH
+SCHEDULED,Zayit V’Gefen,DRIED,PICK_UP,058-159-7532,Shderot HaNasi 19 - Haifa,Noy Hadad,noyhadad26@walla.co.il,IL578956128229664266,CASH
+ON_DEMAND,Shorashim Foods,FRUITS_AND_VEGETABLES,SELF_DELIVERING,053-852-7416,Yehuda HaMaccabi 73 - Tel Aviv,Shira Avraham,shiraavraham44@gmail.com,IL204933093653561656,BANK_TRANSACTION
+ON_DEMAND,Kerem Shalem,MISCELLANEOUS,SELF_DELIVERING,050-753-1598,Kaplan 4 - Herzliya,Alon Dayan,alondayan93@outlook.com,IL372713787380984180,CHECK
+SCHEDULED,Neta HaOchel,MEATS,SELF_DELIVERING,052-456-1239,Begin 58 - Netanya,Yael Biton,yaelbiton24@bezeq.co.il,IL912020010573298601,CHECK
+ON_DEMAND,Gan Lechem,MEATS,SELF_DELIVERING,054-951-3576,Shlomo HaMelech 20 - Ashdod,Eden Mizrahi,edenmizrahi48@gmail.com,IL601387761106402853,BANK_TRANSACTION
+ON_DEMAND,Hamesh Lachmaniyot,MEATS,SELF_DELIVERING,058-753-4682,Bar Ilan 12 - Bnei Brak,Amit Vaknin,amitvaknin57@yahoo.com,IL743429008089163684,BANK_TRANSACTION
+ON_DEMAND,Sufganiot Express,FRUITS_AND_VEGETABLES,SELF_DELIVERING,053-987-3215,Hillel 31 - Jerusalem,Nadav Zohar,nadavzohar37@bezeq.co.il,IL724356210248447948,CHECK
+SCHEDULED,Tene Ochel,DRINKS,PICK_UP,050-864-2097,Emek Refaim 9 - Jerusalem,Rotem Shitrit,rotemshitrit59@walla.co.il,IL756106089411336013,CASH
+ON_DEMAND,HaMitbah Shelanu,DAIRY,PICK_UP,052-147-8523,Arlozorov 25 - Tel Aviv,Gal BenDavid,galbendavid34@bezeq.co.il,IL196875117184105439,CHECK
+ON_DEMAND,MazonNet,FROZEN,PICK_UP,054-258-9630,Menachem Begin 88 - Holon,Avi Elbaz,avielbaz84@outlook.com,IL558829255471603350,CASH
+SCHEDULED,Simcha Supplies,MEATS,SELF_DELIVERING,058-369-1470,Allenby 120 - Tel Aviv,Itai Cohen,itaicohen88@gmail.com,IL419852502899947301,CASH
+SCHEDULED,Mazon B’racha,FRUITS_AND_VEGETABLES,PICK_UP,053-123-9874,Nordau 16 - Ramat Hasharon,Tamar Natan,tamarnatan16@outlook.com,IL900650928546143099,CASH
+SCHEDULED,Leket & Co.,MISCELLANEOUS,SELF_DELIVERING,050-951-6543,Moshe Dayan 33 - Kiryat Ono,Eli Golan,eligolan35@yahoo.com,IL636090516747093144,BANK_TRANSACTION
+ON_DEMAND,Nes V’Shemen,FRUITS_AND_VEGETABLES,SELF_DELIVERING,052-789-3216,Trumpeldor 7 - Hod HaSharon,Dani Peretz,daniperetz27@gmail.com,IL747254517833351658,BANK_TRANSACTION
+SCHEDULED,FreshTel,FRUITS_AND_VEGETABLES,PICK_UP,054-654-7891,Hahashmonaim 15 - Givatayim,Lior Sabag,liorsabag71@walla.co.il,IL128224367285346158,CASH
+ON_DEMAND,BALAGAN Eats,DRIED,PICK_UP,058-321-4568,HaHistadrut 49 - Ashkelon,Roni Azoulay,roniazoulay12@bezeq.co.il,IL627206133940184388,CHECK
+ON_DEMAND,YallaFood,DRIED,PICK_UP,053-147-9632,Sheshet HaYamim 11 - Eilat,Hadar Baruch,hadarbaruch70@yahoo.com,IL754137101715997587,BANK_TRANSACTION
