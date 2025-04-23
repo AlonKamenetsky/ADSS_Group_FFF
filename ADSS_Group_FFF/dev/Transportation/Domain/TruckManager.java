@@ -1,0 +1,80 @@
+package Transportation.Domain;
+
+import java.util.*;
+
+public class TruckManager {
+    private final HashMap<Integer, Truck> allTrucks;
+    private int nextTruckId = 1;
+
+    public TruckManager() {
+        allTrucks = new HashMap<Integer, Truck>();
+    }
+
+    public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException {
+        if(truckType == null || licenseNumber == null || model == null) {
+            throw new NullPointerException();
+        }
+        int truckId = nextTruckId++;
+        TruckType type = TruckType.fromString(truckType);
+        Truck newTruck = new Truck(truckId, type, licenseNumber, model, netWeight, maxWeight);
+        allTrucks.putIfAbsent(truckId, newTruck);
+    }
+
+    public void removeTruck(String licenseNumber) throws NoSuchElementException {
+        Truck truckToRemove = getTruckIdByLicenseNumber(licenseNumber);
+        if(truckToRemove == null) {
+            throw new NoSuchElementException();
+        }
+        int truckId = truckToRemove.getTruckID();
+        allTrucks.remove(truckId);
+    }
+
+    public Truck getTruckIdByLicenseNumber(String licenseNumber) throws NoSuchElementException {
+        for (Truck truck : allTrucks.values()) {
+            if (truck.getLicenseNumber().equals(licenseNumber)) {
+                return truck;
+            }
+        }
+        throw new NoSuchElementException();
+    }
+
+
+    public List<Truck> getAllTrucks() {
+        return new ArrayList<>(allTrucks.values());
+    }
+
+    public boolean doesTruckExist(String licenseNumber) {
+        int _truckId = getTruckIdByLicenseNumber(licenseNumber).getTruckID();
+        return allTrucks.containsKey(_truckId);
+    }
+
+    public void setTruckAvailability(String licenseNumber, boolean status) throws NoSuchElementException {
+        Truck truckToChange = getTruckIdByLicenseNumber(licenseNumber);
+        if(truckToChange == null) {
+            throw new NoSuchElementException();
+        }
+        else {
+            truckToChange.setAvailability(status);
+        }
+    }
+
+    public String getAllTrucksString() {
+        List<Truck> allTrucks = getAllTrucks();
+        if (allTrucks.isEmpty()) return "No trucks available.";
+
+        StringBuilder sb = new StringBuilder("All Trucks:\n");
+        for (Truck t : allTrucks) {
+            sb.append(t).append("\n----------------------\n");
+        }
+        return sb.toString();
+    }
+
+    public Truck getNextTruckAvailable(float weight) {
+        for (Truck t : allTrucks.values()) {
+            if(t.isFree() && weight < t.getMaxWeight()) {
+                return t;
+            }
+        }
+        return null;
+    }
+}

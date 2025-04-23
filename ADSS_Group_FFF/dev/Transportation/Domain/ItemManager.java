@@ -1,0 +1,62 @@
+package Transportation.Domain;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class ItemManager {
+    private final HashMap<Integer, Item> allItems;
+    private int nextItemId = 1;
+
+    public ItemManager() {
+        allItems = new HashMap<>();
+    }
+
+    public Item getItemByName(String itemName) {
+        for (Item i : allItems.values()) {
+            if(i.getItemName().equalsIgnoreCase(itemName)) {
+                return allItems.get(i.getItemId());
+            }
+        }
+        return null;
+    }
+
+    public float getItemWeightByName(String itemName) {
+        for (Item i : allItems.values()) {
+            if (i.getItemName().equals(itemName)) {
+                return allItems.get(i.getItemId()).getWeight();
+            }
+        }
+        return 0;
+    }
+
+    public List<Item> getAllItems() {
+        return new ArrayList<>(allItems.values());
+    }
+
+    public String getAllItemsString() {
+        List<Item> allItems = getAllItems();
+        if (allItems.isEmpty()) return "No items available.";
+
+        StringBuilder sb = new StringBuilder("All Items:\n");
+        for (Item i : allItems) {
+            sb.append(i).append("\n----------------------\n");
+        }
+        return sb.toString();
+    }
+
+    public void addItem(String itemName, float itemWeight) {
+        int itemId = nextItemId++;
+        Item newItem = new Item(itemId, itemName, itemWeight);
+        allItems.put(itemId, newItem);
+    }
+
+    public void removeItem(String itemName) {
+        allItems.remove(getItemByName(itemName).getItemId());
+    }
+
+    public boolean doesItemExist(String itemName) {
+        int itemId = getItemByName(itemName).getItemId();
+        return allItems.containsKey(itemId);
+    }
+}
