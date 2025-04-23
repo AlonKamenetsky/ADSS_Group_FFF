@@ -1,27 +1,98 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DomainLayer.Enums.ProductCategory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ProductController {
     ArrayList<Product> productsArrayList; // TEMP DATA STRUCTURE
-
-    // Functions here
+    int numberOfProducts; // ID Giver
 
     public ProductController() {
-        this.productsArrayList = new ArrayList<Product>();
+        this.numberOfProducts = 0;
+        this.productsArrayList = new ArrayList<>();
+        this.ReadProductsFromCSVFile();
     }
-    public void RegisterNewProduct(Product product){
+
+    public void ReadProductsFromCSVFile() {
+        InputStream in = ProductController.class.getResourceAsStream("/products_data.csv");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+
+                String[] parts = line.split(",");
+                for (int i = 0; i < parts.length; i++) {
+                    parts[i] = parts[i].trim();
+                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
+                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
+                    }
+                }
+                String productName = parts[0];
+                String productCompanyName = parts[1];
+                String categoryStr = parts[2].toUpperCase();
+                ProductCategory productCategory = ProductCategory.valueOf(categoryStr);
+
+                this.RegisterNewProduct(productName, productCompanyName, productCategory);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int RegisterNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
+        Product product = new Product(this.numberOfProducts++, productName, productCompanyName, productCategory);
         this.productsArrayList.add(product);
+        return product.getProductId();
     }
-    public void UpdateProduct(int productID, Product newProduct){
-        newProduct.setProductId(productID);
-        this.productsArrayList.set(productID, newProduct);
+
+    public boolean UpdateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
+        for (Product product : this.productsArrayList) {
+            if (product.getProductId() == productID) {
+                product.setProductName(productName);
+                product.setProductCompanyName(productCompanyName);
+                product.setProductCategory(productCategory);
+                return true;
+            }
+        }
+
+        return false;
     }
-    public void DeleteProduct(int productID) {
-        this.productsArrayList.removeIf(product -> product.productId == productID);
+
+    public boolean DeleteProduct(int productID) {
+        return this.productsArrayList.removeIf(product -> product.productId == productID);
     }
-    public ArrayList<Product> GetAllProducts(){
-        return this.productsArrayList;
+
+    public String[] GetAllProductsAsString() {
+        String[] productsAsString = new String[this.productsArrayList.size()];
+        for (int i = 0; i < this.productsArrayList.size(); i++)
+            productsAsString[i] = this.productsArrayList.get(i).toString();
+
+        return productsAsString;
     }
-    public Product GetProduct(int productID) {return this.productsArrayList.get(productID);}
+
+    public String GetProductAsString(int productID) {
+        for (Product product : this.productsArrayList)
+            if (product.getProductId() == productID)
+                return product.toString();
+
+        return null;
+    }
+
+    public ProductCategory GetProductCategory(int productID) {
+        for (Product product : this.productsArrayList)
+            if (product.getProductId() == productID)
+                return product.getProductCategory();
+
+        return null;
+    }
 }

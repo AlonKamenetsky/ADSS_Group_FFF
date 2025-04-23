@@ -9,6 +9,8 @@ public class Main {
 
         CLI cli = new CLI(sc);
 
+        System.out.println("Welcome to SuppliersModule!");
+
         while (true) {
             cli.printMenuOptions();
             System.out.println("Please select an option: ");
