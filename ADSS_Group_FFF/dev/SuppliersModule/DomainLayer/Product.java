@@ -18,22 +18,36 @@ public class Product {
     public int getProductId() {
         return productId;
     }
+
     public void setProductId(int productId) {
         this.productId = productId;
     }
+
     public String getProductName() {
         return productName;
     }
+
     public void setProductName(String productName) {
         this.productName = productName;
     }
+
     public String getProductCompanyName() {
         return productCompanyName;
     }
+
     public void setProductCompanyName(String productCompanyName) {
         this.productCompanyName = productCompanyName;
     }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
     public String toString() {
-        return productId + "\t" + productName + "\t" + productCompanyName + "\t" + productCategory;
+        return this.productId + "\t" + this.productName + "\t" + this.productCompanyName + "\t" + this.productCategory;
     }
 }

@@ -2,6 +2,7 @@ package SuppliersModule.DomainLayer;
 
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
+import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.util.ArrayList;
 
@@ -25,45 +26,71 @@ public abstract class Supplier {
         this.productCategory = productCategory;
         this.supplierDeliveringMethod = supplierDeliveringMethod;
 
-        this.supplierContracts = new ArrayList<SupplyContract>();
+        this.supplierContracts = new ArrayList<>();
 
         this.supplierContactInfo = supplierContactInfo;
 
         this.supplierPaymentInfo = supplierPaymentInfo;
     }
+
     public int getSupplierId() {
         return supplierId;
     }
+
     public String getSupplierName() {
         return supplierName;
     }
+
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
     }
+
+    public ProductCategory getSupplierProductCategory() {
+        return productCategory;
+    }
+
+    public void setSupplierProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public abstract SupplyMethod getSupplyMethod();
+
     public DeliveringMethod getSupplierDeliveringMethod() {
         return supplierDeliveringMethod;
     }
+
     public void setSupplierDeliveringMethod(DeliveringMethod supplierDeliveringMethod) {
         this.supplierDeliveringMethod = supplierDeliveringMethod;
     }
+
+    public void addSupplierContract(SupplyContract supplierContract) {
+        this.supplierContracts.add(supplierContract);
+    }
+
     public ArrayList<SupplyContract> getSupplierContracts() {
         return supplierContracts;
     }
+
     public ContactInfo getSupplierContactInfo() {
         return supplierContactInfo;
     }
+
     public void setSupplierContactInfo(ContactInfo supplierContactInfo) {
         this.supplierContactInfo = supplierContactInfo;
     }
+
     public PaymentInfo getSupplierPaymentInfo() {
         return supplierPaymentInfo;
     }
+
     public void setSupplierPaymentInfo(PaymentInfo supplierPaymentInfo) {
         this.supplierPaymentInfo = supplierPaymentInfo;
     }
+
     public void AddNewContract(SupplyContract supplyContract) {
         this.supplierContracts.add(supplyContract);
     }
+
     public String toString() {
         return String.format(
                 "Supplier ID: %d%n" +

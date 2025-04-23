@@ -1,9 +1,7 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.Product;
+import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.ProductController;
-
-import java.util.ArrayList;
 
 
 public class ProductService {
@@ -13,21 +11,28 @@ public class ProductService {
         this.productController = new ProductController();
     }
 
-    public void RegisterNewProduct(Product product){
-        this.productController.RegisterNewProduct(product);
-    }
-    public void UpdateProduct(int productID, Product newProduct){
-        this.productController.UpdateProduct(productID, newProduct);
-    }
-    public void DeleteProduct(int productID){
-        this.productController.DeleteProduct(productID);
+    public int RegisterNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
+        return this.productController.RegisterNewProduct(productName, productCompanyName, productCategory);
     }
 
-    public ArrayList<Product> GetAllProducts() {
-        return this.productController.GetAllProducts();
+    public boolean UpdateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
+        return this.productController.UpdateProduct(productID, productName, productCompanyName, productCategory);
     }
-    public Product GetProduct(int productID){
-        return this.productController.GetProduct(productID);
+
+    public boolean DeleteProduct(int productID) {
+        return this.productController.DeleteProduct(productID);
+    }
+
+    public String[] GetProductsAsString() {
+        return this.productController.GetAllProductsAsString();
+    }
+
+    public String GetProductAsString(int productID) {
+        return this.productController.GetProductAsString(productID);
+    }
+
+    public ProductCategory GetProductCategory(int productID) {
+        return this.productController.GetProductCategory(productID);
     }
 }
 

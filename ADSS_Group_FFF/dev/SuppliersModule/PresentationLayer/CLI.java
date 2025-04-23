@@ -1,12 +1,12 @@
 package SuppliersModule.PresentationLayer;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 import SuppliersModule.DomainLayer.*;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.PaymentMethod;
-import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import SuppliersModule.ServiceLayer.ServiceController;
 
@@ -19,15 +19,11 @@ public class CLI {
     public CLI(Scanner sc) {
         this.sc = sc;
         this.serviceController = new ServiceController();
-
-        this.serviceController.ReadProductsFromCSVFile();
-        this.serviceController.ReadSuppliersFromCSVFile();
-        this.serviceController.ReadSupplierContractDataFromCSV();
     }
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
-    public void InsertNewProduct() {
+    public void RegisterNewProduct() {
         System.out.println("Enter product name: ");
         String productName = sc.nextLine();
 
@@ -35,47 +31,58 @@ public class CLI {
         String productCompanyName = sc.nextLine();
 
         System.out.println("Enter product category (0-6): ");
-        ProductCategory productCategory = ProductCategory.values()[sc.nextInt()];
+        this.printProductCategoryDialog();
+        int productCategory = sc.nextInt();
 
-        serviceController.RegisterNewProduct(productName, productCompanyName, productCategory);
-        System.out.println("Product added successfully.");
+        int productID = serviceController.RegisterNewProduct(productName, productCompanyName, productCategory);
+        if (productID != -1)
+            System.out.println("Product added successfully.");
+        else
+            System.out.println("Error registering product.");
+
     }
 
     public void UpdateProduct() {
-        System.out.println("Which product you want to change? Enter product ");
+        System.out.println("Which product you want to change? Enter product: ");
         int productId = sc.nextInt();
+
         System.out.println("Enter new product name: ");
         String newProductName = sc.nextLine();
+
         System.out.println("Enter new product company: ");
         String newProductCompany = sc.nextLine();
-        System.out.println("Enter product category (0-6): ");
-        ProductCategory productCategory = ProductCategory.values()[sc.nextInt()];
-        Product product = serviceController.GetProduct(productId);
 
+        System.out.println("Enter product category: ");
+        this.printProductCategoryDialog();
+        int productCategory = sc.nextInt();
+
+        boolean result = serviceController.UpdateProduct(productId, newProductName, newProductCompany, productCategory);
+        if (result)
+            System.out.println("Product updated successfully.");
+        else
+            System.out.println("Error updating product: no such product exists.");
     }
 
     public void DeleteProduct() {
-        System.out.println("Which product you want to delete? Enter product ID");
+        System.out.println("Which product do you want to delete? Enter product ID");
         int productId = sc.nextInt();
-        serviceController.DeleteProduct(productId);
-    }
-
-    public void PrintAllProducts() {
-        ArrayList<Product> products = serviceController.GetAllProducts();
-        for (Product product : products)
-            System.out.println(product);
+        boolean result = serviceController.DeleteProduct(productId);
+        if (result)
+            System.out.println("Product deleted successfully.");
+        else
+            System.out.println("Error deleting product: no such product exists.");
     }
 
     public void printProduct() {
-        System.out.println("Which product you want to search? Enter product ID");
+        System.out.println("Which product do you want to search? Enter product ID: ");
         int productId = sc.nextInt();
-        ArrayList<Product> products = serviceController.GetAllProducts();
-        for (Product product : products) {
-            if (product.getProductId() == productId) {
-                System.out.println(product);
-                break;
-            }
-        }
+        String result = this.serviceController.GetProductAsString(productId);
+        System.out.println(Objects.requireNonNullElse(result, "Error: No such product exists."));
+    }
+
+    public void PrintAllProducts() {
+        for (String productString : this.serviceController.GetAllProductsAsStrings())
+            System.out.println(productString);
     }
 
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
@@ -85,136 +92,163 @@ public class CLI {
         String supplierName = sc.nextLine();
 
         printProductCategoryDialog();
-        ProductCategory productCategory = ProductCategory.values()[sc.nextInt()];
+        int productCategory = sc.nextInt();
 
-        System.out.println("Enter bank account info");
+        System.out.println("Enter bank account ID: ");
         String bankAccountInfo = sc.nextLine();
-        PrintPaymentMethods();
-        PaymentMethod paymentMethod = PaymentMethod.values()[sc.nextInt()];
-        PaymentInfo paymentInfo = new PaymentInfo(bankAccountInfo, paymentMethod);
 
+        System.out.println("Enter payment method: ");
+        PrintPaymentMethods();
+        int paymentMethod = sc.nextInt();
+
+        System.out.println("Enter delivery method: ");
         PrintDeliveryMethod();
-        DeliveringMethod deliveringMethod = DeliveringMethod.values()[sc.nextInt()];
-        sc.nextLine();
-        System.out.println("Creating new contact info");
-        System.out.println("Enter phone number");
+        int deliveringMethod = sc.nextInt();
+
+        System.out.println("--Creating new contact info--");
+        System.out.println("Enter phone number: ");
         String phoneNumber = sc.nextLine();
         System.out.println("Enter address");
         String address = sc.nextLine();
         System.out.println("Enter email");
         String email = sc.nextLine();
-        System.out.println("Enter name");
-        String name = sc.nextLine();
-        ContactInfo contactInfo = new ContactInfo(phoneNumber, address, email, name);
-        System.out.println("which type of supplier? \n 0. SCHEDULED supplier \n 1. ON_DEMAND supplier");
-        SupplyMethod supplyMethod = SupplyMethod.values()[sc.nextInt()];
-        serviceController.RegisterNewSupplier(supplierName, productCategory, supplyMethod,deliveringMethod, paymentInfo, contactInfo);
-        System.out.println("Register new contract section: \n");
-        this.RegisterNewContract(serviceController.getNumberOfSuppliers(), supplyMethod);
-        System.out.println("Supplier added successfully.");
+        System.out.println("Enter contact name");
+        String contactName = sc.nextLine();
+
+        System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
+        int supplyMethod = sc.nextInt();
+
+        int supplierID = this.serviceController.RegisterNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod);
+
+        if (supplierID == -1)
+            System.out.println("Error creating new supplier.");
+        else
+            System.out.println("Supplier registered successfully.");
+
+
+        System.out.println("Register new contract section:");
+        this.RegisterNewContract(supplierID);
+        System.out.println("Contract added successfully.");
     }
 
+    private void UpdateSupplierName(int supplierID) {
+        System.out.println("Enter new supplier name: ");
+        String SupplierName = sc.nextLine();
+
+        boolean result = this.serviceController.UpdateSupplierName(supplierID, SupplierName);
+        if (result)
+            System.out.println("Supplier name updated successfully.");
+        else
+            System.out.println("Supplier name update failed.");
+    }
+
+    private void UpdateSupplierDeliveryMethod(int supplierID) {
+        System.out.println("Enter delivery method: ");
+        this.PrintDeliveryMethod();
+        int deliveryMethod = sc.nextInt();
+
+        boolean result = this.serviceController.UpdateSupplierDeliveringMethod(supplierID, deliveryMethod);
+        if (result)
+            System.out.println("Supplier delivery method updated successfully.");
+        else
+            System.out.println("Supplier delivery method update failed.");
+    }
+
+    private void UpdateSupplierContactInfo(int supplierID) {
+        System.out.println("Enter new phone number: ");
+        String phoneNumber = sc.nextLine();
+        System.out.println("Enter address: ");
+        String address = sc.nextLine();
+        System.out.println("Enter email: ");
+        String email = sc.nextLine();
+        System.out.println("Enter contact name: ");
+        String ContactName = sc.nextLine();
+
+        boolean result = this.serviceController.UpdateSupplierContactInfo(supplierID, phoneNumber, address, email, ContactName);
+        if (result)
+            System.out.println("Supplier contact info updated successfully.");
+        else
+            System.out.println("Supplier contact info update failed.");
+    }
+
+    private void UpdateSupplierPaymentMethod(int supplierID) {
+        System.out.println("Enter new bank account ID: ");
+        String bankAccountInfo = sc.nextLine();
+        System.out.println("Enter payment method: ");
+        int paymentMethod = sc.nextInt();
+
+        boolean result = this.serviceController.UpdateSupplierPaymentInfo(supplierID, bankAccountInfo, paymentMethod);
+        if (result)
+            System.out.println("Supplier payment info updated successfully.");
+        else
+            System.out.println("Supplier payment info update failed.");
+    }
 
     public void UpdateSupplier() {
         System.out.println("Which supplier to update? Enter supplier ID: ");
-        int supplierId = sc.nextInt();
+        int supplierID = sc.nextInt();
         sc.nextLine();
-        String SupplierName = null;
-        PaymentInfo paymentInfo = null;
-        DeliveringMethod deliveringMethod = null;
-        ContactInfo contactInfo = null;
-        System.out.println("Do you want to update supplier name? \n 1. yes \n 2. no");
-        int updateSupplierName = sc.nextInt();
-        sc.nextLine();
-        if (updateSupplierName == 1) {
-            System.out.println("Enter new supplier name: ");
-            SupplierName = sc.nextLine();
-        }
-        System.out.println("Do you want to update payment method? \n 1. yes \n 2. no");
-        int updatePaymentMethod = sc.nextInt();
-        sc.nextLine();
-        if (updatePaymentMethod == 1) {
-            System.out.println("Enter bank account info");
-            String bankAccountInfo = sc.nextLine();
-            PrintPaymentMethods();
-            PaymentMethod paymentMethod = PaymentMethod.values()[sc.nextInt()];
-            paymentInfo = new PaymentInfo(bankAccountInfo, paymentMethod);
-        }
 
-        System.out.println("Do you want to update delivery method? \n 1. yes \n 2. no");
-        int updateDeliveryMethod = sc.nextInt();
-        sc.nextLine();
-        if (updateDeliveryMethod == 1) {
-            PrintDeliveryMethod();
-            deliveringMethod = DeliveringMethod.values()[sc.nextInt()];
-        }
+        printSupplierUpdateOption();
+        System.out.println("Enter option: ");
+        int option = sc.nextInt();
 
-        System.out.println("Do you want to update contact info? \n 1. yes \n 2. no");
-        int updateContactInfo = sc.nextInt();
-        sc.nextLine();
-        if (updateContactInfo == 1) {
-            System.out.println("Enter phone number");
-            String phoneNumber = sc.nextLine();
-            System.out.println("Enter address");
-            String address = sc.nextLine();
-            System.out.println("Enter email");
-            String email = sc.nextLine();
-            System.out.println("Enter name");
-            String name = sc.nextLine();
-            contactInfo = new ContactInfo(phoneNumber, address, email, name);
-        }
-        serviceController.UpdateSupplier(supplierId, SupplierName, paymentInfo, deliveringMethod, contactInfo);
+        chooseSupplierUpdateOption(option, supplierID);
     }
 
     private void DeleteSupplier() {
-        System.out.println("Which supplier you want to delete? Enter supplier ID");
+        System.out.println("Which supplier you want to delete? Enter supplier ID: ");
         int supplierId = sc.nextInt();
-        serviceController.DeleteSupplier(supplierId);
+
+        boolean result = serviceController.DeleteSupplier(supplierId);
+        if (result)
+            System.out.println("Supplier deleted successfully.");
+        else
+            System.out.println("Error: No such supplier exists.");
     }
 
-    private void printSupplier() {
-        System.out.println("Which supplier you want to search? Enter supplier ID");
+    private void PrintSupplier() {
+        System.out.println("Which supplier do you want to search? Enter supplier ID: ");
         int supplierId = sc.nextInt();
-        Supplier supplier = serviceController.GetSupplier(supplierId);
-        System.out.println(supplier);
+
+        String result = this.serviceController.GetSupplierAsString(supplierId);
+        System.out.println(Objects.requireNonNullElse(result, "Error: No such supplier exists."));
     }
 
     private void PrintAllSuppliers() {
-        ArrayList<Supplier> suppliers = serviceController.GetAllSuppliers();
-        if (suppliers.isEmpty()) {
-            System.out.println("No suppliers found.");
-        }
-        for (Supplier supplier : suppliers) {
+        for (String supplier : this.serviceController.GetAllSuppliersAsString())
             System.out.println(supplier);
-        }
     }
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
-    private void RegisterNewContract(int supplierId, SupplyMethod supplyMethod) {
-        if(supplyMethod != null) {
-            System.out.println("which type of supplier? \n 0. SCHEDULED supplier \n 1. ON_DEMAND supplier");
-            supplyMethod = SupplyMethod.values()[sc.nextInt()];
-        }
-
+    private void RegisterNewContract(int supplierId) {
+        ArrayList<int[]> dataArray = new ArrayList<>();
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
             int productID = sc.nextInt();
             if (productID == -1)
                 break;
-//            Product product = serviceController.GetProduct(productID); to change
             System.out.println("Enter product price: ");
             int price = sc.nextInt();
             System.out.println("Enter quantity for discount: ");
             int quantityForDiscount = sc.nextInt();
             System.out.println("Enter discount percentage: ");
             int discountPercentage = sc.nextInt();
-//
+
+            int[] data = {productID, price, quantityForDiscount, discountPercentage};
+            dataArray.add(data);
         }
+
+        boolean result = this.serviceController.RegisterNewContract(supplierId, dataArray);
+        if (result)
+            System.out.println("Contract registered successfully.");
+        else
+            System.out.println("Error: Failed to register new contract.");
     }
 
     private void PrintSupplierContract(int supplierId) {
-        serviceController.PrintSupplierContracts(supplierId);
+       // serviceController.PrintSupplierContracts(supplierId);
     }
 
     // ------------------- Order FUNCTIONS -----------------------------
@@ -241,8 +275,7 @@ public class CLI {
     private void PrintAllOrders() {
     }
 
-    // --------------------- CLI print Functions
-
+    // ------------------- CLI print Functions -------------------
 
     public void printMenuOptions() {
         System.out.println("1. Product section");
@@ -253,7 +286,6 @@ public class CLI {
     }
 
     public void printProductOptions() {
-        System.out.println("Welcome to SuppliersModule!");
         System.out.println("1. Add product");
         System.out.println("2. Update product");
         System.out.println("3. Delete product");
@@ -265,7 +297,7 @@ public class CLI {
     public void chooseProductsOption(int option) {
         switch (option) {
             case 1:
-                this.InsertNewProduct();
+                this.RegisterNewProduct();
                 break;
             case 2:
                 this.UpdateProduct();
@@ -289,8 +321,8 @@ public class CLI {
         System.out.println("1. Register a new supplier");
         System.out.println("2. Update supplier info");
         System.out.println("3. Delete supplier");
-        System.out.println("4. print supplier");
-        System.out.println("5. print all suppliers");
+        System.out.println("4. Print supplier");
+        System.out.println("5. Print all suppliers");
         System.out.println("6. Exit");
     }
 
@@ -306,27 +338,51 @@ public class CLI {
                 this.DeleteSupplier();
                 break;
             case 4:
-                this.printSupplier();
+                this.PrintSupplier();
                 break;
             case 5:
                 this.PrintAllSuppliers();
                 break;
             case 6:
                 return;
-
         }
     }
 
+    public void printSupplierUpdateOption() {
+        System.out.println("1. Update supplier name");
+        System.out.println("2. Update supplier delivery method");
+        System.out.println("3. Update supplier contact info");
+        System.out.println("4. Update supplier payment info");
+        System.out.println("5. Exit");
+    }
+
+    public void chooseSupplierUpdateOption(int option, int supplierID) {
+        switch (option) {
+            case 1:
+                this.UpdateSupplierName(supplierID);
+                break;
+            case 2:
+                this.UpdateSupplierDeliveryMethod(supplierID);
+                break;
+            case 3:
+                this.UpdateSupplierContactInfo(supplierID);
+                break;
+            case 4:
+                this.UpdateSupplierPaymentMethod(supplierID);
+                break;
+            case 5:
+                return;
+        }
+    }
 
     public void printContractOptions() {
         System.out.println("1. Register a new contract");
-        System.out.println("2. Update contract info");
-        System.out.println("3. Delete contract info");
+        System.out.println("2. Update supplier contract");
+        System.out.println("3. Delete supplier contract");
         System.out.println("4. print contract info");
         System.out.println("5. print all contracts");
         System.out.println("6. Exit");
     }
-
 
     public void printOrderOptions() {
         System.out.println("1. Add order");
@@ -356,7 +412,6 @@ public class CLI {
                 break;
             case 6:
                 return;
-
         }
     }
 

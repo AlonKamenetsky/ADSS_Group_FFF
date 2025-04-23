@@ -1,255 +1,130 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.*;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.PaymentMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
-import SuppliersModule.PresentationLayer.CLI;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ServiceController {
     SupplierService supplierService;
     ProductService productService;
 
-    int numberOfSuppliers = -1;
-    int numberOfProducts = -1;
-    int numberOfContracts = -1;
-
     public ServiceController() {
-        supplierService = new SupplierService();
-        productService = new ProductService();
+        this.supplierService = new SupplierService();
+        this.productService = new ProductService();
+    }
+
+    // --------------------------- VALIDATION FUNCTIONS ---------------------------
+
+    private boolean ValidateProductCategory(int productCategory) {
+        return (productCategory > 0 && productCategory < ProductCategory.values().length);
+    }
+
+    private boolean ValidateSupplyMethod(int supplyMethod) {
+        return (supplyMethod > 0 && supplyMethod < SupplyMethod.values().length);
+    }
+
+    private boolean ValidateDeliveringMethod(int deliveringMethod) {
+        return (deliveringMethod > 0 && deliveringMethod < DeliveringMethod.values().length);
+    }
+
+    private boolean ValidatePaymentMethod(int paymentMethod) {
+        return (paymentMethod > 0 && paymentMethod < PaymentMethod.values().length);
+    }
+
+    private boolean ValidateSupplierAndProduct(int supplierID, int productID) {
+        return this.supplierService.GetSupplierProductCategory(supplierID) == this.productService.GetProductCategory(productID);
+    }
+
+    private boolean ValidateContractProductData(int price, int quantityForDiscount, int discountPercentage) {
+        return price <= 0 || quantityForDiscount <= 0 || !(discountPercentage > 0 && discountPercentage < 100);
     }
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
-    public void ReadProductsFromCSVFile() {
-        InputStream in = CLI.class.getResourceAsStream("/products_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue; // Skip header
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-                this.numberOfProducts++;
-                String productName = parts[0];
-                String productCompanyName = parts[1];
-                String categoryStr = parts[2].toUpperCase();
-                ProductCategory productCategory = ProductCategory.valueOf(categoryStr);
-
-                Product product = new Product(this.numberOfProducts, productName, productCompanyName, productCategory);
-                this.productService.RegisterNewProduct(product);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public int RegisterNewProduct(String productName, String productCompanyName, int productCategory) {
+        if (ValidateProductCategory(productCategory))
+            return this.productService.RegisterNewProduct(productName, productCompanyName, ProductCategory.values()[productCategory]);
+        return -1;
     }
 
-
-
-    public void RegisterNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
-        this.numberOfProducts++;
-        Product product = new Product(this.numberOfProducts, productName, productCompanyName, productCategory);
-        this.productService.RegisterNewProduct(product);
+    public boolean UpdateProduct(int productID, String productName, String productCompanyName, int productCategory) {
+        if (ValidateProductCategory(productCategory))
+            return this.productService.UpdateProduct(productID, productName, productCompanyName, ProductCategory.values()[productCategory]);
+        return false;
     }
 
-    public void UpdateProduct(int productID, Product newProduct) {
-        this.productService.UpdateProduct(productID, newProduct);
+    public boolean DeleteProduct(int productID) {
+        return this.productService.DeleteProduct(productID);
     }
 
-    public void DeleteProduct(int productID) {
-        this.productService.DeleteProduct(productID);
+    public String[] GetAllProductsAsStrings() {
+        return this.productService.GetProductsAsString();
     }
 
-    public ArrayList<Product> GetAllProducts() {
-        return this.productService.GetAllProducts();
-    }
-
-    public Product GetProduct(int productID) {
-        return this.productService.GetProduct(productID);
+    public String GetProductAsString(int productID) {
+        return this.productService.GetProductAsString(productID);
     }
 
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
-    public void ReadSuppliersFromCSVFile() {
-        InputStream in = CLI.class.getResourceAsStream("/suppliers_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue; // Skip header
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-
-                String supplyMethodStr = parts[0].toUpperCase();
-                SupplyMethod supplyMethod = SupplyMethod.valueOf(supplyMethodStr);
-
-                String supplierName = parts[1];
-
-                String categoryStr = parts[2].toUpperCase().replace(" ", "_");
-                ProductCategory productCategory = ProductCategory.valueOf(categoryStr);
-
-                String deliveryMethodStr = parts[3].toUpperCase();
-                DeliveringMethod deliveringMethod = DeliveringMethod.valueOf(deliveryMethodStr);
-
-                String phoneNumber = parts[4];
-                String address = parts[5];
-                String email = parts[6];
-                String contactName = parts[7];
-
-                ContactInfo supplierContactInfo = new ContactInfo(phoneNumber, address, email, contactName);
-
-                String bankAccount = parts[8];
-                String paymentMethodStr = parts[9].toUpperCase();
-                PaymentMethod paymentMethod = PaymentMethod.valueOf(paymentMethodStr);
-
-                PaymentInfo paymentInfo = new PaymentInfo(bankAccount, paymentMethod);
-
-                this.numberOfSuppliers++;
-                Supplier supplier = null;
-                if (supplyMethod == SupplyMethod.ON_DEMAND)
-                    supplier = new OnDemandSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplierContactInfo, paymentInfo);
-                else if (supplyMethod == SupplyMethod.SCHEDULED)
-                    supplier = new ScheduledSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplierContactInfo, paymentInfo);
-
-                this.supplierService.RegisterNewSupplier(supplier);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public int RegisterNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,
+                                    String phoneNumber, String address, String email, String contactName,
+                                    String bankAccount, int paymentMethod) {
+        if (this.ValidateProductCategory(productCategory) && this.ValidateSupplyMethod(supplyMethod) && this.ValidateDeliveringMethod(deliveringMethod) && this.ValidatePaymentMethod(paymentMethod))
+            return this.supplierService.RegisterNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod);
+        return -1;
     }
 
-    public void ReadSupplierContractDataFromCSV() {
-        Map<Integer, ArrayList<SupplyContractProductData>> supplierProductMap = new HashMap<>();
-
-        InputStream in = CLI.class.getResourceAsStream("/contracts_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine){
-                    isFirstLine = false;
-                    continue; // Skip header
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-
-                int supplierId = Integer.parseInt(parts[0]);
-                int productId = Integer.parseInt(parts[1]);
-                double productPrice = Double.parseDouble(parts[2]);
-                int quantityForDiscount = Integer.parseInt(parts[3]);
-                int discountPercentage = Integer.parseInt(parts[4]);
-
-                Product product = this.productService.GetProduct(productId);
-                SupplyContractProductData mapping = new SupplyContractProductData(productPrice, quantityForDiscount, discountPercentage, product);
-
-                // Add the product to the supplier's list in the map
-                supplierProductMap.computeIfAbsent(supplierId, k -> new ArrayList<>()).add(mapping);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        for (Map.Entry<Integer, ArrayList<SupplyContractProductData>> entry : supplierProductMap.entrySet()) {
-            Supplier supplier = this.supplierService.GetSupplier(entry.getKey());
-            SupplyMethod supplyMethod = supplier.getClass().getSimpleName().equals("OnDemandSupplier") ? SupplyMethod.ON_DEMAND : SupplyMethod.SCHEDULED;
-
-            SupplyContract supplyContract = new SupplyContract(supplyMethod, entry.getValue(), 0);
-            this.supplierService.RegisterNewSupplierContract(entry.getKey(), supplyContract);
-        }
+    public boolean UpdateSupplierName(int supplierID, String supplierName) {
+        return this.supplierService.UpdateSupplierName(supplierID, supplierName);
     }
 
-    public void RegisterNewSupplier(String supplierName, ProductCategory productCategory, SupplyMethod supplyMethod, DeliveringMethod deliveringMethod, PaymentInfo paymentInfo, ContactInfo supplierContactInfo) {
-        this.numberOfSuppliers++;
-        Supplier supplier = null;
-        if (supplyMethod == SupplyMethod.ON_DEMAND)
-            supplier = new OnDemandSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplierContactInfo, paymentInfo);
-        else if (supplyMethod == SupplyMethod.SCHEDULED)
-            supplier = new ScheduledSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplierContactInfo, paymentInfo);
-
-        this.supplierService.RegisterNewSupplier(supplier);
+    public boolean UpdateSupplierDeliveringMethod(int supplierID, int deliveringMethod) {
+        if (this.ValidateDeliveringMethod(deliveringMethod))
+            return this.supplierService.UpdateSupplierDeliveringMethod(supplierID, deliveringMethod);
+        return false;
     }
 
-    public void UpdateSupplier(int supplierID, String supplierName, PaymentInfo paymentInfo, DeliveringMethod deliveringMethod, ContactInfo contactInfo) {
-        this.supplierService.UpdateSupplier(supplierID, supplierName, paymentInfo, deliveringMethod, contactInfo);
+    public boolean UpdateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName) {
+        return this.supplierService.UpdateSupplierContactInfo(supplierID, phoneNumber, address, email, contactName);
     }
 
-    public void DeleteSupplier(int supplierID) {
-        supplierService.DeleteSupplier(supplierID);
+    public boolean UpdateSupplierPaymentInfo(int supplierId, String bankAccount, int paymentMethod) {
+        if (this.ValidatePaymentMethod(paymentMethod))
+            return this.supplierService.UpdateSupplierPaymentInfo(supplierId, bankAccount, paymentMethod);
+        return false;
     }
 
-    public ArrayList<Supplier> GetAllSuppliers() {
-        return this.supplierService.GetAllSuppliers();
+    public boolean RegisterNewContract(int supplierID, ArrayList<int[]> dataList) {
+        for (int[] data : dataList)
+            if (!ValidateSupplierAndProduct(supplierID, data[0]) || !ValidateContractProductData(data[1], data[2], data[3]))
+                return false;
+
+        this.supplierService.RegisterNewContract(supplierID, dataList);
+        return true;
     }
 
-    public Supplier GetSupplier(int supplierID) {
-        return supplierService.GetSupplier(supplierID);
+    public boolean DeleteSupplier(int supplierID) {
+        return supplierService.DeleteSupplier(supplierID);
     }
 
-    public void PrintSupplierContracts(int supplierID) {
-        supplierService.PrintAllSupplierContracts(supplierID);
-    }
-    public void registerNewSupplierContract(){
-
-    }
-    public void addContractToSupplier(int supplierID, int contractID) {
-
+    public String[] GetAllSuppliersAsString() {
+        return this.supplierService.GetAllSuppliersAsString();
     }
 
-//    }
-//    public SupplyContract findSupplyContract(int contractID){
-//
-//    }
-//    public ContactInfo findContact(int contractID){
-//
+    public String GetSupplierAsString(int supplierID) {
+        return this.supplierService.GetSupplierAsString(supplierID);
+    }
+
+//    public void PrintSupplierContracts(int supplierID) {
+//        supplierService.PrintAllSupplierContracts(supplierID);
 //    }
 //
-//    public Supplier findSupplier(int supplierID){
+//    public void registerNewSupplierContract(){
 //
 //    }
-//    public ArrayList<Supplier> getAllSuppliers() {
-//
-//    }
-    public int getNumberOfSuppliers(){
-        return this.numberOfSuppliers;
-    }
-    public int getNumberOfContracts(){
-        return this.numberOfContracts;
-    }
 
 }
