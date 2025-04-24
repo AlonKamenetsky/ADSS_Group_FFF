@@ -87,10 +87,6 @@ public abstract class Supplier {
         this.supplierPaymentInfo = supplierPaymentInfo;
     }
 
-    public void AddNewContract(SupplyContract supplyContract) {
-        this.supplierContracts.add(supplyContract);
-    }
-
     public String toString() {
         return String.format(
                 "Supplier ID: %d%n" +

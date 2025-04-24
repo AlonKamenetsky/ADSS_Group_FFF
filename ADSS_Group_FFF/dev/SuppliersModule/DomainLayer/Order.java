@@ -19,10 +19,16 @@ public class Order {
 
     SupplyMethod supplyMethod;
 
-    ArrayList<Product> productArrayList;
+    ArrayList<int[]> productArrayList;
 
-    //Functions
-    public Order(int orderID, int supplierId, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, ContactInfo supplierContactInfo) {
+    public Order(int orderID, int supplierID, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, ContactInfo supplierContactInfo) {
+        this.orderID = orderID;
+        this.supplierID = supplierID;
+        this.supplierContactInfo = supplierContactInfo;
+        this.orderDate = deliveryDate;
+        this.supplyDate = creationDate;
+        this.totalPrice = totalOrderValue;
+        this.productArrayList = dataList;
 
     }
     public ContactInfo getOrderContactInfo() {
@@ -65,8 +71,8 @@ public class Order {
         sb.append("  Supply Method: ").append(supplyMethod).append("\n");
         sb.append("  Total Price: ").append(String.format("%.2f", totalPrice)).append("\n");
         sb.append("  Products:\n");
-        for (Product product : productArrayList) {
-            sb.append("    ").append(product).append("\n");
+        for (int[] product : productArrayList) {
+            sb.append("Product ID: ").append(product).append("\n");
         }
         sb.append("}");
         return sb.toString();

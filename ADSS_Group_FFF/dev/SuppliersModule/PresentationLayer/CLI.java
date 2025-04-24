@@ -208,8 +208,8 @@ public class CLI {
     }
 
     private void printAllSuppliers() {
-        for (String supplier : this.serviceController.GetAllSuppliersAsString())
-            System.out.println(supplier);
+        for (String supplierString : this.serviceController.GetAllSuppliersAsString())
+            System.out.println(supplierString);
     }
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
@@ -335,11 +335,9 @@ public class CLI {
         int choice = sc.nextInt();
         sc.nextLine();
         if(choice != 1 && choice != 2) {
-
+            return;
         }
         serviceController.updateOrderSupplyMethod(orderID, choice);
-
-
 
     }
     private void removeProductsFromOrder(int orderID) {
@@ -360,11 +358,13 @@ public class CLI {
         System.out.println("Enter Order ID: ");
         int orderID = sc.nextInt();
         sc.nextLine();
-        boolean printed = serviceController.printOrder(orderID);
+        String result = this.serviceController.getOrderAsString(orderID);
+        System.out.println(Objects.requireNonNullElse(result, "Error: No such order exists."));
     }
 
     private void printAllOrders() {
-        serviceController.printAllOrders();
+        for (String orderString : this.serviceController.getAllOrdersAsString())
+            System.out.println(orderString);
     }
 
 
