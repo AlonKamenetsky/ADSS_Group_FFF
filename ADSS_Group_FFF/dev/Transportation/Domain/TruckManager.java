@@ -7,7 +7,7 @@ public class TruckManager {
     private int nextTruckId = 1;
 
     public TruckManager() {
-        allTrucks = new HashMap<Integer, Truck>();
+        allTrucks = new HashMap<>();
     }
 
     public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException {

@@ -20,7 +20,7 @@ public class TaskManager {
         siteManager = siteManager1;
         driverManager = driverManager1;
         truckManager = truckManager1;
-        allTasks = new HashMap<Integer, TransportationTask>();
+        allTasks = new HashMap<>();
 
     }
 

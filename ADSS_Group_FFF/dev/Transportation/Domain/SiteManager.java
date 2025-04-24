@@ -10,7 +10,7 @@ public class SiteManager {
 
     public SiteManager(ZoneManager _zoneManager) {
         zoneManager = _zoneManager;
-        allSites = new HashMap<Integer, Site>();
+        allSites = new HashMap<>();
     }
 
     public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) {

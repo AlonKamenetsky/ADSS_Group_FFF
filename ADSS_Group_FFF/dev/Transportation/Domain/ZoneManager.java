@@ -11,7 +11,7 @@ public class ZoneManager {
 
 
     public ZoneManager() {
-        allZones = new HashMap<Integer, Zone>();
+        allZones = new HashMap<>();
     }
 
     public void addZone(String _zoneName) {
