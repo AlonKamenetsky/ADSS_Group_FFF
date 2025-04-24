@@ -106,9 +106,6 @@ public class SupplierService {
 
     }
 
-    public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
-        return this.supplierController.updateOrderSupplyMethod(orderID, supplyMethod);
-    }
 
     public boolean deleteOrder(int orderID) {
         return this.supplierController.deleteOrder(orderID);
@@ -128,5 +125,12 @@ public class SupplierService {
 
     public String[] getAllOrdersAsString() {
         return this.supplierController.getAllOrdersAsString();
+    }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return supplierController.removeProductsFromOrder(orderID, dataList);
+    }
+    public boolean orderExists(int orderID) {
+        return this.supplierController.orderExists(orderID);
     }
 }
