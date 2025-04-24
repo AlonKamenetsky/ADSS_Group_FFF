@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 public class SupplierController {
     OrderController orderController;
@@ -22,13 +21,14 @@ public class SupplierController {
     public SupplierController() {
         this.numberOfSuppliers = 0;
         this.suppliersArrayList = new ArrayList<>();
-        orderController = new OrderController();
-        supplyContractController = new SupplyContractController();
-        this.readSuppliersFromCSVFile();
-        //this.readSupplierContractDataFromCSV();
+
+        this.orderController = new OrderController();
+        this.supplyContractController = new SupplyContractController();
+
+        this.ReadSuppliersFromCSVFile();
     }
 
-    public void readSuppliersFromCSVFile() {
+    private void ReadSuppliersFromCSVFile() {
         InputStream in = SupplierController.class.getResourceAsStream("/suppliers_data.csv");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String line;
@@ -37,7 +37,7 @@ public class SupplierController {
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
                     isFirstLine = false;
-                    continue; // Skip header
+                    continue;
                 }
 
                 String[] parts = line.split(",");
@@ -71,54 +71,15 @@ public class SupplierController {
                 this.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error reading CSV file: " + e.getMessage());
         }
+
+        for (Supplier supplier : this.suppliersArrayList)
+            for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(supplier.getSupplierId()))
+                supplier.addSupplierContract(supplyContract);
     }
 
-//    public void readSupplierContractDataFromCSV() {
-//        Map<Integer, ArrayList<SupplyContractProductData>> supplierProductMap = new HashMap<>();
-//
-//        InputStream in = SupplierController.class.getResourceAsStream("/contracts_data.csv");
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-//            String line;
-//            boolean isFirstLine = true;
-//
-//            while ((line = reader.readLine()) != null) {
-//                if (isFirstLine){
-//                    isFirstLine = false;
-//                    continue; // Skip header
-//                }
-//
-//                String[] parts = line.split(",");
-//                for (int i = 0; i < parts.length; i++) {
-//                    parts[i] = parts[i].trim();
-//                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-//                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-//                    }
-//                }
-//
-//                int supplierID = Integer.parseInt(parts[0]);
-//                int productID = Integer.parseInt(parts[1]);
-//                double productPrice = Double.parseDouble(parts[2]);
-//                int quantityForDiscount = Integer.parseInt(parts[3]);
-//                int discountPercentage = Integer.parseInt(parts[4]);
-//
-//                SupplyContractProductData mapping = new SupplyContractProductData(productID, productPrice, quantityForDiscount, discountPercentage);
-//
-//                supplierProductMap.computeIfAbsent(supplierID, k -> new ArrayList<>()).add(mapping);
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        for (Map.Entry<Integer, ArrayList<SupplyContractProductData>> entry : supplierProductMap.entrySet()) {
-//            Supplier supplier = this.getSupplier(entry.getKey());
-//            SupplyMethod supplyMethod = supplier.getSupplyMethod();
-//
-//            SupplyContract supplyContract = new SupplyContract(supplyMethod, entry.getValue());
-//            supplier.addSupplierContract(supplyContract);
-//        }
-//    }
+    // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
     public int registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod,
                                     String phoneNumber, String address, String email, String contactName,
@@ -207,43 +168,122 @@ public class SupplierController {
             return supplier.getSupplierProductCategory();
         return null;
     }
+
     public DeliveringMethod getSupplierDeliveringMethod(int supplierID) {
-        for(Supplier supplier : this.suppliersArrayList){
-            if(supplier.supplierId == supplierID){
-                return supplier.getSupplierDeliveringMethod();
-            }
-        }
-        return null;
-    }
-    public ContactInfo getSupplierContactInfo(int supplierID){
-        for(Supplier supplier : this.suppliersArrayList){
-            if(supplier.supplierId == supplierID){
-                return supplier.getSupplierContactInfo();
-            }
-        }
+        Supplier supplier = getSupplier(supplierID);
+        if (supplier != null)
+            return supplier.getSupplierDeliveringMethod();
+
         return null;
     }
 
+    public ContactInfo getSupplierContactInfo(int supplierID){
+        Supplier supplier = getSupplier(supplierID);
+        if (supplier != null)
+            return supplier.getSupplierContactInfo();
+
+        return null;
+    }
 
     public SupplyMethod getSupplierSupplyMethod(int supplierID) {
-        for(Supplier supplier : this.suppliersArrayList){
-            if(supplier.supplierId == supplierID){
-                return supplier.getSupplyMethod();
-            }
-        }
+        Supplier supplier = getSupplier(supplierID);
+        if (supplier != null)
+            return supplier.getSupplyMethod();
+
         return null;
     }
-    public boolean addNewContractToSupplier(int supplierId, SupplyContract contract){
-        for(Supplier supplier : this.suppliersArrayList){
-            if(supplier.supplierId == supplierId){
-                supplier.supplierContracts.add(contract);
-                return true;
-            }
-        }
-        return false;
+
+    // --------------------------- CONTRACT FUNCTIONS ---------------------------
+
+    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
+
+        Supplier supplier = getSupplier(supplierID);
+        if (supplier == null)
+            return false;
+
+        SupplyMethod supplyMethod = supplier.getSupplyMethod();
+
+        SupplyContract contract = supplyContractController.registerNewContract(supplierID, dataList, supplyMethod);
+
+        supplier.addSupplierContract(contract);
+
+        return true;
     }
 
-    public int getSupplierContractId(int supplierId) {
-        return 0;
+    public String getContractToString(int contractID) {
+        return this.supplyContractController.getContractToString(contractID);
+    }
+
+    // --------------------------- ORDER FUNCTIONS ---------------------------
+
+    private SupplyContract ValidateProductInContracts(int supplierID, int productID) {
+        Supplier supplier = getSupplier(supplierID);
+        ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
+        if (supplyContractArrayList == null)
+            return null;
+
+        for (SupplyContract contract : supplyContractArrayList)
+            if (contract.CheckIfProductInData(productID))
+                return contract;
+
+        return null;
+    }
+
+    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+        DeliveringMethod deliveringMethod = this.getSupplierDeliveringMethod(supplierId);
+        ContactInfo contactInfo = this.getSupplierContactInfo(supplierId);
+
+        double totalPrice = 0;
+        for(int[] entry : dataList) {
+
+            int productId = entry[0];
+            SupplyContract supplyContract = ValidateProductInContracts(supplierId, productId);
+            if (supplyContract == null)
+                return false;
+            SupplyContractProductData data = supplyContract.getSupplyContractProductDataOfProduct(productId);
+
+            int quantity = entry[1];
+            double productPrice = data.getProductPrice();
+
+            if(quantity >=  data.getQuantityForDiscount()){
+                productPrice = data.getProductPrice();
+                productPrice = productPrice*((100 - data.getDiscountPercentage()) / 100);
+                totalPrice +=  productPrice*quantity;
+            }
+            else {
+                totalPrice += productPrice*quantity;
+            }
+        }
+
+        this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, contactInfo);
+        return true;
+    }
+
+    public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
+        return this.orderController.updateOrderContactInfo(orderId, phoneNumber, address, email, contactName);
+    }
+
+    public boolean updateOrderSupplyDate(int orderID, Date supplyDate){
+        return this.orderController.updateOrderSupplyDate(orderID, supplyDate);
+    }
+
+    public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
+        return this.orderController.updateOrderSupplyMethod(orderID, supplyMethod);
+    }
+
+    public boolean deleteOrder(int orderID) {
+        return this.orderController.deleteOrder(orderID);
+    }
+
+    public Date getOrderSupplyDate(int orderID){
+        return this.orderController.getOrderSupplyDate(orderID);
+    }
+
+    public String getOrderAsString(int orderID) {
+        return this.orderController.getOrderAsString(orderID);
+    }
+
+    public String[] getAllOrdersAsString() {
+        return this.orderController.getAllOrdersAsString();
     }
 }

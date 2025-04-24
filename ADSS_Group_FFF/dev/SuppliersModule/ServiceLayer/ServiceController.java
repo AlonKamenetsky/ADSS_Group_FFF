@@ -128,15 +128,6 @@ public class ServiceController {
         return false;
     }
 
-    public boolean RegisterNewContract(int supplierID, ArrayList<int[]> dataList) {
-        for (int[] data : dataList)
-            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3]))
-                return false;
-
-        supplierService.registerNewContract(supplierID, dataList);
-        return true;
-    }
-
     public boolean DeleteSupplier(int supplierID) {
         return supplierService.deleteSupplier(supplierID);
     }
@@ -149,13 +140,17 @@ public class ServiceController {
         return this.supplierService.getSupplierAsString(supplierID);
     }
 
-//    public void PrintSupplierContracts(int supplierID) {
-//        supplierService.PrintAllSupplierContracts(supplierID);
-//    }
-//
-//    public void registerNewSupplierContract(){
-//
-//    }
+
+    // --------------------------- CONTRACT FUNCTIONS ---------------------------
+
+    public boolean RegisterNewContract(int supplierID, ArrayList<int[]> dataList) {
+        for (int[] data : dataList)
+            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3]))
+                return false;
+
+        return this.supplierService.registerNewContract(supplierID, dataList);
+    }
+
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
@@ -164,30 +159,36 @@ public class ServiceController {
             return false;
         if(deliveryDateAsDate.before(creationDate))
             return false;
-        return supplierService.registerNewOrder(supplierId, dataList, creationDate, deliveryDateAsDate);
+        return this.supplierService.registerNewOrder(supplierId, dataList, creationDate, deliveryDateAsDate);
     }
+
     public boolean updateOrderContactInfo(int orderId,  String phoneNumber, String address, String email, String contactName){
         return this.supplierService.updateOrderContactInfo(orderId, phoneNumber, address, email, contactName);
     }
+
     public boolean updateOrderSupplyDate(int orderID, String supplyDate){
         Date supplyDateAsDate = this.validateDate(supplyDate);
         if(supplyDateAsDate == null)
             return false;
-        Date oldSupplyDate = supplierService.getSupplyDate(orderID);
+        Date oldSupplyDate = supplierService.getOrderSupplyDate(orderID);
         if(supplyDateAsDate.before(oldSupplyDate))
             return false;
-        return supplierService.updateOrderSupplyDate(orderID, supplyDateAsDate);
+        return this.supplierService.updateOrderSupplyDate(orderID, supplyDateAsDate);
     }
+
     public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
-        return supplierService.updateOrderSupplyMethod(orderID, supplyMethod);
+        return this.supplierService.updateOrderSupplyMethod(orderID, supplyMethod);
     }
+
     public boolean deleteOrder(int orderID) {
-        return supplierService.deleteOrder(orderID);
+        return this.supplierService.deleteOrder(orderID);
     }
-    public boolean printOrder(int orderID) {
-        return supplierService.printOrder(orderID);
+
+    public String getOrderAsString(int orderID) {
+        return this.supplierService.getOrderAsString(orderID);
     }
-    public void printAllOrders() {
-        supplierService.printAllOrders();
+
+    public String[] getAllOrdersAsString() {
+        return this.supplierService.getAllOrdersAsString();
     }
 }

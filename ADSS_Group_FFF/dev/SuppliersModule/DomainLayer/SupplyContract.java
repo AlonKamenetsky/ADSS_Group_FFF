@@ -5,48 +5,59 @@ import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import java.util.ArrayList;
 
 public class SupplyContract {
-   SupplyMethod supplierSupplyMethod;
-   ArrayList<SupplyContractProductData> supplyContractProductsDataArray;
    int contractId;
+   int supplierId;
+   ArrayList<SupplyContractProductData> supplyContractProductsDataArray;
 
-   public SupplyContract(SupplyMethod supplierSupplyMethod) {
-      this.supplierSupplyMethod = supplierSupplyMethod;
+   public SupplyContract(int supplierId, int contractID) {
+      this.supplierId = supplierId;
+      this.contractId = contractID;
       this.supplyContractProductsDataArray = new ArrayList<>();
    }
 
-   public SupplyContract(SupplyMethod supplierSupplyMethod, ArrayList<SupplyContractProductData> supplyContractProductsDataArray, int contractId) {
-      this.supplierSupplyMethod = supplierSupplyMethod;
-      this.supplyContractProductsDataArray = supplyContractProductsDataArray;
+   public SupplyContract(int contractId, int supplierId, SupplyMethod supplierSupplyMethod, ArrayList<SupplyContractProductData> supplyContractProductsDataArray) {
       this.contractId = contractId;
+      this.supplierId = supplierId;
+      this.supplyContractProductsDataArray = supplyContractProductsDataArray;
    }
 
    public void addSupplyContractProductData(SupplyContractProductData data) {
       this.supplyContractProductsDataArray.add(data);
    }
 
-   public SupplyMethod getSupplierSupplyMethod(){
-      return this.supplierSupplyMethod;
+   public int getContractId() {
+      return contractId;
    }
 
-   public void setSupplierSupplyMethod(SupplyMethod supplyMethod){
-      this.supplierSupplyMethod = supplyMethod;
+   public ArrayList<SupplyContractProductData> getSupplyContractProductData() {
+      return this.supplyContractProductsDataArray;
+   }
+
+   public SupplyContractProductData getSupplyContractProductDataOfProduct(int productID) {
+      for (SupplyContractProductData productData : this.supplyContractProductsDataArray)
+         if (productData.getProductID() == productID)
+            return productData;
+
+      return null;
+   }
+
+   public boolean CheckIfProductInData(int productID) {
+      for (SupplyContractProductData productData : this.supplyContractProductsDataArray)
+         if (productData.getProductID() == productID)
+            return true;
+
+      return false;
    }
 
    public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append("SupplyContract {\n");
-      sb.append("  Supplier Supply Method: ").append(supplierSupplyMethod).append(",\n");
+      sb.append("  Contract ID: ").append(contractId).append(",\n");
       sb.append("  Product Data List:\n");
       for (SupplyContractProductData data : supplyContractProductsDataArray) {
          sb.append("    ").append(data).append("\n");
       }
       sb.append("}");
       return sb.toString();
-   }
-   public ArrayList<SupplyContractProductData> getSupplyContractProductData() {
-      return this.supplyContractProductsDataArray;
-   }
-   public int getContractId() {
-      return contractId;
    }
 }

@@ -10,17 +10,18 @@ public class OrderController {
     int orderID;
     ArrayList<Order> ordersArrayList; // TEMP DATA STRUCTURE
 
-    // Functions here
     public OrderController() {
         orderID = 0;
         ordersArrayList = new ArrayList<>();
 
     }
+
     public void registerOrder(int supplierId, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, ContactInfo supplierContactInfo) {
         Order order = new Order(orderID, supplierId, dataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplierContactInfo);
         ordersArrayList.add(order);
         this.orderID++;
     }
+
     private Order getOrder(int orderID) {
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID) {
@@ -29,7 +30,8 @@ public class OrderController {
         }
         return null;
     }
-    public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
+
+    public boolean updateOrderContactInfo(int orderID, String phoneNumber, String address, String email, String contactName){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
                 ContactInfo contactInfo = order.getOrderContactInfo();
@@ -42,6 +44,7 @@ public class OrderController {
         }
         return false;
     }
+
     public boolean updateOrderSupplyDate(int orderID, Date supplyDate){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
@@ -51,6 +54,7 @@ public class OrderController {
         }
         return false;
     }
+
     public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
         SupplyMethod method;
         if(supplyMethod == 1){
@@ -70,6 +74,7 @@ public class OrderController {
         return false;
 
     }
+
     public boolean deleteOrder(int orderID){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
@@ -79,6 +84,7 @@ public class OrderController {
         }
         return false;
     }
+
     public Date getOrderSupplyDate(int orderID){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
@@ -87,28 +93,20 @@ public class OrderController {
         }
         return null;
     }
-    public Date getSupplyDate(int orderID){
-        for (Order order : ordersArrayList) {
-            if(order.orderID == orderID){
-                return order.getSupplyDate();
-            }
+
+    public String getOrderAsString(int orderID){
+        Order order = getOrder(orderID);
+        if (order != null){
+            return order.toString();
         }
         return null;
     }
-    public boolean printOrder(int orderID){
-        for (Order order : ordersArrayList) {
-            if(order.orderID == orderID){
-                System.out.println(order);
-                return true;
-            }
-        }
-        return false;
-    }
-    public void printAllOrders(){
-        for (Order order : ordersArrayList) {
-            System.out.println(order);
-        }
-    }
 
-
+    public String[] getAllOrdersAsString() {
+        String[] ordersAsString = new String[ordersArrayList.size()];
+        for (int i = 0; i < ordersArrayList.size(); i++) {
+            ordersAsString[i] = ordersArrayList.get(i).toString();
+        }
+        return ordersAsString;
+    }
 }
