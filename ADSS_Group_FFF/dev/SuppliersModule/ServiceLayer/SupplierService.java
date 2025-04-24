@@ -75,9 +75,9 @@ public class SupplierService {
     public ContactInfo getSupplierContactInfo(int supplierID) {
         return supplierController.getSupplierContactInfo(supplierID);
     }
-    private SupplyContract getSupplierSupplyContract(int supplierID) {
-
-    }
+//    private SupplyContract getSupplierSupplyContract(int supplierID) {
+//
+//    }
 
     public ProductCategory getSupplierProductCategory(int supplierID) {
         return this.supplierController.getSupplierProductCategory(supplierID);
@@ -168,10 +168,10 @@ public class SupplierService {
         return supplyContractController.getContractToString(contractID);
     }
     public Date getOrderSupplyDate(int orderID){
-        orderController.getOrderSupplyDate(orderID);
+        return orderController.getOrderSupplyDate(orderID);
     }
     public Date getSupplyDate(int orderID){
-        orderController.getSupplyDate(orderID);
+        return orderController.getSupplyDate(orderID);
     }
 
 }

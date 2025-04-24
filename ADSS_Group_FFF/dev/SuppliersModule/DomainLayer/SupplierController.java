@@ -25,7 +25,7 @@ public class SupplierController {
         orderController = new OrderController();
         supplyContractController = new SupplyContractController();
         this.readSuppliersFromCSVFile();
-        this.readSupplierContractDataFromCSV();
+        //this.readSupplierContractDataFromCSV();
     }
 
     public void readSuppliersFromCSVFile() {
@@ -75,50 +75,50 @@ public class SupplierController {
         }
     }
 
-    public void readSupplierContractDataFromCSV() {
-        Map<Integer, ArrayList<SupplyContractProductData>> supplierProductMap = new HashMap<>();
-
-        InputStream in = SupplierController.class.getResourceAsStream("/contracts_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine){
-                    isFirstLine = false;
-                    continue; // Skip header
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-
-                int supplierID = Integer.parseInt(parts[0]);
-                int productID = Integer.parseInt(parts[1]);
-                double productPrice = Double.parseDouble(parts[2]);
-                int quantityForDiscount = Integer.parseInt(parts[3]);
-                int discountPercentage = Integer.parseInt(parts[4]);
-
-                SupplyContractProductData mapping = new SupplyContractProductData(productID, productPrice, quantityForDiscount, discountPercentage);
-
-                supplierProductMap.computeIfAbsent(supplierID, k -> new ArrayList<>()).add(mapping);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        for (Map.Entry<Integer, ArrayList<SupplyContractProductData>> entry : supplierProductMap.entrySet()) {
-            Supplier supplier = this.getSupplier(entry.getKey());
-            SupplyMethod supplyMethod = supplier.getSupplyMethod();
-
-            SupplyContract supplyContract = new SupplyContract(supplyMethod, entry.getValue());
-            supplier.addSupplierContract(supplyContract);
-        }
-    }
+//    public void readSupplierContractDataFromCSV() {
+//        Map<Integer, ArrayList<SupplyContractProductData>> supplierProductMap = new HashMap<>();
+//
+//        InputStream in = SupplierController.class.getResourceAsStream("/contracts_data.csv");
+//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+//            String line;
+//            boolean isFirstLine = true;
+//
+//            while ((line = reader.readLine()) != null) {
+//                if (isFirstLine){
+//                    isFirstLine = false;
+//                    continue; // Skip header
+//                }
+//
+//                String[] parts = line.split(",");
+//                for (int i = 0; i < parts.length; i++) {
+//                    parts[i] = parts[i].trim();
+//                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
+//                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
+//                    }
+//                }
+//
+//                int supplierID = Integer.parseInt(parts[0]);
+//                int productID = Integer.parseInt(parts[1]);
+//                double productPrice = Double.parseDouble(parts[2]);
+//                int quantityForDiscount = Integer.parseInt(parts[3]);
+//                int discountPercentage = Integer.parseInt(parts[4]);
+//
+//                SupplyContractProductData mapping = new SupplyContractProductData(productID, productPrice, quantityForDiscount, discountPercentage);
+//
+//                supplierProductMap.computeIfAbsent(supplierID, k -> new ArrayList<>()).add(mapping);
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        for (Map.Entry<Integer, ArrayList<SupplyContractProductData>> entry : supplierProductMap.entrySet()) {
+//            Supplier supplier = this.getSupplier(entry.getKey());
+//            SupplyMethod supplyMethod = supplier.getSupplyMethod();
+//
+//            SupplyContract supplyContract = new SupplyContract(supplyMethod, entry.getValue());
+//            supplier.addSupplierContract(supplyContract);
+//        }
+//    }
 
     public int registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod,
                                     String phoneNumber, String address, String email, String contactName,
