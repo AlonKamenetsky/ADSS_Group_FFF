@@ -64,12 +64,12 @@ public class TaskMenu {
         System.out.println("Enter source site of the task:");
         taskSourceSite = input.nextLine();
         try {
-            TasksHandler.addTask(taskDate, taskDeparture, taskSourceSite);
+            TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
             System.out.println("Task removed successfully");
         } catch (ParseException e) {
             System.out.println("Invalid date/time format.");
         } catch (NoSuchElementException e) {
-            System.out.println("Task doesn't exist.");
+            System.out.println(e.getMessage());
         } catch (NullPointerException n) {
             System.out.println("Empty parameters entered.");
         }
@@ -105,8 +105,12 @@ public class TaskMenu {
         }
 
         while (true) {
-            System.out.println("Which site would you like to add to this task as destination?:");
+            System.out.println("Which site would you like to add to this task as destination? (must have at least one):");
             String destinationSite = input.nextLine();
+            if (!TasksHandler.checkDestination(destinationSite)) {
+                System.out.println("Site doesn't exist.");
+                continue;
+            }
             System.out.println("""
                     Choose one of the following:
                     1. Choose items to add to this destination document (at least one).
@@ -144,8 +148,7 @@ public class TaskMenu {
             TasksHandler.updateWeightForTask(taskDate, taskDeparture, taskSourceSite);
             if (!TasksHandler.assignDriverAndTruckToTask(taskDate, taskDeparture, taskSourceSite)) {
                 System.out.println("Adding task destination not successful, no drivers or trucks available.");
-            }
-            else {
+            } else {
                 System.out.println("Adding destination to this site successfully");
                 System.out.println("Do you want to add more destination sites or go back to Task Management menu? (Yes/Anything for no)");
                 itemsChosen.clear();

@@ -24,13 +24,17 @@ public class TaskManager {
 
     }
 
-    public void addTask(Date _taskDate, LocalTime _departureTime, String sourceSiteAddress) {
+    public void addTask(String _taskDate, String _departureTime, String sourceSiteAddress) throws ParseException {
         int _taskId = nextTaskId++;
         Site sourceSite = siteManager.getSiteByAddress(sourceSiteAddress.toLowerCase());
         if (sourceSite == null) {
             throw new NoSuchElementException();
         }
-        TransportationTask newTask = new TransportationTask(_taskId, _taskDate, _departureTime, sourceSite);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date taskDate = sdf.parse(_taskDate);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime departureTime = LocalTime.parse(_departureTime, timeFormatter);
+        TransportationTask newTask = new TransportationTask(_taskId, taskDate, departureTime, sourceSite);
         allTasks.put(_taskId, newTask);
     }
 
@@ -38,11 +42,15 @@ public class TaskManager {
         TransportationTask currTask = getTask(taskDate, departureTime, sourceSite);
         driverManager.setDriverAvailability(currTask.getDriverId(), true);
         truckManager.setTruckAvailability(currTask.getTruckLicenseNumber(), true);
-        allTasks.remove(getTask(taskDate, departureTime, sourceSite).getTaskId());
+        allTasks.remove(currTask.getTaskId());
     }
 
-    public boolean doesTaskExist(String taskDate, String departureTime, String sourceSite) {
-        int taskId = getTask(taskDate, departureTime, sourceSite).getTaskId();
+    public boolean doesTaskExist(String taskDate, String departureTime, String sourceSite) throws NoSuchElementException, ParseException {
+        TransportationTask task1 = getTask(taskDate, departureTime, sourceSite);
+        if (task1 == null) {
+            throw new ParseException("", 0);
+        }
+        int taskId = task1.getTaskId();
         return allTasks.containsKey(taskId);
     }
 
@@ -50,7 +58,7 @@ public class TaskManager {
     public void addDocToTask(String taskDate, String departureTime, String sourceSite, String destinationAddress, HashMap<String, Integer> itemsToAdd) {
         {
             TransportationTask currTask = getTask(taskDate, departureTime, sourceSite);
-            Site destinationSite = siteManager.getSiteByAddress(destinationAddress);
+            Site destinationSite = siteManager.getSiteByAddress(destinationAddress.toLowerCase());
             TransportationDoc newDoc = new TransportationDoc(currTask.getTaskId(), nextDocId++, destinationSite);
             for (Map.Entry<String, Integer> entry : itemsToAdd.entrySet()) {
                 String itemName = entry.getKey();
@@ -103,9 +111,12 @@ public class TaskManager {
     }
 
 
-    public TransportationTask getTask(String _taskDate, String _departureTime, String sourceSite) {
+    public TransportationTask getTask(String _taskDate, String _departureTime, String sourceSite) throws NoSuchElementException {
         try {
             Site s = siteManager.getSiteByAddress(sourceSite);
+            if (s == null) {
+                throw new NoSuchElementException("Site doesn't exist");
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date taskDate = sdf.parse(_taskDate);
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -115,7 +126,7 @@ public class TaskManager {
                     return t;
                 }
             }
-            return null;
+            throw new NoSuchElementException("Task doesn't exist");
         } catch (ParseException e) {
             return null;
         }
@@ -157,7 +168,7 @@ public class TaskManager {
         return sb.toString();
     }
 
-    public float getWeightTask(String taskDate, String departureTime, String sourceSite) throws ParseException {
-        return getTask(taskDate, departureTime, sourceSite).getWeightBeforeLeaving();
+    public boolean checkDestination(String address) {
+        return siteManager.doesSiteExist(address);
     }
 }

@@ -15,13 +15,16 @@ public class ZoneManager {
     }
 
     public void addZone(String _zoneName) {
+        if (_zoneName == null) {
+            throw new NullPointerException("Zone name cannot be null");
+        }
         int _zoneId = nextZoneId++;
-        Zone newZone = new Zone(_zoneId, _zoneName);
+        Zone newZone = new Zone(_zoneId, _zoneName.toLowerCase());
         allZones.putIfAbsent(_zoneId, newZone);
     }
 
     public void removeZone(String _zoneName) {
-        Zone z = getZoneByName(_zoneName);
+        Zone z = getZoneByName(_zoneName.toLowerCase());
         allZones.remove(z.getZoneId());
     }
 
@@ -30,7 +33,7 @@ public class ZoneManager {
     }
 
     public String getSitesByZone(String zoneName) {
-        Zone currZone = getZoneByName(zoneName);
+        Zone currZone = getZoneByName(zoneName.toLowerCase());
         if (currZone == null) {
             throw new NoSuchElementException();
         }
@@ -39,7 +42,7 @@ public class ZoneManager {
 
     public Zone getZoneByName(String zoneName) {
         for (Zone zone : allZones.values()) {
-            if (zone.getName().equals(zoneName)) {
+            if (zone.getName().equalsIgnoreCase(zoneName)) {
                 return zone;
             }
         }
@@ -49,9 +52,8 @@ public class ZoneManager {
     public void modifyZone(String _zoneName, String newZoneName) throws NoSuchElementException {
         Zone z = getZoneByName(_zoneName);
         if (z != null) {
-            getZoneById(z.getZoneId()).setZoneName(newZoneName);
-        }
-        else {
+            getZoneById(z.getZoneId()).setZoneName(newZoneName.toLowerCase());
+        } else {
             throw new NoSuchElementException();
         }
     }

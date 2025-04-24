@@ -23,7 +23,7 @@ public class ItemManager {
 
     public float getItemWeightByName(String itemName) {
         for (Item i : allItems.values()) {
-            if (i.getItemName().equals(itemName)) {
+            if (i.getItemName().equalsIgnoreCase(itemName)) {
                 return allItems.get(i.getItemId()).getWeight();
             }
         }
@@ -47,7 +47,7 @@ public class ItemManager {
 
     public void addItem(String itemName, float itemWeight) {
         int itemId = nextItemId++;
-        Item newItem = new Item(itemId, itemName, itemWeight);
+        Item newItem = new Item(itemId, itemName.toLowerCase(), itemWeight);
         allItems.put(itemId, newItem);
     }
 
@@ -56,7 +56,7 @@ public class ItemManager {
     }
 
     public boolean doesItemExist(String itemName) {
-        int itemId = getItemByName(itemName).getItemId();
+        int itemId = getItemByName(itemName.toLowerCase()).getItemId();
         return allItems.containsKey(itemId);
     }
 }

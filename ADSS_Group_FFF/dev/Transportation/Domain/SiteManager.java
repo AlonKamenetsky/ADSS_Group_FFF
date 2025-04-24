@@ -1,8 +1,7 @@
 package Transportation.Domain;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.NoSuchElementException;
 
 public class SiteManager {
     private final HashMap<Integer, Site> allSites;
@@ -16,8 +15,10 @@ public class SiteManager {
 
     public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) {
         int _siteId = nextSiteId++;
-        Zone relatedZone = zoneManager.getZoneByName(_zone.toLowerCase());
-        if (relatedZone == null) {
+        Zone relatedZone;
+        try {
+            relatedZone = zoneManager.getZoneByName(_zone);
+        } catch (NoSuchElementException e) {
             throw new IllegalArgumentException("Invalid zone.");
         }
         int relatedZoneId = relatedZone.getZoneId();
@@ -26,16 +27,8 @@ public class SiteManager {
     }
 
     public void removeSite(String _address) {
-        Site site = getSiteByAddress(_address.toLowerCase());
+        Site site = getSiteByAddress(_address);
         allSites.remove(site.getSiteId());
-    }
-
-    public List<Site> getAllSites() {
-        return new ArrayList<>(allSites.values());
-    }
-
-    public Site getSiteById(int _siteId) {
-        return allSites.get(_siteId);
     }
 
     public Site getSiteByAddress(String address) {
@@ -44,7 +37,7 @@ public class SiteManager {
                 return site;
             }
         }
-        return null;
+        throw new NoSuchElementException("No site found");
     }
 
     public void modifySiteZone(String siteAddress, int zoneId) {

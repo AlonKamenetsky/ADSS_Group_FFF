@@ -55,6 +55,7 @@ public class DriverManager {
         Driver driverToChange = allDrivers.get(driverId);
         if (driverId != null) {
             driverToChange.setAvailability(status);
+            return;
         }
         throw new NoSuchElementException();
     }

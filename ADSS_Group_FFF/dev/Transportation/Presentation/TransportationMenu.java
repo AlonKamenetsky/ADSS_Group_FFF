@@ -11,8 +11,8 @@ public class TransportationMenu {
     private final Scanner input;
 
     public TransportationMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService, ItemService itemService, DataService dataService) {
-        this.TManagerMenuUI = new TManagerRoleMenu(driverService, truckService, taskService, zoneService, siteService, itemService, siteZoneService, this);
-        this.DriverRoleMenuUI = new DriverRoleMenu(this, driverService, taskService);
+        this.TManagerMenuUI = new TManagerRoleMenu(driverService, truckService, taskService, zoneService, siteService, itemService, siteZoneService);
+        this.DriverRoleMenuUI = new DriverRoleMenu(driverService, taskService);
         this.dataService = dataService;
         input = new Scanner(System.in);
     }

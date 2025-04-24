@@ -1,6 +1,7 @@
 package Transportation.Presentation;
 
 import Transportation.Service.SiteService;
+
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -54,11 +55,9 @@ public class SiteMenu {
         try {
             SitesHandler.deleteSite(input.nextLine());
             System.out.println("Site removed successfully");
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             System.out.println("Empty Site address entered.");
-        }
-        catch (NoSuchElementException n) {
+        } catch (NoSuchElementException n) {
             System.out.println("Site doesn't exist.");
         }
     }
@@ -91,8 +90,7 @@ public class SiteMenu {
             System.out.println("Site added successfully.");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-        }
-        catch(NoSuchElementException n) {
+        } catch (NoSuchElementException n) {
             System.out.println("Zone doesn't exist.");
         }
     }

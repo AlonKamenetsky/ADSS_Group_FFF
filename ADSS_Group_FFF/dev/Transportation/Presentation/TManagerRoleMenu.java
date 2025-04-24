@@ -2,7 +2,6 @@ package Transportation.Presentation;
 
 import Transportation.Service.*;
 
-import java.text.ParseException;
 import java.util.Scanner;
 
 public class TManagerRoleMenu {
@@ -11,15 +10,13 @@ public class TManagerRoleMenu {
     private final TruckMenu TruckMenuUI;
     private final SiteMenu SiteMenuUI;
     private final ZoneMenu ZoneMenuUI;
-    private final TransportationMenu transportationMenu;
 
-    public TManagerRoleMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, ItemService itemService, SiteZoneService siteZoneService, TransportationMenu transportationMenu1) {
+    public TManagerRoleMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, ItemService itemService, SiteZoneService siteZoneService) {
         DriverMenuUI = new DriverMenu(driverService, this);
         TaskMenuUI = new TaskMenu(taskService, itemService, this);
         TruckMenuUI = new TruckMenu(truckService, this);
         SiteMenuUI = new SiteMenu(siteService, this);
         ZoneMenuUI = new ZoneMenu(zoneService, siteZoneService,this);
-        transportationMenu = transportationMenu1;
     }
 
     public void show() {
@@ -51,7 +48,8 @@ public class TManagerRoleMenu {
                     ZoneMenuUI.show();
                     break;
                 case "0":
-                    transportationMenu.showHelper();
+                    System.out.println("Bye!");
+                    System.exit(0);
                     return;
                 default:
                     System.out.println("Invalid input.");

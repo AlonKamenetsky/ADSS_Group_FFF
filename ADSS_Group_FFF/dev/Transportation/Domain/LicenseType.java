@@ -9,6 +9,6 @@ public enum LicenseType {
                 return type;
             }
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("License does not exist");
     }
 }

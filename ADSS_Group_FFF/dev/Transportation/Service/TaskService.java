@@ -3,10 +3,6 @@ package Transportation.Service;
 import Transportation.Domain.*;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
@@ -21,19 +17,19 @@ public class TaskService {
         if (_taskDate == null || _departureTime == null || sourceSiteAddress == null) {
             throw new NullPointerException();
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date taskDate = sdf.parse(_taskDate);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime departureTime = LocalTime.parse(_departureTime, timeFormatter);
-        taskManager.addTask(taskDate, departureTime, sourceSiteAddress.toLowerCase());
+
+        taskManager.addTask(_taskDate, _departureTime, sourceSiteAddress.toLowerCase());
     }
 
-    public void deleteTask(String _taskDate, String _departureTime, String sourceSiteAddress) {
+    public void deleteTask(String _taskDate, String _departureTime, String sourceSiteAddress) throws NullPointerException, ParseException, NoSuchElementException {
         if (_taskDate == null || _departureTime == null || sourceSiteAddress == null) {
-            return;
+            throw new NullPointerException();
         }
         if (taskManager.doesTaskExist(_taskDate, _departureTime, sourceSiteAddress.toLowerCase())) {
             taskManager.removeTask(_taskDate, _departureTime, sourceSiteAddress.toLowerCase());
+        }
+        else {
+            throw new NoSuchElementException("Task doesn't exist.");
         }
     }
 
@@ -57,8 +53,11 @@ public class TaskService {
         return taskManager.getAllTasksString();
     }
 
-    public String getTask(String taskDate, String departureTime, String sourceSiteAddress) {
-        return taskManager.getTask(taskDate, departureTime, sourceSiteAddress.toLowerCase()).toString();
+    public boolean checkDestination (String _address) {
+        if(_address == null) {
+            throw new NullPointerException();
+        }
+        return taskManager.checkDestination(_address);
     }
 
     public String getTasksBySourceAddress(String sourceAddress) {

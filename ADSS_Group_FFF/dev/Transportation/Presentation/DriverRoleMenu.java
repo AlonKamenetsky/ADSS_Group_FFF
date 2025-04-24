@@ -8,14 +8,11 @@ public class DriverRoleMenu {
     private String driverId;
     private final DriverService driverHandler;
     private final TaskService driverTaskHandler;
-    private final TransportationMenu transportationMenu; // reference to go back
 
-    public DriverRoleMenu(TransportationMenu transportationMenu, DriverService driverService, TaskService taskService) {
+    public DriverRoleMenu(DriverService driverService, TaskService taskService) {
         driverId = "";
-        this.transportationMenu = transportationMenu;
         driverHandler = driverService;
         driverTaskHandler = taskService;
-
     }
 
     public void modifyDriverId(String driverId) {
@@ -38,8 +35,8 @@ public class DriverRoleMenu {
                     viewMyTasks();
                     break;
                 case "0":
-                    transportationMenu.showHelper();
-                    return;
+                    System.out.println("Bye!");
+                    System.exit(0);
                 default:
                     System.out.println("Invalid input.");
             }

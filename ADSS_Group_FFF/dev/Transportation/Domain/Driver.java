@@ -20,21 +20,17 @@ public class Driver {
         return driverId;
     }
 
-    public ArrayList<LicenseType> getLicenseTypes() {
-        return licenseTypes;
-    }
-
     public boolean hasLicenseType(LicenseType _licenseType) {
         return licenseTypes.contains(_licenseType);
     }
 
     public void addLicense(LicenseType _licenseType) {
-        if (licenseTypes.contains(_licenseType)) {
-            return;
+        if (_licenseType == null) {
+            throw new IllegalArgumentException("License cannot be null");
+        } else if (!licenseTypes.contains(_licenseType)) {
+            licenseTypes.add(_licenseType);
         }
-        licenseTypes.add(_licenseType);
     }
-
     public boolean isAvailable() {
         return isAvailable;
     }

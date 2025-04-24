@@ -12,16 +12,16 @@ public class TruckManager {
 
     public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException {
         if(truckType == null || licenseNumber == null || model == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("Missed Parameters to added Truck");
         }
         int truckId = nextTruckId++;
         TruckType type = TruckType.fromString(truckType);
-        Truck newTruck = new Truck(truckId, type, licenseNumber, model, netWeight, maxWeight);
+        Truck newTruck = new Truck(truckId, type, licenseNumber, model.toLowerCase(), netWeight, maxWeight);
         allTrucks.putIfAbsent(truckId, newTruck);
     }
 
     public void removeTruck(String licenseNumber) throws NoSuchElementException {
-        Truck truckToRemove = getTruckIdByLicenseNumber(licenseNumber);
+        Truck truckToRemove = getTruckIdByLicenseNumber(licenseNumber.toLowerCase());
         if(truckToRemove == null) {
             throw new NoSuchElementException();
         }
@@ -31,11 +31,11 @@ public class TruckManager {
 
     public Truck getTruckIdByLicenseNumber(String licenseNumber) throws NoSuchElementException {
         for (Truck truck : allTrucks.values()) {
-            if (truck.getLicenseNumber().equals(licenseNumber)) {
+            if (truck.getLicenseNumber().equalsIgnoreCase(licenseNumber)) {
                 return truck;
             }
         }
-        throw new NoSuchElementException();
+        throw new NoSuchElementException("Truck does not exist");
     }
 
 
@@ -55,6 +55,7 @@ public class TruckManager {
         }
         else {
             truckToChange.setAvailability(status);
+            return;
         }
     }
 
