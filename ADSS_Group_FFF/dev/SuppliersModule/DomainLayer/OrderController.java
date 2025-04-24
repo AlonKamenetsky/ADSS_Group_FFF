@@ -16,8 +16,8 @@ public class OrderController {
 
     }
 
-    public void registerOrder(int supplierId, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, ContactInfo supplierContactInfo) {
-        Order order = new Order(orderID, supplierId, dataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplierContactInfo);
+    public void registerOrder(int supplierId, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+        Order order = new Order(orderID, supplierId, dataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
         ordersArrayList.add(order);
         this.orderID++;
     }
@@ -55,25 +55,6 @@ public class OrderController {
         return false;
     }
 
-    public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
-        SupplyMethod method;
-        if(supplyMethod == 1){
-             method = SupplyMethod.SCHEDULED;
-        }
-        else if(supplyMethod == 2){
-             method = SupplyMethod.ON_DEMAND;
-        }
-        else{
-            return false;
-        }
-        Order order = getOrder(orderID);
-        if(order != null){
-            order.setSupplyMethod(method);
-            return true;
-        }
-        return false;
-
-    }
 
     public boolean deleteOrder(int orderID){
         for (Order order : ordersArrayList) {
@@ -108,5 +89,31 @@ public class OrderController {
             ordersAsString[i] = ordersArrayList.get(i).toString();
         }
         return ordersAsString;
+    }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        Order order = getOrder(orderID);
+        if (order != null){
+            for (Integer data : dataList) {
+                order.removeProductFromOrder(data);
+            }
+            if(order.orderIsEmpty()){
+                ordersArrayList.remove(order);
+                System.out.println("Order deleted because all products removed");
+            }
+            else{
+
+            }
+            return true;
+        }
+        else
+            return false;
+    }
+    public boolean orderExists(int orderID) {
+        Order order = getOrder(orderID);
+        if (order != null){
+            return true;
+        }
+        return false;
     }
 }

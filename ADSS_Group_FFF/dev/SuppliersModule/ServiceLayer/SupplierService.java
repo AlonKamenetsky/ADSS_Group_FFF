@@ -126,4 +126,11 @@ public class SupplierService {
     public String[] getAllOrdersAsString() {
         return this.supplierController.getAllOrdersAsString();
     }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return supplierController.removeProductsFromOrder(orderID, dataList);
+    }
+    public boolean orderExists(int orderID) {
+        return this.supplierController.orderExists(orderID);
+    }
 }

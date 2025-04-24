@@ -5,6 +5,7 @@ import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Order {
@@ -21,14 +22,15 @@ public class Order {
 
     ArrayList<int[]> productArrayList;
 
-    public Order(int orderID, int supplierID, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, ContactInfo supplierContactInfo) {
+    public Order(int orderID, int supplierID, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
         this.orderID = orderID;
         this.supplierID = supplierID;
         this.supplierContactInfo = supplierContactInfo;
-        this.orderDate = deliveryDate;
-        this.supplyDate = creationDate;
+        this.orderDate = creationDate;
+        this.supplyDate = deliveryDate;
         this.totalPrice = totalOrderValue;
         this.productArrayList = dataList;
+        this.supplyMethod = supplyMethod;
 
     }
     public ContactInfo getOrderContactInfo() {
@@ -59,6 +61,20 @@ public class Order {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
+    public void removeProductFromOrder(int productID) {
+        for (int i = 0; i < productArrayList.size(); i++) {
+            int[] product = productArrayList.get(i);
+            if (product[0] == productID) { // product[0] is ID
+                productArrayList.remove(i);
+                break; // stop after first match
+            }
+        }
+    }
+    public boolean orderIsEmpty(){
+        if(this.productArrayList.isEmpty())
+            return true;
+        return false;
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -72,7 +88,7 @@ public class Order {
         sb.append("  Total Price: ").append(String.format("%.2f", totalPrice)).append("\n");
         sb.append("  Products:\n");
         for (int[] product : productArrayList) {
-            sb.append("Product ID: ").append(product).append("\n");
+            sb.append("Product ID: ").append(Arrays.toString(product)).append("\n");
         }
         sb.append("}");
         return sb.toString();

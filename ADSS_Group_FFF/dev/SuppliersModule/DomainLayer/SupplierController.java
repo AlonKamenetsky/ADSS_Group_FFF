@@ -232,7 +232,7 @@ public class SupplierController {
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
         DeliveringMethod deliveringMethod = this.getSupplierDeliveringMethod(supplierId);
         ContactInfo contactInfo = this.getSupplierContactInfo(supplierId);
-
+        SupplyMethod supplyMethod = this.getSupplierSupplyMethod(supplierId);
         double totalPrice = 0;
         for(int[] entry : dataList) {
 
@@ -255,7 +255,7 @@ public class SupplierController {
             }
         }
 
-        this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, contactInfo);
+        this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
         return true;
     }
 
@@ -282,5 +282,12 @@ public class SupplierController {
 
     public String[] getAllOrdersAsString() {
         return this.orderController.getAllOrdersAsString();
+    }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return orderController.removeProductsFromOrder(orderID, dataList);
+    }
+    public boolean orderExists(int orderID) {
+        return orderController.orderExists(orderID);
     }
 }

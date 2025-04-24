@@ -45,20 +45,16 @@ public class ServiceController {
     private boolean validateContractProductData(int price, int quantityForDiscount, int discountPercentage) {
         return price <= 0 || quantityForDiscount <= 0 || !(discountPercentage > 0 && discountPercentage < 100);
     }
-    private Date validateOrderDated(Date orderMade, String supplyDate) {
+    private Date validateOrderDated(String supplyDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        sdf.setLenient(false);
-
         try {
-            Date parsedSupplyDate = sdf.parse(supplyDate);
-            if (parsedSupplyDate.after(orderMade)) {
-                return parsedSupplyDate;
-            } else {
-                return null; // valid format but not after orderMade
-            }
-        } catch (ParseException e) {
-            return null; // invalid date format
+            Date parsedDate = sdf.parse(supplyDate);
+            System.out.println("Parsed Date: " + parsedDate);
+            return parsedDate;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
     private Date validateDate(String strDate){
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -154,7 +150,7 @@ public class ServiceController {
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
-        Date deliveryDateAsDate = this.validateOrderDated(creationDate, deliveryDate);
+        Date deliveryDateAsDate = this.validateOrderDated(deliveryDate);
         if(deliveryDateAsDate == null)
             return false;
         if(deliveryDateAsDate.before(creationDate))
@@ -187,5 +183,11 @@ public class ServiceController {
 
     public String[] getAllOrdersAsString() {
         return this.supplierService.getAllOrdersAsString();
+    }
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return supplierService.removeProductsFromOrder(orderID, dataList);
+    }
+    public boolean orderExists(int orderID) {
+        return supplierService.orderExists(orderID);
     }
 }
