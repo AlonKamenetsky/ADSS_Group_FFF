@@ -176,9 +176,6 @@ public class ServiceController {
         return this.supplierService.updateOrderSupplyDate(orderID, supplyDateAsDate);
     }
 
-    public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
-        return this.supplierService.updateOrderSupplyMethod(orderID, supplyMethod);
-    }
 
     public boolean deleteOrder(int orderID) {
         return this.supplierService.deleteOrder(orderID);

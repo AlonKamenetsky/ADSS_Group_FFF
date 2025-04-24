@@ -14,6 +14,7 @@ public class CLI {
     }
 
 
+
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
     public void registerNewProduct() {
@@ -101,7 +102,6 @@ public class CLI {
         System.out.println("--Creating new contact info--");
         System.out.println("Enter phone number: ");
         String phoneNumber = sc.nextLine();
-        sc.nextLine();
         System.out.println("Enter address");
         String address = sc.nextLine();
         System.out.println("Enter email");
@@ -210,8 +210,8 @@ public class CLI {
     }
 
     private void printAllSuppliers() {
-        for (String supplier : this.serviceController.GetAllSuppliersAsString())
-            System.out.println(supplier);
+        for (String supplierString : this.serviceController.GetAllSuppliersAsString())
+            System.out.println(supplierString);
     }
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
@@ -242,7 +242,7 @@ public class CLI {
     }
 
     private void printSupplierContract(int supplierId) {
-       // serviceController.PrintSupplierContracts(supplierId);
+        // serviceController.PrintSupplierContracts(supplierId);
     }
 
     // ------------------- Order FUNCTIONS -----------------------------
@@ -253,7 +253,7 @@ public class CLI {
         Date today = new Date();
 
         this.printAllSuppliers();
-        System.out.println("Which supplier you want to register? Enter supplier ID");
+        System.out.println("Which supplier you want to order from? Enter supplier ID");
         int supplierId = sc.nextInt();
         sc.nextLine();
         this.printSupplierContract(supplierId);
@@ -295,15 +295,12 @@ public class CLI {
                 updateOrderSupplyDate(orderID);
                 break;
             case 3:
-                updateOrderSupplyMethod(orderID);
-                break;
-            case 4:
                 removeProductsFromOrder(orderID);
                 break;
-            case 5:
+            case 4:
                 addProductsToOrder(orderID);
                 break;
-            case 6:
+            case 5:
                 break;
             default:
                 break;
@@ -331,17 +328,6 @@ public class CLI {
         String newSupplyDate = sc.nextLine();
         boolean changed = serviceController.updateOrderSupplyDate(orderID, newSupplyDate);
     }
-    private void updateOrderSupplyMethod(int orderID) {
-        System.out.println("Enter new supply method:");
-        System.out.println("1. SCHEDULED");
-        System.out.println("2. ON_DEMAND");
-        int choice = sc.nextInt();
-        sc.nextLine();
-        if(choice != 1 && choice != 2) {
-
-        }
-        serviceController.updateOrderSupplyMethod(orderID, choice);
-    }
     private void removeProductsFromOrder(int orderID) {
 
     }
@@ -360,53 +346,18 @@ public class CLI {
         System.out.println("Enter Order ID: ");
         int orderID = sc.nextInt();
         sc.nextLine();
-        boolean printed = serviceController.printOrder(orderID);
+        String result = this.serviceController.getOrderAsString(orderID);
+        System.out.println(Objects.requireNonNullElse(result, "Error: No such order exists."));
     }
 
     private void printAllOrders() {
-        serviceController.printAllOrders();
+        for (String orderString : this.serviceController.getAllOrdersAsString())
+            System.out.println(orderString);
     }
 
 
     // ------------------- CLI print Functions -------------------
 
-    public void mainCliMenu(){
-        System.out.println("Welcome to SuppliersModule!");
-        while (true) {
-            printMenuOptions();
-            System.out.println("Please select an option: ");
-            int userInput = sc.nextInt();
-            sc.nextLine();
-            switch (userInput) {
-                case 1:
-                    printProductOptions();
-                    userInput = sc.nextInt();
-                    chooseProductsOption(userInput);
-                    break;
-                case 2:
-                    printSupplierOptions();
-                    userInput = sc.nextInt();
-                    sc.nextLine();
-                    chooseSupplierOption(userInput);
-                    break;
-                case 3:
-                    printContractOptions();
-                    userInput = sc.nextInt();
-                    //cli.chooseContractOption(userInput);
-                    break;
-                case 4:
-                    printOrderOptions();
-                    userInput = sc.nextInt();
-                    chooseOrderOption(userInput);
-                    break;
-                case 5:
-                    System.out.println("Bye Bye!");
-                    System.exit(0);
-                default:
-                    System.out.println("Invalid option, please choose again");
-            }
-        }
-    }
     public void printMenuOptions() {
         System.out.println("1. Product section");
         System.out.println("2. Supplier section");
@@ -573,5 +524,43 @@ public class CLI {
         System.out.println("5. DRIED");
         System.out.println("6. MISCELLANEOUS");
     }
+    public void mainCliMenu(){
+        System.out.println("Welcome to SuppliersModule!");
+        while (true) {
+            printMenuOptions();
+            System.out.println("Please select an option: ");
+            int userInput = sc.nextInt();
+            sc.nextLine();
+            switch (userInput) {
+                case 1:
+                    printProductOptions();
+                    userInput = sc.nextInt();
+                    chooseProductsOption(userInput);
+                    break;
+                case 2:
+                    printSupplierOptions();
+                    userInput = sc.nextInt();
+                    sc.nextLine();
+                    chooseSupplierOption(userInput);
+                    break;
+                case 3:
+                    printContractOptions();
+                    userInput = sc.nextInt();
+                    //cli.chooseContractOption(userInput);
+                    break;
+                case 4:
+                    printOrderOptions();
+                    userInput = sc.nextInt();
+                    chooseOrderOption(userInput);
+                    break;
+                case 5:
+                    System.out.println("Bye Bye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid option, please choose again");
+            }
+        }
+    }
+
 
 }

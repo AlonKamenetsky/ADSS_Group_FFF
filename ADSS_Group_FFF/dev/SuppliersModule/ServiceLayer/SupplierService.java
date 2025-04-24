@@ -106,9 +106,6 @@ public class SupplierService {
 
     }
 
-    public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
-        return this.supplierController.updateOrderSupplyMethod(orderID, supplyMethod);
-    }
 
     public boolean deleteOrder(int orderID) {
         return this.supplierController.deleteOrder(orderID);

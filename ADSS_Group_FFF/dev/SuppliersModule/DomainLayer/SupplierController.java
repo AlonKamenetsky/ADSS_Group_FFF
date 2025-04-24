@@ -267,9 +267,6 @@ public class SupplierController {
         return this.orderController.updateOrderSupplyDate(orderID, supplyDate);
     }
 
-    public boolean updateOrderSupplyMethod(int orderID, int supplyMethod){
-        return this.orderController.updateOrderSupplyMethod(orderID, supplyMethod);
-    }
 
     public boolean deleteOrder(int orderID) {
         return this.orderController.deleteOrder(orderID);
