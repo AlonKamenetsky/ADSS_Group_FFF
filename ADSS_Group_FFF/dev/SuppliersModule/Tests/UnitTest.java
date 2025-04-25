@@ -126,7 +126,7 @@ public class UnitTest {
         assertEquals("777", paymentInfo.getSupplierBankAccount());
         assertEquals(PaymentMethod.CASH, paymentInfo.getSupplierPaymentMethod());
     }@Test
-    public void testRegisternewproduct() {
+    public void testRegisterNewProduct() {
         String simulatedInput = String.join("\n", "Milk\nTnuva\n0");
         InputStream inputStream = new ByteArrayInputStream(simulatedInput.getBytes());
         System.setIn(inputStream);
@@ -142,7 +142,7 @@ public class UnitTest {
     }
 
     @Test
-    public void testDeleteproduct() {
+    public void testDeleteProduct() {
         String simulatedInput = String.join("\n", "1");
         InputStream inputStream = new ByteArrayInputStream(simulatedInput.getBytes());
         System.setIn(inputStream);
@@ -158,7 +158,7 @@ public class UnitTest {
     }
 
     @Test
-    public void testPrintproduct() {
+    public void testPrintProduct() {
         String simulatedInput = String.join("\n", "1");
         InputStream inputStream = new ByteArrayInputStream(simulatedInput.getBytes());
         System.setIn(inputStream);
@@ -174,7 +174,7 @@ public class UnitTest {
     }
 
     @Test
-    public void testPrintallproducts() {
+    public void testPrintAllProducts() {
         String simulatedInput = String.join("\n", "");
         InputStream inputStream = new ByteArrayInputStream(simulatedInput.getBytes());
         System.setIn(inputStream);
@@ -190,7 +190,7 @@ public class UnitTest {
     }
 
     @Test
-    public void testRegisternewsupplier() {
+    public void testRegisterNewSupplier() {
         String simulatedInput = String.join("\n",
                 "Tnuva",           // name
                 "0",               // category
