@@ -28,6 +28,9 @@ public class SupplyContract {
    public int getContractId() {
       return contractId;
    }
+   public void setContractId(int contractId) {
+      this.contractId = contractId;
+   }
 
    public ArrayList<SupplyContractProductData> getSupplyContractProductData() {
       return this.supplyContractProductsDataArray;

@@ -50,4 +50,5 @@ public class Product {
     public String toString() {
         return this.productId + "\t" + this.productName + "\t" + this.productCompanyName + "\t" + this.productCategory;
     }
+
 }

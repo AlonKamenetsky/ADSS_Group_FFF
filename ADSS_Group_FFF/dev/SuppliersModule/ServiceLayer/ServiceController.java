@@ -184,7 +184,7 @@ public class ServiceController {
         return false;
     }
 
-    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
+    public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
         return this.supplierService.addProductsToOrder(orderID, dataList);
     }
 

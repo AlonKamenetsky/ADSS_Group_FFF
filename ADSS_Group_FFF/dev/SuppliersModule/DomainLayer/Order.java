@@ -56,7 +56,12 @@ public class Order {
     public SupplyMethod getSupplyMethod() {
         return supplyMethod;
     }
-
+    public ArrayList<int[]> getProductArrayList() {
+        return productArrayList;
+    }
+    public void setProductArrayList(ArrayList<int[]> productArrayList){
+        this.productArrayList = productArrayList;
+    }
     public void setSupplyMethod(SupplyMethod supplyMethod) {
         this.supplyMethod = supplyMethod;
     }

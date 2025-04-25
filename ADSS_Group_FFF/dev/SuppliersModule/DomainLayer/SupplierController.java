@@ -260,13 +260,20 @@ public class SupplierController {
         DeliveringMethod deliveringMethod = this.getSupplierDeliveringMethod(supplierId);
         ContactInfo contactInfo = this.getSupplierContactInfo(supplierId);
         SupplyMethod supplyMethod = this.getSupplierSupplyMethod(supplierId);
+        double totalPrice = calculateTotalPrice(supplierId, dataList);
+        if(totalPrice == -1)
+            return false;
+        this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
+        return true;
+    }
+    private double calculateTotalPrice(int supplierID, ArrayList<int[]> dataList) {
         double totalPrice = 0;
         for(int[] entry : dataList) {
 
             int productId = entry[0];
-            SupplyContract supplyContract = ValidateProductInContracts(supplierId, productId);
+            SupplyContract supplyContract = ValidateProductInContracts(supplierID, productId);
             if (supplyContract == null)
-                return false;
+                return -1;
             SupplyContractProductData data = supplyContract.getSupplyContractProductDataOfProduct(productId);
 
             int quantity = entry[1];
@@ -281,9 +288,7 @@ public class SupplierController {
                 totalPrice += productPrice*quantity;
 
         }
-
-        this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
-        return true;
+        return totalPrice;
     }
 
     public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
@@ -298,12 +303,32 @@ public class SupplierController {
         return this.orderController.updateOrderStatus(orderID, orderStatus);
     }
 
-    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
-        return orderController.addProductsToOrder(orderID, dataList);
+    public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
+        ArrayList<int[]> products = orderController.getOrderProducts(orderID);
+        if(products == null)
+            return false;
+        products.addAll(dataList);
+        double totalPrice = calculateTotalPrice(orderID, products);
+        orderController.setOrderPrice(orderID, totalPrice);
+        orderController.setOrderProducts(orderID, products);
+        return true;
+
     }
 
     public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
-        return orderController.removeProductsFromOrder(orderID, dataList);
+        ArrayList<int[]> products = orderController.getOrderProducts(orderID);
+        if(products == null)
+            return false;
+
+        products.removeIf(pair -> dataList.contains(pair[0]));
+        if(products.size() == 0){
+            this.deleteOrder(orderID);
+            return true;
+        }
+        double totalPrice = calculateTotalPrice(orderID, products);
+        orderController.setOrderProducts(orderID, products);
+        orderController.setOrderPrice(orderID, totalPrice);
+        return true;
     }
 
     public boolean deleteOrder(int orderID) {

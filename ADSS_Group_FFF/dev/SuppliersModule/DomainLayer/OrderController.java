@@ -4,6 +4,10 @@ import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,7 +18,55 @@ public class OrderController {
     public OrderController() {
         orderID = 0;
         ordersArrayList = new ArrayList<>();
+        readOrdersFromCSVFile();
 
+    }
+
+    public void readOrdersFromCSVFile() {
+        InputStream in = OrderController.class.getResourceAsStream("/orders_data.csv");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            String line;
+            boolean isFirstLine = true;
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+
+                String[] parts = line.split(",", 11); // first 10 fields + products
+                int supplierId = Integer.parseInt(parts[0]);
+                Date orderDate = sdf.parse(parts[1]);
+                Date supplyDate = sdf.parse(parts[2]);
+
+                DeliveringMethod deliveringMethod = DeliveringMethod.valueOf(parts[3].toUpperCase());
+                SupplyMethod supplyMethod = SupplyMethod.valueOf(parts[4].toUpperCase());
+
+                String contactName = parts[5];
+                String phone = parts[6];
+                String address = parts[7];
+                String email = parts[8];
+
+                double totalPrice = Double.parseDouble(parts[9]);
+
+                // Parse products
+                ArrayList<int[]> productList = new ArrayList<>();
+                String[] productEntries = parts[10].split(";");
+                for (String productEntry : productEntries) {
+                    String[] prod = productEntry.split(":");
+                    int productId = Integer.parseInt(prod[0]);
+                    int quantity = Integer.parseInt(prod[1]);
+                    productList.add(new int[]{productId, quantity});
+                }
+
+                ContactInfo contactInfo = new ContactInfo(contactName, email, phone, address);
+
+                this.registerOrder(supplierId, productList, totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
+            }
+        } catch (Exception e) {
+            System.err.println("Error reading orders CSV: " + e.getMessage());
+        }
     }
 
     public void registerOrder(int supplierId, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
@@ -108,33 +160,29 @@ public class OrderController {
         return ordersAsString;
     }
 
-    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
-        Order order = getOrder(orderID);
-        if (order != null){
-            for (Integer data : dataList) {
-                order.addProductToOrder(data);
+
+    public ArrayList<int[]>  getOrderProducts(int orderID){
+        for (Order order : ordersArrayList) {
+            if(order.orderID == orderID){
+                return order.getProductArrayList();
             }
-            return true;
         }
-        else
-            return false;
+        return null;
     }
 
-    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+    public boolean setOrderProducts(int orderID, ArrayList<int[]> productArrayList){
         Order order = getOrder(orderID);
-        if (order != null){
-            for (Integer data : dataList) {
-                order.removeProductFromOrder(data);
-            }
-            if(order.orderIsEmpty()){
-                ordersArrayList.remove(order);
-               // System.out.println("Order deleted because all products removed");
-            }
-
-            return true;
-        }
-        else
+        if(order == null)
             return false;
+        order.setProductArrayList(productArrayList);
+        return true;
+    }
+    public boolean setOrderPrice(int orderID, double price){
+        Order order = getOrder(orderID);
+        if(order == null)
+            return false;
+        order.setTotalPrice(price);
+        return true;
     }
 
     public boolean orderExists(int orderID) {

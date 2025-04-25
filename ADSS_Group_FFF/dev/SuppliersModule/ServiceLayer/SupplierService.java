@@ -108,7 +108,7 @@ public class SupplierService {
         return this.supplierController.updateOrderStatus(orderID, os);
     }
 
-    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
+    public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
         return this.supplierController.addProductsToOrder(orderID, dataList);
     }
 

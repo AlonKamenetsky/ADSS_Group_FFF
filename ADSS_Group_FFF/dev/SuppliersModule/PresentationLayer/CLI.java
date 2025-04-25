@@ -80,6 +80,7 @@ public class CLI {
 
         printProductCategoryMethods();
         int productCategory = sc.nextInt();
+        sc.nextLine();
 
         System.out.println("Enter bank account ID: ");
         String bankAccountInfo = sc.nextLine();
@@ -87,10 +88,12 @@ public class CLI {
         System.out.println("Enter payment method: ");
         printPaymentMethods();
         int paymentMethod = sc.nextInt();
+        sc.nextLine();
 
         System.out.println("Enter delivery method: ");
         printDeliveryMethods();
         int deliveringMethod = sc.nextInt();
+        sc.nextLine();
 
         System.out.println("--Creating new contact info--");
         System.out.println("Enter phone number: ");
@@ -104,6 +107,7 @@ public class CLI {
 
         System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
         int supplyMethod = sc.nextInt();
+        sc.nextLine();
 
         int supplierID = this.serviceController.RegisterNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod);
 
@@ -366,14 +370,18 @@ public class CLI {
             System.out.println(conrtractString);
 
         System.out.println("Enter product ID (Enter -1 for exit): ");
-        ArrayList<Integer> dataArray = new ArrayList<>();
+        ArrayList<int[]> dataArray = new ArrayList<>();
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
             int productID = sc.nextInt();
             sc.nextLine();
             if (productID == -1)
                 break;
-            dataArray.add(productID);
+            System.out.println("Enter quantity");
+            int quantity = sc.nextInt();
+            sc.nextLine();
+            int [] data = {productID, quantity};
+            dataArray.add(data);
         }
 
         boolean resultAdd = this.serviceController.addProductsToOrder(orderID, dataArray);
