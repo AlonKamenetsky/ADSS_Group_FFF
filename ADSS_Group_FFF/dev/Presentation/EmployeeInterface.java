@@ -31,13 +31,15 @@ public class EmployeeInterface {
 );
             ConsoleUtils.typewriterPrint("4. View Weekly Availability (this week)", 20
 );
-            ConsoleUtils.typewriterPrint("5. Add Vacation", 20
+            ConsoleUtils.typewriterPrint("5. View Weekly Availability (next week)", 20
 );
-            ConsoleUtils.typewriterPrint("6. View Vacation Dates", 20
+            ConsoleUtils.typewriterPrint("6. Add Vacation", 20
 );
-            ConsoleUtils.typewriterPrint("7. Exit", 20
+            ConsoleUtils.typewriterPrint("7. View Vacation Dates", 20
 );
-            ConsoleUtils.typewriterPrint("> ", 20
+            ConsoleUtils.typewriterPrint("8. Exit", 20
+);
+            ConsoleUtils.typewriterPrint("", 20
 );
 
             int choice = scanner.nextInt();
@@ -47,9 +49,10 @@ public class EmployeeInterface {
                 case 2 -> sendSwapRequest(scanner);
                 case 3 -> sendWeeklyAvailability(scanner);
                 case 4 -> viewWeeklyAvailability();
-                case 5 -> addVacation(scanner);
-                case 6 -> viewHolidays();
-                case 7 -> exit = true;
+                case 5 -> viewNextWeeklyAvailability();
+                case 6 -> addVacation(scanner);
+                case 7 -> viewHolidays();
+                case 8 -> exit = true;
                 default -> ConsoleUtils.typewriterPrint("Invalid choice.", 20
 );
             }
@@ -167,7 +170,7 @@ public class EmployeeInterface {
                         w.getTime()
                 );
             }
-            ConsoleUtils.typewriterPrint("> ", 20
+            ConsoleUtils.typewriterPrint("", 20
 );
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -209,6 +212,17 @@ public class EmployeeInterface {
         }
         if (employee.getAvailabilityThisWeek().isEmpty()) {
             ConsoleUtils.typewriterPrint("No availability set for this week.", 20
+);
+        }
+    }    private void viewNextWeeklyAvailability() {
+        ConsoleUtils.typewriterPrint("\nYour Weekly Availability (next week):", 20
+);
+        for (WeeklyAvailability w : employee.getAvailabilityNextWeek()) {
+            ConsoleUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
+);
+        }
+        if (employee.getAvailabilityThisWeek().isEmpty()) {
+            ConsoleUtils.typewriterPrint("No availability set for next week.", 20
 );
         }
     }

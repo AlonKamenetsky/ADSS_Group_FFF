@@ -67,7 +67,7 @@ public class LoginScreen {
                     for (int i = 0; i < roles.size(); i++) {
                         System.out.printf("  %d) %s%n", i+1, roles.get(i).getName());
                     }
-                    ConsoleUtils.typewriterPrint("> ", 20
+                    ConsoleUtils.typewriterPrint("", 20
 );
                     String line = scanner.nextLine().trim();
                     try {
