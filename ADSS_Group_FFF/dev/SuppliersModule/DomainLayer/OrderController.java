@@ -1,6 +1,7 @@
 package SuppliersModule.DomainLayer;
 
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
+import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.util.ArrayList;
@@ -55,6 +56,14 @@ public class OrderController {
         return false;
     }
 
+    public boolean updateOrderStatus(int orderID, OrderStatus orderStatus){
+        Order order = getOrder(orderID);
+        if (order != null) {
+            order.orderStatus = orderStatus;
+            return true;
+        }
+        return false;
+    }
 
     public boolean deleteOrder(int orderID){
         for (Order order : ordersArrayList) {
@@ -75,6 +84,14 @@ public class OrderController {
         return null;
     }
 
+    public int getOrderSupplierID(int orderID){
+        Order order = getOrder(orderID);
+        if (order != null) {
+            return order.getSupplierID();
+        }
+        return -1;
+    }
+
     public String getOrderAsString(int orderID){
         Order order = getOrder(orderID);
         if (order != null){
@@ -91,6 +108,18 @@ public class OrderController {
         return ordersAsString;
     }
 
+    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
+        Order order = getOrder(orderID);
+        if (order != null){
+            for (Integer data : dataList) {
+                order.addProductToOrder(data);
+            }
+            return true;
+        }
+        else
+            return false;
+    }
+
     public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
         Order order = getOrder(orderID);
         if (order != null){
@@ -99,21 +128,17 @@ public class OrderController {
             }
             if(order.orderIsEmpty()){
                 ordersArrayList.remove(order);
-                System.out.println("Order deleted because all products removed");
+               // System.out.println("Order deleted because all products removed");
             }
-            else{
 
-            }
             return true;
         }
         else
             return false;
     }
+
     public boolean orderExists(int orderID) {
         Order order = getOrder(orderID);
-        if (order != null){
-            return true;
-        }
-        return false;
+        return order != null;
     }
 }

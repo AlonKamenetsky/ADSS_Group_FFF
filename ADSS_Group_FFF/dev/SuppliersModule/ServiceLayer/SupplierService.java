@@ -2,10 +2,7 @@ package SuppliersModule.ServiceLayer;
 
 import SuppliersModule.DomainLayer.*;
 
-import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
-import SuppliersModule.DomainLayer.Enums.PaymentMethod;
-import SuppliersModule.DomainLayer.Enums.ProductCategory;
-import SuppliersModule.DomainLayer.Enums.SupplyMethod;
+import SuppliersModule.DomainLayer.Enums.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,6 +77,18 @@ public class SupplierService {
         return this.supplierController.registerNewContract(supplierID, dataList);
     }
 
+    public String[] GetSupplierContractsAsString(int supplierID) {
+        return this.supplierController.GetSupplierContractsAsString(supplierID);
+    }
+
+    public String[] getAvailableContractsForOrderAsString(int orderID) {
+        return this.supplierController.getAvailableContractsForOrderAsString(orderID);
+    }
+
+    public String getContractToString(int contractID) {
+        return this.supplierController.getContractToString(contractID);
+    }
+
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
@@ -94,26 +103,23 @@ public class SupplierService {
         return this.supplierController.updateOrderSupplyDate(orderID, supplyDate);
     }
 
-    public void updateOrderSupplyMethod() {
-
+    public boolean updateOrderStatus(int orderID, int orderStatus) {
+        OrderStatus os = OrderStatus.values()[orderStatus];
+        return this.supplierController.updateOrderStatus(orderID, os);
     }
 
-    public void removeProductsFromOrder() {
-
+    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
+        return this.supplierController.addProductsToOrder(orderID, dataList);
     }
 
-    public void addProductsToOrder() {
-
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return this.supplierController.removeProductsFromOrder(orderID, dataList);
     }
-
 
     public boolean deleteOrder(int orderID) {
         return this.supplierController.deleteOrder(orderID);
     }
 
-    public String getContractToString(int contractID) {
-        return this.supplierController.getContractToString(contractID);
-    }
 
     public Date getOrderSupplyDate(int orderID){
         return this.supplierController.getOrderSupplyDate(orderID);
@@ -127,9 +133,6 @@ public class SupplierService {
         return this.supplierController.getAllOrdersAsString();
     }
 
-    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
-        return supplierController.removeProductsFromOrder(orderID, dataList);
-    }
     public boolean orderExists(int orderID) {
         return this.supplierController.orderExists(orderID);
     }

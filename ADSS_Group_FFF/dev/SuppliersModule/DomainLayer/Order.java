@@ -1,9 +1,9 @@
 package SuppliersModule.DomainLayer;
 
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
+import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,6 +12,7 @@ public class Order {
     int orderID;
     int supplierID;
     ContactInfo supplierContactInfo;
+    DeliveringMethod deliveringMethod;
 
     Date orderDate;
     Date supplyDate;
@@ -22,16 +23,23 @@ public class Order {
 
     ArrayList<int[]> productArrayList;
 
+    OrderStatus orderStatus;
+
     public Order(int orderID, int supplierID, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
         this.orderID = orderID;
         this.supplierID = supplierID;
         this.supplierContactInfo = supplierContactInfo;
+        this.deliveringMethod = deliveringMethod;
         this.orderDate = creationDate;
         this.supplyDate = deliveryDate;
         this.totalPrice = totalOrderValue;
         this.productArrayList = dataList;
         this.supplyMethod = supplyMethod;
 
+        this.orderStatus = OrderStatus.RECEIVED;
+    }
+    public int getSupplierID(){
+        return orderID;
     }
     public ContactInfo getOrderContactInfo() {
         return supplierContactInfo;
@@ -61,6 +69,20 @@ public class Order {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public void addProductToOrder(int productID) {
+        for (int i = 0; i < productArrayList.size(); i++) {
+            int[] product = productArrayList.get(i);
+            if (product[0] == productID) { // product[0] is ID
+                productArrayList.add(product);
+                break; // stop after first match
+            }
+        }
+    }
+
     public void removeProductFromOrder(int productID) {
         for (int i = 0; i < productArrayList.size(); i++) {
             int[] product = productArrayList.get(i);
@@ -70,11 +92,11 @@ public class Order {
             }
         }
     }
+
     public boolean orderIsEmpty(){
-        if(this.productArrayList.isEmpty())
-            return true;
-        return false;
+        return this.productArrayList.isEmpty();
     }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

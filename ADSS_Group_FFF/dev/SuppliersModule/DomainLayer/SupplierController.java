@@ -1,9 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
-import SuppliersModule.DomainLayer.Enums.PaymentMethod;
-import SuppliersModule.DomainLayer.Enums.ProductCategory;
-import SuppliersModule.DomainLayer.Enums.SupplyMethod;
+import SuppliersModule.DomainLayer.Enums.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +12,9 @@ import java.util.Date;
 public class SupplierController {
     OrderController orderController;
     SupplyContractController supplyContractController;
+
     int numberOfSuppliers;
-    ArrayList<Supplier> suppliersArrayList; // TEMP DATA STRUCTURE
+    ArrayList<Supplier> suppliersArrayList;
 
     public SupplierController() {
         this.numberOfSuppliers = 0;
@@ -210,6 +208,35 @@ public class SupplierController {
         return true;
     }
 
+    public String[] getAvailableContractsForOrderAsString(int orderID) {
+        int supplierID = this.orderController.getOrderSupplierID(orderID);
+        Supplier supplier = getSupplier(supplierID);
+        if (supplier == null)
+            return null;
+
+        ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
+
+        String[] result = new String[supplyContractArrayList.size()];
+        for (int i = 0; i < supplyContractArrayList.size(); i++)
+            result[i] = supplyContractArrayList.get(i).toString();
+
+        return result;
+    }
+
+    public String[] GetSupplierContractsAsString(int supplierID) {
+        Supplier supplier = getSupplier(supplierID);
+        if (supplier == null)
+            return null;
+
+        ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
+
+        String[] result = new String[supplyContractArrayList.size()];
+        for (int i = 0; i < supplyContractArrayList.size(); i++)
+            result[i] = supplyContractArrayList.get(i).toString();
+
+        return result;
+    }
+
     public String getContractToString(int contractID) {
         return this.supplyContractController.getContractToString(contractID);
     }
@@ -250,9 +277,9 @@ public class SupplierController {
                 productPrice = productPrice*((100 - data.getDiscountPercentage()) / 100);
                 totalPrice +=  productPrice*quantity;
             }
-            else {
+            else
                 totalPrice += productPrice*quantity;
-            }
+
         }
 
         this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
@@ -267,6 +294,17 @@ public class SupplierController {
         return this.orderController.updateOrderSupplyDate(orderID, supplyDate);
     }
 
+    public boolean updateOrderStatus(int orderID, OrderStatus orderStatus) {
+        return this.orderController.updateOrderStatus(orderID, orderStatus);
+    }
+
+    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
+        return orderController.addProductsToOrder(orderID, dataList);
+    }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return orderController.removeProductsFromOrder(orderID, dataList);
+    }
 
     public boolean deleteOrder(int orderID) {
         return this.orderController.deleteOrder(orderID);
@@ -284,9 +322,6 @@ public class SupplierController {
         return this.orderController.getAllOrdersAsString();
     }
 
-    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
-        return orderController.removeProductsFromOrder(orderID, dataList);
-    }
     public boolean orderExists(int orderID) {
         return orderController.orderExists(orderID);
     }

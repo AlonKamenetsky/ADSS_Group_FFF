@@ -1,10 +1,6 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
-import SuppliersModule.DomainLayer.Enums.PaymentMethod;
-import SuppliersModule.DomainLayer.Enums.ProductCategory;
-import SuppliersModule.DomainLayer.Enums.SupplyMethod;
-import SuppliersModule.DomainLayer.SupplyContract;
+import SuppliersModule.DomainLayer.Enums.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,7 +62,9 @@ public class ServiceController {
         }
     }
 
-
+    private boolean validateOrderStatus(int orderStatus) {
+        return (orderStatus > 0 && orderStatus < OrderStatus.values().length);
+    }
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
@@ -147,6 +145,14 @@ public class ServiceController {
         return this.supplierService.registerNewContract(supplierID, dataList);
     }
 
+    public String[] GetSupplierContractsAsString(int supplierID) {
+        return this.supplierService.GetSupplierContractsAsString(supplierID);
+    }
+
+    public String[] getAvailableContractsForOrderAsString(int orderID) {
+        return this.supplierService.getAvailableContractsForOrderAsString(orderID);
+    }
+
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
@@ -172,6 +178,19 @@ public class ServiceController {
         return this.supplierService.updateOrderSupplyDate(orderID, supplyDateAsDate);
     }
 
+    public boolean updateOrderStatus(int orderID, int orderStatus) {
+        if (this.validateOrderStatus(orderID))
+            return this.supplierService.updateOrderStatus(orderID, orderStatus);
+        return false;
+    }
+
+    public boolean addProductsToOrder(int orderID, ArrayList<Integer> dataList) {
+        return this.supplierService.addProductsToOrder(orderID, dataList);
+    }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        return this.supplierService.removeProductsFromOrder(orderID, dataList);
+    }
 
     public boolean deleteOrder(int orderID) {
         return this.supplierService.deleteOrder(orderID);
@@ -184,9 +203,7 @@ public class ServiceController {
     public String[] getAllOrdersAsString() {
         return this.supplierService.getAllOrdersAsString();
     }
-    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
-        return supplierService.removeProductsFromOrder(orderID, dataList);
-    }
+
     public boolean orderExists(int orderID) {
         return supplierService.orderExists(orderID);
     }
