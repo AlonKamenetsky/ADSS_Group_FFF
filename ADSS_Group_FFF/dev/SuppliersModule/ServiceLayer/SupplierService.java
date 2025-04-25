@@ -77,7 +77,7 @@ public class SupplierService {
         return this.supplierController.registerNewContract(supplierID, dataList);
     }
 
-    public String[] GetSupplierContractsAsString(int supplierID) {
+    public String[] getSupplierContractsAsString(int supplierID) {
         return this.supplierController.GetSupplierContractsAsString(supplierID);
     }
 
@@ -87,6 +87,9 @@ public class SupplierService {
 
     public String getContractToString(int contractID) {
         return this.supplierController.getContractToString(contractID);
+    }
+    public String[] getAllContractToStrings(){
+        return this.supplierController.getAllContractToStrings();
     }
 
     // --------------------------- ORDER FUNCTIONS ---------------------------

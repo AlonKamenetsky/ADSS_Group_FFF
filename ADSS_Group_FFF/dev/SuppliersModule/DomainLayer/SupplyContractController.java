@@ -53,7 +53,8 @@ public class SupplyContractController {
                 double productPrice = Double.parseDouble(parts[2]);
                 int quantityForDiscount = Integer.parseInt(parts[3]);
                 double discountPercentage = Double.parseDouble(parts[4]);
-                int contractId = Integer.parseInt(parts[5]);
+                int contractId = this.contractId;
+                this.contractId++;
 
                 String uniqueKey = supplierId + "_" + contractId;
 
@@ -74,6 +75,7 @@ public class SupplyContractController {
 
         for (List<SupplyContract> contractslist : supplierToContracts.values())
             this.supplyContracts.addAll(contractslist);
+
     }
 
     private SupplyContract getContractByContactID(int contractID) {
@@ -123,5 +125,12 @@ public class SupplyContractController {
             return supplyContract.toString();
         }
         return null;
+    }
+    public String[] getAllContractToStrings() {
+        String[] contractToStrings = new String[supplyContracts.size()];
+        for(int i = 0; i < supplyContracts.size(); i++){
+            contractToStrings[i] = supplyContracts.get(i).toString();
+        }
+        return contractToStrings;
     }
 }

@@ -63,7 +63,7 @@ public class ServiceController {
     }
 
     private boolean validateOrderStatus(int orderStatus) {
-        return (orderStatus > 0 && orderStatus < OrderStatus.values().length);
+        return (orderStatus >= 0 && orderStatus < OrderStatus.values().length);
     }
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
@@ -80,21 +80,21 @@ public class ServiceController {
         return false;
     }
 
-    public boolean DeleteProduct(int productID) {
+    public boolean deleteProduct(int productID) {
         return this.productService.deleteProduct(productID);
     }
 
-    public String[] GetAllProductsAsStrings() {
+    public String[] getAllProductsAsStrings() {
         return this.productService.getProductsAsString();
     }
 
-    public String GetProductAsString(int productID) {
+    public String getProductAsString(int productID) {
         return this.productService.getProductAsString(productID);
     }
 
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
-    public int RegisterNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,
+    public int registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,
                                     String phoneNumber, String address, String email, String contactName,
                                     String bankAccount, int paymentMethod) {
         if (this.validateProductCategory(productCategory) && this.validateSupplyMethod(supplyMethod) && this.validateDeliveringMethod(deliveringMethod) && this.validatePaymentMethod(paymentMethod))
@@ -102,42 +102,42 @@ public class ServiceController {
         return -1;
     }
 
-    public boolean UpdateSupplierName(int supplierID, String supplierName) {
+    public boolean updateSupplierName(int supplierID, String supplierName) {
         return this.supplierService.updateSupplierName(supplierID, supplierName);
     }
 
-    public boolean UpdateSupplierDeliveringMethod(int supplierID, int deliveringMethod) {
+    public boolean updateSupplierDeliveringMethod(int supplierID, int deliveringMethod) {
         if (this.validateDeliveringMethod(deliveringMethod))
             return this.supplierService.updateSupplierDeliveringMethod(supplierID, deliveringMethod);
         return false;
     }
 
-    public boolean UpdateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName) {
+    public boolean updateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName) {
         return this.supplierService.updateSupplierContactInfo(supplierID, phoneNumber, address, email, contactName);
     }
 
-    public boolean UpdateSupplierPaymentInfo(int supplierId, String bankAccount, int paymentMethod) {
+    public boolean updateSupplierPaymentInfo(int supplierId, String bankAccount, int paymentMethod) {
         if (this.validatePaymentMethod(paymentMethod))
             return this.supplierService.updateSupplierPaymentInfo(supplierId, bankAccount, paymentMethod);
         return false;
     }
 
-    public boolean DeleteSupplier(int supplierID) {
+    public boolean deleteSupplier(int supplierID) {
         return supplierService.deleteSupplier(supplierID);
     }
 
-    public String[] GetAllSuppliersAsString() {
+    public String[] getAllSuppliersAsString() {
         return this.supplierService.getAllSuppliersAsString();
     }
 
-    public String GetSupplierAsString(int supplierID) {
+    public String getSupplierAsString(int supplierID) {
         return this.supplierService.getSupplierAsString(supplierID);
     }
 
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
-    public boolean RegisterNewContract(int supplierID, ArrayList<int[]> dataList) {
+    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
         for (int[] data : dataList)
             if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3]))
                 return false;
@@ -145,13 +145,20 @@ public class ServiceController {
         return this.supplierService.registerNewContract(supplierID, dataList);
     }
 
-    public String[] GetSupplierContractsAsString(int supplierID) {
-        return this.supplierService.GetSupplierContractsAsString(supplierID);
+    public String[] getSupplierContractsAsString(int supplierID) {
+        return this.supplierService.getSupplierContractsAsString(supplierID);
+    }
+    public String getContractsAsString(int contractID) {
+        return supplierService.getContractToString(contractID);
     }
 
     public String[] getAvailableContractsForOrderAsString(int orderID) {
         return this.supplierService.getAvailableContractsForOrderAsString(orderID);
     }
+    public String[] getAllContractToStrings(){
+        return this.supplierService.getAllContractToStrings();
+    }
+
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 

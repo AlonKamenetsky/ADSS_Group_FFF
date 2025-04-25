@@ -240,6 +240,9 @@ public class SupplierController {
     public String getContractToString(int contractID) {
         return this.supplyContractController.getContractToString(contractID);
     }
+    public String[] getAllContractToStrings(){
+        return supplyContractController.getAllContractToStrings();
+    }
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
@@ -350,4 +353,5 @@ public class SupplierController {
     public boolean orderExists(int orderID) {
         return orderController.orderExists(orderID);
     }
+
 }

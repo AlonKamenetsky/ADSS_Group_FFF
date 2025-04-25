@@ -35,8 +35,7 @@ public class Order {
         this.totalPrice = totalOrderValue;
         this.productArrayList = dataList;
         this.supplyMethod = supplyMethod;
-
-        this.orderStatus = OrderStatus.RECEIVED;
+        this.orderStatus = OrderStatus.IN_PROCESS;
     }
     public int getSupplierID(){
         return orderID;

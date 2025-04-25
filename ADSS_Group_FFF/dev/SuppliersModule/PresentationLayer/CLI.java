@@ -25,7 +25,7 @@ public class CLI {
 
         System.out.println("Enter product category (0-6): ");
         this.printProductCategoryMethods();
-        int productCategory = sc.nextInt();
+        int productCategory = readInt();
 
         int productID = serviceController.registerNewProduct(productName, productCompanyName, productCategory);
         if (productID != -1) System.out.println("Product added successfully.");
@@ -35,7 +35,7 @@ public class CLI {
 
     public void updateProduct() {
         System.out.println("Which product you want to change? Enter product: ");
-        int productId = sc.nextInt();
+        int productId = readInt();
 
         System.out.println("Enter new product name: ");
         String newProductName = sc.nextLine();
@@ -45,7 +45,7 @@ public class CLI {
 
         System.out.println("Enter product category: ");
         this.printProductCategoryMethods();
-        int productCategory = sc.nextInt();
+        int productCategory = readInt();
 
         boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany, productCategory);
         if (result) System.out.println("Product updated successfully.");
@@ -54,21 +54,21 @@ public class CLI {
 
     public void deleteProduct() {
         System.out.println("Which product do you want to delete? Enter product ID");
-        int productId = sc.nextInt();
-        boolean result = serviceController.DeleteProduct(productId);
+        int productId = readInt();
+        boolean result = serviceController.deleteProduct(productId);
         if (result) System.out.println("Product deleted successfully.");
         else System.out.println("Error deleting product: no such product exists.");
     }
 
     public void printProduct() {
         System.out.println("Which product do you want to search? Enter product ID: ");
-        int productId = sc.nextInt();
-        String result = this.serviceController.GetProductAsString(productId);
+        int productId = readInt();
+        String result = this.serviceController.getProductAsString(productId);
         System.out.println(Objects.requireNonNullElse(result, "Error: No such product exists."));
     }
 
     public void printAllProducts() {
-        for (String productString : this.serviceController.GetAllProductsAsStrings())
+        for (String productString : this.serviceController.getAllProductsAsStrings())
             System.out.println(productString);
     }
 
@@ -79,21 +79,18 @@ public class CLI {
         String supplierName = sc.nextLine();
 
         printProductCategoryMethods();
-        int productCategory = sc.nextInt();
-        sc.nextLine();
+        int productCategory = readInt();
 
         System.out.println("Enter bank account ID: ");
         String bankAccountInfo = sc.nextLine();
 
         System.out.println("Enter payment method: ");
         printPaymentMethods();
-        int paymentMethod = sc.nextInt();
-        sc.nextLine();
+        int paymentMethod = readInt();
 
         System.out.println("Enter delivery method: ");
         printDeliveryMethods();
-        int deliveringMethod = sc.nextInt();
-        sc.nextLine();
+        int deliveringMethod = readInt();
 
         System.out.println("--Creating new contact info--");
         System.out.println("Enter phone number: ");
@@ -106,10 +103,9 @@ public class CLI {
         String contactName = sc.nextLine();
 
         System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
-        int supplyMethod = sc.nextInt();
-        sc.nextLine();
+        int supplyMethod = readInt();
 
-        int supplierID = this.serviceController.RegisterNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod);
+        int supplierID = this.serviceController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod);
 
         if (supplierID == -1) System.out.println("Error creating new supplier.");
         else System.out.println("Supplier registered successfully.");
@@ -120,11 +116,22 @@ public class CLI {
         System.out.println("Contract added successfully.");
     }
 
+    public void updateSupplier() {
+        System.out.println("Which supplier to update? Enter supplier ID: ");
+        int supplierID = readInt();
+
+        printSupplierUpdateOption();
+        System.out.println("Enter option: ");
+        int option = readInt();
+
+        chooseSupplierUpdateOption(option, supplierID);
+    }
+
     private void updateSupplierName(int supplierID) {
         System.out.println("Enter new supplier name: ");
         String SupplierName = sc.nextLine();
 
-        boolean result = this.serviceController.UpdateSupplierName(supplierID, SupplierName);
+        boolean result = this.serviceController.updateSupplierName(supplierID, SupplierName);
         if (result) System.out.println("Supplier name updated successfully.");
         else System.out.println("Supplier name update failed.");
     }
@@ -132,9 +139,9 @@ public class CLI {
     private void updateSupplierDeliveryMethod(int supplierID) {
         System.out.println("Enter delivery method: ");
         this.printDeliveryMethods();
-        int deliveryMethod = sc.nextInt();
+        int deliveryMethod = readInt();
 
-        boolean result = this.serviceController.UpdateSupplierDeliveringMethod(supplierID, deliveryMethod);
+        boolean result = this.serviceController.updateSupplierDeliveringMethod(supplierID, deliveryMethod);
         if (result) System.out.println("Supplier delivery method updated successfully.");
         else System.out.println("Supplier delivery method update failed.");
     }
@@ -149,7 +156,7 @@ public class CLI {
         System.out.println("Enter contact name: ");
         String ContactName = sc.nextLine();
 
-        boolean result = this.serviceController.UpdateSupplierContactInfo(supplierID, phoneNumber, address, email, ContactName);
+        boolean result = this.serviceController.updateSupplierContactInfo(supplierID, phoneNumber, address, email, ContactName);
         if (result) System.out.println("Supplier contact info updated successfully.");
         else System.out.println("Supplier contact info update failed.");
     }
@@ -158,44 +165,34 @@ public class CLI {
         System.out.println("Enter new bank account ID: ");
         String bankAccountInfo = sc.nextLine();
         System.out.println("Enter payment method: ");
-        int paymentMethod = sc.nextInt();
+        int paymentMethod = readInt();
 
-        boolean result = this.serviceController.UpdateSupplierPaymentInfo(supplierID, bankAccountInfo, paymentMethod);
+        boolean result = this.serviceController.updateSupplierPaymentInfo(supplierID, bankAccountInfo, paymentMethod);
         if (result) System.out.println("Supplier payment info updated successfully.");
         else System.out.println("Supplier payment info update failed.");
     }
 
-    public void updateSupplier() {
-        System.out.println("Which supplier to update? Enter supplier ID: ");
-        int supplierID = sc.nextInt();
-        sc.nextLine();
 
-        printSupplierUpdateOption();
-        System.out.println("Enter option: ");
-        int option = sc.nextInt();
-
-        chooseSupplierUpdateOption(option, supplierID);
-    }
 
     private void deleteSupplier() {
         System.out.println("Which supplier you want to delete? Enter supplier ID: ");
-        int supplierId = sc.nextInt();
+        int supplierId = readInt();
 
-        boolean result = serviceController.DeleteSupplier(supplierId);
+        boolean result = serviceController.deleteSupplier(supplierId);
         if (result) System.out.println("Supplier deleted successfully.");
         else System.out.println("Error: No such supplier exists.");
     }
 
     private void printSupplier() {
         System.out.println("Which supplier do you want to search? Enter supplier ID: ");
-        int supplierId = sc.nextInt();
+        int supplierId = readInt();
 
-        String result = this.serviceController.GetSupplierAsString(supplierId);
+        String result = this.serviceController.getSupplierAsString(supplierId);
         System.out.println(Objects.requireNonNullElse(result, "Error: No such supplier exists."));
     }
 
     private void printAllSuppliers() {
-        for (String supplierString : this.serviceController.GetAllSuppliersAsString())
+        for (String supplierString : this.serviceController.getAllSuppliersAsString())
             System.out.println(supplierString);
     }
 
@@ -205,26 +202,42 @@ public class CLI {
         ArrayList<int[]> dataArray = new ArrayList<>();
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
-            int productID = sc.nextInt();
+            int productID = readInt();
             if (productID == -1) break;
             System.out.println("Enter product price: ");
-            int price = sc.nextInt();
+            int price = readInt();
             System.out.println("Enter quantity for discount: ");
-            int quantityForDiscount = sc.nextInt();
+            int quantityForDiscount = readInt();
             System.out.println("Enter discount percentage: ");
-            int discountPercentage = sc.nextInt();
+            int discountPercentage = readInt();
 
             int[] data = {productID, price, quantityForDiscount, discountPercentage};
             dataArray.add(data);
         }
+        if(this.serviceController.registerNewContract(supplierId, dataArray)) {
+            System.out.println("Supplier registered successfully.");
+            return;
+        }
+        System.out.println("Error");
 
-        boolean result = this.serviceController.RegisterNewContract(supplierId, dataArray);
-        if (result) System.out.println("Contract registered successfully.");
-        else System.out.println("Error: Failed to register new contract.");
+    }
+    private void deleteSupplyContract() {
     }
 
+    private void printSupplyContract() {
+        System.out.println("Enter contract ID: ");
+        int contractID = readInt();
+        System.out.println(serviceController.getContractsAsString(contractID));
+    }
+
+    private void printAllSupplyContracts() {
+        String[] contracts = serviceController.getAllContractToStrings();
+        for(String contract : contracts){
+            System.out.println(contract);
+        }
+    }
     private void printSupplierContracts(int supplierId) {
-        String[] result = this.serviceController.GetSupplierContractsAsString(supplierId);
+        String[] result = this.serviceController.getSupplierContractsAsString(supplierId);
         if (result == null) {
             System.out.println("Error: No such supplier exists.");
             return;
@@ -242,22 +255,20 @@ public class CLI {
 
         this.printAllSuppliers();
         System.out.println("Which supplier you want to order from? Enter supplier ID");
-        int supplierId = sc.nextInt();
-        sc.nextLine();
+        int supplierId = readInt();
         this.printSupplierContracts(supplierId);
 
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
-            int productID = sc.nextInt();
+            int productID = readInt();
             if (productID == -1) {
                 break;
             }
             System.out.println("Enter quantity");
-            int quantity = sc.nextInt();
+            int quantity = readInt();
             int data[] = {productID, quantity};
             dataArray.add(data);
         }
-        sc.nextLine();
         System.out.println("enter delivery date");
         String deliveryDate = sc.nextLine();
         if (serviceController.registerNewOrder(supplierId, dataArray, today, deliveryDate)) {
@@ -269,15 +280,13 @@ public class CLI {
 
     private void updateOrder() {
         System.out.println("Which order you want to update? Enter orderID: ");
-        int orderID = sc.nextInt();
-        sc.nextLine();
+        int orderID = readInt();
         if(!serviceController.orderExists(orderID)) {
             System.out.println("Order does not exist.");
         }
         System.out.println("What do you want to update?");
         printOrderUpdateOption();
-        int option = sc.nextInt();
-        sc.nextLine();
+        int option = readInt();
         switch (option) {
             case 1:
                 updateOrderContactInfo(orderID);
@@ -331,11 +340,9 @@ public class CLI {
     private void updateOrderStatus(int orderID) {
         this.printOrderStatusMethods();
         System.out.println("Enter order status: ");
-        int status = sc.nextInt();
-        sc.nextLine();
+        int status = readInt();
 
-        boolean result = serviceController.updateOrderStatus(orderID, status);
-        if (result)
+        if (serviceController.updateOrderStatus(orderID, status))
             System.out.println("Order status updated successfully.");
         else
             System.out.println("Order status update failed.");
@@ -345,8 +352,7 @@ public class CLI {
         ArrayList<Integer> dataArray = new ArrayList<>();
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
-            int productID = sc.nextInt();
-            sc.nextLine();
+            int productID = readInt();
             if (productID == -1)
                 break;
             dataArray.add(productID);
@@ -373,13 +379,11 @@ public class CLI {
         ArrayList<int[]> dataArray = new ArrayList<>();
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
-            int productID = sc.nextInt();
-            sc.nextLine();
+            int productID = readInt();
             if (productID == -1)
                 break;
             System.out.println("Enter quantity");
-            int quantity = sc.nextInt();
-            sc.nextLine();
+            int quantity = readInt();
             int [] data = {productID, quantity};
             dataArray.add(data);
         }
@@ -393,8 +397,7 @@ public class CLI {
 
     private void deleteOrder() {
         System.out.println("Enter Order ID: ");
-        int orderID = sc.nextInt();
-        sc.nextLine();
+        int orderID = readInt();
         if (!serviceController.orderExists(orderID)) {
             System.out.println("Order does not exist.");
             return;
@@ -408,8 +411,7 @@ public class CLI {
 
     private void printOrder() {
         System.out.println("Enter Order ID: ");
-        int orderID = sc.nextInt();
-        sc.nextLine();
+        int orderID = readInt();
         String result = this.serviceController.getOrderAsString(orderID);
         System.out.println(Objects.requireNonNullElse(result, "Error: No such order exists."));
     }
@@ -418,6 +420,7 @@ public class CLI {
         for (String orderString : this.serviceController.getAllOrdersAsString())
             System.out.println(orderString);
     }
+
 
 
     // ------------------- CLI print Functions -------------------
@@ -438,6 +441,75 @@ public class CLI {
         System.out.println("5. Print all products");
         System.out.println("6. Exit");
     }
+    public void printSupplierOptions() {
+        System.out.println("1. Register a new supplier");
+        System.out.println("2. Update supplier info");
+        System.out.println("3. Delete supplier");
+        System.out.println("4. Print supplier");
+        System.out.println("5. Print all suppliers");
+        System.out.println("6. Exit");
+    }
+    public void printSupplierUpdateOption() {
+        System.out.println("1. Update supplier name");
+        System.out.println("2. Update supplier delivery method");
+        System.out.println("3. Update supplier contact info");
+        System.out.println("4. Update supplier payment info");
+        System.out.println("5. Exit");
+    }
+    public void printContractOptions() {
+        System.out.println("1. Register a new contract");
+        System.out.println("2. Delete supplier contract");
+        System.out.println("3. print contract info");
+        System.out.println("4. print all contracts");
+        System.out.println("5. Exit");
+    }
+
+    public void printOrderOptions() {
+        System.out.println("1. Add order");
+        System.out.println("2. Update order");
+        System.out.println("3. Delete order");
+        System.out.println("4. print order");
+        System.out.println("5. print all orders");
+        System.out.println("6. Exit");
+    }
+
+    private void printOrderUpdateOption() {
+        System.out.println("1. update order contact info");
+        System.out.println("2. update order supply date");
+        System.out.println("3. remove products from order");
+        System.out.println("4. add products to order");
+        System.out.println("5. update order status");
+        System.out.println("6. go back");
+    }
+    private void printPaymentMethods() {
+        System.out.println("0. Check");
+        System.out.println("1. BANK_TRANSACTION");
+        System.out.println("2. Cash");
+    }
+
+    private void printDeliveryMethods() {
+        System.out.println("0. Pick up");
+        System.out.println("1. Self delivering");
+    }
+    private void printProductCategoryMethods() {
+        System.out.println("0. DIARY");
+        System.out.println("1. FROZEN");
+        System.out.println("2. FRUITS AND VEGETABLES");
+        System.out.println("3. DRINKS");
+        System.out.println("4. MEAT");
+        System.out.println("5. DRIED");
+        System.out.println("6. MISCELLANEOUS");
+    }
+
+    private void printOrderStatusMethods() {
+        System.out.println("0. RECEIVED");
+        System.out.println("1. IN_PROCESS");
+        System.out.println("2. DELIVERED");
+        System.out.println("3. ARRIVED");
+        System.out.println("4. CANCELLED");
+    }
+    // ------------------- Choose helper functions -------------------
+
 
     public void chooseProductsOption(int option) {
         switch (option) {
@@ -462,22 +534,9 @@ public class CLI {
         }
     }
 
-    public void printSupplierOptions() {
-        System.out.println("1. Register a new supplier");
-        System.out.println("2. Update supplier info");
-        System.out.println("3. Delete supplier");
-        System.out.println("4. Print supplier");
-        System.out.println("5. Print all suppliers");
-        System.out.println("6. Exit");
-    }
 
-    public void printSupplierUpdateOption() {
-        System.out.println("1. Update supplier name");
-        System.out.println("2. Update supplier delivery method");
-        System.out.println("3. Update supplier contact info");
-        System.out.println("4. Update supplier payment info");
-        System.out.println("5. Exit");
-    }
+
+
 
     public void chooseSupplierOption(int option) {
         switch (option) {
@@ -521,32 +580,7 @@ public class CLI {
     }
 
 
-    public void printContractOptions() {
-        System.out.println("1. Register a new contract");
-        System.out.println("2. Update supplier contract");
-        System.out.println("3. Delete supplier contract");
-        System.out.println("4. print contract info");
-        System.out.println("5. print all contracts");
-        System.out.println("6. Exit");
-    }
 
-    public void printOrderOptions() {
-        System.out.println("1. Add order");
-        System.out.println("2. Update order");
-        System.out.println("3. Delete order");
-        System.out.println("4. print order");
-        System.out.println("5. print all orders");
-        System.out.println("6. Exit");
-    }
-
-    private void printOrderUpdateOption() {
-        System.out.println("1. update order contact info");
-        System.out.println("2. update order supply date");
-        System.out.println("3. remove products from order");
-        System.out.println("4. add products to order");
-        System.out.println("5. add products to order");
-        System.out.println("6. go back");
-    }
 
     public void chooseOrderOption(int option) {
         switch (option) {
@@ -570,64 +604,55 @@ public class CLI {
         }
     }
 
-    private void printPaymentMethods() {
-        System.out.println("0. Check");
-        System.out.println("1. BANK_TRANSACTION");
-        System.out.println("2. Cash");
+    private void chooseContractOption(int userInput) {
+        switch (userInput) {
+            case 1:
+                System.out.println("Enter supplier ID");
+                int supplierId = readInt();
+                this.registerNewContract(supplierId);
+                break;
+            case 2:
+                deleteSupplyContract();
+                break;
+            case 3:
+                printSupplyContract();
+                break;
+            case 4:
+                printAllSupplyContracts();
+                break;
+            case 5:
+                return;
+        }
     }
 
-    private void printDeliveryMethods() {
-        System.out.println("0. Pick up");
-        System.out.println("1. Self delivering");
-    }
 
-    private void printProductCategoryMethods() {
-        System.out.println("0. DIARY");
-        System.out.println("1. FROZEN");
-        System.out.println("2. FRUITS AND VEGETABLES");
-        System.out.println("3. DRINKS");
-        System.out.println("4. MEAT");
-        System.out.println("5. DRIED");
-        System.out.println("6. MISCELLANEOUS");
-    }
 
-    private void printOrderStatusMethods() {
-        System.out.println("0. RECEIVED");
-        System.out.println("1. IN_PROCESS");
-        System.out.println("2. DELIVERED");
-        System.out.println("3. ARRIVED");
-        System.out.println("4. CANCELLED");
-    }
 
     public void mainCliMenu() {
         System.out.println("Welcome to SuppliersModule!");
         while (true) {
             printMenuOptions();
             System.out.println("Please select an option: ");
-            int userInput = sc.nextInt();
-            sc.nextLine();
+            int userInput = readInt();
             switch (userInput) {
                 case 1:
                     printProductOptions();
-                    userInput = sc.nextInt();
-                    sc.nextLine();
+                    userInput = readInt();
                     chooseProductsOption(userInput);
                     break;
                 case 2:
                     printSupplierOptions();
-                    userInput = sc.nextInt();
-                    sc.nextLine();
+                    userInput = readInt();
                     chooseSupplierOption(userInput);
                     break;
                 case 3:
                     printContractOptions();
-                    userInput = sc.nextInt();
-                    //cli.chooseContractOption(userInput);
+                    userInput = readInt();
+                    chooseContractOption(userInput);
                     break;
                 case 4:
                     printOrderOptions();
-                    userInput = sc.nextInt();
-                    sc.nextLine();
+                    userInput = readInt();
                     chooseOrderOption(userInput);
                     break;
                 case 5:
@@ -637,6 +662,18 @@ public class CLI {
                     System.out.println("Invalid option, please choose again");
             }
         }
+    }
+
+
+    // ---------------helpers------------
+    private int readInt() {
+        while (!sc.hasNextInt()) {
+            System.out.println("Invalid input, please enter a number:");
+            sc.next(); // discard invalid input
+        }
+        int num = sc.nextInt();
+        sc.nextLine(); // consume leftover \n
+        return num;
     }
 
 
