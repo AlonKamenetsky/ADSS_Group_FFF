@@ -15,10 +15,10 @@ public class ProductController {
     public ProductController() {
         this.numberOfProducts = 0;
         this.productsArrayList = new ArrayList<>();
-        this.readProductsFromCSVFile();
+        //this.readProductsFromCSVFile();
     }
 
-    public void readProductsFromCSVFile() {
+    public void ReadProductsFromCSVFile() {
         InputStream in = ProductController.class.getResourceAsStream("/products_data.csv");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String line;

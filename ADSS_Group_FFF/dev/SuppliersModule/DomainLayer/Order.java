@@ -114,7 +114,7 @@ public class Order {
         sb.append("  Total Price: ").append(String.format("%.2f", totalPrice)).append("\n");
         sb.append("  Products:\n");
         for (int[] product : productArrayList) {
-            sb.append("Product ID: ").append(Arrays.toString(product)).append("\n");
+            sb.append("Product ID,QUANTITY: ").append(Arrays.toString(product)).append("\n");
         }
         sb.append("}");
         return sb.toString();

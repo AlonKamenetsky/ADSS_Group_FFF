@@ -21,10 +21,10 @@ public class SupplyContractController {
         this.contractId = 0;
         this.supplyContracts = new ArrayList<>();
 
-        this.ReadSupplierContractDataFromCSV();
+       //this.ReadSupplierContractDataFromCSV();
     }
 
-    private void ReadSupplierContractDataFromCSV() {
+    public void ReadSupplierContractDataFromCSV() {
         Map<Integer, List<SupplyContract>> supplierToContracts = new HashMap<>();
         Map<String, SupplyContract> uniqueContractLookup = new HashMap<>();
 
@@ -36,7 +36,7 @@ public class SupplyContractController {
 
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
-                    isFirstLine = false;
+                    isFirstLine = false;  // skip header
                     continue;
                 }
 
@@ -53,8 +53,7 @@ public class SupplyContractController {
                 double productPrice = Double.parseDouble(parts[2]);
                 int quantityForDiscount = Integer.parseInt(parts[3]);
                 double discountPercentage = Double.parseDouble(parts[4]);
-                int contractId = this.contractId;
-                this.contractId++;
+                int contractId = Integer.parseInt(parts[5]);
 
                 String uniqueKey = supplierId + "_" + contractId;
 
@@ -62,20 +61,30 @@ public class SupplyContractController {
                 if (contract == null) {
                     contract = new SupplyContract(supplierId, contractId);
                     uniqueContractLookup.put(uniqueKey, contract);
-                    supplierToContracts.computeIfAbsent(supplierId, k -> new ArrayList<>()).add(contract);
+                    supplierToContracts
+                            .computeIfAbsent(supplierId, k -> new ArrayList<>())
+                            .add(contract);
                 }
 
-                contract.supplyContractProductsDataArray.add(new SupplyContractProductData(
-                        productId, productPrice, quantityForDiscount, discountPercentage));
+                // Now all products with the same supplierId+contractId
+                // end up in the same SupplyContract
+                contract.supplyContractProductsDataArray.add(
+                        new SupplyContractProductData(
+                                productId,
+                                productPrice,
+                                quantityForDiscount,
+                                discountPercentage
+                        )
+                );
             }
 
         } catch (IOException e) {
             System.err.println("Error reading CSV file: " + e.getMessage());
         }
 
-        for (List<SupplyContract> contractslist : supplierToContracts.values())
-            this.supplyContracts.addAll(contractslist);
-
+        for (List<SupplyContract> list : supplierToContracts.values()) {
+            this.supplyContracts.addAll(list);
+        }
     }
 
     private SupplyContract getContractByContactID(int contractID) {

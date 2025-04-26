@@ -2,6 +2,7 @@ package SuppliersModule.PresentationLayer;
 
 import java.util.*;
 
+import SuppliersModule.DomainLayer.Enums.WeekDay;
 import SuppliersModule.ServiceLayer.ServiceController;
 
 
@@ -12,6 +13,12 @@ public class CLI {
     public CLI() {
         this.sc = new Scanner(System.in);
         this.serviceController = new ServiceController();
+    }
+
+    public void ReadDataFromCSVFiles() {
+        System.out.println("Reading data from files...");
+        this.serviceController.ReadDataFromCSVFiles();
+        System.out.println("Done");
     }
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
@@ -104,8 +111,19 @@ public class CLI {
 
         System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
         int supplyMethod = readInt();
+        ArrayList<Integer> supplyDays = null;
+        if (supplyMethod == 0) {
+            System.out.println("Enter days for supplier (Enter -1 for exit), Enter 1-7: ");
+            supplyDays = new ArrayList<>();
+            while (true) {
+                int day =  readInt();
+                if (day == -1)
+                    break;
+                supplyDays.add(day);
+            }
+        }
 
-        int supplierID = this.serviceController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod);
+        int supplierID = this.serviceController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod, supplyDays);
 
         if (supplierID == -1) System.out.println("Error creating new supplier.");
         else System.out.println("Supplier registered successfully.");
@@ -171,7 +189,6 @@ public class CLI {
         if (result) System.out.println("Supplier payment info updated successfully.");
         else System.out.println("Supplier payment info update failed.");
     }
-
 
 
     private void deleteSupplier() {
@@ -426,6 +443,7 @@ public class CLI {
     // ------------------- CLI print Functions -------------------
 
     public void printMenuOptions() {
+        System.out.println("0. Read data from files");
         System.out.println("1. Product section");
         System.out.println("2. Supplier section");
         System.out.println("3. Supplier contract section");
@@ -535,9 +553,6 @@ public class CLI {
     }
 
 
-
-
-
     public void chooseSupplierOption(int option) {
         switch (option) {
             case 1:
@@ -578,9 +593,6 @@ public class CLI {
                 return;
         }
     }
-
-
-
 
     public void chooseOrderOption(int option) {
         switch (option) {
@@ -625,9 +637,6 @@ public class CLI {
         }
     }
 
-
-
-
     public void mainCliMenu() {
         System.out.println("Welcome to SuppliersModule!");
         while (true) {
@@ -635,6 +644,9 @@ public class CLI {
             System.out.println("Please select an option: ");
             int userInput = readInt();
             switch (userInput) {
+                case 0:
+                    ReadDataFromCSVFiles();
+                    break;
                 case 1:
                     printProductOptions();
                     userInput = readInt();

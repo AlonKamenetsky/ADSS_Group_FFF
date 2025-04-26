@@ -16,6 +16,11 @@ public class ServiceController {
         this.productService = new ProductService();
     }
 
+    public void ReadDataFromCSVFiles() {
+        this.productService.ReadProductsFromCSVFile();
+        this.supplierService.ReadDataFromCSVFiles();
+    }
+
     // --------------------------- VALIDATION FUNCTIONS ---------------------------
 
     private boolean validateProductCategory(int productCategory) {
@@ -41,6 +46,7 @@ public class ServiceController {
     private boolean validateContractProductData(int price, int quantityForDiscount, int discountPercentage) {
         return price <= 0 || quantityForDiscount <= 0 || !(discountPercentage > 0 && discountPercentage < 100);
     }
+
     private Date validateOrderDated(String supplyDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -52,6 +58,7 @@ public class ServiceController {
         }
         return null;
     }
+
     private Date validateDate(String strDate){
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         sdf.setLenient(false); // Makes sure it strictly checks the format (e.g., no 31/02/2024)
@@ -65,6 +72,16 @@ public class ServiceController {
     private boolean validateOrderStatus(int orderStatus) {
         return (orderStatus >= 0 && orderStatus < OrderStatus.values().length);
     }
+    private boolean ValidateDays(ArrayList<Integer> days) {
+        if (days == null)
+            return true;
+
+        for (int day : days)
+            if (day < 1 || day > 7)
+                return false;
+        return true;
+    }
+
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
@@ -96,9 +113,10 @@ public class ServiceController {
 
     public int registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,
                                     String phoneNumber, String address, String email, String contactName,
-                                    String bankAccount, int paymentMethod) {
-        if (this.validateProductCategory(productCategory) && this.validateSupplyMethod(supplyMethod) && this.validateDeliveringMethod(deliveringMethod) && this.validatePaymentMethod(paymentMethod))
-            return this.supplierService.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod);
+                                    String bankAccount, int paymentMethod, ArrayList<Integer> supplyDays) {
+        if (this.validateProductCategory(productCategory) && this.validateSupplyMethod(supplyMethod) && this.validateDeliveringMethod(deliveringMethod) &&
+                this.validatePaymentMethod(paymentMethod) && ValidateDays(supplyDays))
+            return this.supplierService.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, supplyDays);
         return -1;
     }
 

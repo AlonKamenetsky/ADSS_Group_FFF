@@ -6,22 +6,34 @@ import SuppliersModule.DomainLayer.Enums.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 
 public class SupplierService {
     SupplierController supplierController;
 
     public SupplierService() {
-        supplierController = new SupplierController();
+        this.supplierController = new SupplierController();
+    }
+
+    public void ReadDataFromCSVFiles() {
+        this.supplierController.ReadDataFromCSVFiles();
     }
 
     public int registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,
                                    String phoneNumber, String address, String email, String contactName,
-                                   String bankAccount, int paymentMethod) {
+                                   String bankAccount, int paymentMethod, ArrayList<Integer> supplyDays) {
         SupplyMethod sm = SupplyMethod.values()[supplyMethod];
         ProductCategory pc = ProductCategory.values()[productCategory];
         DeliveringMethod dm = DeliveringMethod.values()[deliveringMethod];
         PaymentMethod pm = PaymentMethod.values()[paymentMethod];
-        return this.supplierController.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, email, contactName, bankAccount, pm);
+        EnumSet<WeekDay> sd = null;
+        if (supplyDays != null) {
+            sd = EnumSet.noneOf(WeekDay.class);
+            for (int day : supplyDays)
+                sd.add(WeekDay.values()[day - 1]);
+        }
+
+        return this.supplierController.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, email, contactName, bankAccount, pm, sd);
     }
 
     public boolean updateSupplierName(int supplierID, String supplierName) {

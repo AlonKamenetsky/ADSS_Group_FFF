@@ -6,8 +6,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
+import java.util.Random;
 
 public class SupplierController {
     OrderController orderController;
@@ -23,7 +27,22 @@ public class SupplierController {
         this.orderController = new OrderController();
         this.supplyContractController = new SupplyContractController();
 
+        //this.ReadSuppliersFromCSVFile();
+        for (Supplier supplier : this.suppliersArrayList) {
+            for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(supplier.getSupplierId()))
+                supplier.addSupplierContract(supplyContract);
+
+            if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED) {
+                ((ScheduledSupplier) supplier).setSupplyDays(EnumSet.of(WeekDay.Sunday));
+                this.createScheduledOrder((ScheduledSupplier) supplier);
+            }
+        }
+    }
+
+    public void ReadDataFromCSVFiles() {
         this.ReadSuppliersFromCSVFile();
+        this.supplyContractController.ReadSupplierContractDataFromCSV();
+        this.orderController.ReadOrdersFromCSVFile();
     }
 
     private void ReadSuppliersFromCSVFile() {
@@ -66,30 +85,45 @@ public class SupplierController {
                 String paymentMethodStr = parts[9].toUpperCase();
                 PaymentMethod paymentMethod = PaymentMethod.valueOf(paymentMethodStr);
 
-                this.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod);
+                this.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, null);
             }
         } catch (IOException e) {
             System.err.println("Error reading CSV file: " + e.getMessage());
         }
+    }
 
-        for (Supplier supplier : this.suppliersArrayList)
-            for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(supplier.getSupplierId()))
-                supplier.addSupplierContract(supplyContract);
+    private void createScheduledOrder(ScheduledSupplier supplier) {
+        ArrayList<SupplyContractProductData> supplyContractProductDataArrayList = supplier.supplierContracts.get(0).getSupplyContractProductData();
+
+        ArrayList<int[]> productsArray = new ArrayList<>();
+        for (SupplyContractProductData supplyContractProductData : supplyContractProductDataArrayList) {
+            int productID = supplyContractProductData.getProductID();
+
+            int[] data = { productID, new Random().nextInt(10) + 1 };
+            productsArray.add(data);
+        }
+
+        for (WeekDay day: supplier.getSupplyDays()) {
+            Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            this.registerNewOrder(supplier.getSupplierId(), productsArray, date, ScheduledSupplier.getNearestWeekdayDate(day));
+        }
     }
 
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
     public int registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod,
                                     String phoneNumber, String address, String email, String contactName,
-                                    String bankAccount, PaymentMethod paymentMethod) {
+                                    String bankAccount, PaymentMethod paymentMethod, EnumSet<WeekDay> supplyDays) {
         ContactInfo supplierContactInfo = new ContactInfo(phoneNumber, address, email, contactName);
         PaymentInfo supplierPaymentInfo = new PaymentInfo(bankAccount, paymentMethod);
 
         Supplier supplier = null;
         if (supplyMethod == SupplyMethod.ON_DEMAND)
             supplier = new OnDemandSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
-        else if (supplyMethod == SupplyMethod.SCHEDULED)
+        else if (supplyMethod == SupplyMethod.SCHEDULED) {
             supplier = new ScheduledSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
+            ((ScheduledSupplier) supplier).setSupplyDays(supplyDays);
+        }
 
         this.suppliersArrayList.add(supplier);
         return supplier.getSupplierId();

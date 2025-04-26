@@ -18,11 +18,10 @@ public class OrderController {
     public OrderController() {
         orderID = 0;
         ordersArrayList = new ArrayList<>();
-        readOrdersFromCSVFile();
-
+        //this.readOrdersFromCSVFile();
     }
 
-    public void readOrdersFromCSVFile() {
+    public void ReadOrdersFromCSVFile() {
         InputStream in = OrderController.class.getResourceAsStream("/orders_data.csv");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String line;
@@ -161,7 +160,7 @@ public class OrderController {
     }
 
 
-    public ArrayList<int[]>  getOrderProducts(int orderID){
+    public ArrayList<int[]> getOrderProducts(int orderID){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
                 return order.getProductArrayList();

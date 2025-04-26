@@ -55,6 +55,7 @@ public class SupplyContract {
    public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append("SupplyContract {\n");
+      sb.append("  Supplier ID: ").append(supplierId).append(",\n");
       sb.append("  Contract ID: ").append(contractId).append(",\n");
       sb.append("  Product Data List:\n");
       for (SupplyContractProductData data : supplyContractProductsDataArray) {
