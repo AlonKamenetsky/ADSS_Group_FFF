@@ -13,14 +13,10 @@ public class SiteManager {
         allSites = new HashMap<>();
     }
 
-    public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) {
+    public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) throws NoSuchElementException {
         int _siteId = nextSiteId++;
         Zone relatedZone;
-        try {
-            relatedZone = zoneManager.getZoneByName(_zone);
-        } catch (NoSuchElementException e) {
-            throw new IllegalArgumentException("Invalid zone.");
-        }
+        relatedZone = zoneManager.getZoneByName(_zone);
         int relatedZoneId = relatedZone.getZoneId();
         Site newSite = new Site(_siteId, _address.toLowerCase(), _contactName, _phoneNumber, relatedZoneId);
         allSites.putIfAbsent(_siteId, newSite);

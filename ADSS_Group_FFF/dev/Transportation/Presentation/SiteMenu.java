@@ -83,6 +83,13 @@ public class SiteMenu {
         String inputContactName = input.nextLine();
         System.out.println("Enter new site's contact's phone number:");
         String inputPhoneNumber = input.nextLine();
+        try {
+            Integer.parseInt(inputPhoneNumber);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Not a valid phone number, must be numbers only.");
+            return;
+        }
         System.out.println("Enter new site's zone:");
         String inputZone = input.nextLine();
         try {

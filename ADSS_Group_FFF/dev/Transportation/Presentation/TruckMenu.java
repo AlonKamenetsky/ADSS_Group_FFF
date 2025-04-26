@@ -1,15 +1,15 @@
 package Transportation.Presentation;
 
 import Transportation.Service.TruckService;
-import Transportation.Service.DataService;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class TruckMenu {
     private final TruckService TrucksHandler;
     private final TManagerRoleMenu managerRoleMenu;
-    private Scanner input;
+    private final Scanner input;
 
     public TruckMenu(TruckService truckService, TManagerRoleMenu managerRoleMenu) {
         TrucksHandler = truckService;
@@ -99,12 +99,15 @@ public class TruckMenu {
             inputNetWeight = Float.parseFloat(input.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Not a valid weight");
+            return;
         }
         System.out.println("Enter new truck's Maximum Weight:");
         try {
             inputMaxWeight = Float.parseFloat(input.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Not a valid weight");
+            return;
+
         }
         try {
             TrucksHandler.AddTruck(inputTruckType, inputLicenseNumber, inputModel, inputNetWeight, inputMaxWeight);
@@ -114,6 +117,10 @@ public class TruckMenu {
 
         } catch (NullPointerException n) {
             System.out.println("One of the inputs you provided is empty.");
+        }
+        catch (InstanceAlreadyExistsException f) {
+            System.out.print("Truck with this license number already exists.\n");
+            return;
         }
     }
 

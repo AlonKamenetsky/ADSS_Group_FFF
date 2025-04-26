@@ -1,5 +1,6 @@
 package Transportation.Service;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.text.ParseException;
 import java.util.HashMap;
 
@@ -39,20 +40,28 @@ public class DataService {
     }
 
     public void addDriversMock() {
-        driverService.AddDriver("207271966", "Liel", "B");
-        driverService.AddDriver("207271900", "Lidor", "B");
-        driverService.AddDriver("207271901", "Alon", "B");
-        driverService.AddDriver("029349339", "Anat", "B");
-        driverService.AddDriver("12345667", "Alex", "C");
-        driverService.AddDriver("12678999", "Bob", "C1");
+        try {
+            driverService.AddDriver("207271966", "Liel", "B");
+            driverService.AddDriver("207271900", "Lidor", "B");
+            driverService.AddDriver("207271901", "Alon", "B");
+            driverService.AddDriver("029349339", "Anat", "B");
+            driverService.AddDriver("12345667", "Alex", "C");
+            driverService.AddDriver("12678999", "Bob", "C1");
+        } catch (InstanceAlreadyExistsException e) {
+            return;
+        }
     }
 
     public void addTrucksMock() {
-        truckService.AddTruck("SMALL", "3524356", "BYD", 100, 20);
-        truckService.AddTruck("SMALL", "123456", "BMW", 120, 13);
-        truckService.AddTruck("MEDIUM", "999999", "Berlingo", 200, 50);
-        truckService.AddTruck("LARGE", "888888", "KIA", 200, 55);
-        truckService.AddTruck("LARGE", "555555", "OPEL", 200, 150);
+        try {
+            truckService.AddTruck("SMALL", "3524356", "BYD", 100, 20);
+            truckService.AddTruck("SMALL", "123456", "BMW", 120, 13);
+            truckService.AddTruck("MEDIUM", "999999", "Berlingo", 200, 50);
+            truckService.AddTruck("LARGE", "888888", "KIA", 200, 55);
+            truckService.AddTruck("LARGE", "555555", "OPEL", 200, 150);
+        } catch (InstanceAlreadyExistsException e) {
+            return;
+        }
     }
 
     public void addZonesMock() {

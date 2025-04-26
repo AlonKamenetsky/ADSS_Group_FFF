@@ -2,7 +2,6 @@ package Transportation.Presentation;
 
 import Transportation.Service.SiteZoneService;
 import Transportation.Service.ZoneService;
-import Transportation.Service.DataService;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -11,7 +10,7 @@ public class ZoneMenu {
     private final ZoneService zonesHandler;
     private final SiteZoneService siteZoneHandler;
     private final TManagerRoleMenu managerRoleMenu;
-    private Scanner input;
+    private final Scanner input;
 
     public ZoneMenu(ZoneService zoneService, SiteZoneService siteZoneHandler, TManagerRoleMenu managerRoleMenu) {
         zonesHandler = zoneService;

@@ -40,7 +40,7 @@ public class ZoneManager {
         return currZone.toString();
     }
 
-    public Zone getZoneByName(String zoneName) {
+    public Zone getZoneByName(String zoneName) throws NoSuchElementException {
         for (Zone zone : allZones.values()) {
             if (zone.getName().equalsIgnoreCase(zoneName)) {
                 return zone;

@@ -56,6 +56,10 @@ public class ItemManager {
     }
 
     public boolean doesItemExist(String itemName) {
+        Item currItem = getItemByName(itemName.toLowerCase());
+        if (currItem == null) {
+            return false;
+        }
         int itemId = getItemByName(itemName.toLowerCase()).getItemId();
         return allItems.containsKey(itemId);
     }

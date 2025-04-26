@@ -2,6 +2,7 @@ import Transportation.Domain.*;
 
 import org.junit.jupiter.api.Test;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.NoSuchElementException;
@@ -13,7 +14,9 @@ public class UnitTests {
     @Test
     public void addDriver() {
         DriverManager driverManager = new DriverManager();
-        driverManager.addDriver("12345678", "liel", "C");
+        assertDoesNotThrow(() -> {
+            driverManager.addDriver("12345678", "liel", "C");
+        });
         Driver driver = driverManager.getDriverById("12345678");
         assertNotNull(driver);
         assertEquals("12345678", driver.getDriverId());
@@ -33,11 +36,10 @@ public class UnitTests {
     @Test
     public void addDriverWithTheSameId() {
         DriverManager driverManager = new DriverManager();
-        driverManager.addDriver("12345678", "liel", "C");
-        driverManager.addDriver("12345678", "ALEX", "B");
-        Driver d = driverManager.getDriverById("12345678");
-        // check if it not override the first name
-        assertEquals("liel", d.getName());
+        assertThrows(InstanceAlreadyExistsException.class, () -> {
+            driverManager.addDriver("12345678", "liel", "C");
+            driverManager.addDriver("12345678", "ALEX", "B");
+        });
     }
 
     @Test
@@ -52,7 +54,9 @@ public class UnitTests {
     @Test
     public void addTruck() {
         TruckManager truckManager = new TruckManager();
-        truckManager.addTruck("Small", "123", "KIA", 120, 12);
+        assertDoesNotThrow(() -> {
+            truckManager.addTruck("Small", "123", "KIA", 120, 12);
+        });
         Truck t = truckManager.getTruckIdByLicenseNumber("123");
         assertNotNull(t);
     }
@@ -79,8 +83,10 @@ public class UnitTests {
     @Test
     public void addTruckWithTheSameLicenseNumber() {
         TruckManager truckManager = new TruckManager();
-        truckManager.addTruck("SMALL", "123", "KIA", 120, 12);
-        truckManager.addTruck("LARGE", "123", "BMW", 120, 12);
+        assertThrows(InstanceAlreadyExistsException.class, () -> {
+            truckManager.addTruck("SMALL", "123", "KIA", 120, 12);
+            truckManager.addTruck("LARGE", "123", "BMW", 120, 12);
+        });
         Truck t = truckManager.getTruckIdByLicenseNumber("123");
         assertEquals(TruckType.SMALL, t.getTruckType());
     }
@@ -88,7 +94,9 @@ public class UnitTests {
     @Test
     void removeTruck() {
         TruckManager truckManager = new TruckManager();
-        truckManager.addTruck("Small", "123", "KIA", 120, 12);
+        assertDoesNotThrow(() -> {
+            truckManager.addTruck("Small", "123", "KIA", 120, 12);
+        });
         truckManager.removeTruck("123");
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             Truck t = truckManager.getTruckIdByLicenseNumber("123");
@@ -139,10 +147,9 @@ public class UnitTests {
     public void addSiteWithoutExistingZone() {
         ZoneManager zoneManager = new ZoneManager();
         SiteManager siteManager = new SiteManager(zoneManager);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             siteManager.addSite("Rager", "liel", "065432", "WEST2");
         });
-        assertEquals("Invalid zone.", exception.getMessage());
     }
 
     @Test

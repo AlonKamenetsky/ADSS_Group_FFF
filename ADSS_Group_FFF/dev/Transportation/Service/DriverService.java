@@ -2,6 +2,7 @@ package Transportation.Service;
 
 import Transportation.Domain.DriverManager;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.NoSuchElementException;
 
 public class DriverService {
@@ -11,7 +12,7 @@ public class DriverService {
         this.driverManager = driverManager;
     }
 
-    public void AddDriver(String _driverId, String _driverName, String _licenseType) throws IllegalArgumentException, NullPointerException {
+    public void AddDriver(String _driverId, String _driverName, String _licenseType) throws IllegalArgumentException, NullPointerException, InstanceAlreadyExistsException {
         if (_driverId == null || _driverName == null || _licenseType == null) {
             throw new NullPointerException();
         }
@@ -70,6 +71,4 @@ public class DriverService {
     public void ChangeDriverAvailability(String driverId, boolean status) throws NoSuchElementException {
         driverManager.setDriverAvailability(driverId, status);
     }
-
-
 }

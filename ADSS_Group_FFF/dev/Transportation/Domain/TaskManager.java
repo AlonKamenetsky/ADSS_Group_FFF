@@ -40,8 +40,10 @@ public class TaskManager {
 
     public void removeTask(String taskDate, String departureTime, String sourceSite) {
         TransportationTask currTask = getTask(taskDate, departureTime, sourceSite);
-        driverManager.setDriverAvailability(currTask.getDriverId(), true);
-        truckManager.setTruckAvailability(currTask.getTruckLicenseNumber(), true);
+        if (!currTask.getDriverId().isEmpty() && !currTask.getTruckLicenseNumber().isEmpty()) {
+            driverManager.setDriverAvailability(currTask.getDriverId(), true);
+            truckManager.setTruckAvailability(currTask.getTruckLicenseNumber(), true);
+        }
         allTasks.remove(currTask.getTaskId());
     }
 
@@ -110,7 +112,6 @@ public class TaskManager {
         return sb.toString();
     }
 
-
     public TransportationTask getTask(String _taskDate, String _departureTime, String sourceSite) throws NoSuchElementException {
         try {
             Site s = siteManager.getSiteByAddress(sourceSite);
@@ -168,7 +169,8 @@ public class TaskManager {
         return sb.toString();
     }
 
-    public boolean checkDestination(String address) {
-        return siteManager.doesSiteExist(address);
+    public boolean hasDestination(String taskDate, String taskDeparture, String sourceSite, String destinationSite) {
+        TransportationTask currTask = getTask(taskDate, taskDeparture, sourceSite);
+        return currTask.hasDestination(destinationSite);
     }
 }

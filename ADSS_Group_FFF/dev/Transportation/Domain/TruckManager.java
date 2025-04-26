@@ -1,5 +1,6 @@
 package Transportation.Domain;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.*;
 
 public class TruckManager {
@@ -10,19 +11,24 @@ public class TruckManager {
         allTrucks = new HashMap<>();
     }
 
-    public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException {
-        if(truckType == null || licenseNumber == null || model == null) {
+    public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException, InstanceAlreadyExistsException {
+        if (truckType == null || licenseNumber == null || model == null) {
             throw new NullPointerException("Missed Parameters to added Truck");
         }
-        int truckId = nextTruckId++;
-        TruckType type = TruckType.fromString(truckType);
-        Truck newTruck = new Truck(truckId, type, licenseNumber, model.toLowerCase(), netWeight, maxWeight);
-        allTrucks.putIfAbsent(truckId, newTruck);
+        try {
+            getTruckIdByLicenseNumber(licenseNumber);
+            throw new InstanceAlreadyExistsException();
+        } catch (NoSuchElementException e) {
+            int truckId = nextTruckId++;
+            TruckType type = TruckType.fromString(truckType);
+            Truck newTruck = new Truck(truckId, type, licenseNumber, model.toLowerCase(), netWeight, maxWeight);
+            allTrucks.putIfAbsent(truckId, newTruck);
+        }
     }
 
     public void removeTruck(String licenseNumber) throws NoSuchElementException {
         Truck truckToRemove = getTruckIdByLicenseNumber(licenseNumber.toLowerCase());
-        if(truckToRemove == null) {
+        if (truckToRemove == null) {
             throw new NoSuchElementException();
         }
         int truckId = truckToRemove.getTruckID();
@@ -50,10 +56,9 @@ public class TruckManager {
 
     public void setTruckAvailability(String licenseNumber, boolean status) throws NoSuchElementException {
         Truck truckToChange = getTruckIdByLicenseNumber(licenseNumber);
-        if(truckToChange == null) {
+        if (truckToChange == null) {
             throw new NoSuchElementException();
-        }
-        else {
+        } else {
             truckToChange.setAvailability(status);
             return;
         }
@@ -72,7 +77,7 @@ public class TruckManager {
 
     public Truck getNextTruckAvailable(float weight) {
         for (Truck t : allTrucks.values()) {
-            if(t.isFree() && weight < t.getMaxWeight()) {
+            if (t.isFree() && weight < t.getMaxWeight()) {
                 return t;
             }
         }

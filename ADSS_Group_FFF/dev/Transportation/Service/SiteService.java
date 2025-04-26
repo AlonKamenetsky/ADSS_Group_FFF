@@ -14,7 +14,7 @@ public class SiteService {
         this.siteZoneManager = siteZoneManager;
     }
 
-    public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) throws NullPointerException, IllegalArgumentException {
+    public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) throws NullPointerException, IllegalArgumentException, NoSuchElementException {
         if (_address == null || _contactName == null || _phoneNumber == null || _zone == null) {
             throw new NullPointerException();
         }

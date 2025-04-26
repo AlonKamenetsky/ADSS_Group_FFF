@@ -32,4 +32,13 @@ public class ItemService {
     public float getItemWeight(String itemName) {
         return itemManager.getItemWeightByName(itemName);
     }
+
+    public boolean doesItemExist(String itemName) {
+        if (itemName == null) {
+            return false;
+        }
+        else {
+            return itemManager.doesItemExist(itemName);
+        }
+    }
 }

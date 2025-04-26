@@ -31,17 +31,25 @@ public class TransportationTask {
         return sourceSite.getAddress();
     }
 
-    public String getDriverId() { return driverId;}
+    public String getDriverId() {
+        return driverId;
+    }
 
     public int getTaskId() {
         return taskId;
     }
 
-    public Date getTaskDate() { return taskDate; }
+    public Date getTaskDate() {
+        return taskDate;
+    }
 
-    public LocalTime getDepartureTime() { return departureTime; }
+    public LocalTime getDepartureTime() {
+        return departureTime;
+    }
 
-    public String getTruckLicenseNumber() { return  truckLicenseNumber;}
+    public String getTruckLicenseNumber() {
+        return truckLicenseNumber;
+    }
 
 
     public void setWeightBeforeLeaving() {
@@ -52,9 +60,12 @@ public class TransportationTask {
         weightBeforeLeaving = totalWeight[0];
     }
 
-    public float getWeightBeforeLeaving() { return weightBeforeLeaving; }
+    public float getWeightBeforeLeaving() {
+        return weightBeforeLeaving;
+    }
 
     public void addDoc(TransportationDoc doc) {
+        destinationSites.add(doc.getDestinationSite());
         taskDocs.put(doc.getDocId(), doc);
     }
 
@@ -83,5 +94,14 @@ public class TransportationTask {
         }
 
         return sb.toString();
+    }
+
+    public boolean hasDestination(String destinationSite) {
+        for (Site s : destinationSites) {
+            if (s.getAddress().equals(destinationSite)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -53,14 +53,17 @@ public class TaskService {
         return taskManager.getAllTasksString();
     }
 
-    public boolean checkDestination (String _address) {
-        if(_address == null) {
-            throw new NullPointerException();
-        }
-        return taskManager.checkDestination(_address);
-    }
 
     public String getTasksBySourceAddress(String sourceAddress) {
         return taskManager.getTasksBySourceAddress(sourceAddress.toLowerCase());
+    }
+
+    public boolean hasDestination(String taskDate, String taskDeparture, String sourceSite, String destinationSite) throws NullPointerException {
+        if (taskDate == null || taskDeparture == null || sourceSite == null || destinationSite == null) {
+            throw new NullPointerException();
+        }
+        else {
+            return taskManager.hasDestination(taskDate, taskDeparture, sourceSite, destinationSite);
+        }
     }
 }

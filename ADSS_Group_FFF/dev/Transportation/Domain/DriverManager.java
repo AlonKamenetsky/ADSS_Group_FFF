@@ -1,5 +1,6 @@
 package Transportation.Domain;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +13,12 @@ public class DriverManager {
         allDrivers = new HashMap<>();
     }
 
-    public void addDriver(String _driverId, String _driverName, String _licenseType) throws IllegalArgumentException, NullPointerException {
+    public void addDriver(String _driverId, String _driverName, String _licenseType) throws IllegalArgumentException, NullPointerException, InstanceAlreadyExistsException {
         if (_driverId == null || _driverName == null || _licenseType == null) {
             throw new NullPointerException();
+        }
+        if(allDrivers.containsKey((_driverId))) {
+            throw new InstanceAlreadyExistsException();
         }
         LicenseType type = LicenseType.fromString(_licenseType);
         Driver newDriver = new Driver(_driverId, _driverName, type);

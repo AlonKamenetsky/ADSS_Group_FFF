@@ -2,6 +2,7 @@ package Transportation.Service;
 
 import Transportation.Domain.TruckManager;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.NoSuchElementException;
 
 public class TruckService {
@@ -11,7 +12,7 @@ public class TruckService {
         this.truckManager = truckManager;
     }
 
-    public void AddTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException {
+    public void AddTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException, InstanceAlreadyExistsException {
         if (truckType == null || licenseNumber == null || model == null || netWeight < 0 || maxWeight < 0) {
             throw new NullPointerException();
         }
@@ -28,13 +29,6 @@ public class TruckService {
         else {
             throw new NoSuchElementException();
         }
-    }
-
-    public boolean TruckHasAvailable(String licenseNumber) {
-        if (licenseNumber == null) {
-            return false;
-        }
-        return truckManager.doesTruckExist(licenseNumber);
     }
 
     public String viewAllTrucks() {

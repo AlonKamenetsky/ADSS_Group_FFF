@@ -1,6 +1,7 @@
 package Transportation.Presentation;
 
 import Transportation.Service.ItemService;
+import Transportation.Service.SiteService;
 import Transportation.Service.TaskService;
 
 import java.text.ParseException;
@@ -12,12 +13,14 @@ import java.util.Scanner;
 public class TaskMenu {
     private final TaskService TasksHandler;
     private final ItemService ItemHandler;
+    private final SiteService SiteHandler;
     private final TManagerRoleMenu managerRoleMenu;
     private final Scanner input;
 
-    public TaskMenu(TaskService taskService, ItemService itemService, TManagerRoleMenu managerRoleMenu) {
+    public TaskMenu(TaskService taskService, ItemService itemService, SiteService siteHandler, TManagerRoleMenu managerRoleMenu) {
         TasksHandler = taskService;
         ItemHandler = itemService;
+        SiteHandler = siteHandler;
         this.managerRoleMenu = managerRoleMenu;
         input = new Scanner(System.in);
     }
@@ -86,7 +89,6 @@ public class TaskMenu {
     private void addTask() {
         String taskDate, taskDeparture, taskSourceSite;
         HashMap<String, Integer> itemsChosen = new HashMap<>();
-        final float[] allListsWeight = {0};
         System.out.println("Enter date of task (in this format: dd/MM/yyyy):");
         taskDate = input.nextLine();
         System.out.println("Enter time of departure:");
@@ -97,7 +99,7 @@ public class TaskMenu {
             TasksHandler.addTask(taskDate, taskDeparture, taskSourceSite.toLowerCase());
             System.out.println("Task added successfully without destination sites.");
         } catch (ParseException e) {
-            System.out.println("Invalid date/time format: " + e.getMessage());
+            System.out.println("Invalid date/time format");
             return;
         } catch (NoSuchElementException e) {
             System.out.println("Site doesn't exist.");
@@ -107,8 +109,19 @@ public class TaskMenu {
         while (true) {
             System.out.println("Which site would you like to add to this task as destination? (must have at least one):");
             String destinationSite = input.nextLine();
-            if (!TasksHandler.checkDestination(destinationSite)) {
+            try {
+                SiteHandler.getSiteByAddress(destinationSite);
+            }
+            catch (NullPointerException e) {
+                System.out.println("Not a valid site.");
+                continue;
+            }
+            catch (NoSuchElementException e) {
                 System.out.println("Site doesn't exist.");
+                continue;
+            }
+            if(TasksHandler.hasDestination(taskDate, taskDeparture, taskSourceSite.toLowerCase(), destinationSite)) {
+                System.out.println("Task already has this destination.");
                 continue;
             }
             System.out.println("""
@@ -123,15 +136,21 @@ public class TaskMenu {
                         System.out.println(ItemHandler.viewAllItems());
                         System.out.println("Enter name of item you would like you add.");
                         String choiceItem = input.nextLine();
+                        if (!ItemHandler.doesItemExist(choiceItem)) {
+                            System.out.println("Given item doesn't exist.");
+                            continue;
+                        }
                         System.out.println("How many " + choiceItem + " would you like to add?");
-                        int inputQuantity = Integer.parseInt(input.nextLine());
-                        itemsChosen.put(choiceItem, inputQuantity);
+                        try {
+                            int inputQuantity = Integer.parseInt(input.nextLine());
+                            itemsChosen.put(choiceItem, inputQuantity);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Not a valid quantity, only numbers.");
+                            continue;
+                        }
                         System.out.println("Are you done adding items? (Yes/No)");
                         String done = input.nextLine();
                         if (done.equalsIgnoreCase("yes")) {
-                            itemsChosen.forEach((key, value) -> {
-                                allListsWeight[0] += ItemHandler.getItemWeight(choiceItem) * value;
-                            });
                             TasksHandler.addDocToTask(taskDate, taskDeparture, taskSourceSite, destinationSite, itemsChosen);
                             break;
                         }
@@ -145,17 +164,31 @@ public class TaskMenu {
                 default:
                     System.out.println("Invalid option.");
             }
-            TasksHandler.updateWeightForTask(taskDate, taskDeparture, taskSourceSite);
-            if (!TasksHandler.assignDriverAndTruckToTask(taskDate, taskDeparture, taskSourceSite)) {
-                System.out.println("Adding task destination not successful, no drivers or trucks available.");
-            } else {
-                System.out.println("Adding destination to this site successfully");
-                System.out.println("Do you want to add more destination sites or go back to Task Management menu? (Yes/Anything for no)");
-                itemsChosen.clear();
-                if (!input.nextLine().equalsIgnoreCase("yes")) {
-                    return;
-                }
+            if (choice.equals("2")) {
+                continue;
             }
+            TasksHandler.updateWeightForTask(taskDate, taskDeparture, taskSourceSite);
+            System.out.println("Added destination to this site successfully");
+            System.out.println("Do you want to add more destination sites or go back to Task Management menu? (Yes/Anything for no)");
+            itemsChosen.clear();
+            if (!input.nextLine().equalsIgnoreCase("yes")) {
+                break;
+            }
+        }
+        if (!TasksHandler.assignDriverAndTruckToTask(taskDate, taskDeparture, taskSourceSite)) {
+            System.out.println("""
+                        Adding task not successful, no drivers or trucks available for this task.
+                        Consider choosing less items or taking off destination sites.
+                        Full list of trucks is available to you in the Truck Menu.
+                        Task is deleted for now. Thank you and sorry!""");
+            try {
+                TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
+            } catch (ParseException e) {
+                return;
+            }
+        }
+        else {
+            System.out.println("Added task successfully.");
         }
     }
 
