@@ -15,11 +15,11 @@ import java.util.Map;
 
 public class SupplyContractController {
     int contractId;
-    ArrayList<SupplyContract> supplyContracts;
+    ArrayList<SupplyContract> supplyContractsArrayList;
 
     public SupplyContractController() {
         this.contractId = 0;
-        this.supplyContracts = new ArrayList<>();
+        this.supplyContractsArrayList = new ArrayList<>();
 
        //this.ReadSupplierContractDataFromCSV();
     }
@@ -83,12 +83,12 @@ public class SupplyContractController {
         }
 
         for (List<SupplyContract> list : supplierToContracts.values()) {
-            this.supplyContracts.addAll(list);
+            this.supplyContractsArrayList.addAll(list);
         }
     }
 
     private SupplyContract getContractByContactID(int contractID) {
-        for (SupplyContract supplyContract : supplyContracts)
+        for (SupplyContract supplyContract : supplyContractsArrayList)
             if(supplyContract.contractId == contractID)
                 return supplyContract;
 
@@ -97,7 +97,7 @@ public class SupplyContractController {
 
     public ArrayList<SupplyContract> getAllSupplierContracts(int supplierID) {
         ArrayList<SupplyContract> supplyContractArrayList = new ArrayList<>();
-        for (SupplyContract supplyContract : supplyContracts)
+        for (SupplyContract supplyContract : supplyContractsArrayList)
             if(supplyContract.supplierId == supplierID)
                 supplyContractArrayList.add(supplyContract);
 
@@ -128,6 +128,10 @@ public class SupplyContractController {
         return supplyContract;
     }
 
+    public boolean removeAllSupplierContracts(int supplierID) {
+        return this.supplyContractsArrayList.removeIf(contract -> contract.supplierId == supplierID);
+    }
+
     public String getContractToString(int contractID) {
         SupplyContract supplyContract = getContractByContactID(contractID);
         if(supplyContract != null) {
@@ -136,10 +140,10 @@ public class SupplyContractController {
         return null;
     }
     public String[] getAllContractToStrings() {
-        String[] contractToStrings = new String[supplyContracts.size()];
-        for(int i = 0; i < supplyContracts.size(); i++){
-            contractToStrings[i] = supplyContracts.get(i).toString();
-        }
+        String[] contractToStrings = new String[supplyContractsArrayList.size()];
+        for(int i = 0; i < supplyContractsArrayList.size(); i++)
+            contractToStrings[i] = supplyContractsArrayList.get(i).toString();
+
         return contractToStrings;
     }
 }

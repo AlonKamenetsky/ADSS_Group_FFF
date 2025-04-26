@@ -74,6 +74,10 @@ public class OrderController {
         this.orderID++;
     }
 
+    public boolean removeAllSupplierOrders(int supplierID) {
+        return this.ordersArrayList.removeIf(order -> order.supplierID == supplierID);
+    }
+
     private Order getOrder(int orderID) {
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID) {
@@ -158,7 +162,6 @@ public class OrderController {
         }
         return ordersAsString;
     }
-
 
     public ArrayList<int[]> getOrderProducts(int orderID){
         for (Order order : ordersArrayList) {

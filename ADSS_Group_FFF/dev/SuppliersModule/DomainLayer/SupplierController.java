@@ -176,7 +176,7 @@ public class SupplierController {
     }
 
     public boolean deleteSupplier(int supplierID) {
-        return this.suppliersArrayList.removeIf(supplier -> supplier.supplierId == supplierID);
+        return this.suppliersArrayList.removeIf(supplier -> supplier.supplierId == supplierID) && this.orderController.removeAllSupplierOrders(supplierID) && this.supplyContractController.removeAllSupplierContracts(supplierID);
     }
 
     public String[] getAllSuppliersAsString() {
