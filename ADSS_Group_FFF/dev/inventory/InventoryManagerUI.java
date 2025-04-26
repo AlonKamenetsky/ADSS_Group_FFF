@@ -28,7 +28,8 @@ public class InventoryManagerUI {
             System.out.println(YELLOW + "4. Update item quantities" + RESET);
             System.out.println(YELLOW + "5. Mark item as DAMAGED or EXPIRED" + RESET);
             System.out.println(YELLOW + "6. Generate inventory report" + RESET);
-            System.out.println(RED + "7. Exit" + RESET);
+            System.out.println("7. Add a new item to inventory");
+            System.out.println(RED + "8. Exit" + RESET);
             System.out.print("\nEnter your choice: ");
 
             String choice = scanner.nextLine();
@@ -53,6 +54,9 @@ public class InventoryManagerUI {
                     handleGenerateReport();
                     break;
                 case "7":
+                    addItem();
+                    break;
+                case "8":
                     System.out.println(RED + "Exiting the system. Goodbye!" + RESET);
                     return;
                 default:
@@ -63,6 +67,57 @@ public class InventoryManagerUI {
             scanner.nextLine();
         }
     }
+
+    private void addItem() {
+        System.out.println("Adding a new inventory item:");
+
+        System.out.print("Enter item ID: ");
+        String id = scanner.nextLine();
+
+        boolean idExists = service.getAllItems().stream()
+                .anyMatch(item -> item.getId().equals(id));
+
+        if (idExists) {
+            System.out.println("An item with this ID already exists. Operation cancelled.");
+            return;
+        }
+
+        System.out.print("Enter item name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter manufacturer: ");
+        String manufacturer = scanner.nextLine();
+
+        System.out.print("Enter shelf quantity: ");
+        int shelfQuantity = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Enter backroom quantity: ");
+        int backroomQuantity = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Enter minimum threshold: ");
+        int minThreshold = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Enter purchase price: ");
+        double purchasePrice = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter sale price: ");
+        double salePrice = Double.parseDouble(scanner.nextLine());
+
+        System.out.println("Choose a category:");
+        List<Category> categories = service.getAllCategories();
+        for (int i = 0; i < categories.size(); i++) {
+            System.out.println((i + 1) + ". " + categories.get(i).getName());
+        }
+        int categoryChoice = Integer.parseInt(scanner.nextLine()) - 1;
+        Category category = categories.get(categoryChoice);
+
+        InventoryItem newItem = new InventoryItem(id, name, manufacturer, shelfQuantity, backroomQuantity,
+                minThreshold, purchasePrice, salePrice, ItemStatus.NORMAL, category);
+
+        service.addItem(newItem);
+        System.out.println("Item added successfully!");
+    }
+
 
     private void handleUpdateQuantities() {
         System.out.print(YELLOW + "Enter Item ID: " + RESET);

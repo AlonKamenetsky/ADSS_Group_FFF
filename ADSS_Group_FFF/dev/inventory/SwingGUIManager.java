@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 public class SwingGUIManager extends JFrame {
     private InventoryService service;
@@ -17,6 +18,7 @@ public class SwingGUIManager extends JFrame {
         setTitle("Inventory Management System (Swing GUI)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 600);
+        setLocationRelativeTo(null); // Center the window
         setLayout(null);
 
         getContentPane().setBackground(new java.awt.Color(240, 248, 255)); // Light baby blue
@@ -63,8 +65,14 @@ public class SwingGUIManager extends JFrame {
         exportCsvBtn.setFont(font);
         add(exportCsvBtn);
 
+        JButton addItemButton = new JButton("Add New Item");
+        addItemButton.setBounds(100, 340, 300, 30);
+        addItemButton.setFont(font);
+        addItemButton.addActionListener(e -> addItem());
+        add(addItemButton);
+
         JButton exitBtn = new JButton("Exit");
-        exitBtn.setBounds(100, 340, 300, 30);
+        exitBtn.setBounds(100, 380, 300, 30); // moved down 40px
         exitBtn.setFont(font);
         add(exitBtn);
 
@@ -80,6 +88,51 @@ public class SwingGUIManager extends JFrame {
 
         setVisible(true);
     }
+
+    private void addItem() {
+        try {
+            String id = JOptionPane.showInputDialog(this, "Enter item ID:");
+            if (id == null) return;
+
+            boolean idExists = service.getAllItems().stream()
+                    .anyMatch(item -> item.getId().equals(id));
+
+            if (idExists) {
+                JOptionPane.showMessageDialog(this, "An item with this ID already exists. Please use a unique ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String name = JOptionPane.showInputDialog(this, "Enter item name:");
+            if (name == null) return;
+
+            String manufacturer = JOptionPane.showInputDialog(this, "Enter manufacturer:");
+            if (manufacturer == null) return;
+
+            int shelfQuantity = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter shelf quantity:"));
+            int backroomQuantity = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter backroom quantity:"));
+            int minThreshold = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter minimum threshold:"));
+            double purchasePrice = Double.parseDouble(JOptionPane.showInputDialog(this, "Enter purchase price:"));
+            double salePrice = Double.parseDouble(JOptionPane.showInputDialog(this, "Enter sale price:"));
+
+            List<Category> categories = service.getAllCategories();
+            String[] categoryNames = categories.stream().map(Category::getName).toArray(String[]::new);
+            String chosenCategory = (String) JOptionPane.showInputDialog(this, "Choose a category:",
+                    "Category Selection", JOptionPane.PLAIN_MESSAGE, null, categoryNames, categoryNames[0]);
+            if (chosenCategory == null) return;
+            Category selectedCategory = categories.stream()
+                    .filter(c -> c.getName().equals(chosenCategory))
+                    .findFirst().orElse(null);
+
+            InventoryItem newItem = new InventoryItem(id, name, manufacturer, shelfQuantity, backroomQuantity,
+                    minThreshold, purchasePrice, salePrice, ItemStatus.NORMAL, selectedCategory);
+
+            service.addItem(newItem);
+            JOptionPane.showMessageDialog(this, "Item added successfully!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error adding item: " + ex.getMessage());
+        }
+    }
+
 
     public void bringToFront() {
         setAlwaysOnTop(true);

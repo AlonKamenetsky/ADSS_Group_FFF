@@ -21,7 +21,6 @@ public class SimpleCLIManager {
 
     public void run() {
         clearScreen();
-        printAsciiArt();
         askToLoadSampleData(); // <<< NEW
         ui.runMenu();
     }
@@ -41,10 +40,6 @@ public class SimpleCLIManager {
         }
     }
 
-    private void printAsciiArt() {
-        System.out.println(BLUE +
-                " Stav & Blanga Present " + RESET);
-    }
 
     private void clearScreen() {
         System.out.print("\033[H\033[2J");
