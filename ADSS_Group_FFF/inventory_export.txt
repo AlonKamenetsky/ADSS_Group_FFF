@@ -1,0 +1,48 @@
+Item ID: 001
+Name: Tnuva Milk 1L
+Manufacturer: Tnuva
+Shelf Quantity: 5
+Backroom Quantity: 3
+Minimum Threshold: 10
+Purchase Price: 2.4
+Sale Price: 4.9
+Status: NORMAL
+Category: Milk
+-----------------------------
+
+Item ID: 002
+Name: Choco Milk
+Manufacturer: Tnuva
+Shelf Quantity: 2
+Backroom Quantity: 1
+Minimum Threshold: 6
+Purchase Price: 1.9
+Sale Price: 3.9
+Status: EXPIRED
+Category: Milk
+-----------------------------
+
+Item ID: 003
+Name: Yolo Yogurt
+Manufacturer: Strauss
+Shelf Quantity: 5
+Backroom Quantity: 0
+Minimum Threshold: 4
+Purchase Price: 1.5
+Sale Price: 3.0
+Status: DAMAGED
+Category: Yogurt
+-----------------------------
+
+Item ID: 004
+Name: Doritos
+Manufacturer: Osem
+Shelf Quantity: 10
+Backroom Quantity: 5
+Minimum Threshold: 8
+Purchase Price: 3.5
+Sale Price: 6.5
+Status: NORMAL
+Category: Snacks
+-----------------------------
+

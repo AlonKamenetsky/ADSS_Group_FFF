@@ -1,0 +1,5 @@
+Item ID,Name,Manufacturer,Shelf Quantity,Backroom Quantity,Min Threshold,Purchase Price,Sale Price,Status,Category
+001,Tnuva Milk 1L,Tnuva,5,3,10,2.4,4.9,NORMAL,Milk
+002,Choco Milk,Tnuva,2,1,6,1.9,3.9,EXPIRED,Milk
+003,Yolo Yogurt,Strauss,5,0,4,1.5,3.0,DAMAGED,Yogurt
+004,Doritos,Osem,10,5,8,3.5,6.5,NORMAL,Snacks

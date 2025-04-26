@@ -1,27 +1,30 @@
 package inventory;
 
-import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         InventoryService service = new InventoryService();
+        Scanner scanner = new Scanner(System.in);
 
-        // Load sample data into memory (outside domain layer)
-        AppInitializer.loadSampleData(service);
+        System.out.println("Welcome to the Inventory Management System!");
 
-        // Basic usage demo
-        InventoryManagerUI ui = new InventoryManagerUI(service);
+        System.out.println("\nChoose Interface:");
+        System.out.println("1. CLI (Text Mode)");
+        System.out.println("2. GUI (Window Mode)");
+        System.out.print("Enter your choice: ");
+        String uiChoice = scanner.nextLine();
 
-        ui.printAllItems();
-        ui.printLowStockItems();
-        ui.printCategories();
-
-        // Generate a report for a specific category and status
-        InventoryReport report = service.generateReport(
-                "RPT001",
-                Arrays.asList(service.getAllCategories().get(0)), // filter by "Dairy"
-                null // no status filter
-        );
-        System.out.println(report);
+        if (uiChoice.equals("1")) {
+            SimpleCLIManager cli = new SimpleCLIManager(service);
+            cli.run();
+        } else if (uiChoice.equals("2")) {
+            SwingGUIManager gui = new SwingGUIManager(service);
+            gui.setVisible(true);
+            gui.bringToFront();
+            gui.askToLoadSampleData(); // <<< NEW
+        } else {
+            System.out.println("Invalid interface choice. Exiting.");
+        }
     }
 }
