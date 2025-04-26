@@ -7,25 +7,24 @@ import Presentation.LoginScreen;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
-        Scanner scanner = new Scanner(System.in);
-
-        // example‑data prompt
-        ConsoleUtils.typewriterPrint("Load example data? (yes/no) ", 20);
-        String c = scanner.nextLine().trim();
-        while (!c.equalsIgnoreCase("yes") && !c.equalsIgnoreCase("no")) {
-            ConsoleUtils.typewriterPrint("Please enter 'yes' or 'no': ", 20);
-            c = scanner.nextLine().trim();
-        }
-        if (c.equalsIgnoreCase("yes")) {
+        // 1) Bootstrap example data unconditionally (or via a config flag)
+        try {
             DataInitializer.initializeExampleData();
+        } catch (ParseException e) {
+            System.err.println("Error loading example data: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
 
-        // hand off everything else to LoginScreen
+        // 2) Launch the login/UI loop
+        Scanner scanner = new Scanner(System.in);
         LoginScreen login = new LoginScreen(
                 EmployeesRepo.getInstance().getEmployees()
         );
         login.run(scanner);
 
+        // 3) Clean up and exit
         scanner.close();
+        System.out.println("Goodbye!");
     }
 }

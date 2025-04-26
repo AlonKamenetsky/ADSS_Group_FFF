@@ -71,9 +71,9 @@ class EmployeeInterfaceTest {
     void testAddVacationViaMenu() throws Exception {
         // simulate: "5. Add Vacation" → enter date → "7. Exit"
         String input = String.join("\n",
-                "5",
+                "6",
                 "2025-08-15", // vacation date
-                "7"
+                "8"
         ) + "\n";
 
         Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));
@@ -100,7 +100,7 @@ class EmployeeInterfaceTest {
                 "3",
                 "1",
                 "0",
-                "7"
+                "8"
         ) + "\n";
 
         Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));
@@ -132,7 +132,7 @@ class EmployeeInterfaceTest {
         String input = String.join("\n",
                 "2",
                 "1",
-                "7"
+                "8"
         ) + "\n";
 
         Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));

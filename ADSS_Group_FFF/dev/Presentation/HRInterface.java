@@ -13,34 +13,39 @@ public class HRInterface {
     private Role currentUserRole;
     private final List<SwapRequest> swapRequests = SwapRequestsRepo.getInstance().getSwapRequests();
     private final List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
-    private final List<Shift> shifts = ShiftsRepo.getInstance().getSchedule().getCurrentWeek();
 
 
     public HRInterface(String currentUserId) {
         this.currentUserId = currentUserId;
     }
 
-    public void assignEmployeeToShift(Scanner scanner, List<Employee> employees, List<Shift> shifts) {
+
+    private void assignEmployeeToShift(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can assign employees to shifts.", 20
-);
+            ConsoleUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can assign employees to shifts.", 20);
             return;
         }
 
-        // Display available shifts and let the user select one.
-        ConsoleUtils.typewriterPrint("Available Shifts:", 20
-);
-        for (int i = 0; i < shifts.size(); i++) {
-            ConsoleUtils.typewriterPrint((i + 1) + ". " + shifts.get(i).getID() + " on " + shifts.get(i).getDate(), 20
-);
+        ShiftsRepo repo = ShiftsRepo.getInstance();
+        repo.ensureUpToDate();
+        List<Shift> shifts = repo.getCurrentWeekShifts();
+        List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
+
+        if (shifts.isEmpty()) {
+            ConsoleUtils.typewriterPrint("No shifts scheduled for this week.", 20);
+            return;
         }
-        ConsoleUtils.typewriterPrint("Select shift:", 20
-);
+
+        ConsoleUtils.typewriterPrint("Available Shifts:", 20);
+        for (int i = 0; i < shifts.size(); i++) {
+            Shift s = shifts.get(i);
+            ConsoleUtils.typewriterPrint((i + 1) + ". " + s.getID() + " on " + new SimpleDateFormat("yyyy-MM-dd").format(s.getDate()), 20);
+        }
+        ConsoleUtils.typewriterPrint("Select shift:", 20);
         int shiftIndex = scanner.nextInt() - 1;
         scanner.nextLine();
         if (shiftIndex < 0 || shiftIndex >= shifts.size()) {
-            ConsoleUtils.typewriterPrint("Invalid shift selection.", 20
-);
+            ConsoleUtils.typewriterPrint("Invalid shift selection.", 20);
             return;
         }
         Shift shift = shifts.get(shiftIndex);
@@ -475,77 +480,69 @@ public class HRInterface {
      * @param scanner A Scanner object for user input.
      */
     /** Instead of creating a new Shift, pick one of this/next week and set its required roles. */
+
     public void configureShiftRoles(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR can configure shift roles.", 20
-);
+            ConsoleUtils.typewriterPrint("Access Denied: Only HR can configure shift roles.", 20);
             return;
         }
 
         ShiftsRepo repo = ShiftsRepo.getInstance();
+        repo.ensureUpToDate();
 
-        ConsoleUtils.typewriterPrint("Configure roles for: 1) Current week   2) Next week", 20
-);
-        int wk = scanner.nextInt();
-        scanner.nextLine();
+        ConsoleUtils.typewriterPrint("Configure roles for: 1) Current week   2) Next week", 20);
+        int wk = scanner.nextInt(); scanner.nextLine();
 
-        // let the getters themselves ensure up‐to‐date / lazy build next week
         List<Shift> weekShifts = (wk == 1)
                 ? repo.getCurrentWeekShifts()
                 : repo.getNextWeekShifts();
 
         if (weekShifts.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No shifts available to configure.", 20
-);
+            ConsoleUtils.typewriterPrint("No shifts available to configure.", 20);
             return;
         }
 
+        weekShifts.sort(Comparator.comparing(Shift::getDate));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < weekShifts.size(); i++) {
             Shift s = weekShifts.get(i);
-            System.out.printf("%d) %s %s%n", i + 1, s.getID(), s.getType());
+            ConsoleUtils.typewriterPrint(
+                    String.format("%d) %s on %s (%s)",
+                            i+1,
+                            s.getID(),
+                            fmt.format(s.getDate()),
+                            s.getType()
+                    ), 20
+            );
         }
-        ConsoleUtils.typewriterPrint("0) Exit", 20
-);
-        ConsoleUtils.typewriterPrint("Select shift to configure: ", 20
-);
-        int idx = scanner.nextInt() - 1;
-        scanner.nextLine();
-
-        if (idx == -1) {
-            ConsoleUtils.typewriterPrint("Exiting configuration.", 20
-);
-            return;
-        }
+        ConsoleUtils.typewriterPrint("0) Exit", 20);
+        ConsoleUtils.typewriterPrint("Select shift to configure: ", 20);
+        int idx = scanner.nextInt() - 1; scanner.nextLine();
         if (idx < 0 || idx >= weekShifts.size()) {
-            ConsoleUtils.typewriterPrint("Invalid selection.", 20
-);
+            ConsoleUtils.typewriterPrint("Exiting configuration.", 20);
             return;
         }
-
         Shift shift = weekShifts.get(idx);
 
-        // Always ensure exactly 1 Shift Manager slot
         Role managerRole = RolesRepo.getInstance().getRoleByName("Shift Manager");
         shift.getRequiredCounts().put(managerRole, 1);
         shift.getRequiredRoles().putIfAbsent(managerRole, new ArrayList<>());
 
-        // Now prompt only for the other roles
         for (Role role : RolesRepo.getInstance().getRoles()) {
-            if (role.equals(HR_ROLE) || role.equals(managerRole)) {
-                continue;
-            }
+            if (role.equals(HR_ROLE) || role.equals(managerRole)) continue;
             int current = shift.getRequiredCounts().getOrDefault(role, 0);
-            System.out.printf("Required # for role %s (currently %d): ",
-                    role.getName(), current);
-            int cnt = scanner.nextInt();
-            scanner.nextLine();
+            ConsoleUtils.typewriterPrint(
+                    String.format("Required # for role %s (currently %d):", role.getName(), current),
+                    20
+            );
+            int cnt = scanner.nextInt(); scanner.nextLine();
             shift.getRequiredCounts().put(role, cnt);
             shift.getRequiredRoles().put(role, new ArrayList<>(cnt));
         }
 
-        ConsoleUtils.typewriterPrint("Shift roles updated successfully.", 20
-);
+        ConsoleUtils.typewriterPrint("Shift roles updated successfully.", 20);
     }
+
 
 
     /**
@@ -661,7 +658,7 @@ public class HRInterface {
                 case 3 -> updateEmployeeData(scanner, employees);
                 case 4 -> addNewRole(scanner);
                 case 5 -> removeRole(scanner);
-                case 6 -> assignEmployeeToShift(scanner, employees, shifts);
+                case 6 -> assignEmployeeToShift(scanner);
                 case 7 -> processSwapRequests(scanner);
                 case 8 -> configureShiftRoles(scanner);
                 case 9 -> exit = true;

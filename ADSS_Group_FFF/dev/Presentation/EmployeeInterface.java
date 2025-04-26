@@ -59,13 +59,10 @@ public class EmployeeInterface {
         }
     }
     private void viewAssignedShifts() {
+        List<Shift> shifts = ShiftsRepo.getInstance().getCurrentWeekShifts();
         boolean found = false;
-        ConsoleUtils.typewriterPrint("\nYour Assigned Shifts:", 20);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy‑MM‑dd");
-
-        // *** raw list from schedule, not date‑filtered ***
-        List<Shift> shifts = ShiftsRepo.getInstance().getSchedule().getCurrentWeek();
-
+        System.out.println("\nYour Assigned Shifts:");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         for (Shift s : shifts) {
             for (ShiftAssignment sa : s.getAssignedEmployees()) {
                 if (sa.getEmployeeId().equals(employee.getId())) {
@@ -78,44 +75,40 @@ public class EmployeeInterface {
             }
         }
         if (!found) {
-            ConsoleUtils.typewriterPrint("You are not assigned to any shifts.", 20);
+            System.out.println("You are not assigned to any shifts.");
         }
     }
 
     private void sendSwapRequest(Scanner scanner) {
-        // *** raw list from schedule, not date‑filtered ***
-        List<Shift> shifts = ShiftsRepo.getInstance().getSchedule().getCurrentWeek();
-
-        var assigned = shifts.stream()
+        // Always fetch up-to-date current-week shifts
+        List<Shift> shifts = ShiftsRepo.getInstance().getCurrentWeekShifts();
+        List<Shift> assigned = shifts.stream()
                 .filter(s -> s.getAssignedEmployees().stream()
                         .anyMatch(sa -> sa.getEmployeeId().equals(employee.getId())))
                 .collect(Collectors.toList());
 
         if (assigned.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No assigned shifts; cannot request a swap.", 20);
+            System.out.println("No assigned shifts; cannot request a swap.");
             return;
         }
 
-        ConsoleUtils.typewriterPrint("\nYour Assigned Shifts:", 20);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy‑MM‑dd");
+        System.out.println("\nYour Assigned Shifts:");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < assigned.size(); i++) {
             Shift s = assigned.get(i);
-            String roleName = s.getAssignedEmployees().stream()
+            String role = s.getAssignedEmployees().stream()
                     .filter(sa -> sa.getEmployeeId().equals(employee.getId()))
                     .findFirst()
                     .map(sa -> sa.getRole().getName())
                     .orElse("—");
             System.out.printf("%d) %s on %s (%s)%n",
-                    i + 1,
-                    s.getID(),
-                    fmt.format(s.getDate()),
-                    roleName);
+                    i + 1, s.getID(), fmt.format(s.getDate()), role);
         }
-        ConsoleUtils.typewriterPrint("Select shift to swap: ", 20);
+        System.out.print("Select shift to swap: ");
         int idx = scanner.nextInt() - 1;
         scanner.nextLine();
         if (idx < 0 || idx >= assigned.size()) {
-            ConsoleUtils.typewriterPrint("Invalid selection.", 20);
+            System.out.println("Invalid selection.");
             return;
         }
 
@@ -126,13 +119,13 @@ public class EmployeeInterface {
                 .map(ShiftAssignment::getRole)
                 .orElse(null);
         if (myRole == null) {
-            ConsoleUtils.typewriterPrint("Could not determine your role on that shift.", 20);
+            System.out.println("Could not determine your role for that shift.");
             return;
         }
 
         SwapRequest req = new SwapRequest(employee, target, myRole);
         SwapRequestsRepo.getInstance().addSwapRequest(req);
-        ConsoleUtils.typewriterPrint("Swap request sent: " + req, 20);
+        System.out.println("Swap request sent: " + req);
     }
 
     private void sendWeeklyAvailability(Scanner scanner) {

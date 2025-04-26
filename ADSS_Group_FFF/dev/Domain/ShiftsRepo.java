@@ -1,9 +1,9 @@
-// src/main/java/Domain/ShiftsRepo.java
+// Domain/ShiftsRepo.java
 package Domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -11,12 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Singleton repository for:
- *  - RecurringShift templates
- *  - The two‑week rolling schedule
- *  - A simple history of all past shifts
- */
 public class ShiftsRepo {
     private static ShiftsRepo instance = null;
 
@@ -24,7 +18,8 @@ public class ShiftsRepo {
     private final WeeklySchedule       schedule  = new WeeklySchedule();
     private final List<Shift>          history   = new ArrayList<>();
 
-    private LocalDate lastReset = LocalDate.MIN;
+    // Remember the last Saturday-18:00 rollover timestamp
+    private LocalDateTime lastRollover = LocalDateTime.MIN;
 
     private ShiftsRepo() {}
 
@@ -33,56 +28,53 @@ public class ShiftsRepo {
         return instance;
     }
 
-    /** Add one of your daily templates (e.g. Sunday morning). */
     public void addTemplate(RecurringShift r) {
         templates.add(r);
     }
 
-    /** Always call before reading currentWeekShifts. */
+    /**
+     * Archive & roll over exactly once after Saturday at 18:00 (inclusive).
+     */
     public void ensureUpToDate() {
         LocalDate today    = LocalDate.now(ZoneId.systemDefault());
         LocalDate saturday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
-        LocalTime now      = LocalTime.now();
+        LocalDateTime cutoff = saturday.atTime(18, 0);
+        LocalDateTime now    = LocalDateTime.now(ZoneId.systemDefault());
 
-        // On Saturday ≥18:00, archive + roll
-        if (!saturday.equals(lastReset) && now.isAfter(LocalTime.of(18,0))) {
+        // If we are at or past Saturday 18:00 and haven’t rolled yet:
+        if (!now.isBefore(cutoff) && lastRollover.isBefore(cutoff)) {
+            // 1) Archive old currentWeek
             history.addAll(schedule.getCurrentWeek());
+            // 2) Swap nextWeek → currentWeek
             schedule.swapWeeks();
-            schedule.resetNextWeek(templates, saturday);
-            lastReset = saturday;
+            // 3) Build nextWeek for the week after this Saturday
+            schedule.resetNextWeek(templates, saturday.plusDays(7));
+            lastRollover = cutoff;
         }
     }
 
-    /** Get this week’s shifts (Sunday→Saturday). */
+    /** Returns whatever is buffered as currentWeek (after any rollover). */
     public List<Shift> getCurrentWeekShifts() {
         ensureUpToDate();
-        LocalDate today       = LocalDate.now(ZoneId.systemDefault());
-        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-        LocalDate endOfWeek   = startOfWeek.plusDays(6);
-
         return schedule.getCurrentWeek().stream()
-                .filter(shift -> {
-                    LocalDate d = shift.getDate()
-                            .toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    return !d.isBefore(startOfWeek) && !d.isAfter(endOfWeek);
-                })
                 .sorted(Comparator.comparing(Shift::getDate))
                 .collect(Collectors.toList());
     }
 
-    /** Lazily build nextWeek from templates, then return everything sorted. */
+    /** Returns whatever is buffered as nextWeek (after any rollover), lazily building it. */
     public List<Shift> getNextWeekShifts() {
+        ensureUpToDate();
         if (schedule.getNextWeek().isEmpty() && !templates.isEmpty()) {
-            LocalDate pivot = LocalDate.now(ZoneId.systemDefault())
+            LocalDate nextSat = LocalDate.now(ZoneId.systemDefault())
                     .with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
-            schedule.resetNextWeek(templates, pivot);
+            schedule.resetNextWeek(templates, nextSat);
         }
         return schedule.getNextWeek().stream()
                 .sorted(Comparator.comparing(Shift::getDate))
                 .collect(Collectors.toList());
     }
 
-    public WeeklySchedule             getSchedule()  { return schedule;  }
-    public List<RecurringShift>       getTemplates() { return templates; }
-    public List<Shift>                getHistory()   { return history;   }
+    public WeeklySchedule getSchedule()    { return schedule;  }
+    public List<RecurringShift> getTemplates() { return templates; }
+    public List<Shift> getHistory()       { return history;   }
 }
