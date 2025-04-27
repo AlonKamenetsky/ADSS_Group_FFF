@@ -1,18 +1,18 @@
 package SuppliersModule.PresentationLayer;
 
 import java.util.*;
-
-import SuppliersModule.DomainLayer.Enums.WeekDay;
 import SuppliersModule.ServiceLayer.ServiceController;
 
 
 public class CLI {
     ServiceController serviceController;
     Scanner sc;
+   boolean dataRead;
 
     public CLI() {
         this.sc = new Scanner(System.in);
         this.serviceController = new ServiceController();
+        dataRead = false;
     }
 
     public void ReadDataFromCSVFiles() {
@@ -50,11 +50,7 @@ public class CLI {
         System.out.println("Enter new product company: ");
         String newProductCompany = sc.nextLine();
 
-        System.out.println("Enter product category: ");
-        this.printProductCategoryMethods();
-        int productCategory = readInt();
-
-        boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany, productCategory);
+        boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany);
         if (result) System.out.println("Product updated successfully.");
         else System.out.println("Error updating product: no such product exists.");
     }
@@ -92,12 +88,10 @@ public class CLI {
         String bankAccountInfo = sc.nextLine();
 
         System.out.println("Enter payment method: ");
-        printPaymentMethods();
-        int paymentMethod = readInt();
+        int paymentMethod = choosePaymentMethod();
 
         System.out.println("Enter delivery method: ");
-        printDeliveryMethods();
-        int deliveringMethod = readInt();
+        int deliveringMethod = chooseDeliveryMethod();
 
         System.out.println("--Creating new contact info--");
         System.out.println("Enter phone number: ");
@@ -108,9 +102,7 @@ public class CLI {
         String email = sc.nextLine();
         System.out.println("Enter contact name");
         String contactName = sc.nextLine();
-
-        System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
-        int supplyMethod = readInt();
+        int supplyMethod = chooseSupplyMethod();
         ArrayList<Integer> supplyDays = null;
         if (supplyMethod == 0) {
             System.out.println("Enter days for supplier (Enter -1 for exit), Enter 1-7: ");
@@ -125,7 +117,10 @@ public class CLI {
 
         int supplierID = this.serviceController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccountInfo, paymentMethod, supplyDays);
 
-        if (supplierID == -1) System.out.println("Error creating new supplier.");
+        if (supplierID == -1) {
+            System.out.println("Error creating new supplier.");
+            return;
+        }
         else System.out.println("Supplier registered successfully.");
 
 
@@ -269,7 +264,6 @@ public class CLI {
     private void registerNewOrder() {
         ArrayList<int[]> dataArray = new ArrayList<>();
         Date today = new Date();
-
         this.printAllSuppliers();
         System.out.println("Which supplier you want to order from? Enter supplier ID");
         int supplierId = readInt();
@@ -636,16 +630,53 @@ public class CLI {
                 return;
         }
     }
+    public int chooseSupplyMethod(){
+        int supplyMethod = -1;
+        while(true){
+            System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
+            supplyMethod = readInt();
+            if(supplyMethod == 0 || supplyMethod == 1) break;
+            else System.out.println("Invalid supply method.");
+        }
+        return supplyMethod;
+    }
+    public int chooseDeliveryMethod(){
+        int deliveryMethod = -1;
+        printDeliveryMethods();
+        while(true){
+            deliveryMethod = readInt();
+            if(deliveryMethod == 0 || deliveryMethod == 1) break;
+            else System.out.println("Invalid delivery method.");
+        }
+        return deliveryMethod;
+    }
+    public int choosePaymentMethod(){
+        int paymentMethod = -1;
+        while(true){
+            printPaymentMethods();
+            paymentMethod = readInt();
+            if(paymentMethod == 0 || paymentMethod ==1 || paymentMethod==2) break;
+            else System.out.println("Invalid payment method.");
+
+        }
+        return paymentMethod;
+    }
 
     public void mainCliMenu() {
         System.out.println("Welcome to SuppliersModule!");
+
         while (true) {
             printMenuOptions();
             System.out.println("Please select an option: ");
             int userInput = readInt();
             switch (userInput) {
                 case 0:
-                    ReadDataFromCSVFiles();
+                    if(!dataRead) {
+                        ReadDataFromCSVFiles();
+                        dataRead = true;
+                    }
+                    else
+                        System.out.println("Data already loaded.");
                     break;
                 case 1:
                     printProductOptions();

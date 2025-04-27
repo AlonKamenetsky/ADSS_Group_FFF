@@ -19,8 +19,8 @@ public class ProductService {
         return this.productController.registerNewProduct(productName, productCompanyName, productCategory);
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
-        return this.productController.updateProduct(productID, productName, productCompanyName, productCategory);
+    public boolean updateProduct(int productID, String productName, String productCompanyName) {
+        return this.productController.updateProduct(productID, productName, productCompanyName);
     }
 
     public boolean deleteProduct(int productID) {

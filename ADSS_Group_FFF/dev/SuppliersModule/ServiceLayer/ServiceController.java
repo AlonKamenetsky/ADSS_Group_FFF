@@ -53,8 +53,8 @@ public class ServiceController {
             Date parsedDate = sdf.parse(supplyDate);
             System.out.println("Parsed Date: " + parsedDate);
             return parsedDate;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ParseException e) {
+            System.out.println("Invalid Date Format");
         }
         return null;
     }
@@ -91,10 +91,9 @@ public class ServiceController {
         return -1;
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, int productCategory) {
-        if (validateProductCategory(productCategory))
-            return this.productService.updateProduct(productID, productName, productCompanyName, ProductCategory.values()[productCategory]);
-        return false;
+    public boolean updateProduct(int productID, String productName, String productCompanyName) {
+        return this.productService.updateProduct(productID, productName, productCompanyName);
+
     }
 
     public boolean deleteProduct(int productID) {

@@ -55,12 +55,11 @@ public class ProductController {
         return product.getProductId();
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, ProductCategory productCategory) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName) {
         for (Product product : this.productsArrayList) {
             if (product.getProductId() == productID) {
                 product.setProductName(productName);
                 product.setProductCompanyName(productCompanyName);
-                product.setProductCategory(productCategory);
                 return true;
             }
         }
