@@ -1,8 +1,6 @@
 package inventory;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
@@ -71,8 +69,15 @@ public class SwingGUIManager extends JFrame {
         addItemButton.addActionListener(e -> addItem());
         add(addItemButton);
 
+        JButton addCategoryButton = new JButton("Add New Category");
+        addCategoryButton.setBounds(100, 380, 300, 30); // move others down if needed
+        addCategoryButton.setFont(font);
+        addCategoryButton.addActionListener(e -> addCategory());
+        add(addCategoryButton);
+
+
         JButton exitBtn = new JButton("Exit");
-        exitBtn.setBounds(100, 380, 300, 30); // moved down 40px
+        exitBtn.setBounds(100, 420, 300, 30);
         exitBtn.setFont(font);
         add(exitBtn);
 
@@ -257,32 +262,98 @@ public class SwingGUIManager extends JFrame {
     }
 
     private void generateReport() {
-        String reportId = JOptionPane.showInputDialog(this, "Enter Report ID:");
-        String[] options = {"No Filter", "DAMAGED", "EXPIRED"};
-        int choice = JOptionPane.showOptionDialog(this, "Filter by Status?", "Generate Report",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        try {
+            String reportId = JOptionPane.showInputDialog(this, "Enter Report ID:");
+            if (reportId == null || reportId.trim().isEmpty()) {
+                showMessage("Report ID cannot be empty.", "Error");
+                return;
+            }
 
-        ItemStatus filter = null;
-        if (choice == 1) {
-            filter = ItemStatus.DAMAGED;
-        } else if (choice == 2) {
-            filter = ItemStatus.EXPIRED;
+            String[] statusOptions = {"No Filter", "DAMAGED", "EXPIRED"};
+            int statusChoice = JOptionPane.showOptionDialog(
+                    this,
+                    "Filter by Status?",
+                    "Generate Report",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    statusOptions,
+                    statusOptions[0]
+            );
+
+            ItemStatus statusFilter = null;
+            if (statusChoice == 1) {
+                statusFilter = ItemStatus.DAMAGED;
+            } else if (statusChoice == 2) {
+                statusFilter = ItemStatus.EXPIRED;
+            }
+
+            // Ask about Category filtering
+            String[] categoryFilterOptions = {"No Category Filter", "Select Categories"};
+            int categoryChoice = JOptionPane.showOptionDialog(
+                    this,
+                    "Filter by Category?",
+                    "Category Filter",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    categoryFilterOptions,
+                    categoryFilterOptions[0]
+            );
+
+            List<Category> selectedCategories = null;
+            if (categoryChoice == 1) { // User wants to filter categories
+                List<Category> allCategories = service.getAllCategories();
+                if (allCategories.isEmpty()) {
+                    showMessage("No categories available.", "Error");
+                    return;
+                }
+                String[] categoryNames = allCategories.stream().map(Category::getName).toArray(String[]::new);
+
+                JList<String> categoryList = new JList<>(categoryNames);
+                categoryList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                JScrollPane scrollPane = new JScrollPane(categoryList);
+                scrollPane.setPreferredSize(new java.awt.Dimension(300, 200));
+
+                int result = JOptionPane.showConfirmDialog(
+                        this,
+                        scrollPane,
+                        "Select Categories",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    List<String> selectedNames = categoryList.getSelectedValuesList();
+                    selectedCategories = new java.util.ArrayList<>();
+                    for (String selectedName : selectedNames) {
+                        allCategories.stream()
+                                .filter(c -> c.getName().equals(selectedName))
+                                .findFirst()
+                                .ifPresent(selectedCategories::add);
+                    }
+                }
+            }
+
+            InventoryReport report = service.generateReport(reportId, selectedCategories, statusFilter);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Report ID: ").append(report.getId()).append("\n");
+            sb.append("Generated on: ").append(report.getDateGenerated()).append("\n\n");
+            sb.append("Items in Report:\n");
+
+            for (InventoryItem item : report.getItems()) {
+                sb.append(formatItem(item));
+                sb.append("\n-----------------------------\n\n");
+            }
+
+            showMessage(sb.toString(), "Inventory Report");
+
+        } catch (Exception e) {
+            showMessage("Error generating report: " + e.getMessage(), "Error");
         }
-
-        InventoryReport report = service.generateReport(reportId, null, filter);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Report ID: ").append(report.getId()).append("\n");
-        sb.append("Generated on: ").append(report.getDateGenerated()).append("\n\n");
-        sb.append("Items in Report:\n");
-
-        for (InventoryItem item : report.getItems()) {
-            sb.append(formatItem(item));
-            sb.append("\n-----------------------------\n\n");
-        }
-
-        showMessage(sb.toString(), "Inventory Report");
     }
+
 
     private void exportInventoryToTxt() {
         JFileChooser fileChooser = new JFileChooser();
@@ -400,4 +471,40 @@ public class SwingGUIManager extends JFrame {
 
         JOptionPane.showMessageDialog(this, scrollPane, "Export Successful", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private void addCategory() {
+        try {
+            String name = JOptionPane.showInputDialog(this, "Enter new category name:");
+            if (name == null || name.trim().isEmpty()) return;
+
+            List<Category> categories = service.getAllCategories();
+            Category parent = null;
+            if (!categories.isEmpty()) {
+                String[] categoryNames = categories.stream().map(Category::getName).toArray(String[]::new);
+                String chosenParent = (String) JOptionPane.showInputDialog(
+                        this,
+                        "Choose a parent category (or cancel for none):",
+                        "Parent Category",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        categoryNames,
+                        categoryNames[0]);
+
+                if (chosenParent != null) {
+                    parent = categories.stream()
+                            .filter(c -> c.getName().equals(chosenParent))
+                            .findFirst()
+                            .orElse(null);
+                }
+            }
+
+            Category newCategory = new Category(name, parent);
+            service.addCategory(newCategory);
+            JOptionPane.showMessageDialog(this, "Category added successfully!");
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error adding category: " + ex.getMessage());
+        }
+    }
+
 }

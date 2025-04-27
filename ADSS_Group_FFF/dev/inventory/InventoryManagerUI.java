@@ -29,7 +29,9 @@ public class InventoryManagerUI {
             System.out.println(YELLOW + "5. Mark item as DAMAGED or EXPIRED" + RESET);
             System.out.println(YELLOW + "6. Generate inventory report" + RESET);
             System.out.println("7. Add a new item to inventory");
-            System.out.println(RED + "8. Exit" + RESET);
+            System.out.println("8. Add a new category");
+            System.out.println(RED + "9. Exit" + RESET);
+
             System.out.print("\nEnter your choice: ");
 
             String choice = scanner.nextLine();
@@ -57,6 +59,9 @@ public class InventoryManagerUI {
                     addItem();
                     break;
                 case "8":
+                    addCategory();
+                    break;
+                case "9":
                     System.out.println(RED + "Exiting the system. Goodbye!" + RESET);
                     return;
                 default:
@@ -215,18 +220,49 @@ public class InventoryManagerUI {
         System.out.println(GREEN + "1. No filter" + RESET);
         System.out.println(GREEN + "2. DAMAGED only" + RESET);
         System.out.println(GREEN + "3. EXPIRED only" + RESET);
-        String filterChoice = scanner.nextLine();
+        String statusChoice = scanner.nextLine();
 
         ItemStatus statusFilter = null;
-        if (filterChoice.equals("2")) {
+        if (statusChoice.equals("2")) {
             statusFilter = ItemStatus.DAMAGED;
-        } else if (filterChoice.equals("3")) {
+        } else if (statusChoice.equals("3")) {
             statusFilter = ItemStatus.EXPIRED;
         }
 
-        InventoryReport report = service.generateReport(reportId, null, statusFilter);
+        System.out.println(YELLOW + "Would you like to filter by category?" + RESET);
+        System.out.println(GREEN + "1. No category filter (all categories)" + RESET);
+        System.out.println(GREEN + "2. Select categories" + RESET);
+        String categoryChoice = scanner.nextLine();
+
+        List<Category> selectedCategories = null;
+        if (categoryChoice.equals("2")) {
+            List<Category> allCategories = service.getAllCategories();
+            selectedCategories = new java.util.ArrayList<>();
+
+            System.out.println(YELLOW + "Available categories:" + RESET);
+            for (int i = 0; i < allCategories.size(); i++) {
+                System.out.println((i + 1) + ". " + allCategories.get(i).getName());
+            }
+
+            System.out.println(YELLOW + "Enter category numbers separated by commas (e.g., 1,3,5):" + RESET);
+            String[] categoryIndexes = scanner.nextLine().split(",");
+
+            for (String indexStr : categoryIndexes) {
+                try {
+                    int index = Integer.parseInt(indexStr.trim()) - 1;
+                    if (index >= 0 && index < allCategories.size()) {
+                        selectedCategories.add(allCategories.get(index));
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println(RED + "Invalid input for category. Skipping." + RESET);
+                }
+            }
+        }
+
+        InventoryReport report = service.generateReport(reportId, selectedCategories, statusFilter);
         System.out.println(BLUE + report + RESET);
     }
+
 
     public void printAllItems() {
         System.out.println(BLUE + "\n=== All Inventory Items ===" + RESET);
@@ -255,5 +291,32 @@ public class InventoryManagerUI {
     private void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+
+    private void addCategory() {
+        System.out.println("Adding a new category:");
+
+        System.out.print("Enter category name: ");
+        String categoryName = scanner.nextLine();
+
+        System.out.println("Does this category have a parent? (y/n)");
+        String hasParent = scanner.nextLine().trim().toLowerCase();
+
+        Category parent = null;
+        if (hasParent.equals("y")) {
+            System.out.println("Available categories:");
+            List<Category> allCategories = service.getAllCategories();
+            for (int i = 0; i < allCategories.size(); i++) {
+                System.out.println((i + 1) + ". " + allCategories.get(i).getName());
+            }
+            System.out.print("Enter parent category number: ");
+            int parentChoice = Integer.parseInt(scanner.nextLine()) - 1;
+            parent = allCategories.get(parentChoice);
+        }
+
+        Category newCategory = new Category(categoryName, parent);
+        service.addCategory(newCategory);
+        System.out.println(GREEN + "Category added successfully!" + RESET);
     }
 }
