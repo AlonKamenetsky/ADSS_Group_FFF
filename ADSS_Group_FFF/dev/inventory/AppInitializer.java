@@ -1,4 +1,3 @@
-
 package inventory;
 
 import java.util.Date;
@@ -42,9 +41,50 @@ public class AppInitializer {
 
         // Discounts
         Date now = new Date();
-        service.addDiscount(new Discount("D10", 0.10, new Date(now.getTime() - 100000), new Date(now.getTime() + 10000000), null, service.getAllItems().get(0)));
-        service.addDiscount(new Discount("C20", 0.20, new Date(now.getTime() - 100000), new Date(now.getTime() + 10000000), snacks, null));
-        service.addDiscount(new Discount("D15", 0.15, new Date(now.getTime() - 100000), new Date(now.getTime() + 10000000), null, service.getAllItems().get(8)));
-        service.addDiscount(new Discount("C5", 0.05, new Date(now.getTime() - 100000), new Date(now.getTime() + 10000000), drinks, null));
+
+        InventoryItem firstItem = service.getAllItems().stream().findFirst().orElse(null);
+        if (firstItem != null) {
+            service.addDiscount(new Discount(
+                    "D10",
+                    0.10,
+                    new Date(now.getTime() - 100000),
+                    new Date(now.getTime() + 10000000),
+                    null,
+                    firstItem
+            ));
+        }
+
+        service.addDiscount(new Discount(
+                "C20",
+                0.20,
+                new Date(now.getTime() - 100000),
+                new Date(now.getTime() + 10000000),
+                snacks,
+                null
+        ));
+
+        InventoryItem ninthItem = service.getAllItems().stream()
+                .filter(item -> item.getId().equals("009")) // Dove Shampoo
+                .findFirst()
+                .orElse(null);
+        if (ninthItem != null) {
+            service.addDiscount(new Discount(
+                    "D15",
+                    0.15,
+                    new Date(now.getTime() - 100000),
+                    new Date(now.getTime() + 10000000),
+                    null,
+                    ninthItem
+            ));
+        }
+
+        service.addDiscount(new Discount(
+                "C5",
+                0.05,
+                new Date(now.getTime() - 100000),
+                new Date(now.getTime() + 10000000),
+                drinks,
+                null
+        ));
     }
 }

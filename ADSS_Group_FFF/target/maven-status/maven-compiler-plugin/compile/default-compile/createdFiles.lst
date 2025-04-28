@@ -1,0 +1,5 @@
+inventory\Category.class
+inventory\InventoryItem.class
+inventory\ItemStatus.class
+inventory\Main.class
+inventory\Discount.class
