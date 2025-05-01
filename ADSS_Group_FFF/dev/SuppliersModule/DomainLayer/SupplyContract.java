@@ -5,19 +5,19 @@ import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import java.util.ArrayList;
 
 public class SupplyContract {
-   int contractId;
-   int supplierId;
+   int contractID;
+   int supplierID;
    ArrayList<SupplyContractProductData> supplyContractProductsDataArray;
 
-   public SupplyContract(int supplierId, int contractID) {
-      this.supplierId = supplierId;
-      this.contractId = contractID;
+   public SupplyContract(int supplierID, int contractID) {
+      this.contractID = contractID;
+      this.supplierID = supplierID;
       this.supplyContractProductsDataArray = new ArrayList<>();
    }
 
-   public SupplyContract(int contractId, int supplierId, SupplyMethod supplierSupplyMethod, ArrayList<SupplyContractProductData> supplyContractProductsDataArray) {
-      this.contractId = contractId;
-      this.supplierId = supplierId;
+   public SupplyContract(int contractID, int supplierID, SupplyMethod supplierSupplyMethod, ArrayList<SupplyContractProductData> supplyContractProductsDataArray) {
+      this.contractID = contractID;
+      this.supplierID = supplierID;
       this.supplyContractProductsDataArray = supplyContractProductsDataArray;
    }
 
@@ -25,11 +25,11 @@ public class SupplyContract {
       this.supplyContractProductsDataArray.add(data);
    }
 
-   public int getContractId() {
-      return contractId;
+   public int getcontractID() {
+      return contractID;
    }
-   public void setContractId(int contractId) {
-      this.contractId = contractId;
+   public void setcontractID(int contractID) {
+      this.contractID = contractID;
    }
 
    public ArrayList<SupplyContractProductData> getSupplyContractProductData() {
@@ -55,8 +55,8 @@ public class SupplyContract {
    public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append("SupplyContract {\n");
-      sb.append("  Supplier ID: ").append(supplierId).append(",\n");
-      sb.append("  Contract ID: ").append(contractId).append(",\n");
+      sb.append("  Supplier ID: ").append(supplierID).append(",\n");
+      sb.append("  Contract ID: ").append(contractID).append(",\n");
       sb.append("  Product Data List:\n");
       for (SupplyContractProductData data : supplyContractProductsDataArray) {
          sb.append("    ").append(data).append("\n");

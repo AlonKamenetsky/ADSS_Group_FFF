@@ -16,9 +16,8 @@ public class OrderController {
     ArrayList<Order> ordersArrayList; // TEMP DATA STRUCTURE
 
     public OrderController() {
-        orderID = 0;
-        ordersArrayList = new ArrayList<>();
-        //this.readOrdersFromCSVFile();
+        this.orderID = 0;
+        this.ordersArrayList = new ArrayList<>();
     }
 
     public void ReadOrdersFromCSVFile() {
@@ -61,31 +60,87 @@ public class OrderController {
 
                 ContactInfo contactInfo = new ContactInfo(contactName, email, phone, address);
 
-                this.registerOrder(supplierId, productList, totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
+                Order order = new Order(orderID, supplierId, productList, totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
+                ordersArrayList.add(order);
+                this.orderID++;
+
             }
         } catch (Exception e) {
             System.err.println("Error reading orders CSV: " + e.getMessage());
         }
     }
 
-    public void registerOrder(int supplierId, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+    private boolean ValidateProductInContracts(SupplyContract supplyContract, int productID) {
+        return supplyContract.CheckIfProductInData(productID);
+    }
+
+    private double calculateTotalPrice(ArrayList<SupplyContract> supplyContracts, ArrayList<int[]> dataList) {
+        double totalPrice = 0;
+        for(int[] entry : dataList) {
+
+            int productId = entry[0];
+
+            SupplyContract supplyContract = null;
+            for (SupplyContract contract : supplyContracts)
+                if (ValidateProductInContracts(contract, productId)) {
+                    supplyContract = contract;
+                    break;
+                }
+            if (supplyContract == null)
+                return -1;
+
+
+            SupplyContractProductData data = supplyContract.getSupplyContractProductDataOfProduct(productId);
+
+            int quantity = entry[1];
+            double productPrice = data.getProductPrice();
+
+            if(quantity >=  data.getQuantityForDiscount()){
+                productPrice = data.getProductPrice();
+                productPrice = productPrice*((100 - data.getDiscountPercentage()) / 100);
+                totalPrice +=  productPrice*quantity;
+            }
+            else
+                totalPrice += productPrice*quantity;
+
+        }
+        return totalPrice;
+    }
+
+    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, ArrayList<SupplyContract> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+        double totalOrderValue = calculateTotalPrice(supplyContracts, dataList);
+        if (totalOrderValue == -1)
+            return false;
+
         Order order = new Order(orderID, supplierId, dataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
         ordersArrayList.add(order);
         this.orderID++;
+
+        return true;
+    }
+
+    private Order getOrderByID(int orderID) {
+        for (Order order : ordersArrayList)
+            if(order.orderID == orderID)
+                return order;
+
+        return null;
+    }
+
+    public boolean deleteOrder(int orderID){
+        return this.ordersArrayList.removeIf(order -> order.orderID == orderID);
     }
 
     public boolean removeAllSupplierOrders(int supplierID) {
         return this.ordersArrayList.removeIf(order -> order.supplierID == supplierID);
     }
 
-    private Order getOrder(int orderID) {
-        for (Order order : ordersArrayList) {
-            if(order.orderID == orderID) {
-                return order;
-            }
-        }
-        return null;
+    public boolean orderExists(int orderID) {
+        Order order = getOrderByID(orderID);
+        return order != null;
     }
+
+    // ********** UPDATE FUNCTIONS **********
 
     public boolean updateOrderContactInfo(int orderID, String phoneNumber, String address, String email, String contactName){
         for (Order order : ordersArrayList) {
@@ -112,20 +167,10 @@ public class OrderController {
     }
 
     public boolean updateOrderStatus(int orderID, OrderStatus orderStatus){
-        Order order = getOrder(orderID);
+        Order order = getOrderByID(orderID);
         if (order != null) {
             order.orderStatus = orderStatus;
             return true;
-        }
-        return false;
-    }
-
-    public boolean deleteOrder(int orderID){
-        for (Order order : ordersArrayList) {
-            if(order.orderID == orderID){
-                ordersArrayList.remove(order);
-                return true;
-            }
         }
         return false;
     }
@@ -139,19 +184,83 @@ public class OrderController {
         return null;
     }
 
-    public int getOrderSupplierID(int orderID){
-        Order order = getOrder(orderID);
-        if (order != null) {
-            return order.getSupplierID();
+    public boolean addProductsToOrder(int orderID, ArrayList<SupplyContract> supplyContracts ,ArrayList<int[]> dataList) {
+        ArrayList<int[]> products = this.getOrderProducts(orderID);
+        if(products == null)
+            return false;
+        products.addAll(dataList);
+
+        double totalPrice = calculateTotalPrice(supplyContracts, products);
+
+        this.setOrderProducts(orderID, products);
+        this.setOrderPrice(orderID, totalPrice);
+        return true;
+    }
+
+    public boolean removeProductsFromOrder(int orderID, ArrayList<SupplyContract> supplyContracts, ArrayList<Integer> dataList) {
+        ArrayList<int[]> products = this.getOrderProducts(orderID);
+        if(products == null)
+            return false;
+
+        products.removeIf(pair -> dataList.contains(pair[0]));
+        if (products.isEmpty()){
+            this.deleteOrder(orderID);
+            return true;
         }
+
+        double totalPrice = calculateTotalPrice(supplyContracts, products);
+
+        this.setOrderProducts(orderID, products);
+        this.setOrderPrice(orderID, totalPrice);
+
+        return true;
+    }
+
+    // ********** GETTERS FUNCTIONS **********
+
+    public int getOrderSupplierID(int orderID){
+        Order order = getOrderByID(orderID);
+        if (order != null)
+            return order.getSupplierID();
+
         return -1;
     }
 
+    public ArrayList<int[]> getOrderProducts(int orderID){
+        Order order = getOrderByID(orderID);
+        if (order != null)
+            return order.getProductArrayList();
+
+        return null;
+    }
+
+    // ********** SETTERS FUNCTIONS **********
+
+    private boolean setOrderProducts(int orderID, ArrayList<int[]> productArrayList){
+        Order order = getOrderByID(orderID);
+        if (order == null)
+            return false;
+
+        order.setProductArrayList(productArrayList);
+        return true;
+    }
+
+    private boolean setOrderPrice(int orderID, double price){
+        Order order = getOrderByID(orderID);
+        if(order == null)
+            return false;
+
+        order.setTotalPrice(price);
+        return true;
+    }
+
+    // ********** OUTPUT FUNCTIONS **********
+
     public String getOrderAsString(int orderID){
-        Order order = getOrder(orderID);
-        if (order != null){
+        Order order = getOrderByID(orderID);
+        if (order != null)
             return order.toString();
-        }
+
         return null;
     }
 
@@ -162,34 +271,4 @@ public class OrderController {
         }
         return ordersAsString;
     }
-
-    public ArrayList<int[]> getOrderProducts(int orderID){
-        for (Order order : ordersArrayList) {
-            if(order.orderID == orderID){
-                return order.getProductArrayList();
-            }
-        }
-        return null;
-    }
-
-    public boolean setOrderProducts(int orderID, ArrayList<int[]> productArrayList){
-        Order order = getOrder(orderID);
-        if(order == null)
-            return false;
-        order.setProductArrayList(productArrayList);
-        return true;
-    }
-    public boolean setOrderPrice(int orderID, double price){
-        Order order = getOrder(orderID);
-        if(order == null)
-            return false;
-        order.setTotalPrice(price);
-        return true;
-    }
-
-    public boolean orderExists(int orderID) {
-        Order order = getOrder(orderID);
-        return order != null;
-    }
-
 }

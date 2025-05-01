@@ -21,7 +21,7 @@ public class Order {
 
     SupplyMethod supplyMethod;
 
-    ArrayList<int[]> productArrayList;
+    ArrayList<int[]> productArrayList; // [ProductID, Product_Amount
 
     OrderStatus orderStatus;
 
@@ -37,6 +37,7 @@ public class Order {
         this.supplyMethod = supplyMethod;
         this.orderStatus = OrderStatus.IN_PROCESS;
     }
+
     public int getSupplierID(){
         return orderID;
     }
@@ -77,29 +78,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void addProductToOrder(int productID) {
-        for (int i = 0; i < productArrayList.size(); i++) {
-            int[] product = productArrayList.get(i);
-            if (product[0] == productID) { // product[0] is ID
-                productArrayList.add(product);
-                break; // stop after first match
-            }
-        }
-    }
-
-    public void removeProductFromOrder(int productID) {
-        for (int i = 0; i < productArrayList.size(); i++) {
-            int[] product = productArrayList.get(i);
-            if (product[0] == productID) { // product[0] is ID
-                productArrayList.remove(i);
-                break; // stop after first match
-            }
-        }
-    }
-
-    public boolean orderIsEmpty(){
-        return this.productArrayList.isEmpty();
-    }
 
     @Override
     public String toString() {

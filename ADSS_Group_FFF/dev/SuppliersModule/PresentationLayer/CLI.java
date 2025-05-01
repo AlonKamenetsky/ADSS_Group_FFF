@@ -51,16 +51,20 @@ public class CLI {
         String newProductCompany = sc.nextLine();
 
         boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany);
-        if (result) System.out.println("Product updated successfully.");
-        else System.out.println("Error updating product: no such product exists.");
+        if (result)
+            System.out.println("Product updated successfully.");
+        else
+            System.out.println("Error updating product: no such product exists.");
     }
 
     public void deleteProduct() {
         System.out.println("Which product do you want to delete? Enter product ID");
         int productId = readInt();
         boolean result = serviceController.deleteProduct(productId);
-        if (result) System.out.println("Product deleted successfully.");
-        else System.out.println("Error deleting product: no such product exists.");
+        if (result)
+            System.out.println("Product deleted successfully.");
+        else
+            System.out.println("Error deleting product: no such product exists.");
     }
 
     public void printProduct() {
@@ -102,6 +106,7 @@ public class CLI {
         String email = sc.nextLine();
         System.out.println("Enter contact name");
         String contactName = sc.nextLine();
+
         int supplyMethod = chooseSupplyMethod();
         ArrayList<Integer> supplyDays = null;
         if (supplyMethod == 0) {
@@ -121,7 +126,8 @@ public class CLI {
             System.out.println("Error creating new supplier.");
             return;
         }
-        else System.out.println("Supplier registered successfully.");
+        else 
+            System.out.println("Supplier registered successfully.");
 
 
         System.out.println("Register new contract section:");
@@ -170,8 +176,10 @@ public class CLI {
         String ContactName = sc.nextLine();
 
         boolean result = this.serviceController.updateSupplierContactInfo(supplierID, phoneNumber, address, email, ContactName);
-        if (result) System.out.println("Supplier contact info updated successfully.");
-        else System.out.println("Supplier contact info update failed.");
+        if (result)
+            System.out.println("Supplier contact info updated successfully.");
+        else
+            System.out.println("Supplier contact info update failed.");
     }
 
     private void updateSupplierPaymentMethod(int supplierID) {
@@ -181,18 +189,21 @@ public class CLI {
         int paymentMethod = readInt();
 
         boolean result = this.serviceController.updateSupplierPaymentInfo(supplierID, bankAccountInfo, paymentMethod);
-        if (result) System.out.println("Supplier payment info updated successfully.");
-        else System.out.println("Supplier payment info update failed.");
+        if (result)
+            System.out.println("Supplier payment info updated successfully.");
+        else
+            System.out.println("Supplier payment info update failed.");
     }
 
-
     private void deleteSupplier() {
-        System.out.println("Which supplier you want to delete? Enter supplier ID: ");
+        System.out.println("Which supplier you want to delete?(WARNING: This will delete all contracts and orders) Enter supplier ID: ");
         int supplierId = readInt();
 
         boolean result = serviceController.deleteSupplier(supplierId);
-        if (result) System.out.println("Supplier deleted successfully.");
-        else System.out.println("Error: No such supplier exists.");
+        if (result)
+            System.out.println("Supplier deleted successfully.");
+        else
+            System.out.println("Error: No such supplier exists.");
     }
 
     private void printSupplier() {
@@ -226,14 +237,14 @@ public class CLI {
             int[] data = {productID, price, quantityForDiscount, discountPercentage};
             dataArray.add(data);
         }
-        if(this.serviceController.registerNewContract(supplierId, dataArray)) {
-            System.out.println("Supplier registered successfully.");
-            return;
-        }
-        System.out.println("Error");
+        if (this.serviceController.registerNewContract(supplierId, dataArray))
+            System.out.println("Supplier contract registered successfully.");
+        else
+            System.out.println("Error: No such contract exists.");
 
     }
     private void deleteSupplyContract() {
+        //
     }
 
     private void printSupplyContract() {
@@ -272,9 +283,8 @@ public class CLI {
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
             int productID = readInt();
-            if (productID == -1) {
+            if (productID == -1)
                 break;
-            }
             System.out.println("Enter quantity");
             int quantity = readInt();
             int data[] = {productID, quantity};
@@ -493,6 +503,7 @@ public class CLI {
         System.out.println("5. update order status");
         System.out.println("6. go back");
     }
+
     private void printPaymentMethods() {
         System.out.println("0. Check");
         System.out.println("1. BANK_TRANSACTION");
@@ -503,6 +514,7 @@ public class CLI {
         System.out.println("0. Pick up");
         System.out.println("1. Self delivering");
     }
+
     private void printProductCategoryMethods() {
         System.out.println("0. DIARY");
         System.out.println("1. FROZEN");
@@ -545,7 +557,6 @@ public class CLI {
 
         }
     }
-
 
     public void chooseSupplierOption(int option) {
         switch (option) {

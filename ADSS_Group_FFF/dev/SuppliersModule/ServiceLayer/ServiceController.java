@@ -69,9 +69,6 @@ public class ServiceController {
         }
     }
 
-    private boolean validateOrderStatus(int orderStatus) {
-        return (orderStatus >= 0 && orderStatus < OrderStatus.values().length);
-    }
     private boolean ValidateDays(ArrayList<Integer> days) {
         if (days == null)
             return true;
@@ -80,6 +77,10 @@ public class ServiceController {
             if (day < 1 || day > 7)
                 return false;
         return true;
+    }
+
+    private boolean validateOrderStatus(int orderStatus) {
+        return (orderStatus >= 0 && orderStatus < OrderStatus.values().length);
     }
 
 
@@ -119,6 +120,10 @@ public class ServiceController {
         return -1;
     }
 
+    public boolean deleteSupplier(int supplierID) {
+        return supplierService.deleteSupplier(supplierID);
+    }
+
     public boolean updateSupplierName(int supplierID, String supplierName) {
         return this.supplierService.updateSupplierName(supplierID, supplierName);
     }
@@ -139,10 +144,6 @@ public class ServiceController {
         return false;
     }
 
-    public boolean deleteSupplier(int supplierID) {
-        return supplierService.deleteSupplier(supplierID);
-    }
-
     public String[] getAllSuppliersAsString() {
         return this.supplierService.getAllSuppliersAsString();
     }
@@ -156,7 +157,7 @@ public class ServiceController {
 
     public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
         for (int[] data : dataList)
-            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3]))
+            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3])) ////// THIS
                 return false;
 
         return this.supplierService.registerNewContract(supplierID, dataList);
@@ -181,11 +182,19 @@ public class ServiceController {
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
         Date deliveryDateAsDate = this.validateOrderDated(deliveryDate);
-        if(deliveryDateAsDate == null)
+        if (deliveryDateAsDate == null)
             return false;
-        if(deliveryDateAsDate.before(creationDate))
+        if (deliveryDateAsDate.before(creationDate))
             return false;
         return this.supplierService.registerNewOrder(supplierId, dataList, creationDate, deliveryDateAsDate);
+    }
+
+    public boolean deleteOrder(int orderID) {
+        return this.supplierService.deleteOrder(orderID);
+    }
+
+    public boolean orderExists(int orderID) {
+        return supplierService.orderExists(orderID);
     }
 
     public boolean updateOrderContactInfo(int orderId,  String phoneNumber, String address, String email, String contactName){
@@ -216,10 +225,6 @@ public class ServiceController {
         return this.supplierService.removeProductsFromOrder(orderID, dataList);
     }
 
-    public boolean deleteOrder(int orderID) {
-        return this.supplierService.deleteOrder(orderID);
-    }
-
     public String getOrderAsString(int orderID) {
         return this.supplierService.getOrderAsString(orderID);
     }
@@ -228,7 +233,4 @@ public class ServiceController {
         return this.supplierService.getAllOrdersAsString();
     }
 
-    public boolean orderExists(int orderID) {
-        return supplierService.orderExists(orderID);
-    }
 }

@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 public class SupplyContractController {
-    int contractId;
+    int contractID;
     ArrayList<SupplyContract> supplyContractsArrayList;
 
     public SupplyContractController() {
-        this.contractId = 0;
+        this.contractID = 0;
         this.supplyContractsArrayList = new ArrayList<>();
 
        //this.ReadSupplierContractDataFromCSV();
@@ -48,25 +48,25 @@ public class SupplyContractController {
                     }
                 }
 
-                int supplierId = Integer.parseInt(parts[0]);
+                int supplierID = Integer.parseInt(parts[0]);
                 int productId = Integer.parseInt(parts[1]);
                 double productPrice = Double.parseDouble(parts[2]);
                 int quantityForDiscount = Integer.parseInt(parts[3]);
                 double discountPercentage = Double.parseDouble(parts[4]);
-                int contractId = Integer.parseInt(parts[5]);
+                int contractID = Integer.parseInt(parts[5]);
 
-                String uniqueKey = supplierId + "_" + contractId;
+                String uniqueKey = supplierID + "_" + contractID;
 
                 SupplyContract contract = uniqueContractLookup.get(uniqueKey);
                 if (contract == null) {
-                    contract = new SupplyContract(supplierId, contractId);
+                    contract = new SupplyContract(supplierID, contractID);
                     uniqueContractLookup.put(uniqueKey, contract);
                     supplierToContracts
-                            .computeIfAbsent(supplierId, k -> new ArrayList<>())
+                            .computeIfAbsent(supplierID, k -> new ArrayList<>())
                             .add(contract);
                 }
 
-                // Now all products with the same supplierId+contractId
+                // Now all products with the same supplierID+contractID
                 // end up in the same SupplyContract
                 contract.supplyContractProductsDataArray.add(
                         new SupplyContractProductData(
@@ -87,18 +87,44 @@ public class SupplyContractController {
         }
     }
 
+    public SupplyContract registerNewContract(int supplierID, ArrayList<int[]> dataList, SupplyMethod method) {
+        ArrayList<SupplyContractProductData> supplyContractProductDataArrayList = new ArrayList<>();
+        for (int[] data : dataList) {
+            int productID = data[1];
+            int price = data[2];
+            int quantityForDiscount = data[3];
+            int discountPercentage = data[4];
+            SupplyContractProductData supplyContractProductData = new SupplyContractProductData(productID, price, quantityForDiscount, discountPercentage);
+            supplyContractProductDataArrayList.add(supplyContractProductData);
+        }
+
+        SupplyContract supplyContract = new SupplyContract(contractID, supplierID, method, supplyContractProductDataArrayList);
+        contractID++;
+        return supplyContract;
+    }
+
     private SupplyContract getContractByContactID(int contractID) {
         for (SupplyContract supplyContract : supplyContractsArrayList)
-            if(supplyContract.contractId == contractID)
+            if(supplyContract.contractID == contractID)
                 return supplyContract;
 
         return null;
     }
 
+    public boolean removeContractByID(int contractID) {
+        return this.supplyContractsArrayList.removeIf(contract -> contract.contractID == contractID);
+    }
+    
+    public boolean removeAllSupplierContracts(int supplierID) {
+        return this.supplyContractsArrayList.removeIf(contract -> contract.supplierID == supplierID);
+    }
+
+    // ********** GETTERS FUNCTIONS **********
+
     public ArrayList<SupplyContract> getAllSupplierContracts(int supplierID) {
         ArrayList<SupplyContract> supplyContractArrayList = new ArrayList<>();
         for (SupplyContract supplyContract : supplyContractsArrayList)
-            if(supplyContract.supplierId == supplierID)
+            if(supplyContract.supplierID == supplierID)
                 supplyContractArrayList.add(supplyContract);
 
         return supplyContractArrayList;
@@ -112,25 +138,7 @@ public class SupplyContractController {
         return null;
     }
 
-    public SupplyContract registerNewContract(int supplierID, ArrayList<int[]> dataList, SupplyMethod method) {
-        ArrayList<SupplyContractProductData> supplyContractProductDataArrayList = new ArrayList<>();
-        for (int[] data : dataList) {
-            int productID = data[1];
-            int price = data[2];
-            int quantityForDiscount = data[3];
-            int discountPercentage = data[4];
-            SupplyContractProductData supplyContractProductData = new SupplyContractProductData(productID, price, quantityForDiscount, discountPercentage);
-            supplyContractProductDataArrayList.add(supplyContractProductData);
-        }
-
-        SupplyContract supplyContract = new SupplyContract(contractId, supplierID, method, supplyContractProductDataArrayList);
-        contractId++;
-        return supplyContract;
-    }
-
-    public boolean removeAllSupplierContracts(int supplierID) {
-        return this.supplyContractsArrayList.removeIf(contract -> contract.supplierId == supplierID);
-    }
+    // ********** OUTPUT FUNCTIONS **********
 
     public String getContractToString(int contractID) {
         SupplyContract supplyContract = getContractByContactID(contractID);
@@ -139,6 +147,7 @@ public class SupplyContractController {
         }
         return null;
     }
+
     public String[] getAllContractToStrings() {
         String[] contractToStrings = new String[supplyContractsArrayList.size()];
         for(int i = 0; i < supplyContractsArrayList.size(); i++)

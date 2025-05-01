@@ -129,7 +129,7 @@ public class SupplierController {
         return supplier.getSupplierId();
     }
 
-    private Supplier getSupplier(int supplierID) {
+    private Supplier getSupplierBySupplierID(int supplierID) {
         for (Supplier supplier : this.suppliersArrayList)
             if (supplier.supplierId == supplierID)
                 return supplier;
@@ -137,8 +137,16 @@ public class SupplierController {
         return null;
     }
 
+    public boolean deleteSupplier(int supplierID) {
+        return this.suppliersArrayList.removeIf(supplier -> supplier.supplierId == supplierID) &&
+                this.orderController.removeAllSupplierOrders(supplierID) &&
+                this.supplyContractController.removeAllSupplierContracts(supplierID);
+    }
+
+    // ********** UPDATE FUNCTIONS **********
+
     public boolean updateSupplierName(int supplierID, String supplierName) {
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return false;
 
@@ -147,7 +155,7 @@ public class SupplierController {
     }
 
     public boolean updateSupplierDeliveringMethod(int supplierID, DeliveringMethod deliveringMethod) {
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return false;
 
@@ -156,7 +164,7 @@ public class SupplierController {
     }
 
     public boolean updateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName) {
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return false;
 
@@ -166,7 +174,7 @@ public class SupplierController {
     }
 
     public boolean updateSupplierPaymentInfo(int supplierID, String bankAccount, PaymentMethod paymentMethod) {
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return false;
 
@@ -175,9 +183,40 @@ public class SupplierController {
         return true;
     }
 
-    public boolean deleteSupplier(int supplierID) {
-        return this.suppliersArrayList.removeIf(supplier -> supplier.supplierId == supplierID) && this.orderController.removeAllSupplierOrders(supplierID) && this.supplyContractController.removeAllSupplierContracts(supplierID);
+    // ********** GETTERS FUNCTIONS **********
+
+    public ProductCategory getSupplierProductCategory(int supplierID) {
+        Supplier supplier = getSupplierBySupplierID(supplierID);
+        if (supplier != null)
+            return supplier.getSupplierProductCategory();
+        return null;
     }
+
+    public DeliveringMethod getSupplierDeliveringMethod(int supplierID) {
+        Supplier supplier = getSupplierBySupplierID(supplierID);
+        if (supplier != null)
+            return supplier.getSupplierDeliveringMethod();
+
+        return null;
+    }
+
+    public ContactInfo getSupplierContactInfo(int supplierID){
+        Supplier supplier = getSupplierBySupplierID(supplierID);
+        if (supplier != null)
+            return supplier.getSupplierContactInfo();
+
+        return null;
+    }
+
+    public SupplyMethod getSupplierSupplyMethod(int supplierID) {
+        Supplier supplier = getSupplierBySupplierID(supplierID);
+        if (supplier != null)
+            return supplier.getSupplyMethod();
+
+        return null;
+    }
+
+    // ********** OUTPUT FUNCTIONS **********
 
     public String[] getAllSuppliersAsString() {
         String[] suppliersAsString = new String[this.suppliersArrayList.size()];
@@ -188,40 +227,9 @@ public class SupplierController {
     }
 
     public String getSupplierAsString(int supplierID) {
-        Supplier supplier = this.getSupplier(supplierID);
+        Supplier supplier = this.getSupplierBySupplierID(supplierID);
         if (supplier != null)
             return supplier.toString();
-        return null;
-    }
-
-    public ProductCategory getSupplierProductCategory(int supplierID) {
-        Supplier supplier = getSupplier(supplierID);
-        if (supplier != null)
-            return supplier.getSupplierProductCategory();
-        return null;
-    }
-
-    public DeliveringMethod getSupplierDeliveringMethod(int supplierID) {
-        Supplier supplier = getSupplier(supplierID);
-        if (supplier != null)
-            return supplier.getSupplierDeliveringMethod();
-
-        return null;
-    }
-
-    public ContactInfo getSupplierContactInfo(int supplierID){
-        Supplier supplier = getSupplier(supplierID);
-        if (supplier != null)
-            return supplier.getSupplierContactInfo();
-
-        return null;
-    }
-
-    public SupplyMethod getSupplierSupplyMethod(int supplierID) {
-        Supplier supplier = getSupplier(supplierID);
-        if (supplier != null)
-            return supplier.getSupplyMethod();
-
         return null;
     }
 
@@ -229,7 +237,7 @@ public class SupplierController {
 
     public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
 
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return false;
 
@@ -242,13 +250,26 @@ public class SupplierController {
         return true;
     }
 
-    public String[] getAvailableContractsForOrderAsString(int orderID) {
+    // ********** GETTERS FUNCTIONS **********
+
+    private ArrayList<SupplyContract> getAvailableContractsForOrder(int orderID) {
         int supplierID = this.orderController.getOrderSupplierID(orderID);
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return null;
 
         ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
+        return supplyContractArrayList;
+    }
+
+    // ********** OUTPUT FUNCTIONS **********
+
+    public String getContractToString(int contractID) {
+        return this.supplyContractController.getContractToString(contractID);
+    }
+
+    public String[] getAvailableContractsForOrderAsString(int orderID) {
+        ArrayList<SupplyContract> supplyContractArrayList = this.getAvailableContractsForOrder(orderID);
 
         String[] result = new String[supplyContractArrayList.size()];
         for (int i = 0; i < supplyContractArrayList.size(); i++)
@@ -258,7 +279,7 @@ public class SupplierController {
     }
 
     public String[] GetSupplierContractsAsString(int supplierID) {
-        Supplier supplier = getSupplier(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return null;
 
@@ -271,62 +292,34 @@ public class SupplierController {
         return result;
     }
 
-    public String getContractToString(int contractID) {
-        return this.supplyContractController.getContractToString(contractID);
-    }
     public String[] getAllContractToStrings(){
-        return supplyContractController.getAllContractToStrings();
+        return this.supplyContractController.getAllContractToStrings();
     }
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    private SupplyContract ValidateProductInContracts(int supplierID, int productID) {
-        Supplier supplier = getSupplier(supplierID);
-        ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
-        if (supplyContractArrayList == null)
-            return null;
-
-        for (SupplyContract contract : supplyContractArrayList)
-            if (contract.CheckIfProductInData(productID))
-                return contract;
-
-        return null;
-    }
-
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+        Supplier supplier = this.getSupplierBySupplierID(supplierId);
+        if (supplier == null)
+            return false;
+
         DeliveringMethod deliveringMethod = this.getSupplierDeliveringMethod(supplierId);
         ContactInfo contactInfo = this.getSupplierContactInfo(supplierId);
         SupplyMethod supplyMethod = this.getSupplierSupplyMethod(supplierId);
-        double totalPrice = calculateTotalPrice(supplierId, dataList);
-        if(totalPrice == -1)
-            return false;
-        this.orderController.registerOrder(supplierId, dataList, totalPrice, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
-        return true;
+        ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();
+
+        return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
     }
-    private double calculateTotalPrice(int supplierID, ArrayList<int[]> dataList) {
-        double totalPrice = 0;
-        for(int[] entry : dataList) {
 
-            int productId = entry[0];
-            SupplyContract supplyContract = ValidateProductInContracts(supplierID, productId);
-            if (supplyContract == null)
-                return -1;
-            SupplyContractProductData data = supplyContract.getSupplyContractProductDataOfProduct(productId);
-
-            int quantity = entry[1];
-            double productPrice = data.getProductPrice();
-
-            if(quantity >=  data.getQuantityForDiscount()){
-                productPrice = data.getProductPrice();
-                productPrice = productPrice*((100 - data.getDiscountPercentage()) / 100);
-                totalPrice +=  productPrice*quantity;
-            }
-            else
-                totalPrice += productPrice*quantity;
-
-        }
-        return totalPrice;
+    public boolean deleteOrder(int orderID) {
+        return this.orderController.deleteOrder(orderID);
     }
+
+    public boolean orderExists(int orderID) {
+        return this.orderController.orderExists(orderID);
+    }
+
+    // ********** UPDATE FUNCTIONS **********
 
     public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
         return this.orderController.updateOrderContactInfo(orderId, phoneNumber, address, email, contactName);
@@ -341,40 +334,23 @@ public class SupplierController {
     }
 
     public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
-        ArrayList<int[]> products = orderController.getOrderProducts(orderID);
-        if(products == null)
-            return false;
-        products.addAll(dataList);
-        double totalPrice = calculateTotalPrice(orderID, products);
-        orderController.setOrderPrice(orderID, totalPrice);
-        orderController.setOrderProducts(orderID, products);
-        return true;
+        ArrayList<SupplyContract> supplyContracts = getAvailableContractsForOrder(orderID);
+        return this.orderController.addProductsToOrder(orderID, supplyContracts, dataList);
 
     }
 
     public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
-        ArrayList<int[]> products = orderController.getOrderProducts(orderID);
-        if(products == null)
-            return false;
-
-        products.removeIf(pair -> dataList.contains(pair[0]));
-        if(products.size() == 0){
-            this.deleteOrder(orderID);
-            return true;
-        }
-        double totalPrice = calculateTotalPrice(orderID, products);
-        orderController.setOrderProducts(orderID, products);
-        orderController.setOrderPrice(orderID, totalPrice);
-        return true;
+        ArrayList<SupplyContract> supplyContracts = getAvailableContractsForOrder(orderID);
+        return this.orderController.removeProductsFromOrder(orderID, supplyContracts, dataList);
     }
 
-    public boolean deleteOrder(int orderID) {
-        return this.orderController.deleteOrder(orderID);
-    }
+    // ********** GETTERS FUNCTIONS **********
 
     public Date getOrderSupplyDate(int orderID){
         return this.orderController.getOrderSupplyDate(orderID);
     }
+
+    // ********** OUTPUT FUNCTIONS **********
 
     public String getOrderAsString(int orderID) {
         return this.orderController.getOrderAsString(orderID);
@@ -382,10 +358,6 @@ public class SupplierController {
 
     public String[] getAllOrdersAsString() {
         return this.orderController.getAllOrdersAsString();
-    }
-
-    public boolean orderExists(int orderID) {
-        return orderController.orderExists(orderID);
     }
 
 }
