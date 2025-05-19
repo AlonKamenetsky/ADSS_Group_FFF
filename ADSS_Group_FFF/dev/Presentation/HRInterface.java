@@ -22,7 +22,7 @@ public class HRInterface {
 
     private void assignEmployeeToShift(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can assign employees to shifts.", 20);
+            PresentationUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can assign employees to shifts.", 20);
             return;
         }
 
@@ -32,20 +32,20 @@ public class HRInterface {
         List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
 
         if (shifts.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No shifts scheduled for this week.", 20);
+            PresentationUtils.typewriterPrint("No shifts scheduled for this week.", 20);
             return;
         }
 
-        ConsoleUtils.typewriterPrint("Available Shifts:", 20);
+        PresentationUtils.typewriterPrint("Available Shifts:", 20);
         for (int i = 0; i < shifts.size(); i++) {
             Shift s = shifts.get(i);
-            ConsoleUtils.typewriterPrint((i + 1) + ". " + s.getID() + " on " + new SimpleDateFormat("yyyy-MM-dd").format(s.getDate()), 20);
+            PresentationUtils.typewriterPrint((i + 1) + ". " + s.getID() + " on " + new SimpleDateFormat("yyyy-MM-dd").format(s.getDate()), 20);
         }
-        ConsoleUtils.typewriterPrint("Select shift:", 20);
+        PresentationUtils.typewriterPrint("Select shift:", 20);
         int shiftIndex = scanner.nextInt() - 1;
         scanner.nextLine();
         if (shiftIndex < 0 || shiftIndex >= shifts.size()) {
-            ConsoleUtils.typewriterPrint("Invalid shift selection.", 20);
+            PresentationUtils.typewriterPrint("Invalid shift selection.", 20);
             return;
         }
         Shift shift = shifts.get(shiftIndex);
@@ -66,13 +66,13 @@ public class HRInterface {
                 }
             }
             if (allComplete) {
-                ConsoleUtils.typewriterPrint("All roles for shift " + shift.getID() + " have been fully assigned.", 20
+                PresentationUtils.typewriterPrint("All roles for shift " + shift.getID() + " have been fully assigned.", 20
 );
                 break;
             }
 
             // Display the current status for each role.
-            ConsoleUtils.typewriterPrint("\nRole assignment status for shift " + shift.getID() + ":", 20
+            PresentationUtils.typewriterPrint("\nRole assignment status for shift " + shift.getID() + ":", 20
 );
             List<Role> rolesList = new ArrayList<>(requiredCounts.keySet());
             for (int i = 0; i < rolesList.size(); i++) {
@@ -81,13 +81,13 @@ public class HRInterface {
                 int assigned = (assignedMap.get(role) != null) ? assignedMap.get(role).size() : 0;
                 int missing = required - assigned;
                 String status = (missing == 0) ? "Full" : "Missing: " + missing;
-                ConsoleUtils.typewriterPrint((i + 1) + ". " + role.getName() + " (" + status + ")", 20
+                PresentationUtils.typewriterPrint((i + 1) + ". " + role.getName() + " (" + status + ")", 20
 );
             }
-            ConsoleUtils.typewriterPrint("0. Quit assignment for this shift", 20
+            PresentationUtils.typewriterPrint("0. Quit assignment for this shift", 20
 );
 
-            ConsoleUtils.typewriterPrint("Enter the number corresponding to the role you want to fill:", 20
+            PresentationUtils.typewriterPrint("Enter the number corresponding to the role you want to fill:", 20
 );
             int roleChoice = scanner.nextInt() - 1;
             scanner.nextLine();
@@ -96,7 +96,7 @@ public class HRInterface {
                 break;
             }
             if (roleChoice < 0 || roleChoice >= rolesList.size()) {
-                ConsoleUtils.typewriterPrint("Invalid role selection.", 20
+                PresentationUtils.typewriterPrint("Invalid role selection.", 20
 );
                 continue;
             }
@@ -106,7 +106,7 @@ public class HRInterface {
             int required = requiredCounts.get(selectedRole);
             int assigned = (assignedMap.get(selectedRole) != null) ? assignedMap.get(selectedRole).size() : 0;
             if (assigned >= required) {
-                ConsoleUtils.typewriterPrint("This role has already been fully assigned.", 20
+                PresentationUtils.typewriterPrint("This role has already been fully assigned.", 20
 );
                 continue;
             }
@@ -153,24 +153,24 @@ public class HRInterface {
             }
 
             if (qualifiedEmployees.isEmpty()) {
-                ConsoleUtils.typewriterPrint("No qualified employees available for role " + selectedRole.getName(), 20
+                PresentationUtils.typewriterPrint("No qualified employees available for role " + selectedRole.getName(), 20
 );
                 continue;
             }
 
             // Display the qualified employees.
-            ConsoleUtils.typewriterPrint("Qualified Employees for role " + selectedRole.getName() + ":", 20
+            PresentationUtils.typewriterPrint("Qualified Employees for role " + selectedRole.getName() + ":", 20
 );
             for (int i = 0; i < qualifiedEmployees.size(); i++) {
-                ConsoleUtils.typewriterPrint((i + 1) + ". " + qualifiedEmployees.get(i).getName(), 20
+                PresentationUtils.typewriterPrint((i + 1) + ". " + qualifiedEmployees.get(i).getName(), 20
 );
             }
-            ConsoleUtils.typewriterPrint("Select employee to assign:", 20
+            PresentationUtils.typewriterPrint("Select employee to assign:", 20
 );
             int employeeIndex = scanner.nextInt() - 1;
             scanner.nextLine();
             if (employeeIndex < 0 || employeeIndex >= qualifiedEmployees.size()) {
-                ConsoleUtils.typewriterPrint("Invalid employee selection.", 20
+                PresentationUtils.typewriterPrint("Invalid employee selection.", 20
 );
                 continue;
             }
@@ -182,7 +182,7 @@ public class HRInterface {
         }
 
         // After the assignment loop, output the final completion status.
-        ConsoleUtils.typewriterPrint("\nFinal shift completion status for shift " + shift.getID() + ":", 20
+        PresentationUtils.typewriterPrint("\nFinal shift completion status for shift " + shift.getID() + ":", 20
 );
         Map<Role, Integer> finalRequiredCounts = shift.getRequiredCounts();
         Map<Role, ArrayList<Employee>> finalAssignedMap = shift.getRequiredRoles();
@@ -191,7 +191,7 @@ public class HRInterface {
             int asg = (finalAssignedMap.get(role) != null) ? finalAssignedMap.get(role).size() : 0;
             int missing = req - asg;
             String status = (missing == 0) ? "Full" : "Missing " + missing + " employee(s).";
-            ConsoleUtils.typewriterPrint("Role " + role.getName() + ": " + status, 20
+            PresentationUtils.typewriterPrint("Role " + role.getName() + ": " + status, 20
 );
         }
     }
@@ -200,29 +200,29 @@ public class HRInterface {
 
     public void addNewRole(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can add new roles.", 20
+            PresentationUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can add new roles.", 20
 );
             return;
         }
         RolesRepo rolesRepo = RolesRepo.getInstance();
-        ConsoleUtils.typewriterPrint("Enter new role name:", 20
+        PresentationUtils.typewriterPrint("Enter new role name:", 20
 );
         String newRoleName = scanner.nextLine();
         rolesRepo.addRole(new Role(newRoleName));
-        ConsoleUtils.typewriterPrint("New Role Added Successfully!", 20
+        PresentationUtils.typewriterPrint("New Role Added Successfully!", 20
 );
     }
     public void updateEmployeeData(Scanner scanner, List<Employee> employees) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR Manager can update employee data.", 20
+            PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can update employee data.", 20
 );
             return;
         }
 
-        ConsoleUtils.typewriterPrint("Select Employee to Update:", 20
+        PresentationUtils.typewriterPrint("Select Employee to Update:", 20
 );
         for (int i = 0; i < employees.size(); i++) {
-            ConsoleUtils.typewriterPrint(i + 1 + ". " + employees.get(i).getName(), 20
+            PresentationUtils.typewriterPrint(i + 1 + ". " + employees.get(i).getName(), 20
 );
         }
 
@@ -233,13 +233,13 @@ public class HRInterface {
 
         boolean exit = false;
         while (!exit) {
-            ConsoleUtils.typewriterPrint("Select data to update:", 20
+            PresentationUtils.typewriterPrint("Select data to update:", 20
 );
-            ConsoleUtils.typewriterPrint("1. Bank Account", 20
+            PresentationUtils.typewriterPrint("1. Bank Account", 20
 );
-            ConsoleUtils.typewriterPrint("2. Salary", 20
+            PresentationUtils.typewriterPrint("2. Salary", 20
 );
-            ConsoleUtils.typewriterPrint("3. Exit", 20
+            PresentationUtils.typewriterPrint("3. Exit", 20
 );
 
             int choice = scanner.nextInt();
@@ -247,27 +247,27 @@ public class HRInterface {
 
             switch (choice) {
                 case 1:
-                    ConsoleUtils.typewriterPrint("Enter new bank account:", 20
+                    PresentationUtils.typewriterPrint("Enter new bank account:", 20
 );
                     String newBankAccount = scanner.nextLine();
                     employee.setBankAccount(newBankAccount);
-                    ConsoleUtils.typewriterPrint("Bank account updated successfully!", 20
+                    PresentationUtils.typewriterPrint("Bank account updated successfully!", 20
 );
                     break;
                 case 2:
-                    ConsoleUtils.typewriterPrint("Enter new salary:", 20
+                    PresentationUtils.typewriterPrint("Enter new salary:", 20
 );
                     float newSalary = scanner.nextFloat();
                     scanner.nextLine();
                     employee.setSalary(newSalary);
-                    ConsoleUtils.typewriterPrint("Salary updated successfully!", 20
+                    PresentationUtils.typewriterPrint("Salary updated successfully!", 20
 );
                     break;
                 case 3:
                     exit = true;
                     break;
                 default:
-                    ConsoleUtils.typewriterPrint("Invalid choice. Please try again.", 20
+                    PresentationUtils.typewriterPrint("Invalid choice. Please try again.", 20
 );
                     break;
             }
@@ -276,76 +276,76 @@ public class HRInterface {
 
     public void removeRole(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can remove roles.", 20
+            PresentationUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can remove roles.", 20
 );
             return;
         }
         RolesRepo rolesRepo = RolesRepo.getInstance();
         List<Role> roles = rolesRepo.getRoles();
         if (roles.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No roles available to remove.", 20
+            PresentationUtils.typewriterPrint("No roles available to remove.", 20
 );
             return;
         }
-        ConsoleUtils.typewriterPrint("Available Roles:", 20
+        PresentationUtils.typewriterPrint("Available Roles:", 20
 );
         for (int i = 0; i < roles.size(); i++) {
-            ConsoleUtils.typewriterPrint((i + 1) + ": " + roles.get(i).getName(), 20
+            PresentationUtils.typewriterPrint((i + 1) + ": " + roles.get(i).getName(), 20
 );
         }
-        ConsoleUtils.typewriterPrint("Select role to remove (enter the number):", 20
+        PresentationUtils.typewriterPrint("Select role to remove (enter the number):", 20
 );
         int roleIndex = scanner.nextInt() - 1;
         scanner.nextLine();
         if (roleIndex < 0 || roleIndex >= roles.size()) {
-            ConsoleUtils.typewriterPrint("Invalid selection.", 20
+            PresentationUtils.typewriterPrint("Invalid selection.", 20
 );
             return;
         }
         Role roleToRemove = roles.get(roleIndex);
         rolesRepo.getRoles().remove(roleToRemove);
-        ConsoleUtils.typewriterPrint("Role " + roleToRemove.getName() + " removed successfully.", 20
+        PresentationUtils.typewriterPrint("Role " + roleToRemove.getName() + " removed successfully.", 20
 );
     }
 
     // New method: AddEmployee
     public void addEmployee(Scanner scanner, List<Employee> employees) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR Manager can add employees.", 20
+            PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can add employees.", 20
 );
             return;
         }
 
-        ConsoleUtils.typewriterPrint("Enter Employee ID:", 20
+        PresentationUtils.typewriterPrint("Enter Employee ID:", 20
 );
         String id = scanner.nextLine();
-        ConsoleUtils.typewriterPrint("Enter Employee Name:", 20
+        PresentationUtils.typewriterPrint("Enter Employee Name:", 20
 );
         String name = scanner.nextLine();
-        ConsoleUtils.typewriterPrint("Enter Password:", 20
+        PresentationUtils.typewriterPrint("Enter Password:", 20
 );
         String password = scanner.nextLine();
-        ConsoleUtils.typewriterPrint("Enter Bank Account:", 20
+        PresentationUtils.typewriterPrint("Enter Bank Account:", 20
 );
         String bankAccount = scanner.nextLine();
-        ConsoleUtils.typewriterPrint("Enter Salary:", 20
+        PresentationUtils.typewriterPrint("Enter Salary:", 20
 );
         float salary = scanner.nextFloat();
         scanner.nextLine();
-        ConsoleUtils.typewriterPrint("Enter Employment Date (format yyyy-MM-dd):", 20
+        PresentationUtils.typewriterPrint("Enter Employment Date (format yyyy-MM-dd):", 20
 );
         String dateStr = scanner.nextLine();
         Date employmentDate = null;
         try {
             employmentDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
         } catch (ParseException e) {
-            ConsoleUtils.typewriterPrint("Invalid date format. Employee not added.", 20
+            PresentationUtils.typewriterPrint("Invalid date format. Employee not added.", 20
 );
             return;
         }
 
         // Prompt for the employee's role.
-        ConsoleUtils.typewriterPrint("Enter Role for the Employee:", 20
+        PresentationUtils.typewriterPrint("Enter Role for the Employee:", 20
 );
         String roleName = scanner.nextLine();
         Role role = RolesRepo.getInstance().getRoleByName(roleName);
@@ -353,7 +353,7 @@ public class HRInterface {
         if (role != null) {
             rolesList.add(role);
         } else {
-            ConsoleUtils.typewriterPrint("Role not found. Adding employee without any role.", 20
+            PresentationUtils.typewriterPrint("Role not found. Adding employee without any role.", 20
 );
         }
 
@@ -366,50 +366,50 @@ public class HRInterface {
             List<Employee> modifiableEmployees = new ArrayList<>(employees);
             modifiableEmployees.add(newEmployee);
             // If possible, update the original reference or notify the caller about this change.
-            ConsoleUtils.typewriterPrint("The employees list was unmodifiable. Created a new modifiable list with the new employee.", 20
+            PresentationUtils.typewriterPrint("The employees list was unmodifiable. Created a new modifiable list with the new employee.", 20
 );
             // Depending on your application architecture, you might then propagate this new list.
         }
 
-        ConsoleUtils.typewriterPrint("Employee " + name + " added successfully.", 20
+        PresentationUtils.typewriterPrint("Employee " + name + " added successfully.", 20
 );
     }
     // New method: RemoveEmployee
     public void removeEmployee(Scanner scanner, List<Employee> employees) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR Manager can remove employees.", 20
+            PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can remove employees.", 20
 );
             return;
         }
         if (employees.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No employees available.", 20
+            PresentationUtils.typewriterPrint("No employees available.", 20
 );
             return;
         }
-        ConsoleUtils.typewriterPrint("Select Employee to Remove:", 20
+        PresentationUtils.typewriterPrint("Select Employee to Remove:", 20
 );
         for (int i = 0; i < employees.size(); i++) {
-            ConsoleUtils.typewriterPrint((i + 1) + ". " + employees.get(i).getName(), 20
+            PresentationUtils.typewriterPrint((i + 1) + ". " + employees.get(i).getName(), 20
 );
         }
         int index = scanner.nextInt() - 1;
         scanner.nextLine();
         if (index < 0 || index >= employees.size()) {
-            ConsoleUtils.typewriterPrint("Invalid selection.", 20
+            PresentationUtils.typewriterPrint("Invalid selection.", 20
 );
             return;
         }
-        ConsoleUtils.typewriterPrint("Are you sure you want to remove " + employees.get(index).getName() + "? (yes/no)", 20
+        PresentationUtils.typewriterPrint("Are you sure you want to remove " + employees.get(index).getName() + "? (yes/no)", 20
 );
         String confirmation = scanner.nextLine();
         if (!confirmation.equalsIgnoreCase("yes")) {
-            ConsoleUtils.typewriterPrint("Employee removal cancelled.", 20
+            PresentationUtils.typewriterPrint("Employee removal cancelled.", 20
 );
             return;
         }
         Employee employee = employees.get(index);
         employees.remove(index);
-        ConsoleUtils.typewriterPrint("Employee " + employee.getName() + " removed successfully.", 20
+        PresentationUtils.typewriterPrint("Employee " + employee.getName() + " removed successfully.", 20
 );
     }
 
@@ -483,14 +483,14 @@ public class HRInterface {
 
     public void configureShiftRoles(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
-            ConsoleUtils.typewriterPrint("Access Denied: Only HR can configure shift roles.", 20);
+            PresentationUtils.typewriterPrint("Access Denied: Only HR can configure shift roles.", 20);
             return;
         }
 
         ShiftsRepo repo = ShiftsRepo.getInstance();
         repo.ensureUpToDate();
 
-        ConsoleUtils.typewriterPrint("Configure roles for: 1) Current week   2) Next week", 20);
+        PresentationUtils.typewriterPrint("Configure roles for: 1) Current week   2) Next week", 20);
         int wk = scanner.nextInt(); scanner.nextLine();
 
         List<Shift> weekShifts = (wk == 1)
@@ -498,7 +498,7 @@ public class HRInterface {
                 : repo.getNextWeekShifts();
 
         if (weekShifts.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No shifts available to configure.", 20);
+            PresentationUtils.typewriterPrint("No shifts available to configure.", 20);
             return;
         }
 
@@ -506,7 +506,7 @@ public class HRInterface {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < weekShifts.size(); i++) {
             Shift s = weekShifts.get(i);
-            ConsoleUtils.typewriterPrint(
+            PresentationUtils.typewriterPrint(
                     String.format("%d) %s on %s (%s)",
                             i+1,
                             s.getID(),
@@ -515,11 +515,11 @@ public class HRInterface {
                     ), 20
             );
         }
-        ConsoleUtils.typewriterPrint("0) Exit", 20);
-        ConsoleUtils.typewriterPrint("Select shift to configure: ", 20);
+        PresentationUtils.typewriterPrint("0) Exit", 20);
+        PresentationUtils.typewriterPrint("Select shift to configure: ", 20);
         int idx = scanner.nextInt() - 1; scanner.nextLine();
         if (idx < 0 || idx >= weekShifts.size()) {
-            ConsoleUtils.typewriterPrint("Exiting configuration.", 20);
+            PresentationUtils.typewriterPrint("Exiting configuration.", 20);
             return;
         }
         Shift shift = weekShifts.get(idx);
@@ -531,7 +531,7 @@ public class HRInterface {
         for (Role role : RolesRepo.getInstance().getRoles()) {
             if (role.equals(HR_ROLE) || role.equals(managerRole)) continue;
             int current = shift.getRequiredCounts().getOrDefault(role, 0);
-            ConsoleUtils.typewriterPrint(
+            PresentationUtils.typewriterPrint(
                     String.format("Required # for role %s (currently %d):", role.getName(), current),
                     20
             );
@@ -540,7 +540,7 @@ public class HRInterface {
             shift.getRequiredRoles().put(role, new ArrayList<>(cnt));
         }
 
-        ConsoleUtils.typewriterPrint("Shift roles updated successfully.", 20);
+        PresentationUtils.typewriterPrint("Shift roles updated successfully.", 20);
     }
 
 
@@ -550,22 +550,22 @@ public class HRInterface {
      */
     public void processSwapRequests(Scanner scanner) {
         if (swapRequests.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No swap requests available.", 20
+            PresentationUtils.typewriterPrint("No swap requests available.", 20
 );
             return;
         }
 
-        ConsoleUtils.typewriterPrint("Current Swap Requests:", 20
+        PresentationUtils.typewriterPrint("Current Swap Requests:", 20
 );
         for (int i = 0; i < swapRequests.size(); i++) {
-            ConsoleUtils.typewriterPrint((i+1) + ". " + swapRequests.get(i), 20
+            PresentationUtils.typewriterPrint((i+1) + ". " + swapRequests.get(i), 20
 );
         }
-        ConsoleUtils.typewriterPrint("Select a swap request to process: ", 20
+        PresentationUtils.typewriterPrint("Select a swap request to process: ", 20
 );
         int first = scanner.nextInt() - 1; scanner.nextLine();
         if (first < 0 || first >= swapRequests.size()) {
-            ConsoleUtils.typewriterPrint("Invalid selection.", 20
+            PresentationUtils.typewriterPrint("Invalid selection.", 20
 );
             return;
         }
@@ -582,22 +582,22 @@ public class HRInterface {
             }
         }
         if (compat.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No compatible swap requests found.", 20
+            PresentationUtils.typewriterPrint("No compatible swap requests found.", 20
 );
             return;
         }
 
-        ConsoleUtils.typewriterPrint("Compatible Swap Requests:", 20
+        PresentationUtils.typewriterPrint("Compatible Swap Requests:", 20
 );
         for (int i = 0; i < compat.size(); i++) {
-            ConsoleUtils.typewriterPrint((i+1) + ". " + compat.get(i), 20
+            PresentationUtils.typewriterPrint((i+1) + ". " + compat.get(i), 20
 );
         }
-        ConsoleUtils.typewriterPrint("Select one to swap with: ", 20
+        PresentationUtils.typewriterPrint("Select one to swap with: ", 20
 );
         int second = scanner.nextInt() - 1; scanner.nextLine();
         if (second < 0 || second >= compat.size()) {
-            ConsoleUtils.typewriterPrint("Invalid selection.", 20
+            PresentationUtils.typewriterPrint("Invalid selection.", 20
 );
             return;
         }
@@ -628,25 +628,27 @@ public class HRInterface {
     public void managerMainMenu(Scanner scanner) {
         boolean exit = false;
         while (!exit) {
-            ConsoleUtils.typewriterPrint("Manager Menu:", 20
+            PresentationUtils.typewriterPrint("Manager Menu:", 20
 );
-            ConsoleUtils.typewriterPrint("1. Add Employee", 20
+            PresentationUtils.typewriterPrint("1. View My Info", 20
 );
-            ConsoleUtils.typewriterPrint("2. Remove Employee", 20
+            PresentationUtils.typewriterPrint("2. Add Employee", 20
 );
-            ConsoleUtils.typewriterPrint("3. Update Employee Data", 20
+            PresentationUtils.typewriterPrint("3. Remove Employee", 20
 );
-            ConsoleUtils.typewriterPrint("4. Add New Role", 20
+            PresentationUtils.typewriterPrint("4. Update Employee Data", 20
 );
-            ConsoleUtils.typewriterPrint("5. Remove Role", 20
+            PresentationUtils.typewriterPrint("5. Add New Role", 20
 );
-            ConsoleUtils.typewriterPrint("6. Assign Employee to Shift", 20
+            PresentationUtils.typewriterPrint("6. Remove Role", 20
 );
-            ConsoleUtils.typewriterPrint("7. Process Swap Requests", 20
+            PresentationUtils.typewriterPrint("7. Assign Employee to Shift", 20
 );
-            ConsoleUtils.typewriterPrint("8. Set Roles For Shift", 20
+            PresentationUtils.typewriterPrint("8. Process Swap Requests", 20
 );
-            ConsoleUtils.typewriterPrint("9. Exit", 20
+            PresentationUtils.typewriterPrint("9. Set Roles For Shift", 20
+);
+            PresentationUtils.typewriterPrint("10. Exit", 20
 );
 
             int choice = scanner.nextInt();

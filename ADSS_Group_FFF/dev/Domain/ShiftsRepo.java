@@ -6,16 +6,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShiftsRepo {
     private static ShiftsRepo instance = null;
 
-    private final List<RecurringShift> templates = new ArrayList<>();
-    private final WeeklySchedule       schedule  = new WeeklySchedule();
+    private final List<ShiftTemplate> templates = new ArrayList<>();
+    private final WeeklyShiftsSchedule schedule  = new WeeklyShiftsSchedule();
     private final List<Shift>          history   = new ArrayList<>();
 
     // Remember the last Saturday-18:00 rollover timestamp
@@ -28,7 +26,7 @@ public class ShiftsRepo {
         return instance;
     }
 
-    public void addTemplate(RecurringShift r) {
+    public void addTemplate(ShiftTemplate r) {
         templates.add(r);
     }
 
@@ -74,7 +72,41 @@ public class ShiftsRepo {
                 .collect(Collectors.toList());
     }
 
-    public WeeklySchedule getSchedule()    { return schedule;  }
-    public List<RecurringShift> getTemplates() { return templates; }
+    public Optional<Shift> getCurrentShift() {
+        Date now = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        Shift.ShiftTime currentType;
+
+        if (hour >= 8 && hour < 15) {
+            currentType = Shift.ShiftTime.Morning;
+        } else if (hour >= 15 && hour < 22) {
+            currentType = Shift.ShiftTime.Evening;
+        } else {
+            return Optional.empty(); // Outside shift times
+        }
+
+        for (Shift shift : schedule.getCurrentWeek()) {
+            if (isSameDay(shift.getDate(), now) && shift.getType() == currentType) {
+                return Optional.of(shift);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean isSameDay(Date d1, Date d2) {
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(d1);
+        c2.setTime(d2);
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
+
+
+    public WeeklyShiftsSchedule getSchedule()    { return schedule;  }
+    public List<ShiftTemplate> getTemplates() { return templates; }
     public List<Shift> getHistory()       { return history;   }
 }

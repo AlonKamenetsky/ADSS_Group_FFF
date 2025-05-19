@@ -1,6 +1,6 @@
 package tests;
 
-import Domain.RecurringShift;
+import Domain.ShiftTemplate;
 import Domain.Role;
 import Domain.Shift;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +12,12 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RecurringShiftTest {
-    private RecurringShift rs;
+    private ShiftTemplate rs;
     private Role cashier;
 
     @BeforeEach
     void setUp() {
-        rs = new RecurringShift(DayOfWeek.TUESDAY, Shift.ShiftTime.Evening);
+        rs = new ShiftTemplate(DayOfWeek.TUESDAY, Shift.ShiftTime.Evening);
         cashier = new Role("Cashier");
     }
 

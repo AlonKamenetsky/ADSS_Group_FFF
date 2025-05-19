@@ -4,11 +4,6 @@ import java.util.List;
 import java.util.Scanner;
 import Domain.Employee;
 import Domain.Role;
-import Domain.SwapRequestsRepo;
-import Domain.EmployeesRepo;
-import Domain.RolesRepo;
-import Presentation.HRInterface;
-import Presentation.EmployeeInterface;
 
 public class LoginScreen {
     private final List<Employee> users;
@@ -25,16 +20,16 @@ public class LoginScreen {
      */
     public boolean login(Scanner scanner) {
         while (true) {
-            ConsoleUtils.typewriterPrint("\n—— LOGIN ——", 20
+            PresentationUtils.typewriterPrint("\n—— LOGIN ——", 20
 );
-            ConsoleUtils.typewriterPrint("Type 'exit' at any prompt to quit.", 20
+            PresentationUtils.typewriterPrint("Type 'exit' at any prompt to quit.", 20
 );
-            ConsoleUtils.typewriterPrint("ID: ", 20
+            PresentationUtils.typewriterPrint("ID: ", 20
 );
             String id = scanner.nextLine().trim();
             if (id.equalsIgnoreCase("exit")) return false;
 
-            ConsoleUtils.typewriterPrint("Password: ", 20
+            PresentationUtils.typewriterPrint("Password: ", 20
 );
             String pw = scanner.nextLine().trim();
             if (pw.equalsIgnoreCase("exit")) return false;
@@ -48,7 +43,7 @@ public class LoginScreen {
                 }
             }
             if (found == null) {
-                ConsoleUtils.typewriterPrint("Invalid ID or password. Try again.", 20
+                PresentationUtils.typewriterPrint("Invalid ID or password. Try again.", 20
 );
                 continue;
             }
@@ -62,12 +57,12 @@ public class LoginScreen {
             } else {
                 // otherwise force a valid numeric choice
                 while (true) {
-                    ConsoleUtils.typewriterPrint("Select Role:", 20
+                    PresentationUtils.typewriterPrint("Select Role:", 20
 );
                     for (int i = 0; i < roles.size(); i++) {
                         System.out.printf("  %d) %s%n", i+1, roles.get(i).getName());
                     }
-                    ConsoleUtils.typewriterPrint("", 20
+                    PresentationUtils.typewriterPrint("", 20
 );
                     String line = scanner.nextLine().trim();
                     try {
@@ -77,7 +72,7 @@ public class LoginScreen {
                             break;
                         }
                     } catch (NumberFormatException ignored) {}
-                    ConsoleUtils.typewriterPrint("Invalid choice; please enter the number of your role.", 20
+                    PresentationUtils.typewriterPrint("Invalid choice; please enter the number of your role.", 20
 );
                 }
             }
@@ -107,17 +102,17 @@ public class LoginScreen {
             }
 
             // after they return from the menu, ask if they want to switch
-            ConsoleUtils.typewriterPrint("Would you like to switch user? (yes/no) ", 20
+            PresentationUtils.typewriterPrint("Would you like to switch user? (yes/no) ", 20
 );
             String again = scanner.nextLine().trim();
             while (!again.equalsIgnoreCase("yes") && !again.equalsIgnoreCase("no")) {
-                ConsoleUtils.typewriterPrint("Invalid choice. Please enter 'yes' or 'no': ", 20
+                PresentationUtils.typewriterPrint("Invalid choice. Please enter 'yes' or 'no': ", 20
 );
                 again = scanner.nextLine().trim();
             }
             if (!again.equalsIgnoreCase("yes")) break;
         }
-        ConsoleUtils.typewriterPrint("Exiting system. Goodbye!", 20
+        PresentationUtils.typewriterPrint("Exiting system. Goodbye!", 20
 );
     }
 

@@ -67,4 +67,5 @@ public class Shift {
     public List<ShiftAssignment> getAssignedEmployees() {
         return assignedEmployees;
     }
+
 }

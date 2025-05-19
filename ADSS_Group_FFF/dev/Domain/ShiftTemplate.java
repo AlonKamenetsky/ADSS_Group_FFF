@@ -7,12 +7,12 @@ import java.util.Map;
 /**
  * A template for “every Sunday morning” / “every Tuesday evening”, etc.
  */
-public class RecurringShift {
+public class ShiftTemplate {
     private DayOfWeek day;
     private Shift.ShiftTime time;
     private Map<Role, Integer> defaultCounts;
 
-    public RecurringShift(DayOfWeek day, Shift.ShiftTime time) {
+    public ShiftTemplate(DayOfWeek day, Shift.ShiftTime time) {
         this.day = day;
         this.time = time;
         this.defaultCounts = new HashMap<>();

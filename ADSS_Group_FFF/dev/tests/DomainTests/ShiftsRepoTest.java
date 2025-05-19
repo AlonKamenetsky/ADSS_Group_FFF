@@ -24,11 +24,11 @@ class ShiftsRepoTest {
 
     @Test
     void testSwapWeeksAndArchiveHistory() {
-        RecurringShift rs = new RecurringShift(DayOfWeek.SUNDAY, Shift.ShiftTime.Evening);
+        ShiftTemplate rs = new ShiftTemplate(DayOfWeek.SUNDAY, Shift.ShiftTime.Evening);
         rs.setDefaultCount(new Role("Cleaner"), 1);
         repo.addTemplate(rs);
 
-        WeeklySchedule sched = repo.getSchedule();
+        WeeklyShiftsSchedule sched = repo.getSchedule();
         LocalDate sat = LocalDate.of(2023, 9, 16);
         sched.resetNextWeek(repo.getTemplates(), sat);
 
@@ -52,12 +52,12 @@ class ShiftsRepoTest {
     @Test
     void testSwapWeeksAndArchiveHistoryWithAssignments() {
         // 1) seed one template
-        RecurringShift rs = new RecurringShift(DayOfWeek.SUNDAY, Shift.ShiftTime.Evening);
+        ShiftTemplate rs = new ShiftTemplate(DayOfWeek.SUNDAY, Shift.ShiftTime.Evening);
         rs.setDefaultCount(new Role("Cleaner"), 1);
         repo.addTemplate(rs);
 
         // 2) build next week for a known Saturday
-        WeeklySchedule sched = repo.getSchedule();
+        WeeklyShiftsSchedule sched = repo.getSchedule();
         LocalDate sat = LocalDate.of(2023, 9, 16);
         sched.resetNextWeek(repo.getTemplates(), sat);
 

@@ -21,39 +21,45 @@ public class EmployeeInterface {
     public void employeeMainMenu(Scanner scanner) {
         boolean exit = false;
         while (!exit) {
-            ConsoleUtils.typewriterPrint("\nEmployee Menu:", 20
+            PresentationUtils.typewriterPrint("\nEmployee Menu:", 20
 );
-            ConsoleUtils.typewriterPrint("1. View My Shifts", 20
+            PresentationUtils.typewriterPrint("1. View My Info", 20
 );
-            ConsoleUtils.typewriterPrint("2. Send Swap Request", 20
+            PresentationUtils.typewriterPrint("2. View My Shifts", 20
 );
-            ConsoleUtils.typewriterPrint("3. Send Weekly Availability (next week)", 20
+            PresentationUtils.typewriterPrint("3. View Current Shift", 20
 );
-            ConsoleUtils.typewriterPrint("4. View Weekly Availability (this week)", 20
+            PresentationUtils.typewriterPrint("4. Send Weekly Availability (next week)", 20
 );
-            ConsoleUtils.typewriterPrint("5. View Weekly Availability (next week)", 20
+            PresentationUtils.typewriterPrint("5. View Weekly Availability (this week)", 20
 );
-            ConsoleUtils.typewriterPrint("6. Add Vacation", 20
+            PresentationUtils.typewriterPrint("6. View Weekly Availability (next week)", 20
 );
-            ConsoleUtils.typewriterPrint("7. View Vacation Dates", 20
+            PresentationUtils.typewriterPrint("7. Send Swap Request", 20
 );
-            ConsoleUtils.typewriterPrint("8. Exit", 20
+            PresentationUtils.typewriterPrint("8. Add Vacation", 20
 );
-            ConsoleUtils.typewriterPrint("", 20
+            PresentationUtils.typewriterPrint("9. View Vacation Dates", 20
+);
+            PresentationUtils.typewriterPrint("10. Exit", 20
+);
+            PresentationUtils.typewriterPrint("", 20
 );
 
             int choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
-                case 1 -> viewAssignedShifts();
-                case 2 -> sendSwapRequest(scanner);
-                case 3 -> sendWeeklyAvailability(scanner);
-                case 4 -> viewWeeklyAvailability();
-                case 5 -> viewNextWeeklyAvailability();
-                case 6 -> addVacation(scanner);
-                case 7 -> viewHolidays();
-                case 8 -> exit = true;
-                default -> ConsoleUtils.typewriterPrint("Invalid choice.", 20
+                case 1 -> employee.ShowInfo();
+                case 2 -> viewAssignedShifts();
+                case 3 -> viewCurrentShift();
+                case 4 -> sendWeeklyAvailability(scanner);
+                case 5 -> viewWeeklyAvailability();
+                case 6 -> viewNextWeeklyAvailability();
+                case 7 -> sendSwapRequest(scanner);
+                case 8 -> addVacation(scanner);
+                case 9 -> viewHolidays();
+                case 10 -> exit = true;
+                default -> PresentationUtils.typewriterPrint("Invalid choice.", 20
 );
             }
         }
@@ -145,13 +151,13 @@ public class EmployeeInterface {
                 .collect(Collectors.toList());
 
         if (slots.isEmpty()) {
-            ConsoleUtils.typewriterPrint("No shifts scheduled for next week.", 20
+            PresentationUtils.typewriterPrint("No shifts scheduled for next week.", 20
 );
             return;
         }
 
         while (true) {
-            ConsoleUtils.typewriterPrint("\nToggle availability for next‑week slots (0 to finish):", 20
+            PresentationUtils.typewriterPrint("\nToggle availability for next‑week slots (0 to finish):", 20
 );
             for (int i = 0; i < slots.size(); i++) {
                 WeeklyAvailability w = slots.get(i);
@@ -163,18 +169,18 @@ public class EmployeeInterface {
                         w.getTime()
                 );
             }
-            ConsoleUtils.typewriterPrint("", 20
+            PresentationUtils.typewriterPrint("", 20
 );
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             if (choice == 0) {
-                ConsoleUtils.typewriterPrint("Finished updating availability.", 20
+                PresentationUtils.typewriterPrint("Finished updating availability.", 20
 );
                 break;
             }
             if (choice < 1 || choice > slots.size()) {
-                ConsoleUtils.typewriterPrint("Invalid choice, try again.", 20
+                PresentationUtils.typewriterPrint("Invalid choice, try again.", 20
 );
                 continue;
             }
@@ -183,12 +189,12 @@ public class EmployeeInterface {
             if (employee.getAvailabilityNextWeek().contains(picked)) {
                 // remove
                 employee.removeAvailability(picked.getDay(), picked.getTime());
-                ConsoleUtils.typewriterPrint("Removed availability: " + picked.getDay() + " " + picked.getTime(), 20
+                PresentationUtils.typewriterPrint("Removed availability: " + picked.getDay() + " " + picked.getTime(), 20
 );
             } else {
                 // add
                 employee.addAvailability(picked.getDay(), picked.getTime());
-                ConsoleUtils.typewriterPrint("Marked available: " + picked.getDay() + " " + picked.getTime(), 20
+                PresentationUtils.typewriterPrint("Marked available: " + picked.getDay() + " " + picked.getTime(), 20
 );
             }
         }
@@ -197,62 +203,71 @@ public class EmployeeInterface {
 
 
     private void viewWeeklyAvailability() {
-        ConsoleUtils.typewriterPrint("\nYour Weekly Availability (this week):", 20
+        PresentationUtils.typewriterPrint("\nYour Weekly Availability (this week):", 20
 );
         for (WeeklyAvailability w : employee.getAvailabilityThisWeek()) {
-            ConsoleUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
+            PresentationUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
 );
         }
         if (employee.getAvailabilityThisWeek().isEmpty()) {
-            ConsoleUtils.typewriterPrint("No availability set for this week.", 20
+            PresentationUtils.typewriterPrint("No availability set for this week.", 20
 );
         }
     }    private void viewNextWeeklyAvailability() {
-        ConsoleUtils.typewriterPrint("\nYour Weekly Availability (next week):", 20
+        PresentationUtils.typewriterPrint("\nYour Weekly Availability (next week):", 20
 );
         for (WeeklyAvailability w : employee.getAvailabilityNextWeek()) {
-            ConsoleUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
+            PresentationUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
 );
         }
         if (employee.getAvailabilityThisWeek().isEmpty()) {
-            ConsoleUtils.typewriterPrint("No availability set for next week.", 20
+            PresentationUtils.typewriterPrint("No availability set for next week.", 20
 );
         }
     }
 
     private void addVacation(Scanner scanner) {
         if (employee.getHolidays().size() >= 5) {
-            ConsoleUtils.typewriterPrint("Max 5 vacations reached.", 20
+            PresentationUtils.typewriterPrint("Max 5 vacations reached.", 20
 );
             return;
         }
-        ConsoleUtils.typewriterPrint("\nEnter vacation date (yyyy-MM-dd): ", 20
+        PresentationUtils.typewriterPrint("\nEnter vacation date (yyyy-MM-dd): ", 20
 );
         String str = scanner.nextLine();
         try {
             // use ordinary hyphens here:
             Date d = new SimpleDateFormat("yyyy-MM-dd").parse(str);
             employee.addHoliday(d);
-            ConsoleUtils.typewriterPrint("Vacation added: " + str, 20
+            PresentationUtils.typewriterPrint("Vacation added: " + str, 20
 );
         } catch (ParseException e) {
-            ConsoleUtils.typewriterPrint("Bad date format. Please use yyyy-MM-dd.", 20
+            PresentationUtils.typewriterPrint("Bad date format. Please use yyyy-MM-dd.", 20
 );
         }
     }
 
 
     private void viewHolidays() {
-        ConsoleUtils.typewriterPrint("\nYour Vacations:", 20
+        PresentationUtils.typewriterPrint("\nYour Vacations:", 20
 );
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy‑MM‑dd");
         for (Date d : employee.getHolidays()) {
-            ConsoleUtils.typewriterPrint("• " + fmt.format(d), 20
+            PresentationUtils.typewriterPrint("• " + fmt.format(d), 20
 );
         }
         if (employee.getHolidays().isEmpty()) {
-            ConsoleUtils.typewriterPrint("No vacations scheduled.", 20
+            PresentationUtils.typewriterPrint("No vacations scheduled.", 20
 );
+        }
+    }
+
+    private void viewCurrentShift() {
+        Optional<Shift> currentShift = ShiftsRepo.getInstance().getCurrentShift();
+        if (currentShift.isPresent()) {
+            PresentationUtils.printShift(currentShift.get());
+        } else {
+            System.out.println("There is no shift currently active.");
         }
     }
 }

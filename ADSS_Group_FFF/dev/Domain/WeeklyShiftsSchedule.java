@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WeeklySchedule {
+public class WeeklyShiftsSchedule {
     private List<Shift> currentWeek = new ArrayList<>();
     private List<Shift> nextWeek    = new ArrayList<>();
 
@@ -19,9 +19,9 @@ public class WeeklySchedule {
     /**
      * Build concrete shifts for the week *after* refSaturday.
      */
-    public void resetNextWeek(List<RecurringShift> templates, LocalDate refSaturday) {
+    public void resetNextWeek(List<ShiftTemplate> templates, LocalDate refSaturday) {
         nextWeek.clear();
-        for (RecurringShift rs : templates) {
+        for (ShiftTemplate rs : templates) {
             // days after Saturday → 1…7
             int satVal  = DayOfWeek.SATURDAY.getValue();
             int dowVal  = rs.getDay().getValue();

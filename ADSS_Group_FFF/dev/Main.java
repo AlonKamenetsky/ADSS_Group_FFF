@@ -1,15 +1,14 @@
 import java.text.ParseException;
 import java.util.Scanner;
 import Domain.EmployeesRepo;
-import Presentation.ConsoleUtils;
-import Presentation.DataInitializer;
+import Presentation.DemoDataLoader;
 import Presentation.LoginScreen;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
         // 1) Bootstrap example data unconditionally (or via a config flag)
         try {
-            DataInitializer.initializeExampleData();
+            DemoDataLoader.initializeExampleData();
         } catch (ParseException e) {
             System.err.println("Error loading example data: " + e.getMessage());
             e.printStackTrace();

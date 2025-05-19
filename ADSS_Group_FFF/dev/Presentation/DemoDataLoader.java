@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 
-public class DataInitializer {
+public class DemoDataLoader {
     public static void initializeExampleData() throws ParseException {
         // ——— 1) Seed Roles & Employees ———
         RolesRepo rolesRepo   = RolesRepo.getInstance();
@@ -54,8 +54,8 @@ public class DataInitializer {
         // ——— 2) Define recurring-shift templates ———
         ShiftsRepo shiftsRepo = ShiftsRepo.getInstance();
         for (DayOfWeek dow : DayOfWeek.values()) {
-            shiftsRepo.addTemplate(new RecurringShift(dow, Shift.ShiftTime.Morning));
-            shiftsRepo.addTemplate(new RecurringShift(dow, Shift.ShiftTime.Evening));
+            shiftsRepo.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Morning));
+            shiftsRepo.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Evening));
         }
 
         // ——— 3) Bootstrap the rolling schedule based on current time ———
@@ -77,7 +77,7 @@ public class DataInitializer {
             shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday);
         }
 
-        ConsoleUtils.typewriterPrint(
+        PresentationUtils.typewriterPrint(
                 "Example data and recurring-shift templates loaded successfully.",
                 20
         );

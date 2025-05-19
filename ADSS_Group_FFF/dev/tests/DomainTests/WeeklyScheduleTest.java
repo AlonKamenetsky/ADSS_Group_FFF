@@ -1,7 +1,7 @@
 package tests;
 
-import Domain.WeeklySchedule;
-import Domain.RecurringShift;
+import Domain.WeeklyShiftsSchedule;
+import Domain.ShiftTemplate;
 import Domain.Role;
 import Domain.Shift;
 
@@ -12,25 +12,23 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class WeeklyScheduleTest {
-    private WeeklySchedule ws;
-    private List<RecurringShift> templates;
+    private WeeklyShiftsSchedule ws;
+    private List<ShiftTemplate> templates;
     private Role cashier, manager;
 
     @BeforeEach
     void setUp() {
-        ws = new WeeklySchedule();
+        ws = new WeeklyShiftsSchedule();
         templates = new ArrayList<>();
 
-        RecurringShift monMorning = new RecurringShift(DayOfWeek.MONDAY, Shift.ShiftTime.Morning);
-        RecurringShift wedEvening = new RecurringShift(DayOfWeek.WEDNESDAY, Shift.ShiftTime.Evening);
+        ShiftTemplate monMorning = new ShiftTemplate(DayOfWeek.MONDAY, Shift.ShiftTime.Morning);
+        ShiftTemplate wedEvening = new ShiftTemplate(DayOfWeek.WEDNESDAY, Shift.ShiftTime.Evening);
         cashier = new Role("Cashier");
         manager = new Role("Manager");
 

@@ -2,9 +2,8 @@ package tests.PresentationTests;
 
 import Domain.Employee;
 import Domain.Role;
-import Domain.RecurringShift;
+import Domain.ShiftTemplate;
 import Domain.Shift;
-import Domain.ShiftAssignment;
 import Domain.ShiftsRepo;
 import Domain.SwapRequest;
 import Domain.SwapRequestsRepo;
@@ -86,7 +85,7 @@ class EmployeeInterfaceTest {
     @Test
     void testSendWeeklyAvailabilityViaMenu() {
         // first add a single RecurringShift template for next week
-        RecurringShift tmpl = new RecurringShift(DayOfWeek.MONDAY, Shift.ShiftTime.Morning);
+        ShiftTemplate tmpl = new ShiftTemplate(DayOfWeek.MONDAY, Shift.ShiftTime.Morning);
         tmpl.setDefaultCount(new Role("Cashier"), 1);
         repo.addTemplate(tmpl);
 

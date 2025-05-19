@@ -124,7 +124,7 @@ class HRInterfaceTest {
     @Test
     void ConfigureShiftRolesViaMenu() {
         // add one template so next week exists
-        RecurringShift tmpl = new RecurringShift(DayOfWeek.MONDAY, Shift.ShiftTime.Evening);
+        ShiftTemplate tmpl = new ShiftTemplate(DayOfWeek.MONDAY, Shift.ShiftTime.Evening);
         tmpl.setDefaultCount(RolesRepo.getInstance().getRoleByName("Cashier"), 3);
         ShiftsRepo.getInstance().addTemplate(tmpl);
         // force‐build next‐week
