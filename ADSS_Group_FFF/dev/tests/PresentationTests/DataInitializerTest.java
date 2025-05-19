@@ -3,7 +3,7 @@ package tests.PresentationTests;
 import Domain.EmployeesRepo;
 import Domain.RolesRepo;
 import Domain.ShiftsRepo;
-import Presentation.DataInitializer;
+import Presentation.DemoDataLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class DataInitializerTest {
 
     @Test
     void testInitializeExampleData() throws Exception {
-        DataInitializer.initializeExampleData();
+        DemoDataLoader.initializeExampleData();
         // Expect some roles (HR and others) to be loaded.
         assertFalse(RolesRepo.getInstance().getRoles().isEmpty(), "Roles should be loaded");
         // Expect at least two employees.

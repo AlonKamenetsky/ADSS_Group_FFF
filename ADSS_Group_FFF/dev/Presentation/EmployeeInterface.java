@@ -64,6 +64,8 @@ public class EmployeeInterface {
             }
         }
     }
+
+
     private void viewAssignedShifts() {
         List<Shift> shifts = ShiftsRepo.getInstance().getCurrentWeekShifts();
         boolean found = false;

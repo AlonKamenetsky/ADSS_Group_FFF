@@ -53,6 +53,15 @@ public class Employee extends User {
     public List<Shift> getShifts()       { return shifts; }
     public List<Date>  getHolidays()     { return holidays; }
 
+    public void ShowInfo(){
+        System.out.println("Employee Name: " + getName());
+        System.out.println("Employee ID: " + getId());
+        System.out.println("Employee Roles: " + getRoles());
+        System.out.println("Employee Bank Account: " + getBankAccount());
+        System.out.println("Employee Salary: " + getSalary());
+        System.out.println("Employee Employment Date: " + getEmploymentDate());
+    }
+
     // --- Availability Management ---------------------------------------
 
     /** Called Saturday evening to roll nextWeek → thisWeek. */

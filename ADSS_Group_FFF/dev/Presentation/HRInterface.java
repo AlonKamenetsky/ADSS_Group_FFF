@@ -9,7 +9,6 @@ import Domain.*;
 public class HRInterface {
     private static final Role HR_ROLE = RolesRepo.getInstance().getRoleByName("HR");
     private final String currentUserId;
-    private String selectedShiftId;
     private Role currentUserRole;
     private final List<SwapRequest> swapRequests = SwapRequestsRepo.getInstance().getSwapRequests();
     private final List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
@@ -655,15 +654,16 @@ public class HRInterface {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> addEmployee(scanner, employees);
-                case 2 -> removeEmployee(scanner, employees);
-                case 3 -> updateEmployeeData(scanner, employees);
-                case 4 -> addNewRole(scanner);
-                case 5 -> removeRole(scanner);
-                case 6 -> assignEmployeeToShift(scanner);
-                case 7 -> processSwapRequests(scanner);
-                case 8 -> configureShiftRoles(scanner);
-                case 9 -> exit = true;
+                case 1 -> EmployeesRepo.getInstance().getEmployeeById(currentUserId).ShowInfo();
+                case 2 -> addEmployee(scanner, employees);
+                case 3 -> removeEmployee(scanner, employees);
+                case 4 -> updateEmployeeData(scanner, employees);
+                case 5 -> addNewRole(scanner);
+                case 6 -> removeRole(scanner);
+                case 7 -> assignEmployeeToShift(scanner);
+                case 8 -> processSwapRequests(scanner);
+                case 9 -> configureShiftRoles(scanner);
+                case 10 -> exit = true;
 
             }
         }
