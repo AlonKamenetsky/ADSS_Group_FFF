@@ -160,17 +160,23 @@ public class InventoryController {
 
     public void addPeriodicOrder(String productId, int quantity, DayOfWeek orderDay) {
         PeriodicOrder p1 = new PeriodicOrder(productId, quantity, orderDay);
-        PeriodicOrders.add(p1);
+        periodicOrders.add(p1);
         //DB Access
     }
 
     public void advanceDay() {
         simulationClock.advanceDay();
-        for PeriodicOrder p1 : PeriodicOrders
+        OrdersToday();
+    }
+
+    private void OrdersToday()
+    {
+        for (PeriodicOrder p1 : periodicOrders)
         {
-            if (p1.getOrderDay() == simulationClock.getCurrentDay())
-                p1.setSupplier;
-                p1.PlaceOrder;
+            if (p1.getOrderDay() == simulationClock.getCurrentDay()) {
+                p1.SetSupplierId(getbestsupplier(p1.getProductId()));
+                p1.placeOrder();
+            }
         }
     }
 

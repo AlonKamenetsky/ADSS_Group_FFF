@@ -11,11 +11,21 @@ public class SupplierOrder {
         this.quantity = quantity;
     }
 
-    public String getSupplierId() { return supplierId; }
-    public void SetSupplierId(String supplierId )
-    {this.supplierId = supplierId}
-    public String getProductId() { return productId; }
-    public int getQuantity() { return quantity; }
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void SetSupplierId(String supplierId) {
+        this.supplierId = supplierId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
 
     @Override
     public String toString() {
