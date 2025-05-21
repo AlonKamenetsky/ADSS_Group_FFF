@@ -9,12 +9,10 @@ public class MutualOrder {
 
     // if true then it is a request for an order, if false it is an order that has been delivered
     private boolean isRequest;
+
 }
 
-// we need to ask arnon how the communication between the modules should go about.
-// will there be 2 DBs? 2 DBs and 1 mutual?
-// busy-wait? listening?
-//
+
 //
 //    //in supplier module
 //    public Status getOrderStatus(String OrderId )

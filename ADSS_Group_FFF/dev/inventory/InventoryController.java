@@ -1,21 +1,73 @@
 package inventory;
 
+import communicationInventoryAndSupplier.*;
+
+import java.time.DayOfWeek;
 import java.util.*;
 
-public class InventoryService {
+public class InventoryController {
     private Map<String, InventoryItem> items;
     private Map<String, Category> categories;
     private Map<String, Discount> itemDiscounts;
     private Map<String, Discount> categoryDiscounts;
     private List<InventoryReport> reports;
+    private List<PeriodicOrder> periodicOrders;
+    private SimulationClock simulationClock;
 
-    public InventoryService() {
+    private SupplierService supplierService;
+
+    public InventoryController() {
         this.items = new HashMap<>();
         this.categories = new HashMap<>();
         this.itemDiscounts = new HashMap<>();
         this.categoryDiscounts = new HashMap<>();
         this.reports = new ArrayList<>();
+        this.simulationClock = new SimulationClock();
+        periodicOrders = new ArrayList<>();
     }
+
+
+    public void setSupplierService(SupplierService supplierService) {
+        this.supplierService = supplierService;
+    }
+
+
+    public void checkAndReorderLowStockItems() {
+        if (supplierService == null) {
+            System.err.println("SupplierService not set.");
+            return;
+        }
+
+        for (InventoryItem item : getLowStockItems()) {
+            List<SupplierQuote> quotes = supplierService.getQuotesSingleProduct(item.getId());
+            if (quotes.isEmpty()) {
+                System.out.println("No suppliers found for item " + item.getId());
+                continue;
+            }
+
+            SupplierQuote best = selectBestQuote(quotes, item);
+            int reorderAmount = Math.max(best.getMinimumOrderQuantity(), item.getMinThreshold() * 2); // strategy
+            SupplierOrder order = new SupplierOrder(best.getSupplierId(), item.getId(), reorderAmount);
+            OrderConfirmation confirmation = supplierService.placeOrderSingleProduct(order);
+
+            if (confirmation.isSuccess()) {
+                System.out.println("Auto-order placed for item " + item.getId());
+            } else {
+                System.out.println("Order failed for item " + item.getId());
+            }
+        }
+    }
+
+    private SupplierQuote selectBestQuote(List<SupplierQuote> quotes, InventoryItem item) {
+        // naive best price selector (can add tie-breakers on delivery days etc.)
+        return quotes.stream()
+                .filter(q -> q.getMinimumOrderQuantity() <= item.getMinThreshold() * 3)
+                .min(Comparator.comparingDouble(SupplierQuote::getPricePerUnit))
+                .orElse(quotes.get(0));
+    }
+
+    // ass2
+
 
     public void addItem(InventoryItem item) {
         if (items.containsKey(item.getId())) {
@@ -81,12 +133,15 @@ public class InventoryService {
         return report;
     }
 
-    public void updateQuantities(String itemId, int shelfDelta, int backroomDelta) {
+
+    //method for both adding "buying" and subtracting "selling" Stock
+    public void updateItemQuantity(String itemId, int shelfDelta, int backroomDelta) {
         InventoryItem item = items.get(itemId);
         if (item != null) {
             item.setShelfQuantity(item.getShelfQuantity() + shelfDelta);
             item.setBackroomQuantity(item.getBackroomQuantity() + backroomDelta);
         }
+        checkAndReorderLowStockItems();
     }
 
     public void addDiscount(Discount discount) {
@@ -102,4 +157,30 @@ public class InventoryService {
     public List<InventoryReport> getAllReports() {
         return reports;
     }
+
+    public void addPeriodicOrder(String productId, int quantity, DayOfWeek orderDay) {
+        PeriodicOrder p1 = new PeriodicOrder(productId, quantity, orderDay);
+        PeriodicOrders.add(p1);
+        //DB Access
+    }
+
+    public void advanceDay() {
+        simulationClock.advanceDay();
+        for PeriodicOrder p1 : PeriodicOrders
+        {
+            if (p1.getOrderDay() == simulationClock.getCurrentDay())
+                p1.setSupplier;
+                p1.PlaceOrder;
+        }
+    }
+
+    public List<PeriodicOrder> getAllPeriodicOrders() {
+        return periodicOrders;
+    }
+
+    public boolean removePeriodicOrderById(int id) {
+        return periodicOrders.removeIf(order -> order.getOrderID() == id);
+    }
+
+
 }

@@ -1,11 +1,13 @@
 package inventory;
 
+import communicationInventoryAndSupplier.FakeSupplierService;
+
 public class Main {
     public static void main(String[] args) {
-        InventoryService service = new InventoryService();
-        SwingGUIManager gui = new SwingGUIManager(service);
-        gui.setVisible(true);
-        gui.bringToFront();
-        gui.askToLoadSampleData();
+        InventoryController controller = new InventoryController();
+        controller.setSupplierService(new FakeSupplierService());
+
+        InventoryCLI cli = new InventoryCLI(controller);
+        cli.run();
     }
 }

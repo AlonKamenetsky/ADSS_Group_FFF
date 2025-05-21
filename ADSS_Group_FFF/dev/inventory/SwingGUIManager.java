@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class SwingGUIManager extends JFrame {
-    private InventoryService service;
+    private InventoryController service;
     private int nextButtonY = 20;
     private static final int BUTTON_SPACING = 40;
 
-    public SwingGUIManager(InventoryService service) {
+    public SwingGUIManager(InventoryController service) {
         this.service = service;
         setupGUI();
     }
@@ -108,7 +108,7 @@ public class SwingGUIManager extends JFrame {
             if (item == null) return;
 
             int[] changes = promptQuantityChange();
-            service.updateQuantities(item.getId(), changes[0], changes[1]);
+            service.updateItemQuantity(item.getId(), changes[0], changes[1]);
             showInfo("Quantities updated successfully.");
         } catch (Exception ex) {
             showError("Error updating quantities: " + ex.getMessage());

@@ -96,12 +96,28 @@ public class InventoryItem {
 
     @Override
     public String toString() {
-        return "InventoryItem{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", totalQuantity=" + (shelfQuantity + backroomQuantity) +
-                ", status=" + status +
-                ", category=" + (category != null ? category.getName() : "none") +
-                '}';
+        return("----------------------------------\n"+toRowString());
     }
-}
+
+        public String toRowString() {
+            return String.format(
+                    "%-10s | %-15s | %-17s | %-5d | %-8d | %-5d | %-8s | %-10s",
+                    id,
+                    name,
+                    manufacturer,
+                    shelfQuantity,
+                    backroomQuantity,
+                    minThreshold,
+                    status,
+                    category != null ? category.getName() : "None"
+            );
+        }
+
+        public static String getTableHeader() {
+            return String.format(
+                    "%-10s | %-15s | %-17s | %-5s | %-8s | %-5s | %-8s | %-10s",
+                    "ID", "Name", "Manufacturer", "Shelf", "Backroom", "Min", "Status", "Category"
+            );
+        }
+    }
+

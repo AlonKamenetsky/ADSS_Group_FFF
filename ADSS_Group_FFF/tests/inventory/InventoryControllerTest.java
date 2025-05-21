@@ -11,14 +11,14 @@ import java.util.Collections;
 import java.util.Date;
 
 
-public class InventoryServiceTest {
-    private InventoryService service;
+public class InventoryControllerTest {
+    private InventoryController service;
     private Category dairy;
     private InventoryItem milk;
 
     @BeforeEach
     public void setup() {
-        service = new InventoryService();
+        service = new InventoryController();
         dairy = new Category("Dairy", null);
         service.addCategory(dairy);
 
@@ -38,8 +38,8 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void testUpdateQuantities() {
-        service.updateQuantities("001", 5, 5);
+    public void testUpdateItemQuantity() {
+        service.updateItemQuantity("001", 5, 5);
         InventoryItem item = service.getAllItems().get(0);
         assertEquals(7, item.getShelfQuantity());
         assertEquals(6, item.getBackroomQuantity());
