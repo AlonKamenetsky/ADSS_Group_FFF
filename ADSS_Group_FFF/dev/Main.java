@@ -36,7 +36,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         LoginScreen login = new LoginScreen(
                 EmployeesRepo.getInstance().getEmployees());
-        login.run(scanner,demoData);
+        login.run(scanner);
 
         // 3) Clean up and exit
         scanner.close();

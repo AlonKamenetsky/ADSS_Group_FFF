@@ -44,7 +44,7 @@ public class LoginScreenTest {
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
 
         // login(...) now returns boolean
-        assertTrue(loginScreen.login(scanner,1), "Login should succeed with correct credentials");
+        assertTrue(loginScreen.login(scanner), "Login should succeed with correct credentials");
 
         // after success, currentUser and currentRole must be set
         assertNotNull(loginScreen.getCurrentUser(), "Current user must be populated");
@@ -64,6 +64,6 @@ public class LoginScreenTest {
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
 
         // login(...) should return false on exit after failure
-        assertFalse(loginScreen.login(scanner,1), "Login should return false when user not found and then exit");
+        assertFalse(loginScreen.login(scanner), "Login should return false when user not found and then exit");
     }
 }
