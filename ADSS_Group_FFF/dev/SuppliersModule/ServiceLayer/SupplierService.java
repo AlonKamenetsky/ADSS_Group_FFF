@@ -70,15 +70,6 @@ public class SupplierService {
         return supplierController.getSupplierDeliveringMethod(supplierID);
     }
 
-
-    // אין סיבה כי מחלקות הסרביס לייר ומעלה לא אמורות להכיר את האובייקטים האלו
-//    public ContactInfo getSupplierContactInfo(int supplierID) {
-//        return supplierController.getSupplierContactInfo(supplierID);
-//    }
-//    private SupplyContract getSupplierSupplyContracts(int supplierID) {
-//        return this.supplierController.getSupp;
-//    }
-
     public ProductCategory getSupplierProductCategory(int supplierID) {
         return this.supplierController.getSupplierProductCategory(supplierID);
     }
@@ -110,6 +101,11 @@ public class SupplierService {
         return this.supplierController.registerNewOrder(supplierId, dataList, creationDate, deliveryDate);
     }
 
+    public boolean registerNewScheduledOrder(int supplierId, int day, ArrayList<int[]> dataList) {
+        WeekDay d = WeekDay.values()[day - 1];
+        return this.supplierController.registerNewScheduledOrder(supplierId, d, dataList);
+    }
+
     public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
         return this.supplierController.updateOrderContactInfo(orderId, phoneNumber, address, email, contactName);
     }
@@ -134,7 +130,6 @@ public class SupplierService {
     public boolean deleteOrder(int orderID) {
         return this.supplierController.deleteOrder(orderID);
     }
-
 
     public Date getOrderSupplyDate(int orderID){
         return this.supplierController.getOrderSupplyDate(orderID);

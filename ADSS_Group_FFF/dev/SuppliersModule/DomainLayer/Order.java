@@ -21,11 +21,11 @@ public class Order {
 
     SupplyMethod supplyMethod;
 
-    ArrayList<int[]> productArrayList; // [ProductID, Product_Amount
+    ArrayList<OrderProductData> productArrayList; // [ProductID, Product_Amount
 
     OrderStatus orderStatus;
 
-    public Order(int orderID, int supplierID, ArrayList<int[]> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+    public Order(int orderID, int supplierID, ArrayList<OrderProductData> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
         this.orderID = orderID;
         this.supplierID = supplierID;
         this.supplierContactInfo = supplierContactInfo;
@@ -56,10 +56,10 @@ public class Order {
     public SupplyMethod getSupplyMethod() {
         return supplyMethod;
     }
-    public ArrayList<int[]> getProductArrayList() {
+    public ArrayList<OrderProductData> getProductArrayList() {
         return productArrayList;
     }
-    public void setProductArrayList(ArrayList<int[]> productArrayList){
+    public void setProductArrayList(ArrayList<OrderProductData> productArrayList){
         this.productArrayList = productArrayList;
     }
     public void setSupplyMethod(SupplyMethod supplyMethod) {
@@ -91,8 +91,8 @@ public class Order {
         sb.append("  Supply Method: ").append(supplyMethod).append("\n");
         sb.append("  Total Price: ").append(String.format("%.2f", totalPrice)).append("\n");
         sb.append("  Products:\n");
-        for (int[] product : productArrayList) {
-            sb.append("Product ID,QUANTITY: ").append(Arrays.toString(product)).append("\n");
+        for (OrderProductData productData : productArrayList) {
+            sb.append(productData);
         }
         sb.append("}");
         return sb.toString();

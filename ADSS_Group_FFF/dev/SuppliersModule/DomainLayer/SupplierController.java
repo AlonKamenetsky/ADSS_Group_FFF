@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.Random;
 
+import static SuppliersModule.DomainLayer.OrderController.buildProductDataArray;
+
 public class SupplierController {
     OrderController orderController;
     SupplyContractController supplyContractController;
@@ -120,10 +122,8 @@ public class SupplierController {
         Supplier supplier = null;
         if (supplyMethod == SupplyMethod.ON_DEMAND)
             supplier = new OnDemandSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
-        else if (supplyMethod == SupplyMethod.SCHEDULED) {
-            supplier = new ScheduledSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
-            ((ScheduledSupplier) supplier).setSupplyDays(supplyDays);
-        }
+        else if (supplyMethod == SupplyMethod.SCHEDULED)
+            supplier = new ScheduledSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo, supplyDays);
 
         this.suppliersArrayList.add(supplier);
         return supplier.getSupplierId();
@@ -311,6 +311,22 @@ public class SupplierController {
         return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
     }
 
+    public boolean registerNewScheduledOrder(int supplierId, WeekDay day, ArrayList<int[]> dataList) {
+        Supplier supplier = this.getSupplierBySupplierID(supplierId);
+        if (supplier == null || supplier.getSupplyMethod() != SupplyMethod.SCHEDULED)
+            return false;
+
+        ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();
+        ArrayList<OrderProductData> orderProductData = buildProductDataArray(dataList, supplyContracts);
+
+        ScheduledOrder scheduledOrder = new ScheduledOrder(supplier.supplierId, day, orderProductData);
+
+        ScheduledSupplier scheduledSupplier = ((ScheduledSupplier)supplier);
+        scheduledSupplier.addScheduledOrder(day, scheduledOrder);
+
+        return true;
+    }
+
     public boolean deleteOrder(int orderID) {
         return this.orderController.deleteOrder(orderID);
     }
@@ -335,13 +351,11 @@ public class SupplierController {
 
     public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
         ArrayList<SupplyContract> supplyContracts = getAvailableContractsForOrder(orderID);
-        return this.orderController.addProductsToOrder(orderID, supplyContracts, dataList);
-
+        return this.orderController.addProductsToOrder(orderID,supplyContracts, dataList);
     }
 
     public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
-        ArrayList<SupplyContract> supplyContracts = getAvailableContractsForOrder(orderID);
-        return this.orderController.removeProductsFromOrder(orderID, supplyContracts, dataList);
+        return this.orderController.removeProductsFromOrder(orderID, dataList);
     }
 
     // ********** GETTERS FUNCTIONS **********

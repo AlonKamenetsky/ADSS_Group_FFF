@@ -299,6 +299,34 @@ public class CLI {
         }
     }
 
+    private void registerNewScheduledOrder() {
+        ArrayList<int[]> dataArray = new ArrayList<>();
+        Date today = new Date();
+        this.printAllSuppliers();
+        System.out.println("Which supplier you want to order from? Enter supplier ID");
+        int supplierId = readInt();
+        this.printSupplierContracts(supplierId);
+
+        while (true) {
+            System.out.println("Enter product ID (Enter -1 for exit): ");
+            int productID = readInt();
+            if (productID == -1)
+                break;
+            System.out.println("Enter quantity");
+            int quantity = readInt();
+            int data[] = {productID, quantity};
+            dataArray.add(data);
+        }
+
+        System.out.println("enter regular day to be ordered");
+        int deliveryDay = this.readInt();
+        if (serviceController.registerNewScheduledOrder(supplierId, deliveryDay ,dataArray)) {
+            System.out.println("Scheduled Order registered successfully.");
+        } else {
+            System.out.println("Error: Failed to register new order.");
+        }
+    }
+
     private void updateOrder() {
         System.out.println("Which order you want to update? Enter orderID: ");
         int orderID = readInt();
@@ -488,11 +516,12 @@ public class CLI {
 
     public void printOrderOptions() {
         System.out.println("1. Add order");
-        System.out.println("2. Update order");
-        System.out.println("3. Delete order");
-        System.out.println("4. print order");
-        System.out.println("5. print all orders");
-        System.out.println("6. Exit");
+        System.out.println("2. Add Scheduled order");
+        System.out.println("3. Update order");
+        System.out.println("4. Delete order");
+        System.out.println("5. print order");
+        System.out.println("6. print all orders");
+        System.out.println("7. Exit");
     }
 
     private void printOrderUpdateOption() {
@@ -605,18 +634,21 @@ public class CLI {
                 registerNewOrder();
                 break;
             case 2:
-                updateOrder();
+                registerNewScheduledOrder();
                 break;
             case 3:
-                deleteOrder();
+                updateOrder();
                 break;
             case 4:
-                printOrder();
+                deleteOrder();
                 break;
             case 5:
-                printAllOrders();
+                printOrder();
                 break;
             case 6:
+                printAllOrders();
+                break;
+            case 7:
                 return;
         }
     }

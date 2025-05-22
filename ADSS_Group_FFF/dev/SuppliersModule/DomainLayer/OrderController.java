@@ -60,7 +60,7 @@ public class OrderController {
 
                 ContactInfo contactInfo = new ContactInfo(contactName, email, phone, address);
 
-                Order order = new Order(orderID, supplierId, productList, totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
+                Order order = new Order(orderID, supplierId, buildProductDataArray(productList, null), totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
                 ordersArrayList.add(order);
                 this.orderID++;
 
@@ -70,13 +70,15 @@ public class OrderController {
         }
     }
 
-    private boolean ValidateProductInContracts(SupplyContract supplyContract, int productID) {
+    private static boolean ValidateProductInContracts(SupplyContract supplyContract, int productID) {
         return supplyContract.CheckIfProductInData(productID);
     }
 
-    private double calculateTotalPrice(ArrayList<SupplyContract> supplyContracts, ArrayList<int[]> dataList) {
-        double totalPrice = 0;
-        for(int[] entry : dataList) {
+    public static ArrayList<OrderProductData> buildProductDataArray(ArrayList<int[]> dataList, ArrayList<SupplyContract> supplyContracts) {
+
+        ArrayList<OrderProductData> productDataList = new ArrayList<>();
+
+        for (int[] entry : dataList) {
 
             int productId = entry[0];
 
@@ -87,34 +89,46 @@ public class OrderController {
                     break;
                 }
             if (supplyContract == null)
-                return -1;
-
+                return null;
 
             SupplyContractProductData data = supplyContract.getSupplyContractProductDataOfProduct(productId);
 
             int quantity = entry[1];
             double productPrice = data.getProductPrice();
 
-            if(quantity >=  data.getQuantityForDiscount()){
-                productPrice = data.getProductPrice();
-                productPrice = productPrice*((100 - data.getDiscountPercentage()) / 100);
-                totalPrice +=  productPrice*quantity;
-            }
-            else
-                totalPrice += productPrice*quantity;
+            if (quantity >= data.getQuantityForDiscount())
+                productPrice = productPrice * ((100 - data.getDiscountPercentage()) / 100);
 
+
+            productDataList.add(new OrderProductData(productId, quantity, productPrice));
         }
+
+        return productDataList;
+    }
+
+    private double calculateTotalPrice(ArrayList<OrderProductData> dataList) {
+        double totalPrice = 0;
+        for (OrderProductData data : dataList)
+            totalPrice += data.getTotalPrice();
+
         return totalPrice;
     }
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, ArrayList<SupplyContract> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
-        double totalOrderValue = calculateTotalPrice(supplyContracts, dataList);
-        if (totalOrderValue == -1)
+        ArrayList<OrderProductData> orderProductDataList = buildProductDataArray(dataList, supplyContracts);
+        if (orderProductDataList == null)
             return false;
 
-        Order order = new Order(orderID, supplierId, dataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
+        for (OrderProductData orderProductData : orderProductDataList)
+            orderProductData.setOrderID(orderID);
+
+        double totalOrderValue = calculateTotalPrice(orderProductDataList);
+
+        Order order = new Order(orderID, supplierId, orderProductDataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
         ordersArrayList.add(order);
+
         this.orderID++;
+
 
         return true;
     }
@@ -185,30 +199,34 @@ public class OrderController {
     }
 
     public boolean addProductsToOrder(int orderID, ArrayList<SupplyContract> supplyContracts ,ArrayList<int[]> dataList) {
-        ArrayList<int[]> products = this.getOrderProducts(orderID);
+        ArrayList<OrderProductData> products = this.getOrderProducts(orderID);
         if(products == null)
             return false;
-        products.addAll(dataList);
 
-        double totalPrice = calculateTotalPrice(supplyContracts, products);
+        ArrayList<OrderProductData> newProducts = buildProductDataArray(dataList, supplyContracts);
+        products.addAll(newProducts);
+
+        double totalPrice = calculateTotalPrice(products);
 
         this.setOrderProducts(orderID, products);
         this.setOrderPrice(orderID, totalPrice);
         return true;
     }
 
-    public boolean removeProductsFromOrder(int orderID, ArrayList<SupplyContract> supplyContracts, ArrayList<Integer> dataList) {
-        ArrayList<int[]> products = this.getOrderProducts(orderID);
+    public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
+        ArrayList<OrderProductData> products = this.getOrderProducts(orderID);
         if(products == null)
             return false;
 
-        products.removeIf(pair -> dataList.contains(pair[0]));
+        for (int productID : dataList)
+            products.removeIf(orderProductData -> orderProductData.getProductID() == productID);
+
         if (products.isEmpty()){
             this.deleteOrder(orderID);
             return true;
         }
 
-        double totalPrice = calculateTotalPrice(supplyContracts, products);
+        double totalPrice = calculateTotalPrice(products);
 
         this.setOrderProducts(orderID, products);
         this.setOrderPrice(orderID, totalPrice);
@@ -226,7 +244,7 @@ public class OrderController {
         return -1;
     }
 
-    public ArrayList<int[]> getOrderProducts(int orderID){
+    public ArrayList<OrderProductData> getOrderProducts(int orderID){
         Order order = getOrderByID(orderID);
         if (order != null)
             return order.getProductArrayList();
@@ -236,7 +254,7 @@ public class OrderController {
 
     // ********** SETTERS FUNCTIONS **********
 
-    private boolean setOrderProducts(int orderID, ArrayList<int[]> productArrayList){
+    private boolean setOrderProducts(int orderID, ArrayList<OrderProductData> productArrayList){
         Order order = getOrderByID(orderID);
         if (order == null)
             return false;

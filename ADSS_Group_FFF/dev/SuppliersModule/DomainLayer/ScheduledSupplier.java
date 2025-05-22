@@ -11,12 +11,17 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 
 public class ScheduledSupplier extends Supplier {
     private EnumSet<WeekDay> supplyDays;
+    private HashMap<WeekDay,ScheduledOrder> scheduledOrders;
 
-    public ScheduledSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
+    public ScheduledSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo, EnumSet<WeekDay> supplyDays) {
         super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContactInfo, supplierPaymentInfo);
+        this.supplyDays = supplyDays;
+
+        scheduledOrders = new HashMap<>();
     }
 
     @Override
@@ -30,6 +35,21 @@ public class ScheduledSupplier extends Supplier {
 
     public void setSupplyDays(EnumSet<WeekDay> supplyDays) {
         this.supplyDays = supplyDays;
+    }
+
+    public HashMap<WeekDay,ScheduledOrder> getScheduledOrders() {
+        return this.scheduledOrders;
+    }
+
+    public void setScheduledOrders(HashMap<WeekDay,ScheduledOrder> scheduledOrders) {
+        this.scheduledOrders = scheduledOrders;
+    }
+
+    public void addScheduledOrder(WeekDay day, ScheduledOrder scheduledOrder) {
+        if (!this.scheduledOrders.containsKey(day))
+            this.scheduledOrders.put(day,scheduledOrder);
+        else
+            this.scheduledOrders.get(day).addProductsData(scheduledOrder.getProductsData());
     }
 
     @Override

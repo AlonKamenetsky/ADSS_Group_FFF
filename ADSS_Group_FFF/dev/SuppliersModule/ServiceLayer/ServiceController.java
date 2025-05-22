@@ -69,12 +69,16 @@ public class ServiceController {
         }
     }
 
-    private boolean ValidateDays(ArrayList<Integer> days) {
+    private boolean validateDay(int day) {
+        return day >= 1 && day <= 7;
+    }
+
+    private boolean validateDays(ArrayList<Integer> days) {
         if (days == null)
             return true;
 
         for (int day : days)
-            if (day < 1 || day > 7)
+            if (validateDay(day))
                 return false;
         return true;
     }
@@ -115,7 +119,7 @@ public class ServiceController {
                                     String phoneNumber, String address, String email, String contactName,
                                     String bankAccount, int paymentMethod, ArrayList<Integer> supplyDays) {
         if (this.validateProductCategory(productCategory) && this.validateSupplyMethod(supplyMethod) && this.validateDeliveringMethod(deliveringMethod) &&
-                this.validatePaymentMethod(paymentMethod) && ValidateDays(supplyDays))
+                this.validatePaymentMethod(paymentMethod) && validateDays(supplyDays))
             return this.supplierService.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, supplyDays);
         return -1;
     }
@@ -187,6 +191,13 @@ public class ServiceController {
         if (deliveryDateAsDate.before(creationDate))
             return false;
         return this.supplierService.registerNewOrder(supplierId, dataList, creationDate, deliveryDateAsDate);
+    }
+
+    public boolean registerNewScheduledOrder(int supplierId, int day, ArrayList<int[]> dataList) {
+        if (!validateDay(day))
+            return false;
+
+        return this.supplierService.registerNewScheduledOrder(supplierId, day, dataList);
     }
 
     public boolean deleteOrder(int orderID) {
