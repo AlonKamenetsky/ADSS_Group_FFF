@@ -18,12 +18,13 @@ public class LoginScreen {
      * Prompts until we get a valid ID/password or "exit".
      * Returns false if the user typed "exit" at either prompt.
      */
-    public boolean login(Scanner scanner) {
+    public boolean login(Scanner scanner, int demoData) {
         while (true) {
-            PresentationUtils.typewriterPrint("\n—— LOGIN ——", 20
+            PresentationUtils.typewriterPrint("\n--- LOGIN ---", 20
 );
             PresentationUtils.typewriterPrint("Type 'exit' at any prompt to quit.", 20
 );
+
             PresentationUtils.typewriterPrint("ID: ", 20
 );
             String id = scanner.nextLine().trim();
@@ -87,9 +88,9 @@ public class LoginScreen {
      * Drives the whole “login → dispatch to UI → switch-user?” loop.
      * Stops when user types “exit” or says “no” to switching.
      */
-    public void run(Scanner scanner) {
+    public void run(Scanner scanner, int demoData) {
         while (true) {
-            if (!login(scanner)) break;
+            if (!login(scanner, demoData)) break;
 
             // dispatch to the correct interface
             if (currentRole.getName().equals("HR")) {

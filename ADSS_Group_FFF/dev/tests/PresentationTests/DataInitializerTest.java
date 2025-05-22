@@ -21,7 +21,7 @@ class DataInitializerTest {
 
     @Test
     void testInitializeExampleData() throws Exception {
-        DemoDataLoader.initializeExampleData();
+        DemoDataLoader.initializeExampleData(0);
         // Expect some roles (HR and others) to be loaded.
         assertFalse(RolesRepo.getInstance().getRoles().isEmpty(), "Roles should be loaded");
         // Expect at least two employees.
