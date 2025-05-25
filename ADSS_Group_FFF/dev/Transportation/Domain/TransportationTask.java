@@ -77,6 +77,10 @@ public class TransportationTask {
         this.truckLicenseNumber = truckLicenseNumber;
     }
 
+    public ArrayList<Site> getDestinationSites() {
+        return destinationSites;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

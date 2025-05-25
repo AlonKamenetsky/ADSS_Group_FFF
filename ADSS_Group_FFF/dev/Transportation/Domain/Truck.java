@@ -41,6 +41,14 @@ public class Truck {
         return licenseNumber;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public float getNetWeight() {
+        return netWeight;
+    }
+
     public String toString() {
         return String.format(
                 "Truck Type: %s\nLicense Number: %s\nModel: %s\nNet Weight: %.2f\nMax Weight: %.2f\nAvailable: %s",

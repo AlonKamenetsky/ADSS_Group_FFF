@@ -29,6 +29,10 @@ public class TransportationDoc {
         return docItems.getListWeight();
     }
 
+    public int getTaskId(){
+        return taskId;
+    }
+
     public void removeItemFromDocList(Item removeItem) {
         docItems.removeItemFromList(removeItem);
     }

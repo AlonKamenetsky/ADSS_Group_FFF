@@ -1,6 +1,12 @@
 package Transportation.Service;
 
+import Transportation.Data.DTO.ItemDTO;
+import Transportation.Domain.Item;
 import Transportation.Domain.ItemManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemService {
     private final ItemManager itemManager;
@@ -37,4 +43,17 @@ public class ItemService {
             return itemManager.doesItemExist(itemName);
         }
     }
+//
+//    public List<ItemDTO> getAllItemDTOs() {
+//        return itemManager.getAllItems()
+//                .stream()
+//                .map(ItemDTO::fromEntity)
+//                .collect(Collectors.toList());
+//    }
+//
+//    public ItemDTO getItemDTOByName(String itemName) {
+//        Item item = itemManager.getItemByName(itemName);
+//        return item != null ? ItemDTO.fromEntity(item) : null;
+//    }
+
 }
