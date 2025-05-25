@@ -21,15 +21,6 @@ public class ItemManager {
         return null;
     }
 
-    public float getItemWeightByName(String itemName) {
-        for (Item i : allItems.values()) {
-            if (i.getItemName().equalsIgnoreCase(itemName)) {
-                return allItems.get(i.getItemId()).getWeight();
-            }
-        }
-        return 0;
-    }
-
     public List<Item> getAllItems() {
         return new ArrayList<>(allItems.values());
     }
@@ -60,7 +51,7 @@ public class ItemManager {
         if (currItem == null) {
             return false;
         }
-        int itemId = getItemByName(itemName.toLowerCase()).getItemId();
+        int itemId = currItem.getItemId();
         return allItems.containsKey(itemId);
     }
 }

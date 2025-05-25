@@ -29,10 +29,6 @@ public class ItemService {
         return itemManager.getAllItemsString();
     }
 
-    public float getItemWeight(String itemName) {
-        return itemManager.getItemWeightByName(itemName);
-    }
-
     public boolean doesItemExist(String itemName) {
         if (itemName == null) {
             return false;

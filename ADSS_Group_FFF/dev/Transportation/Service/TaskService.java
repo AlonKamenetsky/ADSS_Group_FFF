@@ -13,28 +13,28 @@ public class TaskService {
         this.taskManager = taskManager;
     }
 
-    public void addTask(String _taskDate, String _departureTime, String sourceSiteAddress) throws ParseException, NoSuchElementException, NullPointerException {
-        if (_taskDate == null || _departureTime == null || sourceSiteAddress == null) {
+    public void addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException, NoSuchElementException, NullPointerException {
+        if (_taskDate == null || _departureTime == null || taskSourceSite == null) {
             throw new NullPointerException();
         }
 
-        taskManager.addTask(_taskDate, _departureTime, sourceSiteAddress.toLowerCase());
+        taskManager.addTask(_taskDate, _departureTime, taskSourceSite.toLowerCase());
     }
 
-    public void deleteTask(String _taskDate, String _departureTime, String sourceSiteAddress) throws NullPointerException, ParseException, NoSuchElementException {
-        if (_taskDate == null || _departureTime == null || sourceSiteAddress == null) {
+    public void deleteTask(String taskDate, String taskDeparture, String taskSourceSite) throws NullPointerException, ParseException, NoSuchElementException {
+        if (taskDate == null || taskDeparture == null || taskSourceSite == null) {
             throw new NullPointerException();
         }
-        if (taskManager.doesTaskExist(_taskDate, _departureTime, sourceSiteAddress.toLowerCase())) {
-            taskManager.removeTask(_taskDate, _departureTime, sourceSiteAddress.toLowerCase());
+        if (taskManager.doesTaskExist(taskDate, taskDeparture, taskSourceSite.toLowerCase())) {
+            taskManager.removeTask(taskDate, taskDeparture, taskSourceSite.toLowerCase());
         }
         else {
             throw new NoSuchElementException("Task doesn't exist.");
         }
     }
 
-    public void addDocToTask(String taskDate, String departureTime, String sourceSite, String destinationAddress, HashMap<String, Integer> itemsToAdd) {
-        taskManager.addDocToTask(taskDate, departureTime, sourceSite.toLowerCase(), destinationAddress.toLowerCase(), itemsToAdd);
+    public void addDocToTask(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite, HashMap<String, Integer> itemsChosen) {
+        taskManager.addDocToTask(taskDate, taskDeparture, taskSourceSite.toLowerCase(), destinationSite.toLowerCase(), itemsChosen);
     }
 
     public void updateWeightForTask(String taskDate, String taskDeparture, String taskSourceSite) {
@@ -58,12 +58,12 @@ public class TaskService {
         return taskManager.getTasksBySourceAddress(sourceAddress.toLowerCase());
     }
 
-    public boolean hasDestination(String taskDate, String taskDeparture, String sourceSite, String destinationSite) throws NullPointerException {
-        if (taskDate == null || taskDeparture == null || sourceSite == null || destinationSite == null) {
+    public boolean hasDestination(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite) throws NullPointerException, NoSuchElementException {
+        if (taskDate == null || taskDeparture == null || taskSourceSite == null || destinationSite == null) {
             throw new NullPointerException();
         }
         else {
-            return taskManager.hasDestination(taskDate, taskDeparture, sourceSite, destinationSite);
+            return taskManager.hasDestination(taskDate, taskDeparture, taskSourceSite, destinationSite);
         }
     }
 }

@@ -1,10 +1,10 @@
 package Transportation.Presentation;
 
 import Transportation.Service.ItemService;
-import Transportation.Service.SiteService;
 import Transportation.Service.TaskService;
 
 import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -13,14 +13,12 @@ import java.util.Scanner;
 public class TaskMenu {
     private final TaskService TasksHandler;
     private final ItemService ItemHandler;
-    private final SiteService SiteHandler;
     private final TManagerRoleMenu managerRoleMenu;
     private final Scanner input;
 
-    public TaskMenu(TaskService taskService, ItemService itemService, SiteService siteHandler, TManagerRoleMenu managerRoleMenu) {
+    public TaskMenu(TaskService taskService, ItemService itemService, TManagerRoleMenu managerRoleMenu) {
         TasksHandler = taskService;
         ItemHandler = itemService;
-        SiteHandler = siteHandler;
         this.managerRoleMenu = managerRoleMenu;
         input = new Scanner(System.in);
     }
@@ -98,10 +96,11 @@ public class TaskMenu {
         try {
             TasksHandler.addTask(taskDate, taskDeparture, taskSourceSite.toLowerCase());
             System.out.println("Task added successfully without destination sites.");
-        } catch (ParseException e) {
+        } catch (ParseException | DateTimeParseException e) {
             System.out.println("Invalid date/time format");
             return;
-        } catch (NoSuchElementException e) {
+        }
+        catch (NoSuchElementException e) {
             System.out.println("Site doesn't exist.");
             return;
         }
@@ -110,20 +109,19 @@ public class TaskMenu {
             System.out.println("Which site would you like to add to this task as destination? (must have at least one):");
             String destinationSite = input.nextLine();
             try {
-                SiteHandler.getSiteByAddress(destinationSite);
+                if (TasksHandler.hasDestination(taskDate, taskDeparture, taskSourceSite.toLowerCase(), destinationSite)) {
+                    System.out.println("Task already has this destination.");
+                    continue;
+                }
             }
             catch (NullPointerException e) {
-                System.out.println("Not a valid site.");
-                continue;
-            }
+                    System.out.println("Not a valid site.");
+                    continue;
+                }
             catch (NoSuchElementException e) {
-                System.out.println("Site doesn't exist.");
-                continue;
-            }
-            if(TasksHandler.hasDestination(taskDate, taskDeparture, taskSourceSite.toLowerCase(), destinationSite)) {
-                System.out.println("Task already has this destination.");
-                continue;
-            }
+                    System.out.println("Site doesn't exist.");
+                    continue;
+                }
             System.out.println("""
                     Choose one of the following:
                     1. Choose items to add to this destination document (at least one).
@@ -135,15 +133,15 @@ public class TaskMenu {
                     while (true) {
                         System.out.println(ItemHandler.viewAllItems());
                         System.out.println("Enter name of item you would like you add.");
-                        String choiceItem = input.nextLine();
-                        if (!ItemHandler.doesItemExist(choiceItem)) {
+                        String itemName = input.nextLine();
+                        if (!ItemHandler.doesItemExist(itemName)) {
                             System.out.println("Given item doesn't exist.");
                             continue;
                         }
-                        System.out.println("How many " + choiceItem + " would you like to add?");
+                        System.out.println("How many " + itemName + " would you like to add?");
                         try {
                             int inputQuantity = Integer.parseInt(input.nextLine());
-                            itemsChosen.put(choiceItem, inputQuantity);
+                            itemsChosen.put(itemName, inputQuantity);
                         } catch (NumberFormatException e) {
                             System.out.println("Not a valid quantity, only numbers.");
                             continue;
@@ -185,6 +183,9 @@ public class TaskMenu {
                 TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
             } catch (ParseException e) {
                 return;
+            }
+            catch (NoSuchElementException n) {
+                System.out.println(n.getMessage());
             }
         }
         else {

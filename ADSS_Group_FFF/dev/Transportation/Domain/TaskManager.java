@@ -24,9 +24,9 @@ public class TaskManager {
 
     }
 
-    public void addTask(String _taskDate, String _departureTime, String sourceSiteAddress) throws ParseException {
+    public void addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException {
         int _taskId = nextTaskId++;
-        Site sourceSite = siteManager.getSiteByAddress(sourceSiteAddress.toLowerCase());
+        Site sourceSite = siteManager.getSiteByAddress(taskSourceSite.toLowerCase());
         if (sourceSite == null) {
             throw new NoSuchElementException();
         }
@@ -38,8 +38,8 @@ public class TaskManager {
         allTasks.put(_taskId, newTask);
     }
 
-    public void removeTask(String taskDate, String departureTime, String sourceSite) {
-        TransportationTask currTask = getTask(taskDate, departureTime, sourceSite);
+    public void removeTask(String taskDate, String taskDeparture, String taskSourceSite) {
+        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
         if (!currTask.getDriverId().isEmpty() && !currTask.getTruckLicenseNumber().isEmpty()) {
             driverManager.setDriverAvailability(currTask.getDriverId(), true);
             truckManager.setTruckAvailability(currTask.getTruckLicenseNumber(), true);
@@ -47,32 +47,30 @@ public class TaskManager {
         allTasks.remove(currTask.getTaskId());
     }
 
-    public boolean doesTaskExist(String taskDate, String departureTime, String sourceSite) throws NoSuchElementException, ParseException {
-        TransportationTask task1 = getTask(taskDate, departureTime, sourceSite);
-        if (task1 == null) {
+    public boolean doesTaskExist(String taskDate, String taskDeparture, String taskSourceSite) throws NoSuchElementException, ParseException {
+        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
+        if (currTask == null) {
             throw new ParseException("", 0);
         }
-        int taskId = task1.getTaskId();
+        int taskId = currTask.getTaskId();
         return allTasks.containsKey(taskId);
     }
 
 
-    public void addDocToTask(String taskDate, String departureTime, String sourceSite, String destinationAddress, HashMap<String, Integer> itemsToAdd) {
-        {
-            TransportationTask currTask = getTask(taskDate, departureTime, sourceSite);
-            Site destinationSite = siteManager.getSiteByAddress(destinationAddress.toLowerCase());
-            TransportationDoc newDoc = new TransportationDoc(currTask.getTaskId(), nextDocId++, destinationSite);
-            for (Map.Entry<String, Integer> entry : itemsToAdd.entrySet()) {
-                String itemName = entry.getKey();
-                int quantity = entry.getValue();
-                Item itemToAdd = itemManager.getItemByName(itemName);
-                newDoc.addItem(itemToAdd, quantity);
-            }
-            currTask.addDoc(newDoc);
+    public void     addDocToTask(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite, HashMap<String, Integer> itemsChosen) {
+        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
+        Site destinationSite1 = siteManager.getSiteByAddress(destinationSite.toLowerCase());
+        TransportationDoc newDoc = new TransportationDoc(currTask.getTaskId(), nextDocId++, destinationSite1);
+        for (Map.Entry<String, Integer> entry : itemsChosen.entrySet()) {
+            String itemName = entry.getKey();
+            int quantity = entry.getValue();
+            Item itemToAdd = itemManager.getItemByName(itemName);
+            newDoc.addItem(itemToAdd, quantity);
         }
+        currTask.addDoc(newDoc);
     }
 
-    public void updateWeightForTask(String taskDate, String taskDeparture, String taskSourceSite)  {
+    public void updateWeightForTask(String taskDate, String taskDeparture, String taskSourceSite) {
         TransportationTask task1 = getTask(taskDate, taskDeparture, taskSourceSite);
         task1.setWeightBeforeLeaving();
     }
@@ -169,8 +167,9 @@ public class TaskManager {
         return sb.toString();
     }
 
-    public boolean hasDestination(String taskDate, String taskDeparture, String sourceSite, String destinationSite) {
-        TransportationTask currTask = getTask(taskDate, taskDeparture, sourceSite);
+    public boolean hasDestination(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite) throws NoSuchElementException {
+        siteManager.getSiteByAddress(destinationSite);
+        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
         return currTask.hasDestination(destinationSite);
     }
 }
