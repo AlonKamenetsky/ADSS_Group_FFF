@@ -13,11 +13,12 @@ public class DriverManager {
         allDrivers = new HashMap<>();
     }
 
+
     public void addDriver(String _driverId, String _driverName, String _licenseType) throws IllegalArgumentException, NullPointerException, InstanceAlreadyExistsException {
         if (_driverId == null || _driverName == null || _licenseType == null) {
-            throw new NullPointerException();
-        }
-        if(allDrivers.containsKey((_driverId))) {
+           throw new NullPointerException();
+      }
+      if(allDrivers.containsKey((_driverId))) {
             throw new InstanceAlreadyExistsException();
         }
         LicenseType type = LicenseType.fromString(_licenseType);
@@ -25,9 +26,11 @@ public class DriverManager {
         allDrivers.putIfAbsent(_driverId, newDriver);
     }
 
-    public void removeDriver(String driverId) {
+
+     public void removeDriver(String driverId) {
         allDrivers.remove(driverId);
     }
+
 
     public Driver getDriverById(String driverId) {
         return allDrivers.get(driverId);
@@ -38,6 +41,7 @@ public class DriverManager {
         return currDriver.hasLicenseType(LicenseType.fromString(licenseType));
     }
 
+
     public void addLicense(String driverId, String _licenseType) {
         Driver driverToAdd = allDrivers.get(driverId);
         LicenseType license = LicenseType.fromString(_licenseType);
@@ -45,6 +49,7 @@ public class DriverManager {
             driverToAdd.addLicense(license);
         }
     }
+
 
     public boolean doesDriverExist(String _driverId) {
         return allDrivers.containsKey(_driverId);
