@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface TransportationTaskDAO {
 
     TransportationTaskDTO insert(TransportationTaskDTO transportationTask) throws SQLException;
-    void delete(String license) throws SQLException;
+    void delete(int taskId) throws SQLException;
     Optional<TransportationTaskDTO> findById(int taskId) throws SQLException;
     Optional<TransportationTaskDTO> findByDateTimeAndSource(Date taskDate, LocalTime departureTime , String sourceSite) throws SQLException;
     List<TransportationTaskDTO> findAll() throws SQLException;

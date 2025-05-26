@@ -27,7 +27,7 @@ public class ItemRepositoryImpli implements ItemRepository {
     }
 
     @Override
-    public Optional<ItemDTO> findById(int itemId) throws SQLException {
+    public Optional<ItemDTO> findItem(int itemId) throws SQLException {
         return itemDAO.findById(itemId);
     }
 

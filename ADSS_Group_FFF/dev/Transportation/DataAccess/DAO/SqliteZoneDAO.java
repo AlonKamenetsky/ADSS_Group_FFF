@@ -100,6 +100,7 @@ public class SqliteZoneDAO implements ZoneDAO {
         return list;
     }
 
+
     // helper method retrieving sites by zone
     private ArrayList<String> getSitesForZone(int zoneId) throws SQLException {
         String sql = "SELECT address FROM sites WHERE zone_id = ?";

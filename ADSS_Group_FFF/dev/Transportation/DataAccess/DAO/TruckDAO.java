@@ -10,5 +10,5 @@ public interface TruckDAO {
     TruckDTO insert(TruckDTO truck) throws SQLException;
     Optional<TruckDTO> findByLicense(String licenseNumber) throws SQLException;
     List<TruckDTO> findAll() throws SQLException;
-    void delete(String license) throws SQLException;
+    void delete(TruckDTO truckDTO) throws SQLException;
 }

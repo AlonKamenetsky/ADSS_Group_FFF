@@ -104,11 +104,11 @@ public class SqliteTruckDAO implements TruckDAO {
     }
 
     @Override
-    public void delete(String license) throws SQLException {
+    public void delete(TruckDTO truckDTO) throws SQLException {
         String sql = "DELETE FROM trucks WHERE license_number = ?";
 
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, license);
+            ps.setString(1, truckDTO.licenseNumber());
             ps.executeUpdate();
         }
     }

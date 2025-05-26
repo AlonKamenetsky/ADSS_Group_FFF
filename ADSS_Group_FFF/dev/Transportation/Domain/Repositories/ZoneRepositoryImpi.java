@@ -6,6 +6,7 @@ import Transportation.DTO.ZoneDTO;
 import Transportation.DataAccess.DAO.ZoneDAO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,17 +20,12 @@ public class ZoneRepositoryImpi implements ZoneRepository {
     }
 
     @Override
-    public ZoneDTO insert(String zoneName) throws SQLException {
-       return zoneDAO.insert(new zoneDTO(null,zoneName));
+    public ZoneDTO addZone(String zoneName, ArrayList<String> sites) throws SQLException {
+       return zoneDAO.insert(new ZoneDTO(null,zoneName,sites));
     }
 
     @Override
-    public void update(ZoneDTO zone) throws SQLException {
-        zoneDAO.update(zone);
-    }
-
-    @Override
-    public void delete(ZoneDTO zone) throws SQLException {
+    public void deleteZone(ZoneDTO zone) throws SQLException {
         zoneDAO.delete(zone);
     }
 
@@ -39,12 +35,12 @@ public class ZoneRepositoryImpi implements ZoneRepository {
     }
 
     @Override
-    public Optional<ZoneDTO> findById(int id) throws SQLException {
+    public Optional<ZoneDTO> findZone(int id) throws SQLException {
         return zoneDAO.findById(id);
     }
 
     @Override
-    public Optional<ZoneDTO> findByName(String name) throws SQLException {
+    public Optional<ZoneDTO> findByZoneName(String name) throws SQLException {
         return zoneDAO.findByName(name);
     }
 }

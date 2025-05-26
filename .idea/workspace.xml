@@ -9,7 +9,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)" />
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationDocRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepositoryImpli.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/SqliteTransportationTaskDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/SqliteTransportationTaskDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/SqliteTruckDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/SqliteTruckDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/SqliteZoneDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/SqliteZoneDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/TransportationTaskDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/TransportationTaskDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/TruckDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/DAO/TruckDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ItemRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ItemRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ItemRepositoryImpli.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ItemRepositoryImpli.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationDocRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationDocRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ZoneRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ZoneRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ZoneRepositoryImpi.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ZoneRepositoryImpi.java" afterDir="false" />
+    </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +83,7 @@
     "Repository.Attach.Sources": "false",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Transportation__HR",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/taeer/IdeaProjects/ADSS_Group_FFF/ADSS_Group_FFF",
@@ -242,7 +262,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747673998088</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL‎-00010" summary="adding zone&amp;item repositories">
+      <option name="closed" value="true" />
+      <created>1748272588889</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL‎-00010" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1748272588889</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -256,7 +284,9 @@
     <MESSAGE value="# ready for final submission" />
     <MESSAGE value="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)" />
     <MESSAGE value="Changes by benbe missed from las commit, also changed some files name" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changes by benbe missed from las commit, also changed some files name" />
+    <MESSAGE value="commit before merging" />
+    <MESSAGE value="adding zone&amp;item repositories" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding zone&amp;item repositories" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
