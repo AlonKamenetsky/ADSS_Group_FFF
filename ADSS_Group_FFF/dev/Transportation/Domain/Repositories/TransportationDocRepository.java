@@ -1,4 +1,4 @@
-package Transportation.Data.Repositories;
+package Transportation.Domain.Repositories;
 
 public interface TransportationDocRepository {
 }
