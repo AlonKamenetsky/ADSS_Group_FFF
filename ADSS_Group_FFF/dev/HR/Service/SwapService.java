@@ -6,20 +6,26 @@ import HR.Domain.*;
 import java.util.List;
 
 public class SwapService {
+    private static SwapService instance;
     private final ShiftDAOImpl.SwapRequestsRepo repo;
 
-    public SwapService() {
+    private SwapService() {
         repo = ShiftDAOImpl.SwapRequestsRepo.getInstance();
     }
 
-    public void SendSwapRequest(SwapRequest request) {
+    public static SwapService getInstance() {
+        if (instance == null) {
+            instance = new SwapService();
+        }
+        return instance;
+    }
+    public void SendSwapRequest(Employee employee, Shift shift, Role role) {
+        SwapRequest request = new SwapRequest(employee, shift, role);
         repo.addSwapRequest(request);
-        System.out.println("Swap request sent: " + request);
     }
 
     public void CancelSwapRequest(SwapRequest request) {
         repo.removeSwapRequest(request);
-        System.out.println("Swap request cancelled: " + request);
     }
 
     public void AcceptSwapRequests(SwapRequest req1,SwapRequest req2) {

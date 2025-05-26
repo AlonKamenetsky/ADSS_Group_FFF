@@ -3,6 +3,7 @@ package HR.DataAccess;
 import HR.Domain.Employee;
 import HR.Domain.Shift;
 import HR.Domain.SwapRequest;
+import HR.Presentation.PresentationUtils;
 
 import java.sql.*;
 import java.sql.Date;
@@ -170,11 +171,13 @@ public class ShiftDAOImpl implements ShiftDAO {
         // Adds a new swap request.
         public void addSwapRequest(SwapRequest request) {
             swapRequests.add(request);
+            PresentationUtils.typewriterPrint("Swap request sent: " + request,20);
         }
 
         // Removes a swap request.
         public void removeSwapRequest(SwapRequest request) {
             swapRequests.remove(request);
+            System.out.println("Swap request cancelled: " + request);
         }
     }
 }

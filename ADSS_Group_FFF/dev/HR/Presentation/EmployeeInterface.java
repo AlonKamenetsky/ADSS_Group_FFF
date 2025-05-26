@@ -2,6 +2,8 @@ package HR.Presentation;
 
 import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.*;
+import HR.Service.EmployeeService;
+import HR.Service.ShiftService;
 import HR.Service.SwapService;
 
 import java.text.ParseException;
@@ -14,12 +16,14 @@ import java.util.stream.Collectors;
 public class EmployeeInterface {
     private final Employee employee;
     // only this week’s shifts
-    private final List<Shift> shifts = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts();
-    private final SwapService swapService;
+    private final SwapService swapService = SwapService.getInstance();
+    private final EmployeeService employeeService = EmployeeService.getInstance();
+    private final ShiftService shiftService = ShiftService.getInstance();
+
 
     public EmployeeInterface(Employee employee) {
         this.employee = employee;
-        this.swapService = new SwapService();
+
     }
 
     public void employeeMainMenu(Scanner scanner) {
@@ -55,7 +59,7 @@ public class EmployeeInterface {
             int choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
-                case 1 -> employee.ShowInfo();
+                case 1 -> employeeService.ShowInfo(employee);
                 case 2 -> viewAssignedShifts();
                 case 3 -> viewCurrentShift();
                 case 4 -> sendWeeklyAvailability(scanner);
@@ -117,33 +121,12 @@ public class EmployeeInterface {
     }
 
     private void viewAssignedShifts() {
-        List<Shift> shifts = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts();
-        boolean found = false;
-        System.out.println("\nYour Assigned Shifts:");
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        for (Shift s : shifts) {
-            for (ShiftAssignment sa : s.getAssignedEmployees()) {
-                if (sa.getEmployeeId().equals(employee.getId())) {
-                    System.out.printf("• %s on %s (%s)%n",
-                            s.getID(),
-                            fmt.format(s.getDate()),
-                            sa.getRole().getName());
-                    found = true;
-                }
-            }
-        }
-        if (!found) {
-            System.out.println("You are not assigned to any shifts.");
-        }
+        shiftService.GetAssignedShifts(employee);
     }
 
     private void sendSwapRequest(Scanner scanner) {
         // Always fetch up-to-date current-week shifts
-        List<Shift> shifts = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts();
-        List<Shift> assigned = shifts.stream()
-                .filter(s -> s.getAssignedEmployees().stream()
-                        .anyMatch(sa -> sa.getEmployeeId().equals(employee.getId())))
-                .collect(Collectors.toList());
+        List<Shift> assigned = shiftService.getAssignedShifts(employee);
 
         if (assigned.isEmpty()) {
             System.out.println("No assigned shifts; cannot request a swap.");
@@ -171,107 +154,98 @@ public class EmployeeInterface {
         }
 
         Shift target = assigned.get(idx);
-        Role myRole = target.getAssignedEmployees().stream()
-                .filter(sa -> sa.getEmployeeId().equals(employee.getId()))
-                .findFirst()
-                .map(ShiftAssignment::getRole)
-                .orElse(null);
+        Role myRole = shiftService.getMyRoleForShift(employee, target);
         if (myRole == null) {
             System.out.println("Could not determine your role for that shift.");
             return;
         }
-
-        SwapRequest req = new SwapRequest(employee, target, myRole);
-        swapService.SendSwapRequest(req);
+        swapService.SendSwapRequest(employee, target, myRole);
     }
 
     private void sendWeeklyAvailability(Scanner scanner) {
-        // Gather all distinct day‑of‑week + time slots from next week’s shifts
-        List<WeeklyAvailability> slots = WeeklyAvailabilityDAO.ShiftsRepo.getInstance()
-                .getNextWeekShifts().stream()
-                .map(s -> {
-                    DayOfWeek dow = s.getDate().toInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .getDayOfWeek();
-                    return new WeeklyAvailability(dow, s.getType());
-                })
-                .distinct()
-                .sorted(Comparator
-                        .comparing(WeeklyAvailability::getDay)
-                        .thenComparing(WeeklyAvailability::getTime))
-                .collect(Collectors.toList());
+            // Gather all distinct day‑of‑week + time slots from next week’s shifts
+            List<WeeklyAvailability> slots = shiftService.getNextWeekShifts().stream()
+                    .map(s -> {
+                        DayOfWeek dow = s.getDate().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .getDayOfWeek();
+                        return new WeeklyAvailability(dow, s.getType());
+                    })
+                    .distinct()
+                    .sorted(Comparator
+                            .comparing(WeeklyAvailability::getDay)
+                            .thenComparing(WeeklyAvailability::getTime))
+                    .collect(Collectors.toList());
 
-        if (slots.isEmpty()) {
-            PresentationUtils.typewriterPrint("No shifts scheduled for next week.", 20
-);
-            return;
+            if (slots.isEmpty()) {
+                PresentationUtils.typewriterPrint("No shifts scheduled for next week.", 20);
+                return;
+            }
+
+            Set<WeeklyAvailability> selectedAvailabilities = new HashSet<>(employee.getAvailabilityNextWeek());
+
+            while (true) {
+                PresentationUtils.typewriterPrint("\nToggle availability for next‑week slots (0 to finish):", 20);
+                for (int i = 0; i < slots.size(); i++) {
+                    WeeklyAvailability w = slots.get(i);
+                    boolean selected = selectedAvailabilities.contains(w);
+                    System.out.printf("%2d) [%s] %s %s%n",
+                            i + 1,
+                            selected ? "X" : " ",
+                            w.getDay(),
+                            w.getTime()
+                    );
+                }
+                PresentationUtils.typewriterPrint("", 20);
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                if (choice == 0) {
+                    PresentationUtils.typewriterPrint("Finished updating availability.", 20);
+                    break;
+                }
+                if (choice < 1 || choice > slots.size()) {
+                    PresentationUtils.typewriterPrint("Invalid choice, try again.", 20);
+                    continue;
+                }
+
+                WeeklyAvailability picked = slots.get(choice - 1);
+                if (selectedAvailabilities.contains(picked)) {
+                    selectedAvailabilities.remove(picked);
+                    PresentationUtils.typewriterPrint("Removed availability: " + picked.getDay() + " " + picked.getTime(), 20);
+                } else {
+                    selectedAvailabilities.add(picked);
+                    PresentationUtils.typewriterPrint("Marked available: " + picked.getDay() + " " + picked.getTime(), 20);
+                }
+            }
+
+            // Delegate the actual update to the service
+            employeeService.updateWeeklyAvailability(employee, selectedAvailabilities);
         }
-
-        while (true) {
-            PresentationUtils.typewriterPrint("\nToggle availability for next‑week slots (0 to finish):", 20
-);
-            for (int i = 0; i < slots.size(); i++) {
-                WeeklyAvailability w = slots.get(i);
-                boolean selected = employee.getAvailabilityNextWeek().contains(w);
-                System.out.printf("%2d) [%s] %s %s%n",
-                        i + 1,
-                        selected ? "X" : " ",
-                        w.getDay(),
-                        w.getTime()
-                );
-            }
-            PresentationUtils.typewriterPrint("", 20
-);
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            if (choice == 0) {
-                PresentationUtils.typewriterPrint("Finished updating availability.", 20
-);
-                break;
-            }
-            if (choice < 1 || choice > slots.size()) {
-                PresentationUtils.typewriterPrint("Invalid choice, try again.", 20
-);
-                continue;
-            }
-
-            WeeklyAvailability picked = slots.get(choice - 1);
-            if (employee.getAvailabilityNextWeek().contains(picked)) {
-                // remove
-                employee.removeAvailability(picked.getDay(), picked.getTime());
-                PresentationUtils.typewriterPrint("Removed availability: " + picked.getDay() + " " + picked.getTime(), 20
-);
-            } else {
-                // add
-                employee.addAvailability(picked.getDay(), picked.getTime());
-                PresentationUtils.typewriterPrint("Marked available: " + picked.getDay() + " " + picked.getTime(), 20
-);
-            }
-        }
-    }
-
 
 
     private void viewWeeklyAvailability() {
         PresentationUtils.typewriterPrint("\nYour Weekly Availability (this week):", 20
 );
-        for (WeeklyAvailability w : employee.getAvailabilityThisWeek()) {
+        List<WeeklyAvailability> currentWeekAvailability = employeeService.getAvailabilityThisWeek(employee);
+
+        for (WeeklyAvailability w : currentWeekAvailability) {
             PresentationUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
 );
         }
-        if (employee.getAvailabilityThisWeek().isEmpty()) {
+        if (currentWeekAvailability.isEmpty()) {
             PresentationUtils.typewriterPrint("No availability set for this week.", 20
 );
         }
     }    private void viewNextWeeklyAvailability() {
         PresentationUtils.typewriterPrint("\nYour Weekly Availability (next week):", 20
 );
-        for (WeeklyAvailability w : employee.getAvailabilityNextWeek()) {
+        List<WeeklyAvailability> nextWeekAvailability = employeeService.getAvailabilityNextWeek(employee);
+        for (WeeklyAvailability w : nextWeekAvailability) {
             PresentationUtils.typewriterPrint("• " + w.getDay() + " " + w.getTime(), 20
 );
         }
-        if (employee.getAvailabilityThisWeek().isEmpty()) {
+        if (nextWeekAvailability.isEmpty()) {
             PresentationUtils.typewriterPrint("No availability set for next week.", 20
 );
         }
@@ -287,11 +261,8 @@ public class EmployeeInterface {
 );
         String str = scanner.nextLine();
         try {
-            // use ordinary hyphens here:
             Date d = new SimpleDateFormat("yyyy-MM-dd").parse(str);
-            employee.addHoliday(d);
-            PresentationUtils.typewriterPrint("Vacation added: " + str, 20
-);
+            employeeService.AddVacation(employee,d);
         } catch (ParseException e) {
             PresentationUtils.typewriterPrint("Bad date format. Please use yyyy-MM-dd.", 20
 );
@@ -300,25 +271,12 @@ public class EmployeeInterface {
 
 
     private void viewHolidays() {
-        PresentationUtils.typewriterPrint("\nYour Vacations:", 20
-);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy‑MM‑dd");
-        for (Date d : employee.getHolidays()) {
-            PresentationUtils.typewriterPrint("• " + fmt.format(d), 20
-);
-        }
-        if (employee.getHolidays().isEmpty()) {
-            PresentationUtils.typewriterPrint("No vacations scheduled.", 20
-);
-        }
+
+        employeeService.viewHolidays(employee);
+
     }
 
     private void viewCurrentShift() {
-        Optional<Shift> currentShift = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentShift();
-        if (currentShift.isPresent()) {
-            PresentationUtils.printShift(currentShift.get());
-        } else {
-            System.out.println("There is no shift currently active.");
-        }
+        shiftService.getCurrentShift();
     }
 }

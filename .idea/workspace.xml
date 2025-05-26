@@ -9,7 +9,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)" />
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)">
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/RoleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/RolesRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/RolesRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/Employee.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/Employee.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/EmployeeInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/EmployeeInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/HRInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/HRInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" afterDir="false" />
+    </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +75,7 @@
     "Repository.Attach.Sources": "false",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Transportation__HR",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/taeer/IdeaProjects/ADSS_Group_FFF/ADSS_Group_FFF",

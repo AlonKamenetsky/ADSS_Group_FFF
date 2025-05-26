@@ -1,6 +1,7 @@
 package HR.DataAccess;
 
 import HR.Domain.Role;
+import HR.Presentation.PresentationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +34,18 @@ public class RolesRepo {
     public void addRole(Role role) {
         if (getRoleByName(role.getName()) == null) {
             roles.add(role);
+            PresentationUtils.typewriterPrint("Role added: " + role.getName(), 20);
         } else {
-            System.out.println("Role already exists.");
+            PresentationUtils.typewriterPrint("Role already exists.",20);
         }
     }
 
     public void removeRole(Role role) {
         if (roles.contains(role)) {
             roles.remove(role);
+            PresentationUtils.typewriterPrint("Role removed: " + role.getName(), 20);
         } else {
-            System.out.println("Role not found.");
+            PresentationUtils.typewriterPrint("Role not found.",20);
         }
     }
 

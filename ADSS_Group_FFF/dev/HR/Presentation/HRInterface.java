@@ -9,6 +9,7 @@ import HR.DataAccess.RolesRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.*;
 import HR.Service.EmployeeService;
+import HR.Service.RoleService;
 import HR.Service.ShiftService;
 import HR.Service.SwapService;
 
@@ -16,16 +17,16 @@ public class HRInterface {
     private static final Role HR_ROLE = RolesRepo.getInstance().getRoleByName("HR");
     private final String currentUserId;
     private Role currentUserRole;
-    private final ShiftService shiftService;
-    private final SwapService swapService;
-    private final EmployeeService employeeService;
+    private final ShiftService shiftService = ShiftService.getInstance();
+    private final SwapService swapService = SwapService.getInstance();
+    private final EmployeeService employeeService = EmployeeService.getInstance();
+    private final RoleService roleService = RoleService.getInstance();
+    private final Employee  currentUser;
 
 
     public HRInterface(String currentUserId) {
         this.currentUserId = currentUserId;
-        shiftService = new ShiftService();
-        swapService = new SwapService();
-        employeeService = new EmployeeService();
+        this.currentUser = employeeService.getEmployeeById(currentUserId);
     }
 
 
@@ -37,7 +38,7 @@ public class HRInterface {
 
         WeeklyAvailabilityDAO.ShiftsRepo repo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
         repo.ensureUpToDate();
-        List<Shift> shifts = repo.getCurrentWeekShifts();
+        List<Shift> shifts = shiftService.getCurrentWeekShifts();
         List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
 
         if (shifts.isEmpty()) {
@@ -211,11 +212,10 @@ public class HRInterface {
 );
             return;
         }
-        RolesRepo rolesRepo = RolesRepo.getInstance();
         PresentationUtils.typewriterPrint("Enter new role name:", 20
 );
         String newRoleName = scanner.nextLine();
-        rolesRepo.addRole(new Role(newRoleName));
+        roleService.addRole(newRoleName);
         PresentationUtils.typewriterPrint("New Role Added Successfully!", 20
 );
     }
@@ -285,35 +285,39 @@ public class HRInterface {
     public void removeRole(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
             PresentationUtils.typewriterPrint("Access Denied: Only HR or Shift Manager can remove roles.", 20
-);
+            );
             return;
         }
-        RolesRepo rolesRepo = RolesRepo.getInstance();
-        List<Role> roles = rolesRepo.getRoles();
+        List<Role> roles = roleService.getRoles();
         if (roles.isEmpty()) {
             PresentationUtils.typewriterPrint("No roles available to remove.", 20
-);
+            );
             return;
         }
         PresentationUtils.typewriterPrint("Available Roles:", 20
-);
+        );
         for (int i = 0; i < roles.size(); i++) {
             PresentationUtils.typewriterPrint((i + 1) + ": " + roles.get(i).getName(), 20
-);
+            );
         }
         PresentationUtils.typewriterPrint("Select role to remove (enter the number):", 20
-);
+        );
         int roleIndex = scanner.nextInt() - 1;
         scanner.nextLine();
         if (roleIndex < 0 || roleIndex >= roles.size()) {
             PresentationUtils.typewriterPrint("Invalid selection.", 20
-);
+            );
             return;
         }
         Role roleToRemove = roles.get(roleIndex);
-        rolesRepo.getRoles().remove(roleToRemove);
-        PresentationUtils.typewriterPrint("Role " + roleToRemove.getName() + " removed successfully.", 20
-);
+        PresentationUtils.typewriterPrint("Are you sure you want to remove the role '" + roleToRemove.getName() + "'? (yes/no)", 20
+        );
+        String confirmation = scanner.nextLine();
+        if (!confirmation.equalsIgnoreCase("yes")) {
+            PresentationUtils.typewriterPrint("Role removal cancelled.", 20);
+            return;
+        }
+        roleService.removeRole(roleToRemove);
     }
 
     // New method: AddEmployee
@@ -352,17 +356,38 @@ public class HRInterface {
             return;
         }
 
-        // Prompt for the employee's role.
-        PresentationUtils.typewriterPrint("Enter Role for the Employee:", 20
-);
-        String roleName = scanner.nextLine();
-        Role role = RolesRepo.getInstance().getRoleByName(roleName);
+        // Show available roles and allow multiple selection
+        List<Role> allRoles = roleService.getRoles();
         List<Role> rolesList = new ArrayList<>();
-        if (role != null) {
-            rolesList.add(role);
+        while (true) {
+            PresentationUtils.typewriterPrint("Available Roles:", 20);
+            for (int i = 0; i < allRoles.size(); i++) {
+                PresentationUtils.typewriterPrint((i + 1) + ". " + allRoles.get(i).getName(), 20);
+            }
+            PresentationUtils.typewriterPrint("Enter the number of a role to add (0 to finish):", 20);
+            String input = scanner.nextLine().trim();
+            int roleNum;
+            try {
+                roleNum = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                PresentationUtils.typewriterPrint("Invalid input. Please enter a number.", 20);
+                continue;
+            }
+            if (roleNum == 0) break;
+            if (roleNum < 1 || roleNum > allRoles.size()) {
+                PresentationUtils.typewriterPrint("Invalid role number.", 20);
+                continue;
+            }
+            Role selectedRole = allRoles.get(roleNum - 1);
+            if (!rolesList.contains(selectedRole)) {
+                rolesList.add(selectedRole);
+                PresentationUtils.typewriterPrint("Added role: " + selectedRole.getName(), 20);
         } else {
-            PresentationUtils.typewriterPrint("Role not found. Adding employee without any role.", 20
-);
+                PresentationUtils.typewriterPrint("Role already added.", 20);
+            }
+        }
+        if (rolesList.isEmpty()) {
+            PresentationUtils.typewriterPrint("No roles selected. Adding employee without any role.", 20);
         }
         employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate);
 
@@ -412,15 +437,14 @@ public class HRInterface {
             return;
         }
 
-        WeeklyAvailabilityDAO.ShiftsRepo repo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
-        repo.ensureUpToDate();
+        shiftService.ensureShiftsRepoUpToDate();
 
         PresentationUtils.typewriterPrint("Configure roles for: 1) Current week   2) Next week", 20);
         int wk = scanner.nextInt(); scanner.nextLine();
 
         List<Shift> weekShifts = (wk == 1)
-                ? repo.getCurrentWeekShifts()
-                : repo.getNextWeekShifts();
+                ? shiftService.getCurrentWeekShifts()
+                : shiftService.getNextWeekShifts();
 
         if (weekShifts.isEmpty()) {
             PresentationUtils.typewriterPrint("No shifts available to configure.", 20);
@@ -447,25 +471,21 @@ public class HRInterface {
             PresentationUtils.typewriterPrint("Exiting configuration.", 20);
             return;
         }
+
         Shift shift = weekShifts.get(idx);
-
-        Role managerRole = RolesRepo.getInstance().getRoleByName("Shift Manager");
-        shift.getRequiredCounts().put(managerRole, 1);
-        shift.getRequiredRoles().putIfAbsent(managerRole, new ArrayList<>());
-
-        for (Role role : RolesRepo.getInstance().getRoles()) {
-            if (role.equals(HR_ROLE) || role.equals(managerRole)) continue;
-            int current = shift.getRequiredCounts().getOrDefault(role, 0);
+        List<Role> roles = roleService.getRoles();
+        Map<Role, Integer> requiredCounts = new HashMap<>();
+        for (Role role : roles) {
+            if (role.getName().equals("Shift Manager") || role.getName().equals("HR Manager")) {
+                continue;
+            }
             PresentationUtils.typewriterPrint(
-                    String.format("Required # for role %s (currently %d):", role.getName(), current),
-                    20
+                    String.format("Required # for role %s:", role.getName()), 20
             );
             int cnt = scanner.nextInt(); scanner.nextLine();
-            shift.getRequiredCounts().put(role, cnt);
-            shift.getRequiredRoles().put(role, new ArrayList<>(cnt));
+            requiredCounts.put(role, cnt);
         }
-
-        PresentationUtils.typewriterPrint("Shift roles updated successfully.", 20);
+        shiftService.ConfigureShiftRoles(shift, requiredCounts);
     }
 
 
@@ -564,7 +584,7 @@ public class HRInterface {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> employeeService.ShowInfo();
+                case 1 -> employeeService.ShowInfo(currentUser);
                 case 2 -> addEmployee(scanner);
                 case 3 -> removeEmployee(scanner);
                 case 4 -> updateEmployeeData(scanner);
