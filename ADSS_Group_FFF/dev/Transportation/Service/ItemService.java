@@ -1,12 +1,6 @@
 package Transportation.Service;
 
-import Transportation.Data.DTO.ItemDTO;
-import Transportation.Domain.Item;
 import Transportation.Domain.ItemManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ItemService {
     private final ItemManager itemManager;
