@@ -1,6 +1,13 @@
 package Transportation.Service;
 
+import Transportation.DTO.ItemDTO;
+import Transportation.Domain.Item;
 import Transportation.Domain.ItemManager;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemService {
     private final ItemManager itemManager;
@@ -24,10 +31,19 @@ public class ItemService {
             itemManager.removeItem(itemName);
         }
     }
+//    public String viewAllItems() {
+//        return itemManager.getAllItemsString();
+//    }
 
-    public String viewAllItems() {
-        return itemManager.getAllItemsString();
+    public List<ItemDTO> viewAllItems() {
+        try {
+            return itemManager.getAllItems();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
+
 
     public boolean doesItemExist(String itemName) {
         if (itemName == null) {
