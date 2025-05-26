@@ -1,0 +1,111 @@
+E2E Test1 (assigning employee to shift)
+
+Explanation: loading initial data to the system.
+logging into hr manager account, setting roles for shift and then assigning john to the shift.
+logging out of the hr manager account and logging into john's account and viewing in his assigned shifts that it shoes his shift.
+
+Input (meaning)
+
+yes (loads initial data)
+hr (id for HR manager user)
+123 (password for HR manager user)
+8 (choosing set roles for shift method)
+1 (choosing current week shifts)
+13 (choosing Saturday morning shift)
+1 (choosing 1 cashier)
+1 (choosing 1 warehouse worker)
+1 (choosing 1 cleaner)
+1 (choosing 1 driver)
+6 (choosing assign employee to shift method
+11(Saturday morning shift)
+5 (choosing cashier option)
+2 (choosing John to assign)
+0 (quit back to menu)
+9 (exit user)
+yes (switch user)
+2 (id for john)
+456 (password for john)
+2 (log in as cashier)
+1 (view my assigned shifts)
+-----------------------------------------------------------------------------------------------------------------
+
+E2E Test2 (submit weekly availability)
+
+Explanation: loading initial data to the system, logging into jane's account as shift manager.
+submit next week's weekly availability and the viewing it to see its been marked correctly.
+
+Input (meaning)
+
+yes (loads initial data)
+1 (id for jane)
+123 (password for jane)
+1 (choose shift manager role)
+3 (submit weekly availability for next week)
+1 (choose Monday morning as available)
+0 (exit method)
+5 (view weekly availability next week)
+-----------------------------------------------------------------------------------------------------------------
+
+E2E Test3 (accept shift swap request)
+
+Explanation: loading initial data to the system, logging into the hr manager account, setting roles for both Saturday shifts and then assigning jane and john each to a different shift.
+logging out of the hr manager and logging into the employees account requesting a swap from both.
+logging back into the hr manager's account and accepting the requests.
+logging into john and seeing in his assigned shifts he has been swapped.
+
+Input (meaning)
+
+yes (load initial data)
+hr (id for hr manager)
+123 (password for hr manager)
+8 (choosing set roles for shift method)
+1 (choosing current week shifts)
+13 (choosing Saturday morning shift)
+1 (choosing 1 cashier)
+1 (choosing 1 warehouse worker)
+1 (choosing 1 cleaner)
+1 (choosing 1 driver)
+8 (choosing set roles for shift method)
+1 (choosing current week shifts)
+14 (choosing Saturday evening shift)
+1 (choosing 1 cashier)
+1 (choosing 1 warehouse worker)
+1 (choosing 1 cleaner)
+1 (choosing 1 driver)
+6 (choosing assign employee to shift method
+11(Saturday morning shift)
+5 (choosing cashier option)
+2 (choosing John to assign)
+0 (quit back to menu)
+6 (choosing assign employee to shift method
+12 (Saturday morning shift)
+5 (choosing cashier option)
+1 (choosing Jane to assign)
+0 (quit back to menu)
+9 (exit user)
+yes (switch user)
+2 (id for john)
+456 (password for john)
+2 (log in as cashier)
+2 (send swap request)
+1 (choose Saturday morning shift)
+8 (exit user)
+yes (switch user)
+1 (id for jane)
+123 (password for jane)
+2 (choose cashier role)
+2 (send swap request)
+1 (choose Saturday evening shift)
+8 (exit user)
+yes (switch user)
+hr (id for hr manager)
+123 (password for hr manager)
+7 (process swap requests method)
+1 (choose john swap request)
+1 (swap with jane swap request)
+9 (exit user)
+yes (switch user)
+2 (id for john)
+456 (password for john)
+2 (log in as cashier)
+1 (view my assigned shifts)
