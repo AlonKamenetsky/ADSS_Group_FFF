@@ -18,7 +18,7 @@ public final class Database {
                             CREATE TABLE IF NOT EXISTS trucks(
                                 truck_id        INTEGER PRIMARY KEY AUTOINCREMENT,
                                 truck_type      TEXT      NOT NULL,
-                                license_number  INTEGER   NOT NULL,
+                                license_number  TEXT   NOT NULL,
                                 model           TEXT      NOT NULL,
                                 net_weight      REAL      NOT NULL,
                                 max_weight      REAL      NOT NULL,

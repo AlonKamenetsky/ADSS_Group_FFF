@@ -3,7 +3,7 @@ package Transportation.DTO;
 import java.util.ArrayList;
 
 public record ZoneDTO(
-        int zoneId,
+        Integer zoneId,
         String zoneName,
         ArrayList<String> sitesRelated
 ) {

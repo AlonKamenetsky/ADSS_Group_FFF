@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public record TransportationTaskDTO(
-        int taskId,
+        Integer taskId,
         LocalDate taskDate,
         LocalTime departureTime,
         String sourceAddress,

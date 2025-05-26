@@ -172,4 +172,10 @@ public class TaskManager {
         TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
         return currTask.hasDestination(destinationSite);
     }
+
+//    make it work:
+//    public TransportationDocDTO createDocByAddress(int taskId, String address) throws SQLException {
+//        int siteId = siteDAO.findByAddress(address).orElseThrow().siteId();
+//        return docDAO.insert(new TransportationDocDTO(null, taskId, siteId, 0f));
+//    }
 }

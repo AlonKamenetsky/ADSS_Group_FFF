@@ -2,12 +2,13 @@ package Transportation.DataAccess.DAO;
 
 import Transportation.DTO.TruckDTO;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 public interface TruckDAO {
-    void insert(TruckDTO truck);
-    TruckDTO findByLicense(String licenseNumber);
-    ArrayList<TruckDTO> findAll();
-    void delete(String license);
-    void update(TruckDTO truck);
+    TruckDTO insert(TruckDTO truck) throws SQLException;
+    Optional<TruckDTO> findByLicense(String licenseNumber) throws SQLException;
+    List<TruckDTO> findAll() throws SQLException;
+    void delete(String license) throws SQLException;
 }

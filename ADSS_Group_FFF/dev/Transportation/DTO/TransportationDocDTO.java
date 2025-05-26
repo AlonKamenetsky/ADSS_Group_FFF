@@ -1,7 +1,7 @@
 package Transportation.DTO;
 
 public record TransportationDocDTO(
-        int docId,
+        Integer docId,
         int taskId,
         String destinationAddress,
         float totalWeight
