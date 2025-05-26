@@ -99,11 +99,68 @@ public final class Database {
                 //HR Tables:
 
                 st.executeUpdate("""
-                            CREATE TABLE IF NOT EXISTS users(
-                                id   INTEGER PRIMARY KEY AUTOINCREMENT,
-                                name TEXT NOT NULL
+                             CREATE TABLE IF NOT EXISTS employees (
+                                id TEXT PRIMARY KEY,
+                                name TEXT NOT NULL,
+                                password TEXT NOT NULL,
+                                bank_account TEXT,
+                                salary REAL,
+                                employment_date DATE
                             );
                         """);
+                st.executeUpdate("""
+                            CREATE TABLE IF NOT EXISTS roles (
+                                name TEXT PRIMARY KEY 
+                            );
+                        """);
+                st.executeUpdate("""
+                            CREATE TABLE IF NOT EXISTS employee_roles (
+                                  employee_id TEXT NOT NULL,
+                                  role_name TEXT NOT NULL,
+                                  PRIMARY KEY (employee_id, role_name),
+                                  FOREIGN KEY (employee_id) REFERENCES employees(id),
+                                  FOREIGN KEY (role_name) REFERENCES roles(name)
+                            );
+                        """);
+                st.executeUpdate("""
+                            CREATE TABLE IF NOT EXISTS shifts (
+                                  id TEXT PRIMARY KEY,
+                                  date DATE NOT NULL,
+                                  time TEXT NOT NULL  -- "Morning", "Evening", etc.
+                              );
+                        """);
+                st.executeUpdate("""
+                        CREATE TABLE IF NOT EXISTS shift_assignments (
+                                  shift_id TEXT NOT NULL,
+                                  employee_id TEXT NOT NULL,
+                                  role_name TEXT NOT NULL,
+                                  PRIMARY KEY (shift_id, employee_id, role_name),
+                                  FOREIGN KEY (shift_id) REFERENCES shifts(id),
+                                  FOREIGN KEY (employee_id) REFERENCES employees(id),
+                                  FOREIGN KEY (role_name) REFERENCES roles(name)
+                              );                        
+                        """);
+                st.executeUpdate("""
+                        CREATE TABLE IF NOT EXISTS weekly_availability (
+                                  employee_id TEXT NOT NULL,
+                                  available_date DATE NOT NULL,
+                                  shift_time TEXT NOT NULL,
+                                  PRIMARY KEY (employee_id, available_date, shift_time),
+                                  FOREIGN KEY (employee_id) REFERENCES employees(id)
+                              );
+                        """);
+                st.executeUpdate("""
+                        CREATE TABLE IF NOT EXISTS swap_requests (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            requester_id TEXT NOT NULL,
+                            shift_id TEXT NOT NULL,
+                            role_name TEXT NOT NULL,
+                            FOREIGN KEY (requester_id) REFERENCES employees(id),
+                            FOREIGN KEY (shift_id) REFERENCES shifts(id),
+                            FOREIGN KEY (role_name) REFERENCES roles(name)
+                        );
+                        """);
+
 
             }
         } catch (Exception e) {

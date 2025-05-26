@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="ADSS_Group_FFF:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)" />
+    <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="HR" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Taeerc&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AlonKamenetsky/ADSS_Group_FFF.git&quot;,
+    &quot;accountId&quot;: &quot;f89c589a-02f2-4330-8ff4-5c7785b41d46&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2vV500Yi3ID85UNUviSSlfp7jNK" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.RoleTest.executor": "Run",
+    "JUnit.RolesRepoTest.executor": "Run",
+    "JUnit.ShiftTest.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/taeer/IdeaProjects/ADSS_Group_FFF/ADSS_Group_FFF",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "CodeWithMe",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="ADSS_Group_FFF" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RoleTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="tests" />
+      <option name="MAIN_CLASS_NAME" value="tests.RoleTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RolesRepoTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="tests" />
+      <option name="MAIN_CLASS_NAME" value="tests.RolesRepoTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ShiftTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="tests" />
+      <option name="MAIN_CLASS_NAME" value="tests.ShiftTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.ShiftTest" />
+        <item itemvalue="JUnit.RolesRepoTest" />
+        <item itemvalue="JUnit.RoleTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="" />
+      <created>1744217176506</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744217176506</updated>
+      <workItem from="1744217178675" duration="1101000" />
+      <workItem from="1744218318107" duration="395000" />
+      <workItem from="1744316324674" duration="11209000" />
+      <workItem from="1744457598211" duration="10984000" />
+      <workItem from="1745350589651" duration="803000" />
+      <workItem from="1745351429590" duration="1281000" />
+      <workItem from="1745513070480" duration="5704000" />
+      <workItem from="1745683498354" duration="639000" />
+      <workItem from="1747589919012" duration="1986000" />
+      <workItem from="1747671503587" duration="2483000" />
+      <workItem from="1748030229296" duration="1951000" />
+      <workItem from="1748258704798" duration="292000" />
+    </task>
+    <task id="LOCAL-00001" summary="Domain Layer &amp; Presentation Layer update + skeleton and functionalities&#10;raw interfaces">
+      <option name="closed" value="true" />
+      <created>1744323205448</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1744323205449</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Domain Layer &amp; Presentation Layer update interfaces&#10;mainly HR menu">
+      <option name="closed" value="true" />
+      <created>1744327447344</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1744327447346</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Domain Layer &amp; Presentation Layer updated logic&#10;updated menus and added some unit testing, basic. we added user and shifts repo">
+      <option name="closed" value="true" />
+      <created>1744468884735</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1744468884735</updated>
+    </task>
+    <task id="LOCAL-00004" summary="added instructions file, ready for submission">
+      <option name="closed" value="true" />
+      <created>1745661165093</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1745661165093</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added instructions file, ready for submission">
+      <option name="closed" value="true" />
+      <created>1745661212270</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1745661212270</updated>
+    </task>
+    <task id="LOCAL-00006" summary="# ready for final submission">
+      <option name="closed" value="true" />
+      <created>1745673680363</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1745673680363</updated>
+    </task>
+    <task id="LOCAL-00007" summary="# ready for final submission">
+      <option name="closed" value="true" />
+      <created>1745673709698</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1745673709698</updated>
+    </task>
+    <task id="LOCAL-00008" summary="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)">
+      <option name="closed" value="true" />
+      <created>1747673943309</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1747673943309</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Changes by benbe missed from las commit, also changed some files name">
+      <option name="closed" value="true" />
+      <created>1747673998088</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1747673998088</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Domain Layer &amp; Presentation Layer update + skeleton and functionalities&#10;raw interfaces" />
+    <MESSAGE value="Domain Layer &amp; Presentation Layer update interfaces&#10;mainly HR menu" />
+    <MESSAGE value="Domain Layer &amp; Presentation Layer updated logic&#10;updated menus and added some unit testing, basic. we added user and shifts repo" />
+    <MESSAGE value="added instructions file, ready for submission" />
+    <MESSAGE value="# ready for final submission" />
+    <MESSAGE value="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)" />
+    <MESSAGE value="Changes by benbe missed from las commit, also changed some files name" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes by benbe missed from las commit, also changed some files name" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
