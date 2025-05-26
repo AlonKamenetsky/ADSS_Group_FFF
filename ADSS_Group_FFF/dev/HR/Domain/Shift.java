@@ -30,6 +30,9 @@ public class Shift {
         return ID;
     }
 
+    public String getDateString() {
+        return date.toString();
+    }
     public Date getDate() {
         return date;
     }

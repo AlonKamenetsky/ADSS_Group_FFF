@@ -16,12 +16,16 @@ public class HRInterface {
     private static final Role HR_ROLE = RolesRepo.getInstance().getRoleByName("HR");
     private final String currentUserId;
     private Role currentUserRole;
-    private final List<SwapRequest> swapRequests = SwapRequestsRepo.getInstance().getSwapRequests();
-    private final List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
+    private final ShiftService shiftService;
+    private final SwapService swapService;
+    private final EmployeeService employeeService;
 
 
     public HRInterface(String currentUserId) {
         this.currentUserId = currentUserId;
+        shiftService = new ShiftService();
+        swapService = new SwapService();
+        employeeService = new EmployeeService();
     }
 
 
@@ -181,9 +185,7 @@ public class HRInterface {
             }
 
             Employee selectedEmployee = qualifiedEmployees.get(employeeIndex);
-            shift.assignEmployee(selectedEmployee, selectedRole);
-            System.out.println("Employee " + selectedEmployee.getName() + " assigned to role " +
-                    selectedRole.getName() + " in shift " + shift.getID());
+            shiftService.AssignEmployeeToShift(shift,selectedEmployee,selectedRole);
         }
 
         // After the assignment loop, output the final completion status.
@@ -217,7 +219,8 @@ public class HRInterface {
         PresentationUtils.typewriterPrint("New Role Added Successfully!", 20
 );
     }
-    public void updateEmployeeData(Scanner scanner, List<Employee> employees) {
+    public void updateEmployeeData(Scanner scanner) {
+        List<Employee> employees = employeeService.getEmployees();
         if (!currentUserRole.equals(HR_ROLE)) {
             PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can update employee data.", 20
 );
@@ -255,7 +258,7 @@ public class HRInterface {
                     PresentationUtils.typewriterPrint("Enter new bank account:", 20
 );
                     String newBankAccount = scanner.nextLine();
-                    employee.setBankAccount(newBankAccount);
+                    employeeService.setBankAccount(employee,newBankAccount);
                     PresentationUtils.typewriterPrint("Bank account updated successfully!", 20
 );
                     break;
@@ -264,7 +267,7 @@ public class HRInterface {
 );
                     float newSalary = scanner.nextFloat();
                     scanner.nextLine();
-                    employee.setSalary(newSalary);
+                    employeeService.setSalary(employee,newSalary);
                     PresentationUtils.typewriterPrint("Salary updated successfully!", 20
 );
                     break;
@@ -314,7 +317,7 @@ public class HRInterface {
     }
 
     // New method: AddEmployee
-    public void addEmployee(Scanner scanner, List<Employee> employees) {
+    public void addEmployee(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
             PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can add employees.", 20
 );
@@ -361,26 +364,12 @@ public class HRInterface {
             PresentationUtils.typewriterPrint("Role not found. Adding employee without any role.", 20
 );
         }
+        employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate);
 
-        Employee newEmployee = new Employee(id, rolesList, name, password, bankAccount, salary, employmentDate);
-
-        try {
-            employees.add(newEmployee);
-        } catch (UnsupportedOperationException ex) {
-            // If the list is unmodifiable, wrap it in a new modifiable ArrayList and update the reference.
-            List<Employee> modifiableEmployees = new ArrayList<>(employees);
-            modifiableEmployees.add(newEmployee);
-            // If possible, update the original reference or notify the caller about this change.
-            PresentationUtils.typewriterPrint("The employees list was unmodifiable. Created a new modifiable list with the new employee.", 20
-);
-            // Depending on your application architecture, you might then propagate this new list.
-        }
-
-        PresentationUtils.typewriterPrint("Employee " + name + " added successfully.", 20
-);
     }
     // New method: RemoveEmployee
-    public void removeEmployee(Scanner scanner, List<Employee> employees) {
+    public void removeEmployee(Scanner scanner) {
+        List<Employee> employees = employeeService.getEmployees();
         if (!currentUserRole.equals(HR_ROLE)) {
             PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can remove employees.", 20
 );
@@ -413,78 +402,9 @@ public class HRInterface {
             return;
         }
         Employee employee = employees.get(index);
-        employees.remove(index);
-        PresentationUtils.typewriterPrint("Employee " + employee.getName() + " removed successfully.", 20
-);
+        employeeService.removeEmployee(employee);
     }
 
-
-    /**
-     * Helper method that swaps employees between two shifts for the same role.
-     * It extracts the employees, shifts, and role from the provided SwapRequest objects,
-     * then updates each shift's required roles mapping accordingly.
-     *
-     * @param req1 The first SwapRequest.
-     * @param req2 The second SwapRequest.
-     */
-    private void swapShifts(SwapRequest req1, SwapRequest req2) {
-        Employee emp1 = req1.getEmployee();
-        Employee emp2 = req2.getEmployee();
-        Shift  shift1 = req1.getShift();
-        Shift  shift2 = req2.getShift();
-        Role role = req1.getRole(); // Both requests have the same role after filtering
-
-        // Retrieve the required roles mappings from each shift.
-        Map<Role, ArrayList<Employee>> rolesMap1 = shift1.getRequiredRoles();
-        Map<Role, ArrayList<Employee>> rolesMap2 = shift2.getRequiredRoles();
-
-        // From shift1: remove emp1 and add emp2 for the role.
-        List<Employee> employeesForRole1 = rolesMap1.get(role);
-        if (employeesForRole1 != null && employeesForRole1.contains(emp1)) {
-            employeesForRole1.remove(emp1);
-            employeesForRole1.add(emp2);
-        } else {
-            System.out.println("Employee " + emp1.getId() + " was not found for role " +
-                    role.getName() + " in shift " + shift1.getID());
-        }
-
-        // From shift2: remove emp2 and add emp1 for the role.
-        List<Employee> employeesForRole2 = rolesMap2.get(role);
-        if (employeesForRole2 != null && employeesForRole2.contains(emp2)) {
-            employeesForRole2.remove(emp2);
-            employeesForRole2.add(emp1);
-        } else {
-            System.out.println("Employee " + emp2.getId() + " was not found for role " +
-                    role.getName() + " in shift " + shift2.getID());
-        }
-
-        System.out.println("Swapped employees " + emp1.getName() + " and " + emp2.getName() +
-                " for role " + role.getName() + " between shifts " +
-                shift1.getID() + " and " + shift2.getID());
-    }
-
-    /**
-     * Helper method to externally add a new swap request.
-     * Typically called from the EmployeeInterface.
-     */
-    public void addSwapRequest(SwapRequest request) {
-        swapRequests.add(request);
-    }
-    /**
-     * Creates a new shift by asking the HR manager for details.
-     * The method prompts for:
-     * - Shift ID
-     * - Date (in yyyy-MM-dd format)
-     * - Shift type (Morning/Evening)
-     * Then, it iterates over all roles in the system (from RolesRepo) and for each role,
-     * prompts for the number of employees required. For each role, an empty ArrayList
-     * is created with the given initial capacity (note: capacity is not the list size).
-     * The resulting mapping is passed into the Shift constructor.
-     * Finally, the new shift is added to the ShiftsRepo.
-     *
-     * @param scanner A Scanner object for user input.
-     */
-    /** Instead of creating a new Shift, pick one of this/next week and set its required roles. */
 
     public void configureShiftRoles(Scanner scanner) {
         if (!currentUserRole.equals(HR_ROLE)) {
@@ -554,6 +474,7 @@ public class HRInterface {
      * Processes two swap requests and updates both shifts' assignedEmployees lists.
      */
     public void processSwapRequests(Scanner scanner) {
+        List<SwapRequest> swapRequests = swapService.getSwapRequests();
         if (swapRequests.isEmpty()) {
             PresentationUtils.typewriterPrint("No swap requests available.", 20
 );
@@ -607,25 +528,8 @@ public class HRInterface {
             return;
         }
         SwapRequest req2 = compat.get(second);
+        swapService.AcceptSwapRequests(req1,req2);
 
-        Employee e1 = req1.getEmployee();
-        Employee e2 = req2.getEmployee();
-        Shift  s1 = req1.getShift();
-        Shift  s2 = req2.getShift();
-        Role   r  = req1.getRole();
-
-        // Update assignedEmployees lists:
-        s1.getAssignedEmployees().removeIf(sa -> sa.getEmployeeId().equals(e1.getId()) && sa.getRole().equals(r));
-        s2.getAssignedEmployees().removeIf(sa -> sa.getEmployeeId().equals(e2.getId()) && sa.getRole().equals(r));
-        s1.assignEmployee(e2, r);
-        s2.assignEmployee(e1, r);
-
-        System.out.printf("Swapped %s and %s for role %s between shifts %s and %s.%n",
-                e1.getName(), e2.getName(), r.getName(), s1.getID(), s2.getID());
-
-        // Remove processed requests
-        swapRequests.remove(req1);
-        swapRequests.remove(req2);
     }
 
 
@@ -660,10 +564,10 @@ public class HRInterface {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> EmployeesRepo.getInstance().getEmployeeById(currentUserId).ShowInfo();
-                case 2 -> addEmployee(scanner, employees);
-                case 3 -> removeEmployee(scanner, employees);
-                case 4 -> updateEmployeeData(scanner, employees);
+                case 1 -> employeeService.ShowInfo();
+                case 2 -> addEmployee(scanner);
+                case 3 -> removeEmployee(scanner);
+                case 4 -> updateEmployeeData(scanner);
                 case 5 -> addNewRole(scanner);
                 case 6 -> removeRole(scanner);
                 case 7 -> assignEmployeeToShift(scanner);

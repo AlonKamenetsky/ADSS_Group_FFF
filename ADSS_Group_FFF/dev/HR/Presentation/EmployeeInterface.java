@@ -14,10 +14,12 @@ import java.util.stream.Collectors;
 public class EmployeeInterface {
     private final Employee employee;
     // only this week’s shifts
-    private final List<Shift> shifts = ShiftsRepo.getInstance().getCurrentWeekShifts();
+    private final List<Shift> shifts = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts();
+    private final SwapService swapService;
 
     public EmployeeInterface(Employee employee) {
         this.employee = employee;
+        this.swapService = new SwapService();
     }
 
     public void employeeMainMenu(Scanner scanner) {
@@ -39,11 +41,13 @@ public class EmployeeInterface {
 );
             PresentationUtils.typewriterPrint("7. Send Swap Request", 20
 );
-            PresentationUtils.typewriterPrint("8. Add Vacation", 20
+            PresentationUtils.typewriterPrint("8. Cancel Swap Request", 20
 );
-            PresentationUtils.typewriterPrint("9. View Vacation Dates", 20
+            PresentationUtils.typewriterPrint("9. Add Vacation", 20
 );
-            PresentationUtils.typewriterPrint("10. Exit", 20
+            PresentationUtils.typewriterPrint("10. View Vacation Dates", 20
+);
+            PresentationUtils.typewriterPrint("11. Exit", 20
 );
             PresentationUtils.typewriterPrint("", 20
 );
@@ -58,15 +62,59 @@ public class EmployeeInterface {
                 case 5 -> viewWeeklyAvailability();
                 case 6 -> viewNextWeeklyAvailability();
                 case 7 -> sendSwapRequest(scanner);
-                case 8 -> addVacation(scanner);
-                case 9 -> viewHolidays();
-                case 10 -> exit = true;
+                case 8 -> cancelSwapRequest(scanner);
+                case 9 -> addVacation(scanner);
+                case 10 -> viewHolidays();
+                case 11 -> exit = true;
                 default -> PresentationUtils.typewriterPrint("Invalid choice.", 20
 );
             }
         }
     }
 
+    private void cancelSwapRequest(Scanner scanner) {
+        // 1. fetch only this employee’s swap-requests
+        List<SwapRequest> requests = swapService.getSwapRequests().stream()
+                .filter(s -> s.getEmployee().getId().equals(employee.getId()))
+                .collect(Collectors.toList());
+
+        if (requests.isEmpty()) {
+            PresentationUtils.typewriterPrint("No swap requests available to cancel.", 20);
+            return;
+        }
+
+        // 2. list them out
+        PresentationUtils.typewriterPrint("Select a swap request to cancel:", 20);
+        for (int i = 0; i < requests.size(); i++) {
+            SwapRequest req = requests.get(i);
+            String line = String.format(
+                    "%d. Shift on %s [%s] – Role: %s",
+                    i + 1,
+                    req.getShift().getDate(),
+                    req.getShift().getType(),
+                    req.getRole().getName()
+            );
+            PresentationUtils.typewriterPrint(line, 20);
+        }
+
+        // 3. prompt for choice
+        PresentationUtils.typewriterPrint("Enter the number of the request to cancel: ", 20);
+        String input = scanner.nextLine().trim();
+
+        try {
+            int choice = Integer.parseInt(input);
+            if (choice < 1 || choice > requests.size()) {
+                PresentationUtils.typewriterPrint("Invalid selection.", 20);
+                return;
+            }
+
+            // 4. cancel the selected request
+            SwapRequest toCancel = requests.get(choice - 1);
+            swapService.CancelSwapRequest(toCancel);
+        } catch (NumberFormatException e) {
+            PresentationUtils.typewriterPrint("Invalid input. Please enter a number.", 20);
+        }
+    }
 
     private void viewAssignedShifts() {
         List<Shift> shifts = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts();
@@ -134,8 +182,7 @@ public class EmployeeInterface {
         }
 
         SwapRequest req = new SwapRequest(employee, target, myRole);
-        SwapRequestsRepo.getInstance().addSwapRequest(req);
-        System.out.println("Swap request sent: " + req);
+        swapService.SendSwapRequest(req);
     }
 
     private void sendWeeklyAvailability(Scanner scanner) {
