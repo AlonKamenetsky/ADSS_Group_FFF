@@ -2,18 +2,19 @@ package Transportation.DataAccess.DAO;
 
 import Transportation.DTO.TransportationTaskDTO;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Date;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 public interface TransportationTaskDAO {
 
-    void insert(TransportationTaskDTO transportationTask);
-    void update(TransportationTaskDTO transportationTask);
-    void delete(String license);
-    TransportationTaskDTO findById(int taskId);
-    TransportationTaskDTO findByDateTimeAndSource(Date taskDate, LocalTime departureTime , String sourceSite);
-    ArrayList<TransportationTaskDTO> findAll();
-    ArrayList<TransportationTaskDTO> findBySourceAddress(String sourceAddress);
-    ArrayList<TransportationTaskDTO> findByDriverId(String driverId);
+    TransportationTaskDTO insert(TransportationTaskDTO transportationTask) throws SQLException;
+    void delete(String license) throws SQLException;
+    Optional<TransportationTaskDTO> findById(int taskId) throws SQLException;
+    Optional<TransportationTaskDTO> findByDateTimeAndSource(Date taskDate, LocalTime departureTime , String sourceSite) throws SQLException;
+    List<TransportationTaskDTO> findAll() throws SQLException;
+    List<TransportationTaskDTO> findBySourceAddress(String sourceAddress) throws SQLException;
+    List<TransportationTaskDTO> findByDriverId(String driverId) throws SQLException;
 }

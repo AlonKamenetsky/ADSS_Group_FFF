@@ -1,4 +1,5 @@
 package Transportation.Domain.Repositories;
 
-public class TransportationTaskRepository {
+public interface TransportationTaskRepository {
+
 }

@@ -3,10 +3,10 @@ package Transportation.DTO;
 import Transportation.Domain.TruckType;
 
 public record TruckDTO(
-        int truckId,
+        Integer truckId,
+        TruckType truckType,
         String licenseNumber,
         String model,
-        TruckType truckType,
         float netWeight,
         float maxWeight,
         boolean isFree

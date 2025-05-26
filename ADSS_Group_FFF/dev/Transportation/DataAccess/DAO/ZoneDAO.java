@@ -2,13 +2,14 @@ package Transportation.DataAccess.DAO;
 
 import  Transportation.DTO.ZoneDTO;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 public interface ZoneDAO {
-     void insert(ZoneDTO zone);
-     void delete(ZoneDTO zone);
-     void update(ZoneDTO zone);
-    ZoneDTO findById(int zoneId);
-    ZoneDTO findByName(String zoneName);
-    ArrayList<ZoneDTO> findAll();
+    ZoneDTO insert(ZoneDTO zone) throws SQLException;
+    void delete(ZoneDTO zone) throws SQLException;
+    Optional<ZoneDTO> findById(int zoneId) throws SQLException;
+    Optional<ZoneDTO> findByName(String zoneName) throws SQLException;
+    List<ZoneDTO> findAll() throws SQLException;
 }

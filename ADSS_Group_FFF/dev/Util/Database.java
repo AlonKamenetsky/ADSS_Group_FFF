@@ -5,7 +5,7 @@ import java.sql.*;
 
 public final class Database {
     private static final String DB_URL = "jdbc:sqlite:SuperLee.db";
-    private static Connection conn;
+    private final static Connection conn;
 
     static {
         try {
@@ -18,7 +18,7 @@ public final class Database {
                             CREATE TABLE IF NOT EXISTS trucks(
                                 truck_id        INTEGER PRIMARY KEY AUTOINCREMENT,
                                 truck_type      TEXT      NOT NULL,
-                                license_number  INTEGER   NOT NULL,
+                                license_number  TEXT   NOT NULL,
                                 model           TEXT      NOT NULL,
                                 net_weight      REAL      NOT NULL,
                                 max_weight      REAL      NOT NULL,
