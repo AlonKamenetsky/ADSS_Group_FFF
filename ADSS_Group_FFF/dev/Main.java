@@ -1,9 +1,9 @@
 import java.text.ParseException;
 import java.util.Scanner;
-import Domain.EmployeesRepo;
-import Presentation.DemoDataLoader;
-import Presentation.LoginScreen;
-import Presentation.PresentationUtils;
+import HR.DataAccess.EmployeesRepo;
+import HR.Presentation.DemoDataLoader;
+import HR.Presentation.LoginScreen;
+import HR.Presentation.PresentationUtils;
 
 public class Main {
     public static void main(String[] args) throws ParseException {

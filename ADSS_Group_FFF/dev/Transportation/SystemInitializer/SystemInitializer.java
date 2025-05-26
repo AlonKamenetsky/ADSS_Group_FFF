@@ -6,7 +6,7 @@ import Transportation.Service.*;
 
 public class SystemInitializer {
     public static TransportationMenu buildApplication() {
-        // === Domain Managers ===
+        // === HR.tests.Domain Managers ===
         DriverManager driverManager = new DriverManager();
         TruckManager truckManager = new TruckManager();
         ZoneManager zoneManager = new ZoneManager();
