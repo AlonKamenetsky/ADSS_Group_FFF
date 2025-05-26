@@ -5,7 +5,7 @@ import java.sql.*;
 
 public final class Database {
     private static final String DB_URL = "jdbc:sqlite:SuperLee.db";
-    private static Connection conn;
+    private final static Connection conn;
 
     static {
         try {
