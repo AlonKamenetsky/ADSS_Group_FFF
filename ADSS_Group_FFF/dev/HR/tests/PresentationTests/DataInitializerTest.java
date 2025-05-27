@@ -2,6 +2,7 @@ package HR.tests.PresentationTests;
 
 import HR.DataAccess.EmployeesRepo;
 import HR.DataAccess.RolesRepo;
+import HR.DataAccess.ShiftsRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Presentation.DemoDataLoader;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ class DataInitializerTest {
         // Clear repositories before each test.
         RolesRepo.getInstance().getRoles().clear();
         EmployeesRepo.getInstance().getEmployees().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts().clear();
+        ShiftsRepo.getInstance().getCurrentWeekShifts().clear();
     }
 
     @Test
@@ -27,6 +28,6 @@ class DataInitializerTest {
         // Expect at least two employees.
         assertTrue(EmployeesRepo.getInstance().getEmployees().size() >= 2, "At least two employees should be loaded");
         // Expect two shifts to be loaded.
-        assertEquals(14, WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts().size(), "Two shifts should be created for each day of the week");
+        assertEquals(14, ShiftsRepo.getInstance().getCurrentWeekShifts().size(), "Two shifts should be created for each day of the week");
     }
 }

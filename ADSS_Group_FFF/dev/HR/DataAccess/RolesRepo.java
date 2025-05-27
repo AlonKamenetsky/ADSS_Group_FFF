@@ -1,14 +1,15 @@
 package HR.DataAccess;
 
 import HR.Domain.Role;
+import HR.Domain.RoleRepo;
 import HR.Presentation.PresentationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RolesRepo {
+public class RolesRepo implements RoleRepo {
     private static RolesRepo instance = null;
-    private List<Role> roles;
+    private final List<Role> roles;
 
     private RolesRepo() {
         roles = new ArrayList<>();

@@ -1,6 +1,7 @@
 package HR.tests.DomainTests;
 
 import HR.DataAccess.ShiftDAOImpl;
+import HR.DataAccess.SwapRequestsRepo;
 import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.Shift;
@@ -18,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SwapRequestsRepoTest {
 
-    private ShiftDAOImpl.SwapRequestsRepo repo;
+    private SwapRequestsRepo repo;
 
     @BeforeEach
     public void setUp() {
-        repo = ShiftDAOImpl.SwapRequestsRepo.getInstance();
+        repo = SwapRequestsRepo.getInstance();
         // Clear any existing swap requests.
         repo.getSwapRequests().clear();
     }

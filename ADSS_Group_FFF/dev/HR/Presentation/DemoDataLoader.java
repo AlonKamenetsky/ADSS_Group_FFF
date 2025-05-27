@@ -3,8 +3,13 @@ package HR.Presentation;
 
 import HR.DataAccess.EmployeesRepo;
 import HR.DataAccess.RolesRepo;
+import HR.DataAccess.ShiftsRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.*;
+import HR.Service.EmployeeService;
+import HR.Service.RoleService;
+import HR.Service.ShiftService;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -17,47 +22,43 @@ import java.util.*;
 public class DemoDataLoader {
     public static void initializeExampleData(int i) throws ParseException {
         // ——— 1) Seed Roles & Employees ———
-        RolesRepo rolesRepo   = RolesRepo.getInstance();
-        EmployeesRepo empRepo = EmployeesRepo.getInstance();
-        WeeklyAvailabilityDAO.ShiftsRepo shiftsRepo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
+        RoleService roleService   = RoleService.getInstance();
+        EmployeeService employeeService = EmployeeService.getInstance();
+        ShiftService shiftService = ShiftService.getInstance();
         switch (i){
         case 1:
             Arrays.asList("HR", "Shift Manager", "Cashier", "Warehouse", "Cleaner", "Driver")
-                    .forEach(name -> rolesRepo.addRole(new Role(name)));
+                    .forEach(roleService::addRole);
 
-            Role hrRole       = rolesRepo.getRoleByName("HR");
-            Role cashierRole  = rolesRepo.getRoleByName("Cashier");
-            Role warehouseRole= rolesRepo.getRoleByName("Warehouse");
-            Role cleanerRole  = rolesRepo.getRoleByName("Cleaner");
-            Role driverRole   = rolesRepo.getRoleByName("Driver");
-            Role shiftMgrRole = rolesRepo.getRoleByName("Shift Manager");
+            Role hrRole       = roleService.getRoleByName("HR");
+            Role cashierRole  = roleService.getRoleByName("Cashier");
+            Role warehouseRole= roleService.getRoleByName("Warehouse");
+            Role cleanerRole  = roleService.getRoleByName("Cleaner");
+            Role driverRole   = roleService.getRoleByName("Driver");
+            Role shiftMgrRole = roleService.getRoleByName("Shift Manager");
 
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             df.setLenient(false);
             Date hireDate = df.parse("2020-01-01");
 
-            Employee dana = new Employee("1",
+            employeeService.addEmployee("1",
                     new LinkedList<>(Arrays.asList(shiftMgrRole, cashierRole)),
                     "Dana", "123", "IL123BANK", 5000f, hireDate);
-            dana.setPassword("123");
-            empRepo.addEmployee(dana);
-
-            Employee john = new Employee("2",
+            employeeService.getEmployeeById("1").setPassword("123");
+            employeeService.addEmployee("2",
                     new LinkedList<>(Arrays.asList(warehouseRole, cashierRole)),
                     "John", "456", "IL456BANK", 4500f, hireDate);
-            john.setPassword("456");
-            empRepo.addEmployee(john);
+            employeeService.getEmployeeById("2").setPassword("456");
 
-            Employee hr = new Employee("hr",
+            employeeService.addEmployee("hr",
                     new LinkedList<>(Arrays.asList(hrRole)),
                     "HR Manager", "123", "IL456BANK", 4500f, hireDate);
-            hr.setPassword("123");
-            empRepo.addEmployee(hr);
+            employeeService.getEmployeeById("hr").setPassword("123");
 
             // ——— 2) Define recurring-shift templates ———
             for (DayOfWeek dow : DayOfWeek.values()) {
-                shiftsRepo.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Morning));
-                shiftsRepo.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Evening));
+                shiftService.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Morning));
+                shiftService.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Evening));
             }
 
             // ——— 3) Bootstrap the rolling schedule based on current time ———
@@ -68,15 +69,15 @@ public class DemoDataLoader {
 
             if (!now.isBefore(cutoff)) {
                 // After Saturday 18:00 → currentWeek = week after this Saturday
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday);
-                shiftsRepo.getSchedule().swapWeeks();
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday.plusDays(7));
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), saturday);
+                shiftService.getSchedule().swapWeeks();
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), saturday.plusDays(7));
             } else {
                 // Before Saturday 18:00 → currentWeek = week after last Saturday
                 LocalDate prevSat = saturday.minusDays(7);
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), prevSat);
-                shiftsRepo.getSchedule().swapWeeks();
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday);
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), prevSat);
+                shiftService.getSchedule().swapWeeks();
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), saturday);
             }
 
             PresentationUtils.typewriterPrint(
@@ -86,16 +87,16 @@ public class DemoDataLoader {
             break;
         case 0:
 
-            rolesRepo.addRole(new Role("HR"));
+            roleService.addRole("HR");
             List<Role> HRRoles = new ArrayList<>();
-            HRRoles.add(rolesRepo.getRoleByName("HR"));
+            HRRoles.add(roleService.getRoleByName("HR"));
 
             SimpleDateFormat df_ = new SimpleDateFormat("yyyy-MM-dd");
             df_.setLenient(false);
 
             for (DayOfWeek dow : DayOfWeek.values()) {
-                shiftsRepo.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Morning));
-                shiftsRepo.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Evening));
+                shiftService.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Morning));
+                shiftService.addTemplate(new ShiftTemplate(dow, Shift.ShiftTime.Evening));
             }
 
             // ——— 3) Bootstrap the rolling schedule based on current time ———
@@ -106,15 +107,15 @@ public class DemoDataLoader {
 
             if (!now_.isBefore(cutoff_)) {
                 // After Saturday 18:00 → currentWeek = week after this Saturday
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday_);
-                shiftsRepo.getSchedule().swapWeeks();
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday_.plusDays(7));
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), saturday_);
+                shiftService.getSchedule().swapWeeks();
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), saturday_.plusDays(7));
             } else {
                 // Before Saturday 18:00 → currentWeek = week after last Saturday
                 LocalDate prevSat_ = saturday_.minusDays(7);
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), prevSat_);
-                shiftsRepo.getSchedule().swapWeeks();
-                shiftsRepo.getSchedule().resetNextWeek(shiftsRepo.getTemplates(), saturday_);
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), prevSat_);
+                shiftService.getSchedule().swapWeeks();
+                shiftService.getSchedule().resetNextWeek(shiftService.getTemplates(), saturday_);
             }
 
             Scanner scanner = new Scanner(System.in);
@@ -190,7 +191,7 @@ public class DemoDataLoader {
                 }
             }
 
-            Employee hrUser = new Employee(
+            employeeService.addEmployee(
                     newId,
                     HRRoles,
                     newName,
@@ -199,7 +200,6 @@ public class DemoDataLoader {
                     newSalary,
                     newEmpDate
             );
-            EmployeesRepo.getInstance().addEmployee(hrUser);
         }
 
     }

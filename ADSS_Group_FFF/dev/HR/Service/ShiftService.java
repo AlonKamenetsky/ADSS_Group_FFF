@@ -1,10 +1,8 @@
 package HR.Service;
 
+import HR.DataAccess.ShiftsRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
-import HR.Domain.Employee;
-import HR.Domain.Role;
-import HR.Domain.Shift;
-import HR.Domain.ShiftAssignment;
+import HR.Domain.*;
 import HR.Presentation.PresentationUtils;
 
 import java.text.SimpleDateFormat;
@@ -15,10 +13,10 @@ public class ShiftService {
 
     private final RoleService roleService = RoleService.getInstance();
     private static ShiftService instance;
-    private final WeeklyAvailabilityDAO.ShiftsRepo repo;
+    private final ShiftsRepo repo;
 
     private ShiftService() {
-        repo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
+        repo = ShiftsRepo.getInstance();
     }
 
     public static ShiftService getInstance() {
@@ -28,6 +26,10 @@ public class ShiftService {
         return instance;
     }
 
+
+    public Shift getShiftById(String id) {
+        return repo.getShiftByID(id);
+    }
 
 
     public void AssignEmployeeToShift(Shift shift, Employee employee, Role role) {
@@ -149,6 +151,18 @@ public class ShiftService {
         } else {
             PresentationUtils.typewriterPrint("There is no shift currently active.",20);
         }
+    }
+
+    public void addTemplate(ShiftTemplate shiftTemplate) {
+        repo.addTemplate(shiftTemplate);
+    }
+
+    public List<ShiftTemplate> getTemplates() {
+        return repo.getTemplates();
+    }
+
+    public WeeklyShiftsSchedule getSchedule() {
+        return repo.getSchedule();
     }
 }
 

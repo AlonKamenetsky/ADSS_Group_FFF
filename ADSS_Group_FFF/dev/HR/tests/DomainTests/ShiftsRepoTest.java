@@ -1,9 +1,9 @@
 // src/test/java/HR.tests/DomainTests/ShiftsRepoTest.java
 package HR.tests.DomainTests;
 
+import HR.DataAccess.ShiftsRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.*;
-import HR.tests.Domain.*;
 import org.junit.jupiter.api.*;
 
 import java.time.DayOfWeek;
@@ -13,11 +13,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShiftsRepoTest {
-    private WeeklyAvailabilityDAO.ShiftsRepo repo;
+    private ShiftsRepo repo;
 
     @BeforeEach
     void init() {
-        repo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
+        repo = ShiftsRepo.getInstance();
         repo.getTemplates().clear();
         repo.getSchedule().getCurrentWeek().clear();
         repo.getSchedule().getNextWeek().clear();

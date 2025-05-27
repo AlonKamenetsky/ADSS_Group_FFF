@@ -6,7 +6,7 @@ import HR.Presentation.PresentationUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeesRepo {
+public class EmployeesRepo implements HR.Domain.EmployeesRepo {
 
     private static EmployeesRepo instance = null;
 

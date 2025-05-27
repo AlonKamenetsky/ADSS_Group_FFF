@@ -1,11 +1,10 @@
 package HR.tests.PresentationTests;
 
+import HR.DataAccess.*;
 import HR.DataAccess.EmployeesRepo;
-import HR.DataAccess.RolesRepo;
-import HR.DataAccess.ShiftDAOImpl;
-import HR.DataAccess.WeeklyAvailabilityDAO;
+import HR.DataAccess.ShiftsRepo;
+import HR.DataAccess.SwapRequestsRepo;
 import HR.Domain.*;
-import HR.tests.Domain.*;
 import HR.Presentation.HRInterface;
 import org.junit.jupiter.api.*;
 
@@ -30,11 +29,11 @@ class HRInterfaceTest {
         // clear out all singletons
         RolesRepo.getInstance().getRoles().clear();
         EmployeesRepo.getInstance().getEmployees().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getCurrentWeek().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getNextWeek().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getTemplates().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getHistory().clear();
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests().clear();
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().clear();
+        ShiftsRepo.getInstance().getSchedule().getNextWeek().clear();
+        ShiftsRepo.getInstance().getTemplates().clear();
+        ShiftsRepo.getInstance().getHistory().clear();
+        SwapRequestsRepo.getInstance().getSwapRequests().clear();
 
         // seed roles
         RolesRepo rs = RolesRepo.getInstance();
@@ -59,7 +58,7 @@ class HRInterfaceTest {
         reqCnts .put(cashier,   2);
         Date shiftDate = df.parse("15-09-2025");
         Shift s = new Shift("SHIFT1", shiftDate, Shift.ShiftTime.Morning, reqRoles, reqCnts);
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getCurrentWeek().add(s);
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().add(s);
 
         // construct UI and give it HR privileges
         ui = new HRInterface("HRUser");
@@ -70,11 +69,11 @@ class HRInterfaceTest {
     void tearDown() {
         RolesRepo.getInstance().getRoles().clear();
         EmployeesRepo.getInstance().getEmployees().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getCurrentWeek().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getNextWeek().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getTemplates().clear();
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getHistory().clear();
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests().clear();
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().clear();
+        ShiftsRepo.getInstance().getSchedule().getNextWeek().clear();
+        ShiftsRepo.getInstance().getTemplates().clear();
+        ShiftsRepo.getInstance().getHistory().clear();
+        SwapRequestsRepo.getInstance().getSwapRequests().clear();
     }
 
     @Test void managerMenuExitImmediately() {
@@ -131,13 +130,13 @@ class HRInterfaceTest {
         // add one template so next week exists
         ShiftTemplate tmpl = new ShiftTemplate(DayOfWeek.MONDAY, Shift.ShiftTime.Evening);
         tmpl.setDefaultCount(RolesRepo.getInstance().getRoleByName("Cashier"), 3);
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().addTemplate(tmpl);
+        ShiftsRepo.getInstance().addTemplate(tmpl);
         // force‐build next‐week
         LocalDate sat = LocalDate.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance()
+        ShiftsRepo.getInstance()
                 .getSchedule()
-                .resetNextWeek(WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getTemplates(), sat);
+                .resetNextWeek(ShiftsRepo.getInstance().getTemplates(), sat);
 
 
         String in = String.join("\n",
@@ -149,7 +148,7 @@ class HRInterfaceTest {
         ) + "\n";
 
         ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
-        Shift updated = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getNextWeek().get(0);
+        Shift updated = ShiftsRepo.getInstance().getSchedule().getNextWeek().get(0);
         assertEquals(1,
                 updated.getRequiredCounts()
                         .get(RolesRepo.getInstance().getRoleByName("Shift Manager"))
@@ -199,7 +198,7 @@ class HRInterfaceTest {
         ) + "\n";
 
         ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
-        Shift s = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getCurrentWeek().get(0);
+        Shift s = ShiftsRepo.getInstance().getSchedule().getCurrentWeek().get(0);
         assertEquals(1,
                 s.getRequiredRoles()
                         .get(RolesRepo.getInstance().getRoleByName("Cashier"))
@@ -221,11 +220,11 @@ class HRInterfaceTest {
         Shift s2 = new Shift("X2", d, Shift.ShiftTime.Evening, rR, rC);
         s1.assignEmployee(a, cashier);
         s2.assignEmployee(b, cashier);
-        WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getSchedule().getCurrentWeek().add(s1);
+        ShiftsRepo.getInstance().getSchedule().getCurrentWeek().add(s1);
 
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests().clear();
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().addSwapRequest(new SwapRequest(a, s1, cashier));
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().addSwapRequest(new SwapRequest(b, s2, cashier));
+        SwapRequestsRepo.getInstance().getSwapRequests().clear();
+        SwapRequestsRepo.getInstance().addSwapRequest(new SwapRequest(a, s1, cashier));
+        SwapRequestsRepo.getInstance().addSwapRequest(new SwapRequest(b, s2, cashier));
 
         String in = String.join("\n",
                 "7",    // Process Swap Requests
@@ -235,6 +234,6 @@ class HRInterfaceTest {
         ) + "\n";
 
         ui.managerMainMenu(new Scanner(new ByteArrayInputStream(in.getBytes())));
-        assertTrue(ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests().isEmpty());
+        assertTrue(SwapRequestsRepo.getInstance().getSwapRequests().isEmpty());
     }
 }

@@ -1,16 +1,17 @@
 package HR.Service;
 
 import HR.DataAccess.ShiftDAOImpl;
+import HR.DataAccess.SwapRequestsRepo;
 import HR.Domain.*;
 
 import java.util.List;
 
 public class SwapService {
     private static SwapService instance;
-    private final ShiftDAOImpl.SwapRequestsRepo repo;
+    private final SwapRequestsRepo repo;
 
     private SwapService() {
-        repo = ShiftDAOImpl.SwapRequestsRepo.getInstance();
+        repo = SwapRequestsRepo.getInstance();
     }
 
     public static SwapService getInstance() {

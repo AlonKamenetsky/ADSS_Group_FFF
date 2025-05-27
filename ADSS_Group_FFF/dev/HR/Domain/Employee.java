@@ -1,5 +1,6 @@
 package HR.Domain;
 
+import HR.DataAccess.ShiftsRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
 
 import java.time.DayOfWeek;
@@ -18,7 +19,7 @@ public class Employee extends User {
     private final List<WeeklyAvailability> availabilityNextWeek = new ArrayList<>();
 
     // List of all assigned shifts (backed by ShiftsRepo)
-    private final List<Shift> shifts = WeeklyAvailabilityDAO.ShiftsRepo.getInstance().getCurrentWeekShifts();
+    private final List<Shift> shifts = ShiftsRepo.getInstance().getCurrentWeekShifts();
 
     // Holidays
     private final List<Date> holidays = new ArrayList<>();

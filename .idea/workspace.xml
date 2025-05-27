@@ -10,7 +10,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)">
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftsRepo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/SwapRequestsRepo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/SwapRequestsRepo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/SwapDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/SwapDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/WeeklyAvailabilityDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/WeeklyAvailabilityDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/Employee.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/Employee.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/DemoDataLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/DemoDataLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/EmployeesRepoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/EmployeesRepoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/RolesRepoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/RolesRepoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/ShiftTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/ShiftTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/ShiftsRepoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/ShiftsRepoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/SwapRequestsRepoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DomainTests/SwapRequestsRepoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/PresentationTests/DataInitializerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/PresentationTests/DataInitializerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/PresentationTests/EmployeeInterfaceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/PresentationTests/EmployeeInterfaceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/PresentationTests/HRInterfaceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/PresentationTests/HRInterfaceTest.java" afterDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,6 +40,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -39,12 +58,12 @@
     &quot;assignee&quot;: &quot;Taeerc&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/AlonKamenetsky/ADSS_Group_FFF.git&quot;,
-    &quot;accountId&quot;: &quot;f89c589a-02f2-4330-8ff4-5c7785b41d46&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AlonKamenetsky/ADSS_Group_FFF.git",
+    "accountId": "fdb0ab21-227b-4f63-8ec9-f400729d9ec1"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -143,14 +162,6 @@
         <item itemvalue="JUnit.RoleTest" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

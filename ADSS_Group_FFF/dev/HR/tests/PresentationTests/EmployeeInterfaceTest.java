@@ -1,6 +1,8 @@
 package HR.tests.PresentationTests;
 
 import HR.DataAccess.ShiftDAOImpl;
+import HR.DataAccess.ShiftsRepo;
+import HR.DataAccess.SwapRequestsRepo;
 import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.Employee;
 import HR.Domain.Role;
@@ -26,7 +28,7 @@ class EmployeeInterfaceTest {
     private Employee employee;
     private EmployeeInterface ui;
     private SimpleDateFormat df;
-    private WeeklyAvailabilityDAO.ShiftsRepo repo;
+    private ShiftsRepo repo;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -45,7 +47,7 @@ class EmployeeInterfaceTest {
         );
 
         ui = new EmployeeInterface(employee);
-        repo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
+        repo = ShiftsRepo.getInstance();
 
         // clear out any previous schedule/templates/history
         repo.getTemplates().clear();
@@ -53,7 +55,7 @@ class EmployeeInterfaceTest {
         repo.getSchedule().getNextWeek().clear();
         repo.getHistory().clear();
         // clear swap‐requests
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests().clear();
+        SwapRequestsRepo.getInstance().getSwapRequests().clear();
     }
 
     @AfterEach
@@ -63,7 +65,7 @@ class EmployeeInterfaceTest {
         repo.getSchedule().getCurrentWeek().clear();
         repo.getSchedule().getNextWeek().clear();
         repo.getHistory().clear();
-        ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests().clear();
+        SwapRequestsRepo.getInstance().getSwapRequests().clear();
     }
 
     @Test
@@ -137,7 +139,7 @@ class EmployeeInterfaceTest {
         Scanner sc = new Scanner(new ByteArrayInputStream(input.getBytes()));
         ui.employeeMainMenu(sc);
 
-        var swaps = ShiftDAOImpl.SwapRequestsRepo.getInstance().getSwapRequests();
+        var swaps = SwapRequestsRepo.getInstance().getSwapRequests();
         assertEquals(1, swaps.size(), "One swap request should be created");
         SwapRequest r = swaps.get(0);
         assertEquals("S1", r.getShift().getID());

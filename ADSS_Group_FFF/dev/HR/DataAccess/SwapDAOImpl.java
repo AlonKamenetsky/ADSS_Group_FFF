@@ -59,9 +59,9 @@ public class SwapDAOImpl implements SwapDAO {
 
     private SwapRequest map(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
-        Employee employee = EmployeesRepo.getInstance().get(rs.getString("requester_id"));
-        Shift shift = ShiftsRepo.getInstance().get(rs.getString("shift_id"));
-        Role role = RolesRepo.getInstance().get(rs.getString("role_name"));
+        Employee employee = EmployeesRepo.getInstance().getEmployeeById(rs.getString("requester_id"));
+        Shift shift = ShiftsRepo.getInstance().getShiftByID(rs.getString("shift_id"));
+        Role role = RolesRepo.getInstance().getRoleByName(rs.getString("role_name"));
 
         return new SwapRequest(id, employee, shift, role);
     }

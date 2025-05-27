@@ -36,8 +36,7 @@ public class HRInterface {
             return;
         }
 
-        WeeklyAvailabilityDAO.ShiftsRepo repo = WeeklyAvailabilityDAO.ShiftsRepo.getInstance();
-        repo.ensureUpToDate();
+        shiftService.ensureShiftsRepoUpToDate();
         List<Shift> shifts = shiftService.getCurrentWeekShifts();
         List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
 
