@@ -8,7 +8,7 @@ import Transportation.DTO.ItemDTO;
 import java.sql.SQLException;
 
 public class ItemManager {
-    //private final HashMap<Integer, Item> allItems;
+    // private final HashMap<Integer, Item> allItems;
     //private int nextItemId = 1;
     private final ItemRepository itemRepository;
 

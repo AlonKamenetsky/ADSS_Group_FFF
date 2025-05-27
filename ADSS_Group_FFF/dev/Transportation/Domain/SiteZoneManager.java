@@ -1,5 +1,8 @@
 package Transportation.Domain;
 
+import Transportation.DTO.SiteDTO;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class SiteZoneManager {
@@ -34,5 +37,9 @@ public class SiteZoneManager {
             siteManager.modifySiteZone(siteAddress.toLowerCase(), -1);
             currZone.removeSiteFromZone(site);
         }
+    }
+
+    public List<SiteDTO> getSiteByZone(int zoneId) {
+        return null;
     }
 }
