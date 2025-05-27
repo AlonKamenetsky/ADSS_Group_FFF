@@ -1,13 +1,10 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.TransportationDocDTO;
-import Transportation.DataAccess.DAO.SqliteTransportationDocDAO;
-import Transportation.DataAccess.DAO.TransportationDocDAO;
-import Transportation.Domain.ItemsList;
-import Transportation.Domain.TransportationDoc;
+import Transportation.DataAccess.SqliteTransportationDocDAO;
+import Transportation.DataAccess.TransportationDocDAO;
 
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

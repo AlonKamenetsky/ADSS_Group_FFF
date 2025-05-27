@@ -1,8 +1,8 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.ItemDTO;
-import Transportation.DataAccess.DAO.ItemDAO;
-import Transportation.DataAccess.DAO.SqliteItemDAO;
+import Transportation.DataAccess.ItemDAO;
+import Transportation.DataAccess.SqliteItemDAO;
 
 import java.sql.SQLException;
 import java.util.List;

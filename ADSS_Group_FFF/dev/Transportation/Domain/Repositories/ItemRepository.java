@@ -1,5 +1,5 @@
 package Transportation.Domain.Repositories;
-import Transportation.Domain.Item;
+
 import Transportation.DTO.ItemDTO;
 
 import java.sql.SQLException;

@@ -1,8 +1,8 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.SiteDTO;
-import Transportation.DataAccess.DAO.SiteDAO;
-import Transportation.DataAccess.DAO.SqliteSiteDAO;
+import Transportation.DataAccess.SiteDAO;
+import Transportation.DataAccess.SqliteSiteDAO;
 
 import java.sql.SQLException;
 import java.util.List;
