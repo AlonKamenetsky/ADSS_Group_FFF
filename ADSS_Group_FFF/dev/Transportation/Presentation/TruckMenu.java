@@ -82,6 +82,8 @@ public class TruckMenu {
             }
         } catch (NoSuchElementException e) {
             System.out.println("Given truck doesn't exist.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

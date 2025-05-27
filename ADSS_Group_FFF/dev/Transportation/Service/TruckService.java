@@ -63,7 +63,8 @@ public class TruckService {
     }
 
 
-    public void ChangeTruckAvailability(int truckID, boolean status) throws  SQLException {
-        truckManager.setTruckAvailability(truckID, status);
+    public void ChangeTruckAvailability(String licenseNumber, boolean status) throws  SQLException {
+        int truckId = truckManager.getTruckIdByLicense(licenseNumber);
+        truckManager.setTruckAvailability(truckId, status);
     }
 }
