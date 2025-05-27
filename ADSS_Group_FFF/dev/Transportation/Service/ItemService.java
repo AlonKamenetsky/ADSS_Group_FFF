@@ -3,7 +3,6 @@ package Transportation.Service;
 import Transportation.DTO.ItemDTO;
 import Transportation.Domain.Item;
 import Transportation.Domain.ItemManager;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +26,13 @@ public class ItemService {
         if (itemName == null) {
             return;
         }
-        if (itemManager.doesItemExist(itemName)) {
-            itemManager.removeItem(itemName);
+
+        ItemDTO itemDTO = itemManager.getItemByName(itemName);
+        if (itemDTO != null) {
+            itemManager.removeItem(itemDTO.itemId());
         }
     }
+
 //    public String viewAllItems() {
 //        return itemManager.getAllItemsString();
 //    }

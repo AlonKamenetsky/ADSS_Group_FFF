@@ -4,7 +4,7 @@ import Transportation.Domain.TruckType;
 
 public record TruckDTO(
         Integer truckId,
-        TruckType truckType,
+        String  truckType,
         String licenseNumber,
         String model,
         float netWeight,

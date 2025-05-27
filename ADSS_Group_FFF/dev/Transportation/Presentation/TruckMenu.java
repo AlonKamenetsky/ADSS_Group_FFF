@@ -3,6 +3,7 @@ package Transportation.Presentation;
 import Transportation.Service.TruckService;
 
 import javax.management.InstanceAlreadyExistsException;
+import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -63,6 +64,8 @@ public class TruckMenu {
             System.out.println("Empty license number entered.");
         } catch (NoSuchElementException n) {
             System.out.println("Truck doesn't exist.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
