@@ -1,7 +1,6 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.TruckDTO;
-import Transportation.Domain.TruckType;
 import Util.Database;
 
 import java.sql.*;
@@ -17,7 +16,7 @@ public class SqliteTruckDAO implements TruckDAO {
                     "VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement ps = Database.getConnection()
                     .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, truck.truckType().name());
+                ps.setString(1, truck.truckType());
                 ps.setString(2, truck.licenseNumber());
                 ps.setString(3, truck.model());
                 ps.setFloat(4, truck.netWeight());
@@ -41,7 +40,7 @@ public class SqliteTruckDAO implements TruckDAO {
             String sql = "UPDATE trucks SET truck_type = ?, model = ?, net_weight = ?, max_weight = ?, is_free = ? " +
                     "WHERE truck_id = ?";
             try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-                ps.setString(1, truck.truckType().name());
+                ps.setString(1, truck.truckType());
                 ps.setString(2, truck.model());
                 ps.setFloat(3, truck.netWeight());
                 ps.setFloat(4, truck.maxWeight());
@@ -52,6 +51,19 @@ public class SqliteTruckDAO implements TruckDAO {
             }
         }
     }
+
+
+
+    @Override
+    public void setAvailability(int truckId, boolean status) throws SQLException{
+        String sql = "UPDATE trucks SET is_free = ? WHERE truckId = ?";
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setBoolean(1, status);
+            ps.setInt(2, truckId);
+            ps.executeUpdate();
+        }
+    }
+
 
 
     @Override
@@ -65,7 +77,7 @@ public class SqliteTruckDAO implements TruckDAO {
                 return rs.next()
                         ? Optional.of(new TruckDTO(
                         rs.getInt("truck_id"),
-                        TruckType.valueOf(rs.getString("truck_type")),
+                        rs.getString("truck_type"),
                         rs.getString("license_number"),
                         rs.getString("model"),
                         rs.getFloat("net_weight"),
@@ -79,6 +91,29 @@ public class SqliteTruckDAO implements TruckDAO {
     }
 
     @Override
+    public Optional<TruckDTO> findTruckById(int truckId) throws SQLException {
+        String sql = "SELECT truck_id, truck_type, license_number, model, net_weight, max_weight, is_free " +
+                "FROM trucks WHERE truck_id = ?";
+
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, truckId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next()
+                        ? Optional.of(new TruckDTO(
+                        rs.getInt("truck_id"),
+                        rs.getString("truck_type"),
+                        rs.getString("license_number"),
+                        rs.getString("model"),
+                        rs.getFloat("net_weight"),
+                        rs.getFloat("max_weight"),
+                        rs.getBoolean("is_free")
+                ))
+                        : Optional.empty();
+
+            }
+        }    }
+
+    @Override
     public ArrayList<TruckDTO> findAll() throws SQLException {
         String sql = "SELECT truck_id, truck_type, license_number, model, net_weight, max_weight, is_free " +
                 "FROM trucks ORDER BY truck_id";
@@ -90,7 +125,7 @@ public class SqliteTruckDAO implements TruckDAO {
             while (rs.next()) {
                 trucks.add(new TruckDTO(
                         rs.getInt("truck_id"),
-                        TruckType.valueOf(rs.getString("truck_type")),
+                        rs.getString("truck_type"),
                         rs.getString("license_number"),
                         rs.getString("model"),
                         rs.getFloat("net_weight"),
@@ -104,11 +139,11 @@ public class SqliteTruckDAO implements TruckDAO {
     }
 
     @Override
-    public void delete(String license) throws SQLException {
-        String sql = "DELETE FROM trucks WHERE license_number = ?";
+    public void delete(int truckId) throws SQLException {
+        String sql = "DELETE FROM trucks WHERE truck_id = ?";
 
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, license);
+            ps.setInt(1, truckId);
             ps.executeUpdate();
         }
     }

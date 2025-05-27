@@ -17,7 +17,7 @@ public class Zone {
         sitesRelated.add(site);
     }
 
-    public void removeSite(Site site) {
+    public void removeSiteFromZone(Site site) {
         sitesRelated.remove(site);
     }
 
@@ -51,7 +51,4 @@ public class Zone {
         return sb.toString();
     }
 
-    public void removeSiteFromZone(Site site) {
-        sitesRelated.remove(site);
-    }
 }

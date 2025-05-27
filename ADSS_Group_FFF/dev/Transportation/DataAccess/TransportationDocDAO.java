@@ -1,4 +1,4 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.TransportationDocDTO;
 

@@ -1,4 +1,4 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.SiteDTO;
 import Util.Database;
@@ -98,10 +98,10 @@ public class SqliteSiteDAO implements SiteDAO {
     }
 
     @Override
-    public void delete(SiteDTO site) throws SQLException {
+    public void delete(int siteId) throws SQLException {
         String sql = "DELETE FROM sites WHERE site_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setInt(1, site.siteId());
+            ps.setInt(1, siteId);
             ps.executeUpdate();
         }
     }

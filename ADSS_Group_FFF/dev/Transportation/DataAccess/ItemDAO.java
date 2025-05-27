@@ -1,4 +1,4 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.ItemDTO;
 
@@ -11,5 +11,5 @@ public interface ItemDAO {
     Optional<ItemDTO> findById(int id) throws SQLException;
     Optional<ItemDTO> findByName(String name) throws SQLException;
     ItemDTO insert(ItemDTO item) throws SQLException;
-    void delete(ItemDTO item) throws SQLException;
+    void delete(int itemId) throws SQLException;
 }

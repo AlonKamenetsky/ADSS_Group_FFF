@@ -1,4 +1,4 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.ItemDTO;
 import Util.Database;
@@ -82,10 +82,10 @@ public class SqliteItemDAO implements ItemDAO {
     }
 
     @Override
-    public void delete(ItemDTO item) throws SQLException {
+    public void delete(int itemId) throws SQLException {
         String sql = "DELETE FROM items WHERE item_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setInt(1, item.itemId());
+            ps.setInt(1, itemId);
             ps.executeUpdate();
         }
     }

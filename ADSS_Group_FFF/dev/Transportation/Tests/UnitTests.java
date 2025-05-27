@@ -1,3 +1,5 @@
+package Transportation.Tests;
+
 import Transportation.Domain.*;
 
 import org.junit.jupiter.api.Test;

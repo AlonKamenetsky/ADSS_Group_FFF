@@ -1,5 +1,7 @@
 package Transportation.Domain;
 
+import Transportation.DTO.TruckDTO;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -57,7 +59,7 @@ public class TaskManager {
     }
 
 
-    public void     addDocToTask(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite, HashMap<String, Integer> itemsChosen) {
+    public void addDocToTask(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite, HashMap<String, Integer> itemsChosen) {
         TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
         Site destinationSite1 = siteManager.getSiteByAddress(destinationSite.toLowerCase());
         TransportationDoc newDoc = new TransportationDoc(currTask.getTaskId(), nextDocId++, destinationSite1);
@@ -77,7 +79,7 @@ public class TaskManager {
 
     public boolean assignDriverAndTruckToTask(String taskDate, String taskDeparture, String taskSourceSite) {
         TransportationTask task = getTask(taskDate, taskDeparture, taskSourceSite);
-        Truck nextAvailableTruck = truckManager.getNextTruckAvailable(task.getWeightBeforeLeaving());
+        TruckDTO nextAvailableTruck = truckManager.getNextTruckAvailable(task.getWeightBeforeLeaving());
         if (nextAvailableTruck == null) {
             return false;
         }

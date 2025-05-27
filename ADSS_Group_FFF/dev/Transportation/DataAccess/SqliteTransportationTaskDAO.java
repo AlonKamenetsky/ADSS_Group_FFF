@@ -1,4 +1,4 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.TransportationTaskDTO;
 import Util.Database;
@@ -67,10 +67,10 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     }
 
     @Override
-    public void delete(String license) throws SQLException {
-        String sql = "DELETE FROM transportation_tasks WHERE truck_license_number = ?";
+    public void delete(int taskId) throws SQLException {
+        String sql = "DELETE FROM transportation_tasks WHERE taskId = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, license);
+            ps.setInt(1, taskId);
             ps.executeUpdate();
         }
     }

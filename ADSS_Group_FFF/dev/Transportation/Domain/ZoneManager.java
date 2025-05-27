@@ -1,80 +1,62 @@
 package Transportation.Domain;
 
+import Transportation.DTO.ZoneDTO;
+import Transportation.Domain.Repositories.ZoneRepository;
+import Transportation.Domain.Repositories.ZoneRepositoryImpli;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class ZoneManager {
-    private final HashMap<Integer, Zone> allZones;
-    private int nextZoneId = 1;
-
+    private final ZoneRepository zoneRepo;
 
     public ZoneManager() {
-        allZones = new HashMap<>();
+        this.zoneRepo = new ZoneRepositoryImpli();
     }
 
-    public void addZone(String _zoneName) {
-        if (_zoneName == null) {
-            throw new NullPointerException("Zone name cannot be null");
-        }
-        int _zoneId = nextZoneId++;
-        Zone newZone = new Zone(_zoneId, _zoneName.toLowerCase());
-        allZones.putIfAbsent(_zoneId, newZone);
+    public ZoneDTO addZone(String _zoneName) throws SQLException {
+        return zoneRepo.addZone(_zoneName);
     }
 
-    public void removeZone(String _zoneName) {
-        Zone z = getZoneByName(_zoneName.toLowerCase());
-        allZones.remove(z.getZoneId());
+    public void removeZone(int zoneId) throws SQLException {
+        zoneRepo.deleteZone(zoneId);
     }
 
-    public Zone getZoneById(int zoneId) {
-        return allZones.get(zoneId);
+    public Optional<ZoneDTO> getZoneById(int zoneId) throws SQLException {
+        return zoneRepo.findZone(zoneId);
     }
 
-    public String getSitesByZone(String zoneName) {
-        Zone currZone = getZoneByName(zoneName.toLowerCase());
-        if (currZone == null) {
-            throw new NoSuchElementException();
-        }
-        return currZone.toString();
+    public void modifyZone(ZoneDTO updatedZone) throws SQLException {
+        zoneRepo.updateZone(updatedZone);
     }
 
-    public Zone getZoneByName(String zoneName) throws NoSuchElementException {
-        for (Zone zone : allZones.values()) {
-            if (zone.getName().equalsIgnoreCase(zoneName)) {
-                return zone;
-            }
-        }
-        throw new NoSuchElementException();
+    // just use DTO.isEmpty()
+//    public boolean doesZoneExist(String zoneName) {
+//        int zoneId = getZoneByName(zoneName.toLowerCase()).getZoneId();
+//        return allZones.containsKey(zoneId);
+//    }
+
+    public List<ZoneDTO> getAllZones() throws SQLException {
+        return zoneRepo.getAllZones();
     }
 
-    public void modifyZone(String _zoneName, String newZoneName) throws NoSuchElementException {
-        Zone z = getZoneByName(_zoneName);
-        if (z != null) {
-            getZoneById(z.getZoneId()).setZoneName(newZoneName.toLowerCase());
-        } else {
-            throw new NoSuchElementException();
-        }
-    }
-
-    public boolean doesZoneExist(String zoneName) {
-        int zoneId = getZoneByName(zoneName.toLowerCase()).getZoneId();
-        return allZones.containsKey(zoneId);
-    }
-
-    public List<Zone> getAllZones() {
-        return new ArrayList<>(allZones.values());
-    }
-
-    public String getAllZonesString() {
-        List<Zone> allZones = getAllZones();
+    // might not need, check later. can use DTO attributes and print simply.
+    public String getAllZonesString() throws SQLException {
+        List<ZoneDTO> allZones = getAllZones();
         if (allZones.isEmpty()) return "No zones available.";
 
         StringBuilder sb = new StringBuilder("All Zones:\n");
-        for (Zone z : allZones) {
+        for (ZoneDTO z : allZones) {
             sb.append(z).append("\n----------------------\n");
         }
         return sb.toString();
+    }
+
+    // new methods for part B
+    public Optional<ZoneDTO> findZoneByName(String name) throws SQLException {
+        return zoneRepo.findByZoneName(name);
     }
 }

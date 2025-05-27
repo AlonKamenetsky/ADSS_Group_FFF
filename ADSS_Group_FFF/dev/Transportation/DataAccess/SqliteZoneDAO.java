@@ -1,4 +1,4 @@
-package Transportation.DataAccess.DAO;
+package Transportation.DataAccess;
 
 import Transportation.DTO.ZoneDTO;
 import Util.Database;
@@ -12,34 +12,34 @@ public class SqliteZoneDAO implements ZoneDAO {
 
     @Override
     public ZoneDTO insert(ZoneDTO zone) throws SQLException {
-        if (zone.zoneId() == null) {
-            String sql = "INSERT INTO zones(zone_name) VALUES (?)";
-            try (PreparedStatement ps = Database.getConnection()
-                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, zone.zoneName());
-                ps.executeUpdate();
-                try (ResultSet keys = ps.getGeneratedKeys()) {
-                    keys.next();
-                    return new ZoneDTO(keys.getInt(1), zone.zoneName(), new ArrayList<>());
-                }
-            }
-        } else {
-            String sql = "UPDATE zones SET zone_name = ? WHERE zone_id = ?";
-            try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-                ps.setString(1, zone.zoneName());
-                ps.setInt(2, zone.zoneId());
-                ps.executeUpdate();
-                return zone;
+        String sql = "INSERT INTO zones(zone_name) VALUES (?)";
+        try (PreparedStatement ps = Database.getConnection()
+                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, zone.zoneName());
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                keys.next();
+                return new ZoneDTO(keys.getInt(1), zone.zoneName(), new ArrayList<>());
             }
         }
     }
 
     @Override
-    public void delete(ZoneDTO zone) throws SQLException {
+    public void delete(int zoneId) throws SQLException {
         String sql = "DELETE FROM zones WHERE zone_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setInt(1, zone.zoneId());
+            ps.setInt(1, zoneId);
             ps.executeUpdate();
+        }
+    }
+
+    public ZoneDTO update(ZoneDTO zone) throws SQLException {
+        String sql = "UPDATE zones SET zone_name = ? WHERE zone_id = ?";
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setString(1, zone.zoneName());
+            ps.setInt(2, zone.zoneId());
+            ps.executeUpdate();
+            return zone;
         }
     }
 
@@ -99,6 +99,7 @@ public class SqliteZoneDAO implements ZoneDAO {
 
         return list;
     }
+
 
     // helper method retrieving sites by zone
     private ArrayList<String> getSitesForZone(int zoneId) throws SQLException {
