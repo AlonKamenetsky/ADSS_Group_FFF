@@ -11,6 +11,7 @@ import java.util.Optional;
 public class SiteRepositoryImpli implements SiteRepository {
     private final SiteDAO siteDAO;
 
+
     public SiteRepositoryImpli() {
         this.siteDAO = new SqliteSiteDAO();
     }

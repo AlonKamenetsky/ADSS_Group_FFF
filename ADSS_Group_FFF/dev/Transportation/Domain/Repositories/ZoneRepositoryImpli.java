@@ -18,13 +18,19 @@ public class ZoneRepositoryImpli implements ZoneRepository {
     }
 
     @Override
-    public ZoneDTO addZone(String zoneName, ArrayList<String> sites) throws SQLException {
-       return zoneDAO.insert(new ZoneDTO(null,zoneName,sites));
+    public ZoneDTO addZone(String zoneName) throws SQLException {
+       return zoneDAO.insert(new ZoneDTO(null,zoneName, new ArrayList<>()));
     }
+
 
     @Override
     public void deleteZone(int zoneId) throws SQLException {
         zoneDAO.delete(zoneId);
+    }
+
+    @Override
+    public ZoneDTO updateZone(ZoneDTO updatedZone) throws SQLException {
+        zoneDAO.update(updatedZone);
     }
 
     @Override
