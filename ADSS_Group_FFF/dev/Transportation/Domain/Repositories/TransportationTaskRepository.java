@@ -4,7 +4,6 @@ import Transportation.DTO.TransportationTaskDTO;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -18,5 +17,4 @@ public interface TransportationTaskRepository {
     List<TransportationTaskDTO> findAllTasks() throws SQLException;
     List<TransportationTaskDTO> findTaskBySourceAddress(String sourceAddress) throws SQLException;
     List<TransportationTaskDTO> findTaskByDriverId(String driverId) throws SQLException;
-
 }

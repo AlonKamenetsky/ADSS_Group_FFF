@@ -1,8 +1,8 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.TruckDTO;
-import Transportation.DataAccess.DAO.SqliteTruckDAO;
-import Transportation.DataAccess.DAO.TruckDAO;
+import Transportation.DataAccess.SqliteTruckDAO;
+import Transportation.DataAccess.TruckDAO;
 import Transportation.Domain.TruckType;
 
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class TruckRepositoryImpli implements TruckRepository {
-    private TruckDAO truckDAO;
+    private final TruckDAO truckDAO;
     public TruckRepositoryImpli() {
         this.truckDAO = new SqliteTruckDAO();
     }
@@ -31,7 +31,7 @@ public class TruckRepositoryImpli implements TruckRepository {
     }
 
     @Override
-    public void deleteTruck(TruckDTO truckDTO) throws SQLException {
-        truckDAO.delete(truckDTO);
+    public void deleteTruck(int truckId) throws SQLException {
+        truckDAO.delete(truckId);
     }
 }

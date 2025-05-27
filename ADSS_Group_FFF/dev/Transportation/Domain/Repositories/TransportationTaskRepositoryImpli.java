@@ -1,15 +1,12 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.TransportationTaskDTO;
-import Transportation.DataAccess.DAO.SqliteTransportationTaskDAO;
-import Transportation.DataAccess.DAO.SqliteTruckDAO;
-import Transportation.DataAccess.DAO.TransportationTaskDAO;
-import Transportation.DataAccess.DAO.TruckDAO;
+import Transportation.DataAccess.SqliteTransportationTaskDAO;
+import Transportation.DataAccess.TransportationTaskDAO;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

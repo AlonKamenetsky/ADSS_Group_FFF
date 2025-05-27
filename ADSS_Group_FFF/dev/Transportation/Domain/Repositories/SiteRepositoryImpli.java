@@ -21,8 +21,8 @@ public class SiteRepositoryImpli implements SiteRepository {
     }
 
     @Override
-    public void deleteSite(SiteDTO site) throws SQLException {
-        siteDAO.delete(site);
+    public void deleteSite(int siteId) throws SQLException {
+        siteDAO.delete(siteId);
     }
 
     @Override

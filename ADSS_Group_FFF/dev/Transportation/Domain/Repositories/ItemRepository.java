@@ -10,5 +10,5 @@ public interface ItemRepository {
     ItemDTO addItem(String name, float weight)  throws SQLException;
     List<ItemDTO> getAllItems() throws SQLException;
     Optional<ItemDTO> findItem(int id) throws SQLException;
-    void delete(ItemDTO itemDTO) throws SQLException;
+    void delete(int itemId) throws SQLException;
 }

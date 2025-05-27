@@ -1,22 +1,20 @@
 package Transportation.Domain.Repositories;
 
-import Transportation.DataAccess.DAO.SqliteZoneDAO;
-import Transportation.Domain.Zone;
+import Transportation.DataAccess.SqliteZoneDAO;
 import Transportation.DTO.ZoneDTO;
-import Transportation.DataAccess.DAO.ZoneDAO;
+import Transportation.DataAccess.ZoneDAO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ZoneRepositoryImpi implements ZoneRepository {
+public class ZoneRepositoryImpli implements ZoneRepository {
 
     private final ZoneDAO zoneDAO;
 
-    public ZoneRepositoryImpi() {
+    public ZoneRepositoryImpli() {
         this.zoneDAO = new SqliteZoneDAO();
-
     }
 
     @Override
@@ -25,8 +23,8 @@ public class ZoneRepositoryImpi implements ZoneRepository {
     }
 
     @Override
-    public void deleteZone(ZoneDTO zone) throws SQLException {
-        zoneDAO.delete(zone);
+    public void deleteZone(int zoneId) throws SQLException {
+        zoneDAO.delete(zoneId);
     }
 
     @Override

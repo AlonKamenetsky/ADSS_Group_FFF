@@ -9,9 +9,8 @@ import java.util.Optional;
 
 public interface ZoneRepository {
     ZoneDTO addZone(String zoneName, ArrayList<String> sites) throws SQLException;
-    void deleteZone(ZoneDTO zone) throws SQLException;
+    void deleteZone(int zoneId) throws SQLException;
     List<ZoneDTO> getAllZones() throws SQLException;
     Optional<ZoneDTO> findZone(int id) throws SQLException;
     Optional<ZoneDTO> findByZoneName(String name) throws SQLException;
-
 }

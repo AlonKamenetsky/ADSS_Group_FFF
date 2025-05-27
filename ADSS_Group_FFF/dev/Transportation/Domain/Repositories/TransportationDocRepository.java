@@ -1,8 +1,6 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.TransportationDocDTO;
-import Transportation.Domain.ItemsList;
-import Transportation.Domain.Site;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -15,5 +13,4 @@ public interface TransportationDocRepository {
     Optional<TransportationDocDTO> findDoc(int docId) throws SQLException;
     List<TransportationDocDTO> findDocByTaskId(int taskId) throws SQLException;
     //List<TransportationDocDTO> findDocByDestinationAddress(String address) throws SQLException;
-
 }

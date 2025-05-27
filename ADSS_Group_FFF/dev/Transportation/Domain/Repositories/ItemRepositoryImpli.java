@@ -32,8 +32,7 @@ public class ItemRepositoryImpli implements ItemRepository {
     }
 
     @Override
-    public void delete(ItemDTO itemDTO) throws SQLException {
-        itemDAO.delete(itemDTO);
-
+    public void delete(int itemId) throws SQLException {
+        itemDAO.delete(itemId);
     }
 }

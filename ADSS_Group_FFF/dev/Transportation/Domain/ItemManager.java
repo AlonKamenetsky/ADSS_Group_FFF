@@ -1,14 +1,11 @@
 package Transportation.Domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import Transportation.Domain.Repositories.ItemRepository;
 import Transportation.DTO.ItemDTO;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 public class ItemManager {
     //private final HashMap<Integer, Item> allItems;
@@ -60,9 +57,9 @@ public class ItemManager {
 
 
 
-    public void removeItem(String itemName) {
+    public void removeItem(int itemId) {
         try {
-            itemRepository.delete(getItemByName(itemName));
+            itemRepository.delete(itemId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
