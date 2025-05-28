@@ -1,5 +1,8 @@
 package Transportation.Domain;
 
+import Transportation.DTO.ItemDTO;
+import Transportation.DTO.TransportationDocDTO;
+
 public class TransportationDoc {
     private final int docId;
     private final int taskId;
@@ -36,6 +39,7 @@ public class TransportationDoc {
     public void removeItemFromDocList(Item removeItem) {
         docItems.removeItemFromList(removeItem);
     }
+
 
     @Override
     public String toString() {

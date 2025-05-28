@@ -1,7 +1,12 @@
 package Transportation.Domain;
 
+import Transportation.DTO.ItemDTO;
+import Transportation.DTO.TransportationDocDTO;
 import Transportation.DTO.TruckDTO;
+import Transportation.Domain.Repositories.TransportationDocRepository;
+import Transportation.Domain.Repositories.TransportationTaskRepository;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -9,35 +14,35 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TaskManager {
-    private final HashMap<Integer, TransportationTask> allTasks;
     private final SiteManager siteManager;
     private final DriverManager driverManager;
     private final TruckManager truckManager;
     private final ItemManager itemManager;
-    private int nextTaskId = 1;
-    private int nextDocId = 1;
+    private final TransportationDocRepository docRepository;
+    private final TransportationTaskRepository taskRepository;
 
-    public TaskManager(SiteManager siteManager1, DriverManager driverManager1, TruckManager truckManager1, ItemManager itemManager1) {
-        itemManager = itemManager1;
-        siteManager = siteManager1;
-        driverManager = driverManager1;
-        truckManager = truckManager1;
-        allTasks = new HashMap<>();
+    public TaskManager(SiteManager siteManager1, DriverManager driverManager1, TruckManager truckManager1, ItemManager itemManager1,TransportationDocRepository docRepository1, TransportationTaskRepository taskRepository1) {
+        this.docRepository = docRepository1;
+        this taskRepository = taskRepository1;
+        this.itemManager = itemManager1;
+        this.siteManager = siteManager1;
+        this.driverManager = driverManager1;
+        this.truckManager = truckManager1;
 
     }
 
-    public void addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException {
-        int _taskId = nextTaskId++;
+    public void addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException, SQLException {
         Site sourceSite = siteManager.getSiteByAddress(taskSourceSite.toLowerCase());
         if (sourceSite == null) {
             throw new NoSuchElementException();
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date taskDate = sdf.parse(_taskDate);
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime departureTime = LocalTime.parse(_departureTime, timeFormatter);
-        TransportationTask newTask = new TransportationTask(_taskId, taskDate, departureTime, sourceSite);
-        allTasks.put(_taskId, newTask);
+        taskRepository.createTask(_taskDate,_departureTime,taskSourceSite);
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//        Date taskDate = sdf.parse(_taskDate);
+//        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+//        LocalTime departureTime = LocalTime.parse(_departureTime, timeFormatter);
+//        TransportationTask newTask = new TransportationTask(_taskId, taskDate, departureTime, sourceSite);
+//        allTasks.put(_taskId, newTask);
     }
 
     public void removeTask(String taskDate, String taskDeparture, String taskSourceSite) {
@@ -59,18 +64,44 @@ public class TaskManager {
     }
 
 
-    public void addDocToTask(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite, HashMap<String, Integer> itemsChosen) {
+
+
+    public void addDocToTask(String taskDate, String taskDeparture, String taskSourceSite,
+                             String destinationSite, List<DocItemsInfo> itemsChosen) throws SQLException {
         TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
-        Site destinationSite1 = siteManager.getSiteByAddress(destinationSite.toLowerCase());
-        TransportationDoc newDoc = new TransportationDoc(currTask.getTaskId(), nextDocId++, destinationSite1);
-        for (Map.Entry<String, Integer> entry : itemsChosen.entrySet()) {
-            String itemName = entry.getKey();
-            int quantity = entry.getValue();
-            Item itemToAdd = itemManager.getItemByName(itemName);
-            newDoc.addItem(itemToAdd, quantity);
+
+        float totalWeight = 0;
+        for (DocItemsInfo itemInfo : itemsChosen) {
+            Item item = Item.fromDTO(itemManager.getItemById(itemInfo.getItemId()));
+            if (item != null) {
+                totalWeight += item.getWeight() * itemInfo.getQuantity();
+            }
         }
-        currTask.addDoc(newDoc);
+
+        TransportationDocDTO newDocDTO = TransportationDocRepository.createDoc(
+                currTask.getTaskId(),
+                destinationSite,
+                totalWeight
+        );
+
+        Site destSite = siteManager.getSiteByAddress(destinationSite.toLowerCase());
+        TransportationDoc doc = new TransportationDoc(
+                newDocDTO.taskId(),
+                newDocDTO.docId(),
+                destSite
+        );
+
+        for (DocItemsInfo itemInfo : itemsChosen) {
+            Item item = Item.fromDTO(itemManager.getItemById(itemInfo.getItemId()));
+            if (item != null) {
+                doc.addItem(item, itemInfo.getQuantity());
+            }
+        }
+
+        currTask.addDoc(doc);
     }
+
+
 
     public void updateWeightForTask(String taskDate, String taskDeparture, String taskSourceSite) {
         TransportationTask task1 = getTask(taskDate, taskDeparture, taskSourceSite);

@@ -1,7 +1,6 @@
 package Transportation.Presentation;
 
 import Transportation.Service.TruckService;
-
 import javax.management.InstanceAlreadyExistsException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
