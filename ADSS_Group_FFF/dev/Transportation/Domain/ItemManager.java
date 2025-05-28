@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import Transportation.Domain.Repositories.ItemRepository;
 import Transportation.DTO.ItemDTO;
+import Transportation.Domain.Repositories.ItemRepositoryImpli;
 
 import java.sql.SQLException;
 
 public class ItemManager {
-    // private final HashMap<Integer, Item> allItems;
-    //private int nextItemId = 1;
     private final ItemRepository itemRepository;
 
-    public ItemManager(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
+    public ItemManager() {
+        this.itemRepository = new ItemRepositoryImpli();
     }
 
     public void addItem(String itemName, float itemWeight) {
