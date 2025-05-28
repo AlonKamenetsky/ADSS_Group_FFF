@@ -4,8 +4,8 @@ import Transportation.DTO.ZoneDTO;
 import Transportation.Domain.Repositories.ZoneRepository;
 import Transportation.Domain.Repositories.ZoneRepositoryImpli;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,12 +17,22 @@ public class ZoneManager {
         this.zoneRepo = new ZoneRepositoryImpli();
     }
 
-    public ZoneDTO addZone(String _zoneName) throws SQLException {
-        return zoneRepo.addZone(_zoneName);
+    public ZoneDTO addZone(String _zoneName) throws SQLException, InstanceAlreadyExistsException {
+        if(findZoneByName(_zoneName).isPresent()) {
+            throw new InstanceAlreadyExistsException();
+        }
+        else {
+            return zoneRepo.addZone(_zoneName);
+        }
     }
 
-    public void removeZone(int zoneId) throws SQLException {
-        zoneRepo.deleteZone(zoneId);
+    public void removeZone(int zoneId) throws SQLException, NoSuchElementException {
+        if (getZoneById(zoneId).isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        else {
+            zoneRepo.deleteZone(zoneId);
+        }
     }
 
     public Optional<ZoneDTO> getZoneById(int zoneId) throws SQLException {

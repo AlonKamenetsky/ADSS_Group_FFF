@@ -30,7 +30,7 @@ public class ZoneRepositoryImpli implements ZoneRepository {
 
     @Override
     public ZoneDTO updateZone(ZoneDTO updatedZone) throws SQLException {
-        zoneDAO.update(updatedZone);
+        return zoneDAO.update(updatedZone);
     }
 
     @Override

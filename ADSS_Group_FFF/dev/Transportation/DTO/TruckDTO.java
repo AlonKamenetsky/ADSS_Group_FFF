@@ -1,7 +1,5 @@
 package Transportation.DTO;
 
-import Transportation.Domain.TruckType;
-
 public record TruckDTO(
         Integer truckId,
         String  truckType,

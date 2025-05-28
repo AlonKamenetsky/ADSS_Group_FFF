@@ -2,6 +2,7 @@ package Transportation.Domain;
 
 import Transportation.DTO.TruckDTO;
 import Transportation.Domain.Repositories.TruckRepository;
+import Transportation.Domain.Repositories.TruckRepositoryImpli;
 
 import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
@@ -11,65 +12,47 @@ public class TruckManager {
 
     private final TruckRepository truckRepository;
 
-    public TruckManager(TruckRepository truckRepository) {
-        this.truckRepository = truckRepository;
-    };
+    public TruckManager() {
+        this.truckRepository = new TruckRepositoryImpli();
+    }
 
 
-    public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws IllegalArgumentException, NullPointerException, InstanceAlreadyExistsException {
-        if (truckType == null || licenseNumber == null || model == null) {
-            throw new NullPointerException("Missed Parameters to added Truck");
-        }
-        try {
-            truckRepository.addTruck(truckType,licenseNumber,model,netWeight,maxWeight,true);
-        } catch (NoSuchElementException | SQLException e) {
-            e.printStackTrace();
+    public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws SQLException, InstanceAlreadyExistsException {
+        if (getTruckById(getTruckIdByLicense(licenseNumber)).isEmpty()) {
+            truckRepository.addTruck(truckType, licenseNumber, model, netWeight, maxWeight, true);
+        } else {
+            throw new InstanceAlreadyExistsException();
         }
     }
 
-    public void removeTruck(int truckId) throws SQLException{
-        try {
+    public void removeTruck(int truckId) throws SQLException, NoSuchElementException {
+        if (getTruckById(truckId).isEmpty()) {
+            throw new NoSuchElementException();
+        } else {
             truckRepository.deleteTruck(truckId);
         }
-        catch (NoSuchElementException e) {
-            e.printStackTrace();
-        }
     }
 
 
-
-    public List<TruckDTO> getAllTrucks() {
-        try {
-            return truckRepository.getAllTrucks();
-        }   catch (SQLException e) {
-            e.printStackTrace();
-            // create new list
-            return new ArrayList<>();
-        }
+    public List<TruckDTO> getAllTrucks() throws SQLException {
+        return truckRepository.getAllTrucks();
     }
 
 
-    public boolean doesTruckExist(int truckId) throws SQLException{
-        try {
-            return truckRepository.findTruckById(truckId).isPresent();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean doesTruckExist(int truckId) throws SQLException {
+        return truckRepository.findTruckById(truckId).isPresent();
     }
 
-    public void setTruckAvailability(int truckId, boolean status) throws SQLException {
-        try {
-            Optional<TruckDTO> truckToChange = truckRepository.findTruckById(truckId);
-            if (truckToChange.isPresent()) {
+    public void setTruckAvailability(int truckId, boolean status) throws SQLException, NoSuchElementException {
+        Optional<TruckDTO> truckToChange = truckRepository.findTruckById(truckId);
+        if (truckToChange.isPresent()) {
             truckRepository.updateAvailability(truckId, status);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
+        } else {
+            throw new NoSuchElementException();
         }
     }
 
+    // fix exception thrown to pass to service
     public String getAllTrucksString() {
         try {
             List<TruckDTO> trucks = truckRepository.getAllTrucks();
@@ -90,26 +73,26 @@ public class TruckManager {
         }
     }
 
-    public TruckDTO getNextTruckAvailable(float weight) {
+    public Optional<TruckDTO> getNextTruckAvailable(float weight) throws SQLException {
         for (TruckDTO t : getAllTrucks()) {
             if (t.isFree() && weight < t.maxWeight()) {
-                return t;
+                return Optional.of(t);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    public TruckDTO getTruckById(int truckId) throws SQLException {
-        return truckRepository.findTruckById(truckId)
-                .orElseThrow(() -> new NoSuchElementException("Truck not found"));
+    public Optional<TruckDTO> getTruckById(int truckId) throws SQLException {
+        return truckRepository.findTruckById(truckId);
     }
 
-    public int getTruckIdByLicense(String licenseNumber) {
-        try {
-            return truckRepository.findTruckByLicense(licenseNumber).get().truckId();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Database error while retrieving truck by license", e);
+    public int getTruckIdByLicense(String licenseNumber) throws SQLException, NoSuchElementException {
+        Optional<TruckDTO> truck = truckRepository.findTruckByLicense(licenseNumber);
+        if (truck.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        else {
+            return truck.get().truckId();
         }
     }
 }
