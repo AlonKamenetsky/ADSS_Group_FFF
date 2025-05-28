@@ -97,13 +97,13 @@ public class SupplierService {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
-        return this.supplierController.registerNewOrder(supplierId, dataList, creationDate, deliveryDate);
+    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+        return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
     }
 
-    public boolean registerNewScheduledOrder(int supplierId, int day, ArrayList<int[]> dataList) {
+    public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
         WeekDay d = WeekDay.values()[day - 1];
-        return this.supplierController.registerNewScheduledOrder(supplierId, d, dataList);
+        return this.supplierController.registerNewScheduledOrder(d, dataList);
     }
 
     public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){

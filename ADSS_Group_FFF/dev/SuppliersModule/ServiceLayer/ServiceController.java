@@ -98,7 +98,6 @@ public class ServiceController {
 
     public boolean updateProduct(int productID, String productName, String productCompanyName) {
         return this.productService.updateProduct(productID, productName, productCompanyName);
-
     }
 
     public boolean deleteProduct(int productID) {
@@ -184,20 +183,20 @@ public class ServiceController {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
+    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
         Date deliveryDateAsDate = this.validateOrderDated(deliveryDate);
         if (deliveryDateAsDate == null)
             return false;
         if (deliveryDateAsDate.before(creationDate))
             return false;
-        return this.supplierService.registerNewOrder(supplierId, dataList, creationDate, deliveryDateAsDate);
+        return this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate);
     }
 
-    public boolean registerNewScheduledOrder(int supplierId, int day, ArrayList<int[]> dataList) {
+    public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
         if (!validateDay(day))
             return false;
 
-        return this.supplierService.registerNewScheduledOrder(supplierId, day, dataList);
+        return this.supplierService.registerNewScheduledOrder(day, dataList);
     }
 
     public boolean deleteOrder(int orderID) {
