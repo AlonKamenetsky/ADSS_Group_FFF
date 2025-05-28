@@ -30,15 +30,6 @@ public class SupplierController {
         this.supplyContractController = new SupplyContractController();
 
         //this.ReadSuppliersFromCSVFile();
-        for (Supplier supplier : this.suppliersArrayList) {
-            for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(supplier.getSupplierId()))
-                supplier.addSupplierContract(supplyContract);
-
-            if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED) {
-                ((ScheduledSupplier) supplier).setSupplyDays(EnumSet.of(WeekDay.Sunday));
-                this.createScheduledOrder((ScheduledSupplier) supplier);
-            }
-        }
     }
 
     public void ReadDataFromCSVFiles() {
@@ -94,23 +85,6 @@ public class SupplierController {
         }
     }
 
-    private void createScheduledOrder(ScheduledSupplier supplier) {
-        ArrayList<SupplyContractProductData> supplyContractProductDataArrayList = supplier.supplierContracts.get(0).getSupplyContractProductData();
-
-        ArrayList<int[]> productsArray = new ArrayList<>();
-        for (SupplyContractProductData supplyContractProductData : supplyContractProductDataArrayList) {
-            int productID = supplyContractProductData.getProductID();
-
-            int[] data = { productID, new Random().nextInt(10) + 1 };
-            productsArray.add(data);
-        }
-
-        for (WeekDay day: supplier.getSupplyDays()) {
-            Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-            this.registerNewOrder(supplier.getSupplierId(), productsArray, date, ScheduledSupplier.getNearestWeekdayDate(day));
-        }
-    }
-
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
     public int registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod,
@@ -135,6 +109,30 @@ public class SupplierController {
                 return supplier;
 
         return null;
+    }
+
+    private Supplier getSupplierByProductsPrice(ArrayList<int[]> dataList) {
+        Supplier cheapestSupplier = null;
+        double cheapestPrice = 0;
+        for (Supplier supplier : this.suppliersArrayList) {
+            if (supplier.getSupplyMethod() != SupplyMethod.SCHEDULED)
+                continue;
+            ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();
+            ArrayList<OrderProductData> orderProductData = buildProductDataArray(dataList, supplyContracts);
+            if (supplyContracts == null || orderProductData == null)
+                continue;
+
+            double sum = 0;
+            for (OrderProductData productData : orderProductData)
+                sum += productData.getTotalPrice();
+
+            if (sum < cheapestPrice) {
+                cheapestSupplier = supplier;
+                cheapestPrice = sum;
+            }
+        }
+
+        return cheapestSupplier;
     }
 
     public boolean deleteSupplier(int supplierID) {
@@ -258,8 +256,7 @@ public class SupplierController {
         if (supplier == null)
             return null;
 
-        ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
-        return supplyContractArrayList;
+        return supplier.getSupplierContracts();
     }
 
     // ********** OUTPUT FUNCTIONS **********
@@ -298,10 +295,12 @@ public class SupplierController {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
-        Supplier supplier = this.getSupplierBySupplierID(supplierId);
+    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+        Supplier supplier = this.getSupplierByProductsPrice(dataList);
         if (supplier == null)
             return false;
+
+        int supplierId = supplier.getSupplierId();
 
         DeliveringMethod deliveringMethod = this.getSupplierDeliveringMethod(supplierId);
         ContactInfo contactInfo = this.getSupplierContactInfo(supplierId);
@@ -311,9 +310,9 @@ public class SupplierController {
         return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
     }
 
-    public boolean registerNewScheduledOrder(int supplierId, WeekDay day, ArrayList<int[]> dataList) {
-        Supplier supplier = this.getSupplierBySupplierID(supplierId);
-        if (supplier == null || supplier.getSupplyMethod() != SupplyMethod.SCHEDULED)
+    public boolean registerNewScheduledOrder(WeekDay day, ArrayList<int[]> dataList) {
+        Supplier supplier = this.getSupplierByProductsPrice(dataList);
+        if (supplier == null)
             return false;
 
         ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();

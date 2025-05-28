@@ -275,10 +275,6 @@ public class CLI {
     private void registerNewOrder() {
         ArrayList<int[]> dataArray = new ArrayList<>();
         Date today = new Date();
-        this.printAllSuppliers();
-        System.out.println("Which supplier you want to order from? Enter supplier ID");
-        int supplierId = readInt();
-        this.printSupplierContracts(supplierId);
 
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
@@ -292,7 +288,7 @@ public class CLI {
         }
         System.out.println("enter delivery date");
         String deliveryDate = sc.nextLine();
-        if (serviceController.registerNewOrder(supplierId, dataArray, today, deliveryDate)) {
+        if (serviceController.registerNewOrder(dataArray, today, deliveryDate)) {
             System.out.println("Order registered successfully.");
         } else {
             System.out.println("Error: Failed to register new order.");
@@ -301,12 +297,6 @@ public class CLI {
 
     private void registerNewScheduledOrder() {
         ArrayList<int[]> dataArray = new ArrayList<>();
-        Date today = new Date();
-        this.printAllSuppliers();
-        System.out.println("Which supplier you want to order from? Enter supplier ID");
-        int supplierId = readInt();
-        this.printSupplierContracts(supplierId);
-
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
             int productID = readInt();
@@ -320,7 +310,7 @@ public class CLI {
 
         System.out.println("enter regular day to be ordered");
         int deliveryDay = this.readInt();
-        if (serviceController.registerNewScheduledOrder(supplierId, deliveryDay ,dataArray)) {
+        if (serviceController.registerNewScheduledOrder(deliveryDay ,dataArray)) {
             System.out.println("Scheduled Order registered successfully.");
         } else {
             System.out.println("Error: Failed to register new order.");
