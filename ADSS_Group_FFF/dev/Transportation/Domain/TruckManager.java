@@ -52,25 +52,19 @@ public class TruckManager {
         }
     }
 
-    // fix exception thrown to pass to service
-    public String getAllTrucksString() {
-        try {
-            List<TruckDTO> trucks = truckRepository.getAllTrucks();
-            if (trucks.isEmpty()) return "No trucks available.";
+    public String getAllTrucksString() throws SQLException {
+        List<TruckDTO> trucks = truckRepository.getAllTrucks();
+        if (trucks.isEmpty()) return "No trucks available.";
 
-            StringBuilder sb = new StringBuilder("All Trucks:\n");
-            for (TruckDTO t : trucks) {
-                sb.append(t.licenseNumber())
-                        .append(" - ").append(t.truckType())
-                        .append(" MaxWeight: ").append(t.maxWeight())
-                        .append(" Available: ").append(t.isFree())
-                        .append("\n----------------------\n");
-            }
-            return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error retrieving trucks.";
+        StringBuilder sb = new StringBuilder("All Trucks:\n");
+        for (TruckDTO t : trucks) {
+            sb.append(t.licenseNumber())
+                    .append(" - ").append(t.truckType())
+                    .append(" MaxWeight: ").append(t.maxWeight())
+                    .append(" Available: ").append(t.isFree())
+                    .append("\n----------------------\n");
         }
+        return sb.toString();
     }
 
     public Optional<TruckDTO> getNextTruckAvailable(float weight) throws SQLException {
@@ -90,8 +84,7 @@ public class TruckManager {
         Optional<TruckDTO> truck = truckRepository.findTruckByLicense(licenseNumber);
         if (truck.isEmpty()) {
             throw new NoSuchElementException();
-        }
-        else {
+        } else {
             return truck.get().truckId();
         }
     }

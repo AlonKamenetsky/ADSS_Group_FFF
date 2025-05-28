@@ -1,17 +1,24 @@
 package Transportation.Presentation;
 
+import Transportation.DTO.SiteDTO;
 import Transportation.Service.SiteService;
+import Transportation.Service.SiteZoneService;
 
+import javax.management.InstanceAlreadyExistsException;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class SiteMenu {
     private final SiteService SitesHandler;
+    private final SiteZoneService siteZoneHandler;
     private final TManagerRoleMenu managerRoleMenu;
     private final Scanner input;
 
-    public SiteMenu(SiteService siteService, TManagerRoleMenu managerRoleMenu) {
-        SitesHandler = siteService;
+    public SiteMenu(TManagerRoleMenu managerRoleMenu) {
+        SitesHandler = new SiteService();
+        siteZoneHandler = new SiteZoneService();
         this.managerRoleMenu = managerRoleMenu;
         input = new Scanner(System.in);
     }
@@ -67,13 +74,36 @@ public class SiteMenu {
     }
 
     public void viewAllSites() {
-        System.out.println(SitesHandler.viewAllSites());
+        List<SiteDTO> allSites = SitesHandler.viewAllSites();
+        StringBuilder sb = new StringBuilder("All Sites:\n");
+
+        for (SiteDTO site : allSites) {
+            String zoneName = siteZoneHandler.getZoneNameBySite(site);
+            sb.append(String.format(
+                    "Site Address: %s\nContact: %s\nPhone: %s\nZone: %s\n----------------------\n",
+                    site.siteAddress(),
+                    site.contactName(),
+                    site.phoneNumber(),
+                    zoneName.toUpperCase()
+            ));
+        }
+
+        System.out.println(sb);
     }
 
 
     public void viewSiteByAddress() {
         System.out.println("Enter a site's address:");
-        System.out.println(SitesHandler.getSiteByAddress(input.nextLine()));
+        Optional<SiteDTO> site = SitesHandler.getSiteByAddress(input.nextLine());
+        if (site.isPresent()) {
+            String zoneName = siteZoneHandler.getZoneNameBySite(site.get());
+            System.out.printf(
+                    "Site Address: %s\nContact: %s\nPhone: %s\nZone: %s\n----------------------\n%n",
+                    site.get().siteAddress(),
+                    site.get().contactName(),
+                    site.get().phoneNumber(),
+                    zoneName.toUpperCase());
+        }
     }
 
     private void addSite() {
@@ -93,12 +123,15 @@ public class SiteMenu {
         System.out.println("Enter new site's zone:");
         String inputZone = input.nextLine();
         try {
-            SitesHandler.addSite(inputAddress, inputContactName, inputPhoneNumber, inputZone.toLowerCase());
-            System.out.println("Site added successfully.");
+            SitesHandler.addSite(inputAddress, inputContactName, inputPhoneNumber);
+            siteZoneHandler.addSiteToZone(inputAddress, inputZone);
+            System.out.println("Site added successfully and was mapped to " + inputZone.toUpperCase());
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         } catch (NoSuchElementException n) {
             System.out.println("Zone doesn't exist.");
+        } catch (InstanceAlreadyExistsException e) {
+            System.out.println("Site already exists");
         }
     }
 }

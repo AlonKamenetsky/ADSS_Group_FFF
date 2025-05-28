@@ -3,7 +3,6 @@ package Transportation.Presentation;
 import Transportation.Service.TruckService;
 
 import javax.management.InstanceAlreadyExistsException;
-import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -12,8 +11,8 @@ public class TruckMenu {
     private final TManagerRoleMenu managerRoleMenu;
     private final Scanner input;
 
-    public TruckMenu(TruckService truckService, TManagerRoleMenu managerRoleMenu) {
-        TrucksHandler = truckService;
+    public TruckMenu(TManagerRoleMenu managerRoleMenu) {
+        TrucksHandler = new TruckService();
         this.managerRoleMenu = managerRoleMenu;
         input = new Scanner(System.in);
     }
@@ -64,8 +63,8 @@ public class TruckMenu {
             System.out.println("Empty license number entered.");
         } catch (NoSuchElementException n) {
             System.out.println("Truck doesn't exist.");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -82,8 +81,8 @@ public class TruckMenu {
             }
         } catch (NoSuchElementException e) {
             System.out.println("Given truck doesn't exist.");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -112,20 +111,17 @@ public class TruckMenu {
         } catch (NumberFormatException e) {
             System.out.println("Not a valid weight");
             return;
-
         }
         try {
             TrucksHandler.AddTruck(inputTruckType, inputLicenseNumber, inputModel, inputNetWeight, inputMaxWeight);
             System.out.println("Truck added successfully.");
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-
         } catch (NullPointerException n) {
             System.out.println("One of the inputs you provided is empty.");
-        }
-        catch (InstanceAlreadyExistsException f) {
+        } catch (InstanceAlreadyExistsException f) {
             System.out.print("Truck with this license number already exists.\n");
             return;
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -134,19 +130,23 @@ public class TruckMenu {
     }
 
     public void viewAllTrucks() {
-        System.out.println(TrucksHandler.viewAllTrucks());
+        try {
+            System.out.println(TrucksHandler.viewAllTrucks());
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void viewTruckByLicenseNumber() {
         System.out.println("Enter a truck's license number:");
         try {
-            String answer = TrucksHandler.getTruckByLicenseNumber(input.nextLine());
-            System.out.println(answer);
+            System.out.println(TrucksHandler.getTruckByLicenseNumber(input.nextLine()));
         } catch (NullPointerException e) {
             System.out.println("Not a valid license number");
-        }
-        catch (NoSuchElementException n) {
+        } catch (NoSuchElementException n) {
             System.out.println("Truck doesn't exist.");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

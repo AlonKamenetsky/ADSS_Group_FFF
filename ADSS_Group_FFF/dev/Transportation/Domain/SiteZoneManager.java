@@ -1,45 +1,56 @@
 package Transportation.Domain;
 
 import Transportation.DTO.SiteDTO;
+import Transportation.DTO.ZoneDTO;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class SiteZoneManager {
     private final SiteManager siteManager;
     private final ZoneManager zoneManager;
 
-    public SiteZoneManager(SiteManager sm, ZoneManager zm) {
-        this.siteManager = sm;
-        this.zoneManager = zm;
+    public SiteZoneManager() {
+        this.siteManager = new SiteManager();
+        this.zoneManager = new ZoneManager();
     }
 
-    public void addSiteToZone(String siteAddress, String zoneName) throws NoSuchElementException {
-        Site site = siteManager.getSiteByAddress(siteAddress.toLowerCase());
-        Zone zone = zoneManager.getZoneByName(zoneName.toLowerCase());
-        if (site == null || zone == null) {
+    public SiteDTO mapSiteToZone(SiteDTO site, int zoneId) throws SQLException {
+        return siteManager.mapSiteToZone(site, zoneId);
+    }
+
+    public SiteDTO removeSiteFromZone(SiteDTO site) throws SQLException {
+        return siteManager.mapSiteToZone(site, -1);
+    }
+
+    public List<SiteDTO> getSitesByZone(int zoneId) throws SQLException {
+        return siteManager.findAllByZoneId(zoneId);
+    }
+
+    public ZoneDTO getZoneWithSites(String zoneName) throws SQLException, NoSuchElementException {
+        Optional<ZoneDTO> zone = zoneManager.findZoneByName(zoneName);
+        if (zone.isEmpty()) {
             throw new NoSuchElementException();
         }
-        if (siteManager.getSiteZone(siteAddress.toLowerCase()) != zone.getZoneId()) {
-            siteManager.modifySiteZone(siteAddress.toLowerCase(), zone.getZoneId());
+        List<SiteDTO> relatedSites = siteManager.findAllByZoneId(zone.get().zoneId());
+        ArrayList<String> siteAddresses = new ArrayList<>();
+        for (SiteDTO site : relatedSites) {
+            siteAddresses.add(site.siteAddress()); // Or site.contactName(), etc.
         }
-        zone.addSiteToZone(site);
+
+        return new ZoneDTO(zone.get().zoneId(), zone.get().zoneName(), siteAddresses);
     }
 
-    public void removeSiteFromZone(String siteAddress, String zoneName) {
-        Site site = siteManager.getSiteByAddress(siteAddress.toLowerCase());
-        Zone zone = zoneManager.getZoneByName(zoneName.toLowerCase());
-
-        if (site == null || zone == null) return;
-
-        Zone currZone = zoneManager.getZoneByName(zoneName.toLowerCase());
-        if (siteManager.getSiteZone(siteAddress.toLowerCase()) == currZone.getZoneId()) {
-            siteManager.modifySiteZone(siteAddress.toLowerCase(), -1);
-            currZone.removeSiteFromZone(site);
+    public String getZoneNameBySite(SiteDTO site) throws SQLException, NoSuchElementException {
+        Optional<ZoneDTO> zone = zoneManager.getZoneById(site.zoneId());
+        if (zone.isPresent()) {
+            return zone.get().zoneName();
         }
-    }
-
-    public List<SiteDTO> getSiteByZone(int zoneId) {
-        return null;
+        else {
+            throw new NoSuchElementException();
+        }
     }
 }

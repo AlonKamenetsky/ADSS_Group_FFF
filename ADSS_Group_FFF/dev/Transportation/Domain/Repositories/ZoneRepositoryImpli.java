@@ -22,7 +22,6 @@ public class ZoneRepositoryImpli implements ZoneRepository {
        return zoneDAO.insert(new ZoneDTO(null,zoneName, new ArrayList<>()));
     }
 
-
     @Override
     public void deleteZone(int zoneId) throws SQLException {
         zoneDAO.delete(zoneId);

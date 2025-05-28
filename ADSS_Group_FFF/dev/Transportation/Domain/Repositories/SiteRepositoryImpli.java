@@ -17,8 +17,8 @@ public class SiteRepositoryImpli implements SiteRepository {
     }
 
     @Override
-    public SiteDTO addSite(String address, String contactName, String phoneNumber, int zoneId) throws SQLException {
-        return siteDAO.insert(new SiteDTO(null, address, contactName, phoneNumber, zoneId));
+    public SiteDTO addSite(String address, String contactName, String phoneNumber) throws SQLException {
+        return siteDAO.insert(new SiteDTO(null, address, contactName, phoneNumber, -1));
     }
 
     @Override
@@ -27,8 +27,18 @@ public class SiteRepositoryImpli implements SiteRepository {
     }
 
     @Override
+    public SiteDTO mapSiteToZone(SiteDTO site, int zoneId) throws SQLException {
+        return siteDAO.update(site, zoneId);
+    }
+
+    @Override
     public List<SiteDTO> findAll() throws SQLException {
         return siteDAO.findAll();
+    }
+
+    @Override
+    public List<SiteDTO> findAllByZoneId(int zoneId) throws SQLException {
+        return siteDAO.findAllByZoneId(zoneId);
     }
 
     @Override

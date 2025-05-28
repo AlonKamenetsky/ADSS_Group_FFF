@@ -39,8 +39,8 @@ public class ZoneManager {
         return zoneRepo.findZone(zoneId);
     }
 
-    public void modifyZone(ZoneDTO updatedZone) throws SQLException {
-        zoneRepo.updateZone(updatedZone);
+    public ZoneDTO modifyZone(ZoneDTO updatedZone) throws SQLException {
+        return zoneRepo.updateZone(updatedZone);
     }
 
     // just use DTO.isEmpty()

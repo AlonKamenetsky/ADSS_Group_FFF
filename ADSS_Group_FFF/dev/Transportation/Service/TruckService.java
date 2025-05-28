@@ -5,15 +5,14 @@ import Transportation.Domain.TruckManager;
 
 import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class TruckService {
     private final TruckManager truckManager;
 
-    public TruckService(TruckManager truckManager) {
-        this.truckManager = truckManager;
+    public TruckService() {
+        this.truckManager = new TruckManager();
     }
 
     public void AddTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws NullPointerException, InstanceAlreadyExistsException {
@@ -21,7 +20,7 @@ public class TruckService {
             throw new NullPointerException();
         }
         try {
-            truckManager.addTruck(truckType, licenseNumber, model.toLowerCase(), netWeight, maxWeight);
+            truckManager.addTruck(truckType.toLowerCase(), licenseNumber, model.toLowerCase(), netWeight, maxWeight);
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");
         }
@@ -40,7 +39,11 @@ public class TruckService {
     }
 
     public String viewAllTrucks() {
-        return truckManager.getAllTrucksString();
+        try {
+            return truckManager.getAllTrucksString();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
+        }
     }
 
     public String getTruckByLicenseNumber(String licenseNumber) throws NullPointerException, NoSuchElementException {

@@ -14,9 +14,9 @@ public class TManagerRoleMenu {
     public TManagerRoleMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, ItemService itemService, SiteZoneService siteZoneService) {
         DriverMenuUI = new DriverMenu(driverService, this);
         TaskMenuUI = new TaskMenu(taskService, itemService, this);
-        TruckMenuUI = new TruckMenu(truckService, this);
-        SiteMenuUI = new SiteMenu(siteService, this);
-        ZoneMenuUI = new ZoneMenu(zoneService, siteZoneService,this);
+        TruckMenuUI = new TruckMenu(this);
+        SiteMenuUI = new SiteMenu(this);
+        ZoneMenuUI = new ZoneMenu(this);
     }
 
     public void show() {

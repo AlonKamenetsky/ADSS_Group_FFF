@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ZoneService {
     private final ZoneManager zoneManager;
 
-    public ZoneService(ZoneManager zoneManager) {
+    public ZoneService() {
         this.zoneManager = new ZoneManager();
     }
 
@@ -23,7 +23,7 @@ public class ZoneService {
         try {
             zoneManager.addZone(_zoneName.toLowerCase());
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create user due to a system error.");
+            throw new RuntimeException("Database access error");
         }
     }
 
@@ -40,16 +40,16 @@ public class ZoneService {
             int zoneId = maybeZone.get().zoneId();
             zoneManager.removeZone(zoneId);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Database access error");
         }
     }
 
-    public void UpdateZone(String _zoneName, String newZoneName) throws NullPointerException, NoSuchElementException {
+    public ZoneDTO UpdateZone(String _zoneName, String newZoneName) throws NullPointerException, NoSuchElementException {
         if (_zoneName == null || newZoneName == null) {
             throw new NullPointerException();
         }
         try {
-            Optional<ZoneDTO> maybeZone = zoneManager.findZoneByName(_zoneName);
+            Optional<ZoneDTO> maybeZone = zoneManager.findZoneByName(_zoneName.toLowerCase());
             if (maybeZone.isEmpty()) {
                 throw new NoSuchElementException();
             }
@@ -60,9 +60,9 @@ public class ZoneService {
                     newZoneName,
                     existingZone.sitesRelated()
             );
-            zoneManager.modifyZone(updatedZone);
+            return zoneManager.modifyZone(updatedZone);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Database access error");
         }
     }
 
@@ -71,7 +71,7 @@ public class ZoneService {
             return zoneManager.getAllZones();
         }
         catch(SQLException e) {
-            throw new RuntimeException();
+            throw new RuntimeException("Database access error");
         }
     }
 

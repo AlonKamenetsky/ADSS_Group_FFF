@@ -1,52 +1,68 @@
 package Transportation.Service;
 
+import Transportation.DTO.SiteDTO;
 import Transportation.Domain.SiteManager;
-import Transportation.Domain.SiteZoneManager;
 
+import javax.management.InstanceAlreadyExistsException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class SiteService {
     private final SiteManager siteManager;
-    private final SiteZoneManager siteZoneManager;
 
-    public SiteService(SiteManager siteManager, SiteZoneManager siteZoneManager) {
-        this.siteManager = siteManager;
-        this.siteZoneManager = siteZoneManager;
+    public SiteService() {
+        this.siteManager = new SiteManager();
     }
 
-    public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) throws NullPointerException, IllegalArgumentException, NoSuchElementException {
-        if (_address == null || _contactName == null || _phoneNumber == null || _zone == null) {
+    public SiteDTO addSite(String _address, String _contactName, String _phoneNumber) throws NullPointerException, IllegalArgumentException, NoSuchElementException, InstanceAlreadyExistsException {
+        if (_address == null || _contactName == null || _phoneNumber == null) {
             throw new NullPointerException();
         }
         if (!_contactName.matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("Not a valid contact name.");
         }
-        siteManager.addSite(_address.toLowerCase(), _contactName, _phoneNumber, _zone.toLowerCase());
-        siteZoneManager.addSiteToZone(_address.toLowerCase(), _zone.toLowerCase());
+        try {
+            return siteManager.addSite(_address.toLowerCase(), _contactName, _phoneNumber);
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
+        }
     }
 
     public void deleteSite(String _address) throws NullPointerException, NoSuchElementException {
         if (_address == null) {
             throw new NullPointerException();
         }
-        if (siteManager.doesSiteExist(_address.toLowerCase())) {
-            siteManager.removeSite(_address.toLowerCase());
-        } else {
-            throw new NoSuchElementException();
+        try {
+            Optional<SiteDTO> maybeSite = siteManager.findSiteByAddress(_address.toLowerCase());
+            if (maybeSite.isEmpty()) {
+                throw new NoSuchElementException();
+            }
+
+            int siteId = maybeSite.get().zoneId();
+            siteManager.removeSite(siteId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
         }
     }
 
-    public String getSiteByAddress(String _address) {
-        if (_address == null) {
-            return null;
+    public Optional<SiteDTO> getSiteByAddress(String address) throws NullPointerException {
+        if (address == null) {
+            throw new NullPointerException();
         }
-        if (siteManager.doesSiteExist(_address.toLowerCase())) {
-            return siteManager.viewSite(_address.toLowerCase());
+        try {
+            return siteManager.findSiteByAddress(address.toLowerCase());
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
         }
-        return "Site not found";
     }
 
-    public String viewAllSites() {
-        return siteManager.viewAllSites();
+    public List<SiteDTO> viewAllSites() {
+        try {
+            return siteManager.getAllSites();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
+        }
     }
 }

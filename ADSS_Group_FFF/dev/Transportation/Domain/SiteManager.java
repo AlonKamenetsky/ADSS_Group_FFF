@@ -1,90 +1,56 @@
 package Transportation.Domain;
 
+import Transportation.DTO.SiteDTO;
 import Transportation.Domain.Repositories.SiteRepository;
 import Transportation.Domain.Repositories.SiteRepositoryImpli;
 
+import javax.management.InstanceAlreadyExistsException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class SiteManager {
     private final SiteRepository siteRepository;
-    private final ZoneManager zoneManager;
 
-    public SiteManager(ZoneManager _zoneManager) {
-        zoneManager = _zoneManager;
+    public SiteManager() {
         siteRepository = new SiteRepositoryImpli();
     }
 
-    public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) throws NoSuchElementException {
-        if ()
-    }
-
-    public void removeSite(String _address) {
-        Site site = getSiteByAddress(_address);
-        allSites.remove(site.getSiteId());
-    }
-
-    public Site getSiteByAddress(String address) {
-        for (Site site : allSites.values()) {
-            if (site.getAddress().equalsIgnoreCase(address)) {
-                return site;
-            }
-        }
-        throw new NoSuchElementException("No site found");
-    }
-
-    public void modifySiteZone(String siteAddress, int zoneId) {
-        for (Site site : allSites.values()) {
-            if (site.getAddress().equalsIgnoreCase(siteAddress)) {
-                site.setZoneId(zoneId);
-            }
+    public SiteDTO addSite(String address, String contactName, String phoneNumber) throws SQLException, InstanceAlreadyExistsException {
+        if (findSiteByAddress(address).isPresent()) {
+            throw new InstanceAlreadyExistsException();
+        } else {
+            return siteRepository.addSite(address, contactName, phoneNumber);
         }
     }
 
-    public int getSiteZone(String siteAddress) {
-        for (Site site : allSites.values()) {
-            if (site.getAddress().equalsIgnoreCase(siteAddress)) {
-                return site.getZone();
-            }
+    public void removeSite(int siteId) throws SQLException, NoSuchElementException {
+        if (getSiteById(siteId).isEmpty()) {
+            throw new NoSuchElementException();
+        } else {
+            siteRepository.deleteSite(siteId);
         }
-        return -1;
     }
 
-    public boolean doesSiteExist(String address) {
-        int _siteId = getSiteByAddress(address).getSiteId();
-        return allSites.containsKey(_siteId);
+    public SiteDTO mapSiteToZone(SiteDTO updateSite, int zoneId) throws SQLException {
+        return siteRepository.mapSiteToZone(updateSite, zoneId);
     }
 
-    public String viewSite(String address) {
-        Site currSite = getSiteByAddress(address);
-        if (currSite == null) {
-            return "Site not found.\n";
-        }
-
-        return formatSite(currSite);
+    public List<SiteDTO> findAllByZoneId(int zoneId) throws SQLException {
+        return siteRepository.findAllByZoneId(zoneId);
     }
 
-    public String viewAllSites() {
-        if (allSites.isEmpty()) return "No sites available.";
-
-        StringBuilder sb = new StringBuilder("All Sites:\n");
-
-        for (Site site : allSites.values()) {
-            sb.append(formatSite(site));
-        }
-
-        return sb.toString();
+    public Optional<SiteDTO> getSiteById(int siteId) throws SQLException {
+        return siteRepository.findSite(siteId);
     }
 
-    private String formatSite(Site site) {
-        Zone zone = zoneManager.getZoneById(site.getZone());
-        String zoneName = (zone != null) ? zone.getName() : "Unknown";
+    public List<SiteDTO> getAllSites() throws SQLException {
+        return siteRepository.findAll();
+    }
 
-        return String.format(
-                "Site Address: %s\nContact: %s\nPhone: %s\nZone: %s\n----------------------\n",
-                site.getAddress(),
-                site.getContactName(),
-                site.getPhoneNumber(),
-                zoneName.toUpperCase()
-        );
+    // new methods for part B
+    public Optional<SiteDTO> findSiteByAddress(String address) throws SQLException {
+        return siteRepository.findBySiteAddress(address);
     }
 }

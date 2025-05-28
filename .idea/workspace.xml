@@ -9,18 +9,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)">
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="modified Truck logic, Zone logic">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DTO/TruckDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DTO/TruckDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SiteDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SiteDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepositoryImpli.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TruckRepositoryImpli.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteSiteDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteSiteDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepositoryImpli.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/SiteRepositoryImpli.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ZoneRepositoryImpli.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/ZoneRepositoryImpli.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/SiteManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/SiteManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/SiteZoneManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/SiteZoneManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TruckManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TruckManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/ZoneManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/ZoneManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/SiteMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/SiteMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/TManagerRoleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/TManagerRoleMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/TruckMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/TruckMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/ZoneMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/ZoneMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/SiteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/SiteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/SiteZoneService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/SiteZoneService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/TruckService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/TruckService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/ZoneService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/ZoneService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/SystemInitializer/SystemInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/SystemInitializer/SystemInitializer.java" afterDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
@@ -263,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747673998088</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="modified Truck logic, Zone logic">
+      <option name="closed" value="true" />
+      <created>1748420385980</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1748420385980</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,7 +304,8 @@
     <MESSAGE value="# ready for final submission" />
     <MESSAGE value="# added missing fuctionalities from missed requirments task 1 (view current shift, view my info)" />
     <MESSAGE value="Changes by benbe missed from las commit, also changed some files name" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changes by benbe missed from las commit, also changed some files name" />
+    <MESSAGE value="modified Truck logic, Zone logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified Truck logic, Zone logic" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

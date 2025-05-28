@@ -30,6 +30,30 @@ public class SqliteSiteDAO implements SiteDAO {
     }
 
     @Override
+    public List<SiteDTO> findAllByZoneId(int zoneId) throws SQLException {
+        String sql = "SELECT site_id, address, contact_name, phone_number, zone_id FROM sites WHERE zone_id = ?";
+
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, zoneId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                List<SiteDTO> list = new ArrayList<>();
+                while (rs.next()) {
+                    list.add(new SiteDTO(
+                            rs.getInt("site_id"),
+                            rs.getString("address"),
+                            rs.getString("contact_name"),
+                            rs.getString("phone_number"),
+                            rs.getInt("zone_id")
+                    ));
+                }
+                return list;
+            }
+        }
+    }
+
+
+    @Override
     public Optional<SiteDTO> findById(int siteId) throws SQLException {
         String sql = "SELECT site_id, address, contact_name, phone_number, zone_id FROM sites WHERE site_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
@@ -69,30 +93,17 @@ public class SqliteSiteDAO implements SiteDAO {
 
     @Override
     public SiteDTO insert(SiteDTO site) throws SQLException {
-        if (site.siteId() == null) {
-            String sql = "INSERT INTO sites(address, contact_name, phone_number, zone_id) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement ps = Database.getConnection()
-                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, site.siteAddress());
-                ps.setString(2, site.contactName());
-                ps.setString(3, site.phoneNumber());
-                ps.setInt(4, site.zoneId());
-                ps.executeUpdate();
-                try (ResultSet keys = ps.getGeneratedKeys()) {
-                    keys.next();
-                    return new SiteDTO(keys.getInt(1), site.siteAddress(), site.contactName(), site.phoneNumber(), site.zoneId());
-                }
-            }
-        } else {
-            String sql = "UPDATE sites SET address = ?, contact_name = ?, phone_number = ?, zone_id = ? WHERE site_id = ?";
-            try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-                ps.setString(1, site.siteAddress());
-                ps.setString(2, site.contactName());
-                ps.setString(3, site.phoneNumber());
-                ps.setInt(4, site.zoneId());
-                ps.setInt(5, site.siteId());
-                ps.executeUpdate();
-                return site;
+        String sql = "INSERT INTO sites(address, contact_name, phone_number, zone_id) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = Database.getConnection()
+                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, site.siteAddress());
+            ps.setString(2, site.contactName());
+            ps.setString(3, site.phoneNumber());
+            ps.setInt(4, site.zoneId());
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                keys.next();
+                return new SiteDTO(keys.getInt(1), site.siteAddress(), site.contactName(), site.phoneNumber(), site.zoneId());
             }
         }
     }
@@ -103,6 +114,19 @@ public class SqliteSiteDAO implements SiteDAO {
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, siteId);
             ps.executeUpdate();
+        }
+    }
+
+    public SiteDTO update(SiteDTO site, int zoneId) throws SQLException {
+        String sql = "UPDATE sites SET zone_id = ? WHERE site_id = ?";
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, zoneId);
+            ps.setInt(2, site.siteId());
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                keys.next();
+                return new SiteDTO(keys.getInt(1), site.siteAddress(), site.contactName(), site.phoneNumber(), zoneId);
+            }
         }
     }
 
