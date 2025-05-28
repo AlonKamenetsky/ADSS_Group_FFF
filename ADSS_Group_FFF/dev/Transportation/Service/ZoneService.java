@@ -1,9 +1,9 @@
 package Transportation.Service;
 
-import Transportation.DTO.SiteDTO;
 import Transportation.DTO.ZoneDTO;
 import Transportation.Domain.ZoneManager;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,7 +16,7 @@ public class ZoneService {
         this.zoneManager = new ZoneManager();
     }
 
-    public void AddZone(String _zoneName) throws NullPointerException {
+    public void AddZone(String _zoneName) throws NullPointerException, InstanceAlreadyExistsException {
         if (_zoneName == null) {
             throw new NullPointerException();
         }

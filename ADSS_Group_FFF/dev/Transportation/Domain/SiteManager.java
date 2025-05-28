@@ -1,25 +1,21 @@
 package Transportation.Domain;
 
-import java.util.HashMap;
+import Transportation.Domain.Repositories.SiteRepository;
+import Transportation.Domain.Repositories.SiteRepositoryImpli;
+
 import java.util.NoSuchElementException;
 
 public class SiteManager {
-    private final HashMap<Integer, Site> allSites;
+    private final SiteRepository siteRepository;
     private final ZoneManager zoneManager;
-    private int nextSiteId = 1;
 
     public SiteManager(ZoneManager _zoneManager) {
         zoneManager = _zoneManager;
-        allSites = new HashMap<>();
+        siteRepository = new SiteRepositoryImpli();
     }
 
     public void addSite(String _address, String _contactName, String _phoneNumber, String _zone) throws NoSuchElementException {
-        int _siteId = nextSiteId++;
-        Zone relatedZone;
-        relatedZone = zoneManager.getZoneByName(_zone);
-        int relatedZoneId = relatedZone.getZoneId();
-        Site newSite = new Site(_siteId, _address.toLowerCase(), _contactName, _phoneNumber, relatedZoneId);
-        allSites.putIfAbsent(_siteId, newSite);
+        if ()
     }
 
     public void removeSite(String _address) {

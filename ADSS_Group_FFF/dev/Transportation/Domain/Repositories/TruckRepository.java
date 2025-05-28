@@ -1,7 +1,6 @@
 package Transportation.Domain.Repositories;
 
 import Transportation.DTO.TruckDTO;
-import Transportation.Domain.TruckType;
 
 import java.sql.SQLException;
 import java.util.List;

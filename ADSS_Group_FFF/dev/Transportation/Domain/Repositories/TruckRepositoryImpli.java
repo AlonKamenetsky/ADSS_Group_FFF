@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public class TruckRepositoryImpli implements TruckRepository {
     private final TruckDAO truckDAO;
+
     public TruckRepositoryImpli() {
         this.truckDAO = new SqliteTruckDAO();
     }
