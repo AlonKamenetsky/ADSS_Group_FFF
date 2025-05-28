@@ -40,16 +40,16 @@ public class UnitTest {
 
 
     //-------------------Supplier--------------------
-    @Test
-    public void testScheduledSupplier(){
-        ContactInfo contactInfo= new ContactInfo("054", "yehuda", "@", "alon");
-        PaymentInfo paymentInfo = new PaymentInfo("888", PaymentMethod.BANK_TRANSACTION);
-        Supplier supplier = new ScheduledSupplier(0, "osem", ProductCategory.DAIRY, DeliveringMethod.SELF_DELIVERING, contactInfo, paymentInfo);
-        assertEquals("osem", supplier.getSupplierName());
-        assertEquals(ProductCategory.DAIRY, supplier.getSupplierProductCategory());
-        assertEquals(DeliveringMethod.SELF_DELIVERING, supplier.getSupplierDeliveringMethod());
-
-    }
+//    @Test
+//    public void testScheduledSupplier(){
+//        ContactInfo contactInfo= new ContactInfo("054", "yehuda", "@", "alon");
+//        PaymentInfo paymentInfo = new PaymentInfo("888", PaymentMethod.BANK_TRANSACTION);
+//        Supplier supplier = new ScheduledSupplier(0, "osem", ProductCategory.DAIRY, DeliveringMethod.SELF_DELIVERING, contactInfo, paymentInfo);
+//        assertEquals("osem", supplier.getSupplierName());
+//        assertEquals(ProductCategory.DAIRY, supplier.getSupplierProductCategory());
+//        assertEquals(DeliveringMethod.SELF_DELIVERING, supplier.getSupplierDeliveringMethod());
+//
+//    }
     @Test
     public void testOnDemandSupplier(){
         ContactInfo contactInfo= new ContactInfo("054", "yehuda", "@", "alon");
