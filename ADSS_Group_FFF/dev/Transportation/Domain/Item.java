@@ -1,5 +1,7 @@
 package Transportation.Domain;
 
+import Transportation.DTO.ItemDTO;
+
 import java.util.Objects;
 
 public class Item {
@@ -12,6 +14,11 @@ public class Item {
         itemName = _itemName;
         weight = _weight;
     }
+
+    public static Item fromDTO(ItemDTO dto) {
+        return new Item(dto.itemId(), dto.itemName(), dto.itemWeight());
+    }
+
 
     public float getWeight() {
         return weight;

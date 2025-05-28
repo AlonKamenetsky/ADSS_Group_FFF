@@ -1,5 +1,4 @@
 package Transportation.Service;
-
 import Transportation.DTO.ItemDTO;
 import Transportation.Domain.Item;
 import Transportation.Domain.ItemManager;
@@ -52,7 +51,8 @@ public class ItemService {
             return false;
         }
         else {
-            return itemManager.doesItemExist(itemName);
+            ItemDTO itemDTO = itemManager.getItemByName(itemName);
+            return itemManager.doesItemExist(itemDTO.itemId());
         }
     }
 //

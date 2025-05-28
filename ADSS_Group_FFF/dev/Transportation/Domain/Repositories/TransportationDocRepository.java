@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TransportationDocRepository {
 
-    TransportationDocDTO createDoc(int taskId, String destinationSite, float totalWeight) throws SQLException;
+    static TransportationDocDTO createDoc(int taskId, String destinationSite, float totalWeight) throws SQLException;
     void deleteDoc(int docId) throws SQLException;
     Optional<TransportationDocDTO> findDoc(int docId) throws SQLException;
     List<TransportationDocDTO> findDocByTaskId(int taskId) throws SQLException;

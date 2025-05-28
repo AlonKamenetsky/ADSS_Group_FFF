@@ -6,6 +6,7 @@ import Transportation.Domain.Repositories.ItemRepository;
 import Transportation.DTO.ItemDTO;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 public class ItemManager {
     // private final HashMap<Integer, Item> allItems;
@@ -23,8 +24,19 @@ public class ItemManager {
             throw new RuntimeException(e);
         }
     }
+    public Integer getItemIdByName(int itemId) {
+        try {
+            return itemRepository.findItem(itemId)
+                    .map(ItemDTO::itemId)
+                    .orElse(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-    public ItemDTO getItemByName(String itemName) {
+
+        public ItemDTO getItemByName(String itemName) {
         try {
             return itemRepository.getAllItems().stream().filter(i -> i.itemName().equalsIgnoreCase(itemName)).findFirst().orElse(null);
         } catch (SQLException e) {
@@ -32,6 +44,16 @@ public class ItemManager {
             return null;
         }
     }
+    public ItemDTO getItemById(int itemId) {
+        try {
+            return itemRepository.findItem(itemId).orElse(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+}
+
 
     public List<ItemDTO> getAllItems() throws SQLException {
         try {
@@ -65,7 +87,7 @@ public class ItemManager {
         }
     }
 
-    public boolean doesItemExist(String itemName) {
-       return getItemByName(itemName) != null;
+    public boolean doesItemExist(int itemId) {
+       return getItemById(itemId) != null;
     }
 }
