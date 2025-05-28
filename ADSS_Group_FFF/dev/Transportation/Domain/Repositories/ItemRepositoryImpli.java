@@ -18,11 +18,12 @@ public class ItemRepositoryImpli implements ItemRepository {
 
     private final ItemDAO itemDAO;
     private final ItemsListDAO listDAO;
-    private ArrayList<Item> tempItemsList;
+    private final ArrayList<Item> tempItemsList;
 
     public ItemRepositoryImpli() {
         this.itemDAO = new SqliteItemDAO();
         this.listDAO = new SqliteItemsListDAO();
+        this.tempItemsList = new ArrayList<>();
         }
 
     @Override

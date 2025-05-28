@@ -22,12 +22,12 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
 
 
     @Override
-    public TransportationTaskDTO createTask(LocalDate taskDate, LocalTime departureTime, int sourceSiteId) throws ParseException, SQLException {
+    public TransportationTaskDTO createTask(LocalDate taskDate, LocalTime departureTime, String sourceAddress) throws ParseException, SQLException {
         TransportationTaskDTO newTask = new TransportationTaskDTO(
                 null,
                 taskDate,
                 departureTime,
-                sourceSiteId,
+                sourceAddress,
                 new ArrayList<>(),
                 "",
                 "",

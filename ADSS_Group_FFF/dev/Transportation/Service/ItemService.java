@@ -4,7 +4,6 @@ import Transportation.DTO.ItemDTO;
 import Transportation.Domain.ItemManager;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemService {

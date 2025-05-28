@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TransportationTaskRepository {
-    TransportationTaskDTO createTask(LocalDate taskDate, LocalTime departureTime, int sourceSiteId) throws ParseException, SQLException;
+    TransportationTaskDTO createTask(LocalDate taskDate, LocalTime departureTime, String sourceAddress) throws ParseException, SQLException;
     void deleteTask(int taskId) throws SQLException;
     Optional<TransportationTaskDTO> findTask(int taskId) throws SQLException;
     Optional<TransportationTaskDTO> findTaskByDateTimeAndSource(LocalDate taskDate, LocalTime departureTime , int sourceSiteId) throws SQLException;

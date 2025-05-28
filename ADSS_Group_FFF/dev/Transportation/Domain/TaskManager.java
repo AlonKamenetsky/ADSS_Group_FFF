@@ -31,8 +31,7 @@ public class TaskManager {
         if (site.isEmpty()) {
             throw new NoSuchElementException();
         }
-        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
-        return taskRepository.createTask(_taskDate, _departureTime, sourceSiteId);
+        return taskRepository.createTask(_taskDate, _departureTime, taskSourceSite);
     }
 
     public void removeTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite) throws SQLException {
