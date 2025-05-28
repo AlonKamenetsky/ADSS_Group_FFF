@@ -36,7 +36,7 @@ public class ItemRepositoryImpli implements ItemRepository {
     @Override
     public List<ItemDTO> getAllItems() throws SQLException {
         ArrayList<ItemDTO> returnedList = new ArrayList<>();
-        if (tempItemsList == null) {
+        if (tempItemsList.isEmpty()) {
             returnedList = (ArrayList<ItemDTO>) itemDAO.findAll();
         }
         else {
