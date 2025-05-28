@@ -65,11 +65,6 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
     }
 
     @Override
-    public List<TransportationTaskDTO> findTaskByDriverId(String driverId) throws SQLException {
-        return taskDAO.findByDriverId(driverId);
-    }
-
-    @Override
     public boolean hasDestination(int taskId, int siteId) throws SQLException {
         return taskDAO.hasDestination(taskId, siteId);
     }
