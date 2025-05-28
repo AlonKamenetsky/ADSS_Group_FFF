@@ -32,7 +32,6 @@ public final class Database {
                             CREATE TABLE IF NOT EXISTS orders (
                                 id INTEGER PRIMARY KEY,
                                 supplier_id INTEGER NOT NULL,
-                                contact_info_id INTEGER,
                                 delivering_method TEXT NOT NULL,
                                 order_date TEXT NOT NULL,
                                 supply_date TEXT NOT NULL,
@@ -57,21 +56,24 @@ public final class Database {
                             );
                         """);
                 stmt.executeUpdate("""
-                            CREATE TABLE IF NOT EXISTS contact_info (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            CREATE TABLE IF NOT EXISTS suppliers (
+                                id INTEGER PRIMARY KEY,
                                 name TEXT NOT NULL,
-                                phone_number TEXT,
-                                address TEXT,
-                                email TEXT
-                            );
-                        """);
-                stmt.executeUpdate("""
-                            CREATE TABLE IF NOT EXISTS payment_info (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                product_category TEXT NOT NULL,
+                                delivering_method TEXT NOT NULL,
+                        
+                                -- Contact Info fields
+                                contact_name TEXT NOT NULL,
+                                phone_number TEXT NOT NULL,
+                                address TEXT NOT NULL,
+                                email TEXT NOT NULL,
+                        
+                                -- Payment Info fields
                                 bank_account TEXT NOT NULL,
-                                payment_method TEXT NOT NULL  -- store enum name as string
+                                payment_method TEXT NOT NULL  -- enum stored as string
                             );
                         """);
+
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS supply_contracts (
                                 id INTEGER PRIMARY KEY,
@@ -80,16 +82,14 @@ public final class Database {
                             );
                         """);
                 stmt.executeUpdate("""
-                            CREATE TABLE IF NOT EXISTS suppliers (
-                                id INTEGER PRIMARY KEY,
-                                name TEXT NOT NULL,
-                                product_category TEXT NOT NULL,
-                                delivering_method TEXT NOT NULL,
-                                contact_info_id INTEGER NOT NULL,
-                                payment_info_id INTEGER NOT NULL,
-                        
-                                FOREIGN KEY (contact_info_id) REFERENCES contact_info(id),
-                                FOREIGN KEY (payment_info_id) REFERENCES payment_info(id)
+                            CREATE TABLE IF NOT EXISTS supply_contract_product_data (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                contract_id INTEGER NOT NULL,
+                                product_id INTEGER NOT NULL,
+                                product_price REAL NOT NULL,
+                                quantity_for_discount INTEGER NOT NULL,
+                                discount_percentage REAL NOT NULL,
+                                FOREIGN KEY (contract_id) REFERENCES supply_contracts(id)
                             );
                         """);
 
