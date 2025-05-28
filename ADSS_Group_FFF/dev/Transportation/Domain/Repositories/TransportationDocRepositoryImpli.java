@@ -10,28 +10,31 @@ import java.util.Optional;
 
 public class TransportationDocRepositoryImpli implements TransportationDocRepository {
 
-    private final TransportationDocDAO DocDAO;
+    private final TransportationDocDAO docDAO;
     public TransportationDocRepositoryImpli() {
-        this.DocDAO = new SqliteTransportationDocDAO();
+        this.docDAO = new SqliteTransportationDocDAO();
     }
 
     @Override
-    public TransportationDocDTO createDoc(int taskId, String destinationSite, float totalWeight) throws SQLException {
-        return DocDAO.insert(new TransportationDocDTO(null,taskId,destinationSite,totalWeight));
+    public TransportationDocDTO createDoc(int taskId, int destinationSiteId, int itemsListId) throws SQLException {
+        return docDAO.insert(new TransportationDocDTO(null,taskId,destinationSiteId, itemsListId));
     }
 
     @Override
     public void deleteDoc(int docId) throws SQLException {
-        DocDAO.delete(docId);
+        docDAO.delete(docId);
     }
 
+    public int findDocItemsListId(int docId) throws SQLException {
+        return docDAO.findDocItemsListId(docId);
+    }
     @Override
     public Optional<TransportationDocDTO> findDoc(int docId) throws SQLException {
-        return DocDAO.findById(docId);
+        return docDAO.findById(docId);
     }
 
     @Override
     public List<TransportationDocDTO> findDocByTaskId(int taskId) throws SQLException {
-        return DocDAO.findByTaskId(taskId) ;
+        return docDAO.findByTaskId(taskId) ;
     }
 }

@@ -1,4 +1,3 @@
-
 package Util;
 
 import java.sql.*;
@@ -66,13 +65,15 @@ public final class Database {
                 st.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS transportation_tasks (
                                 task_id               INTEGER PRIMARY KEY AUTOINCREMENT,
-                                truck_license_number  TEXT,
+                                truck_id              INTEGER,
                                 task_date             TEXT    NOT NULL,
                                 departure_time        TEXT    NOT NULL,
                                 source_site_id        INTEGER NOT NULL,
                                 weight_before_leaving REAL    NOT NULL,
                                 driver_id             TEXT,
                                 FOREIGN KEY (source_site_id) REFERENCES sites(site_id)
+                                FOREIGN KEY (truck_id) REFERENCES trucks(list_id),
+
                             );
                         """);
                 st.executeUpdate("""
@@ -110,7 +111,7 @@ public final class Database {
                         """);
                 st.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS roles (
-                                name TEXT PRIMARY KEY 
+                                name TEXT PRIMARY KEY
                             );
                         """);
                 st.executeUpdate("""
@@ -138,7 +139,7 @@ public final class Database {
                                   FOREIGN KEY (shift_id) REFERENCES shifts(id),
                                   FOREIGN KEY (employee_id) REFERENCES employees(id),
                                   FOREIGN KEY (role_name) REFERENCES roles(name)
-                              );                        
+                              );
                         """);
                 st.executeUpdate("""
                         CREATE TABLE IF NOT EXISTS weekly_availability (
@@ -171,7 +172,7 @@ public final class Database {
     private Database() {
     }
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() {
         return conn;
     }
 }

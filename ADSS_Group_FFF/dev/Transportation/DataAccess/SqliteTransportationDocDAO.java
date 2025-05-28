@@ -12,15 +12,12 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
 
     @Override
     public TransportationDocDTO insert(TransportationDocDTO doc) throws SQLException {
-        int destinationSiteId = getSiteIdByAddress(doc.destinationAddress());
-        int itemListId = createEmptyItemList();
-
         String sql = "INSERT INTO transportation_docs(task_id, destination_site, item_list_id) VALUES (?, ?, ?)";
         try (PreparedStatement ps = Database.getConnection()
                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, doc.taskId());
-            ps.setInt(2, destinationSiteId);
-            ps.setInt(3, itemListId);
+            ps.setInt(2, doc.destinationSite());
+            ps.setInt(3, doc.itemsListId());
             ps.executeUpdate();
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -28,8 +25,8 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
                 return new TransportationDocDTO(
                         keys.getInt(1),
                         doc.taskId(),
-                        doc.destinationAddress(),
-                        doc.totalWeight()
+                        doc.destinationSite(),
+                        doc.itemsListId()
                 );
             }
         }
@@ -47,9 +44,8 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
     @Override
     public Optional<TransportationDocDTO> findById(int docId) throws SQLException {
         String sql = """
-                SELECT d.doc_id, d.task_id, s.address, d.item_list_id
+                SELECT doc_id, task_id, destination_site, item_list_id
                 FROM transportation_docs d
-                JOIN sites s ON d.destination_site = s.site_id
                 WHERE d.doc_id = ?
                 """;
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
@@ -59,8 +55,8 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
                         ? Optional.of(new TransportationDocDTO(
                         rs.getInt("doc_id"),
                         rs.getInt("task_id"),
-                        rs.getString("address"),
-                        0f // Placeholder, totalWeight not stored in DB
+                        rs.getInt("destination_site"),
+                        rs.getInt("item_list_id")
                 ))
                         : Optional.empty();
             }
@@ -70,22 +66,23 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
     @Override
     public List<TransportationDocDTO> findByTaskId(int taskId) throws SQLException {
         String sql = """
-                SELECT d.doc_id, d.task_id, s.address, d.item_list_id
-                FROM transportation_docs d
-                JOIN sites s ON d.destination_site = s.site_id
-                WHERE d.task_id = ?
-                """;
+        SELECT doc_id, task_id, destination_site, item_list_id
+        FROM transportation_docs
+        WHERE task_id = ?
+    """;
 
         List<TransportationDocDTO> list = new ArrayList<>();
+
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, taskId);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new TransportationDocDTO(
                             rs.getInt("doc_id"),
                             rs.getInt("task_id"),
-                            rs.getString("address"),
-                            0f // Placeholder, calculate weight elsewhere
+                            rs.getInt("destination_site"),
+                            rs.getInt("item_list_id")
                     ));
                 }
             }
@@ -93,6 +90,7 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
 
         return list;
     }
+
 
     @Override
     public List<TransportationDocDTO> findByDestinationAddress(String address) throws SQLException {
@@ -111,8 +109,8 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
                     list.add(new TransportationDocDTO(
                             rs.getInt("doc_id"),
                             rs.getInt("task_id"),
-                            rs.getString("address"),
-                            0f
+                            rs.getInt("destination_site"),
+                            rs.getInt("item_list_id")
                     ));
                 }
             }
@@ -121,27 +119,18 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
         return list;
     }
 
-    private int getSiteIdByAddress(String address) throws SQLException {
-        String sql = "SELECT site_id FROM sites WHERE address = ?";
+    @Override
+    public int findDocItemsListId(int docId) throws SQLException {
+        String sql = "SELECT item_list_id FROM transportation_docs WHERE doc_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, address);
+            ps.setInt(1, docId);
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("site_id");
+                    return rs.getInt("item_list_id");
                 } else {
-                    throw new SQLException("Site not found: " + address);
+                    throw new SQLException("No document found with ID: " + docId);
                 }
-            }
-        }
-    }
-
-    private int createEmptyItemList() throws SQLException {
-        String sql = "INSERT INTO items_lists DEFAULT VALUES";
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
-                return keys.getInt(1);
             }
         }
     }

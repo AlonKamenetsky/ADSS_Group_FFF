@@ -12,4 +12,5 @@ public interface TransportationDocDAO {
     Optional<TransportationDocDTO> findById(int docId) throws SQLException;
     List<TransportationDocDTO> findByTaskId(int taskId) throws SQLException;
     List<TransportationDocDTO> findByDestinationAddress(String address) throws SQLException;
+    int findDocItemsListId(int docId) throws SQLException;
 }

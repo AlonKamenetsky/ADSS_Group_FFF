@@ -38,11 +38,6 @@ public class TruckManager {
         return truckRepository.getAllTrucks();
     }
 
-
-    public boolean doesTruckExist(int truckId) throws SQLException {
-        return truckRepository.findTruckById(truckId).isPresent();
-    }
-
     public void setTruckAvailability(int truckId, boolean status) throws SQLException, NoSuchElementException {
         Optional<TruckDTO> truckToChange = truckRepository.findTruckById(truckId);
         if (truckToChange.isPresent()) {

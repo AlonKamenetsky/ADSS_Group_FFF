@@ -1,13 +1,13 @@
 package Transportation.Domain;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.*;
 
 public class TransportationTask {
     private final int taskId;
     private String truckLicenseNumber;
-    private final Date taskDate;
+    private final LocalDate taskDate;
     private final LocalTime departureTime;
     private final Site sourceSite;
     private final ArrayList<Site> destinationSites;
@@ -15,7 +15,7 @@ public class TransportationTask {
     private String driverId;
     private final HashMap<Integer, TransportationDoc> taskDocs;
 
-    public TransportationTask(int _taskId, Date _taskDate, LocalTime _departureTime, Site _sourceSite) {
+    public TransportationTask(int _taskId, LocalDate _taskDate, LocalTime _departureTime, Site _sourceSite) {
         taskId = _taskId;
         taskDate = _taskDate;
         truckLicenseNumber = ""; // "" = unassigned
@@ -39,7 +39,7 @@ public class TransportationTask {
         return taskId;
     }
 
-    public Date getTaskDate() {
+    public LocalDate getTaskDate() {
         return taskDate;
     }
 
@@ -86,7 +86,7 @@ public class TransportationTask {
         StringBuilder sb = new StringBuilder();
         sb.append("Transportation Task\n");
         sb.append("Source Site: ").append(sourceSite).append("\n");
-        sb.append("Departure Date: ").append(taskDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).append("\n");
+        sb.append("Departure Date: ").append(taskDate).append("\n");
         sb.append("Departure Time: ").append(departureTime).append("\n");
         sb.append("Driver Assigned: ").append(driverId).append("\n");
         sb.append("Truck Assigned: ").append(truckLicenseNumber).append("\n");

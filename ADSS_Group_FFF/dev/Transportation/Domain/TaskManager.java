@@ -1,16 +1,12 @@
 package Transportation.Domain;
 
-import Transportation.DTO.ItemDTO;
-import Transportation.DTO.TransportationDocDTO;
-import Transportation.DTO.TruckDTO;
-import Transportation.Domain.Repositories.TransportationDocRepository;
-import Transportation.Domain.Repositories.TransportationTaskRepository;
+import Transportation.DTO.*;
+import Transportation.Domain.Repositories.*;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TaskManager {
@@ -21,194 +17,165 @@ public class TaskManager {
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
 
-    public TaskManager(SiteManager siteManager1, DriverManager driverManager1, TruckManager truckManager1, ItemManager itemManager1,TransportationDocRepository docRepository1, TransportationTaskRepository taskRepository1) {
-        this.docRepository = docRepository1;
-        this taskRepository = taskRepository1;
-        this.itemManager = itemManager1;
-        this.siteManager = siteManager1;
-        this.driverManager = driverManager1;
-        this.truckManager = truckManager1;
-
+    public TaskManager() {
+        docRepository = new TransportationDocRepositoryImpli();
+        taskRepository = new TransportationTaskRepositoryImpli();
+        itemManager = new ItemManager();
+        siteManager = new SiteManager();
+        driverManager = new DriverManager();
+        truckManager = new TruckManager();
     }
 
-    public void addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException, SQLException {
-        Site sourceSite = siteManager.getSiteByAddress(taskSourceSite.toLowerCase());
-        if (sourceSite == null) {
+    public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
+        Optional<SiteDTO> site = siteManager.findSiteByAddress(taskSourceSite);
+        if (site.isEmpty()) {
             throw new NoSuchElementException();
         }
-        taskRepository.createTask(_taskDate,_departureTime,taskSourceSite);
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//        Date taskDate = sdf.parse(_taskDate);
-//        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-//        LocalTime departureTime = LocalTime.parse(_departureTime, timeFormatter);
-//        TransportationTask newTask = new TransportationTask(_taskId, taskDate, departureTime, sourceSite);
-//        allTasks.put(_taskId, newTask);
+        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
+        return taskRepository.createTask(_taskDate, _departureTime, sourceSiteId);
     }
 
-    public void removeTask(String taskDate, String taskDeparture, String taskSourceSite) {
-        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
-        if (!currTask.getDriverId().isEmpty() && !currTask.getTruckLicenseNumber().isEmpty()) {
-            driverManager.setDriverAvailability(currTask.getDriverId(), true);
-            truckManager.setTruckAvailability(currTask.getTruckLicenseNumber(), true);
+    public void removeTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite) throws SQLException {
+        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
+        Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, sourceSiteId);
+        if (task.isPresent()) {
+            // free truck and driver
+            if(!task.get().truckLicenseNumber().isEmpty() && !task.get().driverId().isEmpty()) {
+                // driverManager.setDriverAvailability(driverManager.getDriverId(), true);
+                truckManager.setTruckAvailability(truckManager.getTruckIdByLicense(task.get().truckLicenseNumber()), true);
+            }
+            taskRepository.deleteTask(task.get().taskId());
         }
-        allTasks.remove(currTask.getTaskId());
     }
 
-    public boolean doesTaskExist(String taskDate, String taskDeparture, String taskSourceSite) throws NoSuchElementException, ParseException {
-        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
-        if (currTask == null) {
-            throw new ParseException("", 0);
+
+    public void addDocToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite,
+                             String destinationSite, HashMap<String, Integer> itemsChosen) throws SQLException {
+        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
+        Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, sourceSiteId);
+        if (task.isPresent()) {
+            //Create itemList and push it to database
+            int listId = itemManager.makeList(itemsChosen);
+            //Create doc (creating mapping between list and destination) and push it to database
+            int destinationSiteId = siteManager.findSiteByAddress(destinationSite).get().siteId();
+            docRepository.createDoc(task.get().taskId(), destinationSiteId, listId);
+            //Phase add doc to task and add mapping to database
+            taskRepository.addDestination(task.get().taskId(), destinationSiteId);
         }
-        int taskId = currTask.getTaskId();
-        return allTasks.containsKey(taskId);
     }
 
 
+    public TransportationTaskDTO updateWeightForTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite) throws SQLException, NoSuchElementException {
+        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
+        Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, sourceSiteId);
+        float weight = 0;
+        if (task.isPresent()) {
+            List<TransportationDocDTO> taskDocs = docRepository.findDocByTaskId(task.get().taskId());
+            for (TransportationDocDTO doc : taskDocs) {
+                int itemsListId = docRepository.findDocItemsListId(doc.docId());
+                weight += itemManager.findWeightList(itemsListId);
+            }
+            return taskRepository.updateWeight(task.get().taskId(), weight);
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
 
+    public boolean assignDriverAndTruckToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite) throws SQLException {
+        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
+        Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, sourceSiteId);
+        if (task.isPresent()) {
+            Optional<TruckDTO> nextAvailableTruck = truckManager.getNextTruckAvailable(task.get().weightBeforeLeaving());
+            if (nextAvailableTruck.isEmpty()) {
+                throw new NoSuchElementException();
+            }
+            //Optional<DriverDTO> nextFittingDriver = driverManager.getAvailableDriverByLicense(String.valueOf((LicenseMapper.getRequiredLicense(TruckType.fromString(nextAvailableTruck.get().truckType())))));
+            //if (nextFittingDriver.isEmpty()) {
+            //    throw new NoSuchElementException();
+            //}
 
-    public void addDocToTask(String taskDate, String taskDeparture, String taskSourceSite,
-                             String destinationSite, List<DocItemsInfo> itemsChosen) throws SQLException {
-        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
+            // All good → assign
+            //taskRepository.assignDriverToTask(nextFittingDriver.get().driverId;
+            taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
+            //nextFittingDriver.setAvailability(false);
+            truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
 
-        float totalWeight = 0;
-        for (DocItemsInfo itemInfo : itemsChosen) {
-            Item item = Item.fromDTO(itemManager.getItemById(itemInfo.getItemId()));
-            if (item != null) {
-                totalWeight += item.getWeight() * itemInfo.getQuantity();
+            return true;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    public String getTaskString(TransportationTaskDTO t, int counter) throws SQLException {
+        StringBuilder sb = new StringBuilder("Transportation Task\n");
+        sb.append(counter).append(". Transportation Task\n");
+        sb.append("Source Site: ").append(t.sourceSiteAddress()).append("\n");
+        sb.append("Departure Date: ").append(t.taskDate()).append("\n");
+        sb.append("Departure Time: ").append(t.departureTime()).append("\n");
+        sb.append("Driver Assigned: ").append(t.driverId()).append("\n");
+        sb.append("Truck Assigned: ").append(t.truckLicenseNumber()).append("\n");
+        sb.append("Weight Before Leaving: ").append(t.weightBeforeLeaving()).append(" kg\n");
+        sb.append("Destinations:\n");
+
+        for (TransportationDocDTO doc : docRepository.findDocByTaskId(t.taskId())) {
+            String destinationAddress = siteManager.getSiteById(doc.destinationSite())
+                    .orElseThrow(() -> new SQLException("Destination site not found")).siteAddress();
+            sb.append("  - Destination: ").append(destinationAddress).append("\n");
+
+            ItemsListDTO list = itemManager.getItemsList(docRepository.findDocItemsListId(doc.docId()));
+            for (Map.Entry<Integer, Integer> entry : list.items().entrySet()) {
+                String itemName = itemManager.getItemById(entry.getKey()).itemName();
+                int quantity = entry.getValue();
+
+                sb.append("    • ").append(itemName).append(" — Quantity: ").append(quantity).append("\n");
             }
         }
 
-        TransportationDocDTO newDocDTO = TransportationDocRepository.createDoc(
-                currTask.getTaskId(),
-                destinationSite,
-                totalWeight
-        );
-
-        Site destSite = siteManager.getSiteByAddress(destinationSite.toLowerCase());
-        TransportationDoc doc = new TransportationDoc(
-                newDocDTO.taskId(),
-                newDocDTO.docId(),
-                destSite
-        );
-
-        for (DocItemsInfo itemInfo : itemsChosen) {
-            Item item = Item.fromDTO(itemManager.getItemById(itemInfo.getItemId()));
-            if (item != null) {
-                doc.addItem(item, itemInfo.getQuantity());
-            }
-        }
-
-        currTask.addDoc(doc);
+        sb.append("----------------------\n");
+        return sb.toString();
     }
 
-
-
-    public void updateWeightForTask(String taskDate, String taskDeparture, String taskSourceSite) {
-        TransportationTask task1 = getTask(taskDate, taskDeparture, taskSourceSite);
-        task1.setWeightBeforeLeaving();
-    }
-
-    public boolean assignDriverAndTruckToTask(String taskDate, String taskDeparture, String taskSourceSite) {
-        TransportationTask task = getTask(taskDate, taskDeparture, taskSourceSite);
-        TruckDTO nextAvailableTruck = truckManager.getNextTruckAvailable(task.getWeightBeforeLeaving());
-        if (nextAvailableTruck == null) {
-            return false;
-        }
-        Driver nextFittingDriver = driverManager.getAvailableDriverByLicense((LicenseMapper.getRequiredLicense(nextAvailableTruck.getTruckType())).name());
-        if (nextFittingDriver == null) {
-            return false;
-        }
-
-        // All good → assign
-        task.assignDriver(nextFittingDriver.getDriverId());
-        task.assignTruck(nextAvailableTruck.getLicenseNumber());
-        nextFittingDriver.setAvailability(false);
-        nextAvailableTruck.setAvailability(false);
-
-        return true;
-    }
-
-    public List<TransportationTask> getAllTasks() {
-        return new ArrayList<>(allTasks.values());
-    }
-
-    public String getAllTasksString() {
-        List<TransportationTask> allTasks = getAllTasks();
-        if (allTasks.isEmpty()) return "No tasks available.";
-
+    public String getAllTasksString() throws SQLException {
+        List<TransportationTaskDTO> allTasks = taskRepository.findAllTasks();
+        int counter = 1;
         StringBuilder sb = new StringBuilder("All Tasks:\n");
-        for (TransportationTask t : allTasks) {
-            sb.append(t).append("\n----------------------\n");
+
+        for (TransportationTaskDTO t : allTasks) {
+            sb.append(getTaskString(t, counter));
+            counter++;
         }
+
         return sb.toString();
     }
 
-    public TransportationTask getTask(String _taskDate, String _departureTime, String sourceSite) throws NoSuchElementException {
-        try {
-            Site s = siteManager.getSiteByAddress(sourceSite);
-            if (s == null) {
-                throw new NoSuchElementException("Site doesn't exist");
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date taskDate = sdf.parse(_taskDate);
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime departureTime = LocalTime.parse(_departureTime, timeFormatter);
-            for (TransportationTask t : allTasks.values()) {
-                if (t.getTaskSourceAddress().equalsIgnoreCase(s.getAddress()) && t.getTaskDate().equals(taskDate) && t.getDepartureTime().equals(departureTime)) {
-                    return t;
-                }
-            }
-            throw new NoSuchElementException("Task doesn't exist");
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
-    public String getTasksBySourceAddress(String sourceAddress) {
+    public String getTasksBySourceAddress(String sourceAddress) throws SQLException {
+        int sourceSiteId = siteManager.findSiteByAddress(sourceAddress)
+                .orElseThrow(() -> new SQLException("Source site not found"))
+                .siteId();
+        int counter = 1;
+        List<TransportationTaskDTO> tasks = taskRepository.findTaskBySourceAddress(sourceSiteId);
         StringBuilder sb = new StringBuilder();
-        boolean found = false;
 
-        for (TransportationTask t : allTasks.values()) {
-            if (t.getTaskSourceAddress().equalsIgnoreCase(sourceAddress)) {
-                sb.append(t).append("\n----------------------\n");
-                found = true;
-            }
-        }
-
-        if (!found) {
-            return "";
+        for (TransportationTaskDTO t : tasks) {
+            sb.append(getTaskString(t, counter));
+            counter++;
         }
 
         return sb.toString();
     }
 
-    public String getTasksByDriverId(String driverId) {
-        StringBuilder sb = new StringBuilder();
-        boolean found = false;
-
-        for (TransportationTask t : allTasks.values()) {
-            if (t.getDriverId().equalsIgnoreCase(driverId)) {
-                sb.append(t).append("\n----------------------\n");
-                found = true;
-            }
+    public boolean hasDestination(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite, String destinationSite) throws NoSuchElementException, SQLException {
+        Optional<SiteDTO> site = siteManager.findSiteByAddress(destinationSite);
+        if (site.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
+        Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, sourceSiteId);
+        if (task.isEmpty()) {
+            throw new NoSuchElementException();
         }
 
-        if (!found) {
-            return "";
-        }
-
-        return sb.toString();
+        int taskId = task.get().taskId();
+        return taskRepository.hasDestination(taskId, site.get().siteId());
     }
-
-    public boolean hasDestination(String taskDate, String taskDeparture, String taskSourceSite, String destinationSite) throws NoSuchElementException {
-        siteManager.getSiteByAddress(destinationSite);
-        TransportationTask currTask = getTask(taskDate, taskDeparture, taskSourceSite);
-        return currTask.hasDestination(destinationSite);
-    }
-
-//    make it work:
-//    public TransportationDocDTO createDocByAddress(int taskId, String address) throws SQLException {
-//        int siteId = siteDAO.findByAddress(address).orElseThrow().siteId();
-//        return docDAO.insert(new TransportationDocDTO(null, taskId, siteId, 0f));
-//    }
 }

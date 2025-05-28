@@ -1,13 +1,14 @@
 package Transportation.Domain;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import Transportation.DTO.ItemsListDTO;
 import Transportation.Domain.Repositories.ItemRepository;
 import Transportation.DTO.ItemDTO;
 import Transportation.Domain.Repositories.ItemRepositoryImpli;
 
 import java.sql.SQLException;
-import java.util.NoSuchElementException;
 
 public class ItemManager {
     private final ItemRepository itemRepository;
@@ -16,53 +17,28 @@ public class ItemManager {
         this.itemRepository = new ItemRepositoryImpli();
     }
 
-    public void addItem(String itemName, float itemWeight) {
-        try {
-            itemRepository.addItem(itemName.toLowerCase(),itemWeight);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public void addItem(String itemName, float itemWeight) throws SQLException {
+        itemRepository.addItem(itemName.toLowerCase(), itemWeight);
     }
-    public Integer getItemIdByName(int itemId) {
-        try {
-            return itemRepository.findItem(itemId)
-                    .map(ItemDTO::itemId)
-                    .orElse(null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+
+    public Integer getItemIdByName(int itemId) throws SQLException {
+        return itemRepository.findItem(itemId)
+                .map(ItemDTO::itemId)
+                .orElse(null);
     }
 
 
-        public ItemDTO getItemByName(String itemName) {
-        try {
-            return itemRepository.getAllItems().stream().filter(i -> i.itemName().equalsIgnoreCase(itemName)).findFirst().orElse(null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public ItemDTO getItemByName(String itemName) throws SQLException {
+        return itemRepository.getAllItems().stream().filter(i -> i.itemName().equalsIgnoreCase(itemName)).findFirst().orElse(null);
     }
-    public ItemDTO getItemById(int itemId) {
-        try {
-            return itemRepository.findItem(itemId).orElse(null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
 
-}
+    public ItemDTO getItemById(int itemId) throws SQLException {
+        return itemRepository.findItem(itemId).orElse(null);
+    }
 
 
     public List<ItemDTO> getAllItems() throws SQLException {
-        try {
-            return itemRepository.getAllItems();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            // create new list
-            return new ArrayList<>();
-        }
+        return itemRepository.getAllItems();
     }
 
     public String getAllItemsString() throws SQLException {
@@ -76,7 +52,13 @@ public class ItemManager {
         return sb.toString();
     }
 
+    public int makeList(HashMap<String, Integer> itemsInList) throws SQLException {
+        return itemRepository.makeList(itemsInList);
+    }
 
+    public float findWeightList(int itemsListId) throws SQLException {
+        return itemRepository.findWeightList(itemsListId);
+    }
 
     public void removeItem(int itemId) {
         try {
@@ -86,7 +68,11 @@ public class ItemManager {
         }
     }
 
-    public boolean doesItemExist(int itemId) {
-       return getItemById(itemId) != null;
+    public ItemsListDTO getItemsList(int itemsListId) throws SQLException {
+        return itemRepository.getItemsList(itemsListId);
+    }
+
+    public boolean doesItemExist(int itemId) throws SQLException {
+        return getItemById(itemId) != null;
     }
 }

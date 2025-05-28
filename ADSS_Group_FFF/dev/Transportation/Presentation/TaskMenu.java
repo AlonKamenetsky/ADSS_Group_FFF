@@ -1,11 +1,13 @@
 package Transportation.Presentation;
 
+import Transportation.DTO.ItemDTO;
 import Transportation.Service.ItemService;
 import Transportation.Service.TaskService;
 
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -77,7 +79,7 @@ public class TaskMenu {
     }
 
     private void viewAllTasks() {
-        System.out.println(TasksHandler.viewAllTasks());
+        System.out.println(TasksHandler.getAllTasksString());
     }
 
     private void returnToMain() {
@@ -94,15 +96,16 @@ public class TaskMenu {
         System.out.println("Enter source site of the task:");
         taskSourceSite = input.nextLine();
         try {
-            TasksHandler.addTask(taskDate, taskDeparture, taskSourceSite.toLowerCase());
+            TasksHandler.addTask(taskDate, taskDeparture, taskSourceSite);
             System.out.println("Task added successfully without destination sites.");
         } catch (ParseException | DateTimeParseException e) {
             System.out.println("Invalid date/time format");
             return;
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             System.out.println("Site doesn't exist.");
             return;
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
 
         while (true) {
@@ -113,15 +116,15 @@ public class TaskMenu {
                     System.out.println("Task already has this destination.");
                     continue;
                 }
+            } catch (NullPointerException e) {
+                System.out.println("Not a valid site.");
+                continue;
+            } catch (NoSuchElementException e) {
+                System.out.println("Site doesn't exist.");
+                continue;
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
             }
-            catch (NullPointerException e) {
-                    System.out.println("Not a valid site.");
-                    continue;
-                }
-            catch (NoSuchElementException e) {
-                    System.out.println("Site doesn't exist.");
-                    continue;
-                }
             System.out.println("""
                     Choose one of the following:
                     1. Choose items to add to this destination document (at least one).
@@ -131,7 +134,7 @@ public class TaskMenu {
             switch (choice) {
                 case "1":
                     while (true) {
-                        System.out.println(ItemHandler.viewAllItems());
+                        viewAllItems();
                         System.out.println("Enter name of item you would like you add.");
                         String itemName = input.nextLine();
                         if (!ItemHandler.doesItemExist(itemName)) {
@@ -175,20 +178,18 @@ public class TaskMenu {
         }
         if (!TasksHandler.assignDriverAndTruckToTask(taskDate, taskDeparture, taskSourceSite)) {
             System.out.println("""
-                        Adding task not successful, no drivers or trucks available for this task.
-                        Consider choosing less items or taking off destination sites.
-                        Full list of trucks is available to you in the Truck Menu.
-                        Task is deleted for now. Thank you and sorry!""");
+                    Adding task not successful, no drivers or trucks available for this task.
+                    Consider choosing less items or taking off destination sites.
+                    Full list of trucks is available to you in the Truck Menu.
+                    Task is deleted for now. Thank you and sorry!""");
             try {
                 TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
             } catch (ParseException e) {
                 return;
-            }
-            catch (NoSuchElementException n) {
+            } catch (NoSuchElementException n) {
                 System.out.println(n.getMessage());
             }
-        }
-        else {
+        } else {
             System.out.println("Added task successfully.");
         }
     }
@@ -197,5 +198,21 @@ public class TaskMenu {
         System.out.println("Enter a site address:");
         String siteAddress = input.nextLine();
         System.out.println(TasksHandler.getTasksBySourceAddress(siteAddress));
+    }
+
+    private void viewAllItems() {
+        List<ItemDTO> allItems = ItemHandler.viewAllItems();
+
+        System.out.println("All Items:");
+        int counter = 1;
+
+        for (ItemDTO i : allItems) {
+            System.out.printf(
+                    "%d. Item name: %s\n   Item weight: %.2f\n----------------------%n",
+                    counter++,
+                    i.itemName(),
+                    i.itemWeight()
+            );
+        }
     }
 }

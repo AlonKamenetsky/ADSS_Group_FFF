@@ -1,11 +1,11 @@
 package Transportation.Service;
+
 import Transportation.DTO.ItemDTO;
-import Transportation.Domain.Item;
 import Transportation.Domain.ItemManager;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ItemService {
     private final ItemManager itemManager;
@@ -18,30 +18,32 @@ public class ItemService {
         if (itemName == null || weight < 0) {
             return;
         }
-        itemManager.addItem(itemName, weight);
+        try {
+            itemManager.addItem(itemName, weight);
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
+        }
     }
 
     public void deleteItem(String itemName) {
         if (itemName == null) {
             return;
         }
-
-        ItemDTO itemDTO = itemManager.getItemByName(itemName);
-        if (itemDTO != null) {
-            itemManager.removeItem(itemDTO.itemId());
+        try {
+            ItemDTO itemDTO = itemManager.getItemByName(itemName);
+            if (itemDTO != null) {
+                itemManager.removeItem(itemDTO.itemId());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
         }
     }
-
-//    public String viewAllItems() {
-//        return itemManager.getAllItemsString();
-//    }
 
     public List<ItemDTO> viewAllItems() {
         try {
             return itemManager.getAllItems();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
         }
     }
 
@@ -50,9 +52,11 @@ public class ItemService {
         if (itemName == null) {
             return false;
         }
-        else {
+        try {
             ItemDTO itemDTO = itemManager.getItemByName(itemName);
             return itemManager.doesItemExist(itemDTO.itemId());
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error");
         }
     }
 //

@@ -42,6 +42,28 @@ public class SqliteItemsListDAO implements ItemsListDAO {
     }
 
     @Override
+    public float findWeight(int listId) throws SQLException {
+        String sql = """
+        SELECT SUM(iil.quantity * i.weight) AS total_weight
+        FROM items_in_list iil
+        JOIN items i ON iil.item_id = i.item_id
+        WHERE iil.list_id = ?
+    """;
+
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, listId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getFloat("total_weight");
+                } else {
+                    return 0f; // No items in list
+                }
+            }
+        }
+    }
+
+
+    @Override
     public HashMap<Integer, Integer> getItemsInList(int listId) throws SQLException {
         String sql = "SELECT item_id, quantity FROM items_in_list WHERE list_id = ?";
         HashMap<Integer, Integer> items = new HashMap<>();

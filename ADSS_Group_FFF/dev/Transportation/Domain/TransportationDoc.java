@@ -1,20 +1,16 @@
 package Transportation.Domain;
 
-import Transportation.DTO.ItemDTO;
-import Transportation.DTO.TransportationDocDTO;
-
 public class TransportationDoc {
     private final int docId;
     private final int taskId;
     private final Site destinationSite;
     private final ItemsList docItems;
-    private int nextItemList = 1;
 
-    public TransportationDoc(int taskId, int docId, Site destinationSite) {
+    public TransportationDoc(int taskId, int docId, Site destinationSite, int itemsListId) {
         this.taskId = taskId;
         this.docId = docId;
         this.destinationSite = destinationSite;
-        docItems = new ItemsList(nextItemList++);
+        docItems = new ItemsList(itemsListId);
     }
 
     public void addItem(Item newItem, int quantity) {

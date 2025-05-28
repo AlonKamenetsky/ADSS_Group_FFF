@@ -8,12 +8,8 @@ public class SystemInitializer {
     public static TransportationMenu buildApplication() {
         // === HR.tests.Domain Managers ===
         DriverManager driverManager = new DriverManager();
-        TruckManager truckManager = new TruckManager();
-        ZoneManager zoneManager = new ZoneManager();
-        SiteManager siteManager = new SiteManager(); // and pass dependencies if needed
-        SiteZoneManager siteZoneManager = new SiteZoneManager();
         ItemManager itemManager = new ItemManager();
-        TaskManager taskManager = new TaskManager(siteManager, driverManager, truckManager, itemManager);
+        TaskManager taskManager = new TaskManager();
 
         // === Services (pass managers) ===
         DriverService driverService = new DriverService(driverManager);
