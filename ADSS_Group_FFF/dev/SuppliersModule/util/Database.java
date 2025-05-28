@@ -64,7 +64,7 @@ public final class Database {
                                 address TEXT,
                                 email TEXT
                             );
-                        """);w
+                        """);
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS payment_info (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
