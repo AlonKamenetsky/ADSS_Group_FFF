@@ -15,12 +15,6 @@ public class CLI {
         dataRead = false;
     }
 
-    public void ReadDataFromCSVFiles() {
-        System.out.println("Reading data from files...");
-        this.serviceController.ReadDataFromCSVFiles();
-        System.out.println("Done");
-    }
-
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
     public void registerNewProduct() {
@@ -132,7 +126,6 @@ public class CLI {
 
         System.out.println("Register new contract section:");
         this.registerNewContract(supplierID);
-        System.out.println("Contract added successfully.");
     }
 
     public void updateSupplier() {
@@ -705,7 +698,6 @@ public class CLI {
             switch (userInput) {
                 case 0:
                     if(!dataRead) {
-                        ReadDataFromCSVFiles();
                         dataRead = true;
                     }
                     else

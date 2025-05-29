@@ -16,27 +16,23 @@ public class ServiceController {
         this.productService = new ProductService();
     }
 
-    public void ReadDataFromCSVFiles() {
-        this.productService.ReadProductsFromCSVFile();
-        this.supplierService.ReadDataFromCSVFiles();
-    }
 
     // --------------------------- VALIDATION FUNCTIONS ---------------------------
 
     private boolean validateProductCategory(int productCategory) {
-        return (productCategory > 0 && productCategory < ProductCategory.values().length);
+        return (productCategory >= 0 && productCategory < ProductCategory.values().length);
     }
 
     private boolean validateSupplyMethod(int supplyMethod) {
-        return (supplyMethod > 0 && supplyMethod < SupplyMethod.values().length);
+        return (supplyMethod >= 0 && supplyMethod < SupplyMethod.values().length);
     }
 
     private boolean validateDeliveringMethod(int deliveringMethod) {
-        return (deliveringMethod > 0 && deliveringMethod < DeliveringMethod.values().length);
+        return (deliveringMethod >= 0 && deliveringMethod < DeliveringMethod.values().length);
     }
 
     private boolean validatePaymentMethod(int paymentMethod) {
-        return (paymentMethod > 0 && paymentMethod < PaymentMethod.values().length);
+        return (paymentMethod >= 0 && paymentMethod < PaymentMethod.values().length);
     }
 
     private boolean validateSupplierAndProduct(int supplierID, int productID) {
@@ -44,7 +40,7 @@ public class ServiceController {
     }
 
     private boolean validateContractProductData(int price, int quantityForDiscount, int discountPercentage) {
-        return price <= 0 || quantityForDiscount <= 0 || !(discountPercentage > 0 && discountPercentage < 100);
+        return price > 0 || quantityForDiscount > 0 || (discountPercentage > 0 && discountPercentage < 100);
     }
 
     private Date validateOrderDated(String supplyDate) {
@@ -78,7 +74,7 @@ public class ServiceController {
             return true;
 
         for (int day : days)
-            if (validateDay(day))
+            if (!validateDay(day))
                 return false;
         return true;
     }
@@ -160,8 +156,12 @@ public class ServiceController {
 
     public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
         for (int[] data : dataList)
-            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3])) ////// THIS
+            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3])) {
+                System.out.println("1111" + validateSupplierAndProduct(supplierID, data[0]));
+                System.out.println("222" + validateContractProductData(data[1], data[2], data[3]));
                 return false;
+            }
+
 
         return this.supplierService.registerNewContract(supplierID, dataList);
     }

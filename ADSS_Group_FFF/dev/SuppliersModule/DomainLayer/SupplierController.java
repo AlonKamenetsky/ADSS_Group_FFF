@@ -1,17 +1,15 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.*;
+import SuppliersModule.DataLayer.SupplierControllerDTO;
+import SuppliersModule.DataLayer.SupplierDTO;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.Random;
 
 import static SuppliersModule.DomainLayer.OrderController.buildProductDataArray;
 
@@ -22,66 +20,39 @@ public class SupplierController {
     int numberOfSuppliers;
     ArrayList<Supplier> suppliersArrayList;
 
-    public SupplierController() {
+    SupplierControllerDTO supplierControllerDTO;
+
+    public SupplierController() throws SQLException, IOException {
         this.numberOfSuppliers = 0;
         this.suppliersArrayList = new ArrayList<>();
 
         this.orderController = new OrderController();
         this.supplyContractController = new SupplyContractController();
 
-        //this.ReadSuppliersFromCSVFile();
-    }
+        this.supplierControllerDTO = SupplierControllerDTO.getInstance();
+        ArrayList<SupplierDTO> dtoList = supplierControllerDTO.getAllSuppliers();
 
-    public void ReadDataFromCSVFiles() {
-        this.ReadSuppliersFromCSVFile();
-        this.supplyContractController.ReadSupplierContractDataFromCSV();
-        this.orderController.ReadOrdersFromCSVFile();
-    }
+        for (SupplierDTO dto : dtoList) {
+            ContactInfo supplierContactInfo = new ContactInfo(dto.phoneNumber, dto.address, dto.emailAddress, dto.contactName);
+            PaymentInfo supplierPaymentInfo = new PaymentInfo(dto.bankAccount, PaymentMethod.valueOf(dto.paymentMethod));
 
-    private void ReadSuppliersFromCSVFile() {
-        InputStream in = SupplierController.class.getResourceAsStream("/suppliers_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
+            Supplier supplier = null;
+            if (SupplyMethod.valueOf(dto.supplyMethod) == SupplyMethod.ON_DEMAND)
+                supplier = new OnDemandSupplier(dto.supplierID, dto.supplierName, ProductCategory.valueOf(dto.productCategory), DeliveringMethod.valueOf(dto.deliveryMethod), supplierContactInfo, supplierPaymentInfo);
+            else if (SupplyMethod.valueOf(dto.supplyMethod) == SupplyMethod.SCHEDULED) {
+                ArrayList<SupplierDaysDTO> supplierDaysDTOList = supplierControllerDTO.getSupplierDaysOfSupplier(dto);
+                EnumSet<WeekDay> days = EnumSet.noneOf(WeekDay.class);
+                for (SupplierDaysDTO supplierDaysDTO : supplierDaysDTOList)
+                    days.add(WeekDay.valueOf(supplierDaysDTO.day));
 
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-
-                String supplyMethodStr = parts[0].toUpperCase();
-                SupplyMethod supplyMethod = SupplyMethod.valueOf(supplyMethodStr);
-
-                String supplierName = parts[1];
-
-                String categoryStr = parts[2].toUpperCase().replace(" ", "_");
-                ProductCategory productCategory = ProductCategory.valueOf(categoryStr);
-
-                String deliveryMethodStr = parts[3].toUpperCase();
-                DeliveringMethod deliveringMethod = DeliveringMethod.valueOf(deliveryMethodStr);
-
-                String phoneNumber = parts[4];
-                String address = parts[5];
-                String email = parts[6];
-                String contactName = parts[7];
-
-                String bankAccount = parts[8];
-                String paymentMethodStr = parts[9].toUpperCase();
-                PaymentMethod paymentMethod = PaymentMethod.valueOf(paymentMethodStr);
-
-                this.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, null);
+                supplier = new ScheduledSupplier(dto.supplierID, dto.supplierName, ProductCategory.valueOf(dto.productCategory), DeliveringMethod.valueOf(dto.deliveryMethod), supplierContactInfo, supplierPaymentInfo, days);
             }
-        } catch (IOException e) {
-            System.err.println("Error reading CSV file: " + e.getMessage());
+
+            for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(dto.supplierID))
+                supplier.addSupplierContract(supplyContract);
+
+            this.numberOfSuppliers++;
+            this.suppliersArrayList.add(supplier);
         }
     }
 
@@ -100,6 +71,16 @@ public class SupplierController {
             supplier = new ScheduledSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo, supplyDays);
 
         this.suppliersArrayList.add(supplier);
+        supplier.supplierDTO.Insert();
+
+        if (supplyMethod == SupplyMethod.SCHEDULED) {
+            ScheduledSupplier scheduledSupplier = (ScheduledSupplier)supplier;
+            for (WeekDay day : scheduledSupplier.getSupplyDays()) {
+                SupplierDaysDTO dto = new SupplierDaysDTO(scheduledSupplier.getSupplierId(), day.toString());
+                dto.Insert();
+            }
+        }
+
         return supplier.getSupplierId();
     }
 
@@ -136,9 +117,15 @@ public class SupplierController {
     }
 
     public boolean deleteSupplier(int supplierID) {
-        return this.suppliersArrayList.removeIf(supplier -> supplier.supplierId == supplierID) &&
-                this.orderController.removeAllSupplierOrders(supplierID) &&
-                this.supplyContractController.removeAllSupplierContracts(supplierID);
+        Supplier supplier = getSupplierBySupplierID(supplierID);
+        if (supplier == null)
+            return false;
+
+        supplier.supplierDTO.Delete();
+        this.supplyContractController.removeAllSupplierContracts(supplierID);
+        this.orderController.removeAllSupplierOrders(supplierID);
+
+        return this.suppliersArrayList.removeIf(s -> s.supplierId == supplierID);
     }
 
     // ********** UPDATE FUNCTIONS **********
@@ -218,8 +205,8 @@ public class SupplierController {
 
     public String[] getAllSuppliersAsString() {
         String[] suppliersAsString = new String[this.suppliersArrayList.size()];
-        for (Supplier supplier : this.suppliersArrayList)
-            suppliersAsString[supplier.supplierId] = supplier.toString();
+        for (int i = 0 ; i < suppliersAsString.length;i++)
+            suppliersAsString[i] = this.suppliersArrayList.get(i).toString();
 
         return suppliersAsString;
     }
@@ -234,7 +221,6 @@ public class SupplierController {
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
     public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
-
         Supplier supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null)
             return false;

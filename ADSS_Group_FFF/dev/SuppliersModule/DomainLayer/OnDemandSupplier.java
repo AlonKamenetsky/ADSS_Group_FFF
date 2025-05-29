@@ -13,6 +13,7 @@ public class OnDemandSupplier extends Supplier {
 
     public OnDemandSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
         super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContactInfo, supplierPaymentInfo);
+        this.supplierDTO.supplyMethod = this.getSupplyMethod().toString();
     }
     @Override
     public SupplyMethod getSupplyMethod() {

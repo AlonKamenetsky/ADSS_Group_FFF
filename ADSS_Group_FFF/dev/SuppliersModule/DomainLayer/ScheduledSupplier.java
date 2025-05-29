@@ -19,9 +19,11 @@ public class ScheduledSupplier extends Supplier {
 
     public ScheduledSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo, EnumSet<WeekDay> supplyDays) {
         super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContactInfo, supplierPaymentInfo);
+        this.supplierDTO.supplyMethod = this.getSupplyMethod().toString();
+
         this.supplyDays = supplyDays;
 
-        scheduledOrders = new HashMap<>();
+        this.scheduledOrders = new HashMap<>();
     }
 
     @Override

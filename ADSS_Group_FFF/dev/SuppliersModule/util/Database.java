@@ -27,6 +27,7 @@ public final class Database {
                                 producs_category TEXT
                             );
                         """);
+
                 // Create orders table
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS orders (
@@ -70,7 +71,16 @@ public final class Database {
                         
                                 -- Payment Info fields
                                 bank_account TEXT NOT NULL,
-                                payment_method TEXT NOT NULL  -- enum stored as string
+                                payment_method TEXT NOT NULL,  -- enum stored as string
+        
+                                supply_method TEXT NOT NULL
+                            );
+                        """);
+
+                stmt.executeUpdate("""
+                            CREATE TABLE IF NOT EXISTS suppliers_days (
+                               id INTEGER,
+                               day TEXT NOT NULL
                             );
                         """);
 
@@ -81,9 +91,9 @@ public final class Database {
                                 FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
                             );
                         """);
+
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS supply_contract_product_data (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 contract_id INTEGER NOT NULL,
                                 product_id INTEGER NOT NULL,
                                 product_price REAL NOT NULL,

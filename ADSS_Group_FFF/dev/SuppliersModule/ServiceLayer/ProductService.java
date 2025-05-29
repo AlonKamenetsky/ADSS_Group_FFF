@@ -11,10 +11,6 @@ public class ProductService {
         this.productController = new ProductController();
     }
 
-    public void ReadProductsFromCSVFile() {
-        this.productController.ReadProductsFromCSVFile();
-    }
-
     public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
         return this.productController.registerNewProduct(productName, productCompanyName, productCategory);
     }

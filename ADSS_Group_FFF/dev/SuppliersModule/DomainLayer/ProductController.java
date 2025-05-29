@@ -1,5 +1,7 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.ProductControllerDTO;
+import SuppliersModule.DataLayer.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 
 import java.io.BufferedReader;
@@ -9,48 +11,39 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ProductController {
-    ArrayList<Product> productsArrayList; // TEMP DATA STRUCTURE
-    int numberOfProducts; // ID Giver
+
+    ProductControllerDTO productControllerDTO;
+
+    ArrayList<Product> productsArrayList;
+    int numberOfProducts;
 
     public ProductController() {
         this.numberOfProducts = 0;
+
         this.productsArrayList = new ArrayList<>();
-        //this.readProductsFromCSVFile();
+
+        this.productControllerDTO = ProductControllerDTO.getInstance();
+
+        ArrayList<ProductDTO> productsDTO = this.productControllerDTO.getAllProducts();
+        for (ProductDTO productDTO : productsDTO) {
+            this.productsArrayList.add(productDTO.convertDTOToEntity());
+            this.numberOfProducts++;
+        }
     }
 
-    public void ReadProductsFromCSVFile() {
-        InputStream in = ProductController.class.getResourceAsStream("/products_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
+    private Product getProductByID(int id) {
+        for (Product product : this.productsArrayList)
+            if (product.productId == id)
+                return product;
 
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-                String productName = parts[0];
-                String productCompanyName = parts[1];
-                String categoryStr = parts[2].toUpperCase();
-                ProductCategory productCategory = ProductCategory.valueOf(categoryStr);
-
-                this.registerNewProduct(productName, productCompanyName, productCategory);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return null;
     }
 
     public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
         Product product = new Product(this.numberOfProducts++, productName, productCompanyName, productCategory);
+
+        product.productDTO.Insert();
+
         this.productsArrayList.add(product);
         return product.getProductId();
     }
@@ -68,7 +61,13 @@ public class ProductController {
     }
 
     public boolean deleteProduct(int productID) {
-        return this.productsArrayList.removeIf(product -> product.productId == productID);
+        Product product = getProductByID(productID);
+        if (product == null)
+            return false;
+
+        product.productDTO.Delete();
+
+        return this.productsArrayList.removeIf(p -> p.productId == productID);
     }
 
     public String[] getAllProductsAsString() {

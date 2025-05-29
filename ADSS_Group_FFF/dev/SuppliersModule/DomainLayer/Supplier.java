@@ -1,5 +1,6 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.SupplierDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
@@ -20,6 +21,8 @@ public abstract class Supplier {
 
     PaymentInfo supplierPaymentInfo;
 
+    SupplierDTO supplierDTO;
+
     public Supplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod,  ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
         this.supplierId = supplierId;
         this.supplierName = supplierName;
@@ -31,6 +34,10 @@ public abstract class Supplier {
         this.supplierContactInfo = supplierContactInfo;
 
         this.supplierPaymentInfo = supplierPaymentInfo;
+
+        this.supplierDTO = new SupplierDTO(this.supplierId, this.supplierName, this.productCategory.toString(), this.supplierDeliveringMethod.toString(),
+                supplierContactInfo.name, supplierContactInfo.email, supplierContactInfo.phoneNumber, supplierContactInfo.address,
+                supplierPaymentInfo.supplierBankAccount.toString(), supplierPaymentInfo.supplierPaymentMethod.toString(), "temp");
     }
 
     public int getSupplierId() {
@@ -43,6 +50,7 @@ public abstract class Supplier {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+        this.supplierDTO.supplierName = supplierName;
     }
 
     public ProductCategory getSupplierProductCategory() {
@@ -51,6 +59,7 @@ public abstract class Supplier {
 
     public void setSupplierProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
+        this.supplierDTO.productCategory = productCategory.toString();
     }
 
     public abstract SupplyMethod getSupplyMethod();
@@ -61,6 +70,7 @@ public abstract class Supplier {
 
     public void setSupplierDeliveringMethod(DeliveringMethod supplierDeliveringMethod) {
         this.supplierDeliveringMethod = supplierDeliveringMethod;
+        this.supplierDTO.deliveryMethod = supplierDeliveringMethod.toString();
     }
 
     public void addSupplierContract(SupplyContract supplierContract) {
@@ -77,6 +87,10 @@ public abstract class Supplier {
 
     public void setSupplierContactInfo(ContactInfo supplierContactInfo) {
         this.supplierContactInfo = supplierContactInfo;
+        this.supplierDTO.contactName = supplierContactInfo.name.toString();
+        this.supplierDTO.emailAddress = supplierContactInfo.email;
+        this.supplierDTO.phoneNumber = supplierContactInfo.phoneNumber;
+        this.supplierDTO.address = supplierContactInfo.address;
     }
 
     public PaymentInfo getSupplierPaymentInfo() {
@@ -85,6 +99,8 @@ public abstract class Supplier {
 
     public void setSupplierPaymentInfo(PaymentInfo supplierPaymentInfo) {
         this.supplierPaymentInfo = supplierPaymentInfo;
+        this.supplierDTO.bankAccount = supplierPaymentInfo.supplierBankAccount;
+        this.supplierDTO.paymentMethod = supplierPaymentInfo.supplierPaymentMethod.toString();
     }
 
     public String toString() {

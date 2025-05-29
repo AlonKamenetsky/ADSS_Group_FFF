@@ -61,7 +61,7 @@ public class UnitTest {
     @Test
     void testAddSupplyContractProductData() {
         SupplyContract contract = new SupplyContract(1, 1001);
-        SupplyContractProductData data = new SupplyContractProductData(10, 5.5, 3, 10.0);
+        SupplyContractProductData data = new SupplyContractProductData(1, 10, 5.5, 3, 10.0);
 
         contract.addSupplyContractProductData(data);
 
@@ -72,7 +72,7 @@ public class UnitTest {
     @Test
     void testGetSupplyContractProductDataOfProduct_Found() {
         SupplyContract contract = new SupplyContract(1, 1001);
-        SupplyContractProductData data = new SupplyContractProductData(10, 5.5, 3, 10.0);
+        SupplyContractProductData data = new SupplyContractProductData(1, 10, 5.5, 3, 10.0);
         contract.addSupplyContractProductData(data);
 
         SupplyContractProductData result = contract.getSupplyContractProductDataOfProduct(10);
@@ -93,7 +93,7 @@ public class UnitTest {
     @Test
     void testCheckIfProductInData() {
         SupplyContract contract = new SupplyContract(1, 1001);
-        contract.addSupplyContractProductData(new SupplyContractProductData(1, 10.0, 5, 5.0));
+        contract.addSupplyContractProductData(new SupplyContractProductData(1, 1, 10.0, 5, 5.0));
 
         assertTrue(contract.CheckIfProductInData(1));
         assertFalse(contract.CheckIfProductInData(999));

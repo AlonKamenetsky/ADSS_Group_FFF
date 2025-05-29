@@ -12,11 +12,12 @@ public class SupplierService {
     SupplierController supplierController;
 
     public SupplierService() {
-        this.supplierController = new SupplierController();
-    }
-
-    public void ReadDataFromCSVFiles() {
-        this.supplierController.ReadDataFromCSVFiles();
+        try {
+            this.supplierController = new SupplierController();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public int registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,

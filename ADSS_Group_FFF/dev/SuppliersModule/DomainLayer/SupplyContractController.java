@@ -1,5 +1,8 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.SupplyContractControllerDTO;
+import SuppliersModule.DataLayer.SupplyContractDTO;
+import SuppliersModule.DataLayer.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.io.BufferedReader;
@@ -15,91 +18,47 @@ import java.util.Map;
 
 public class SupplyContractController {
     int contractID;
+
+    SupplyContractControllerDTO supplyContractControllerDTO;
+
     ArrayList<SupplyContract> supplyContractsArrayList;
 
     public SupplyContractController() {
         this.contractID = 0;
+
         this.supplyContractsArrayList = new ArrayList<>();
 
-       //this.ReadSupplierContractDataFromCSV();
-    }
+        this.supplyContractControllerDTO = SupplyContractControllerDTO.getInstance();
 
-    public void ReadSupplierContractDataFromCSV() {
-        Map<Integer, List<SupplyContract>> supplierToContracts = new HashMap<>();
-        Map<String, SupplyContract> uniqueContractLookup = new HashMap<>();
+        for (SupplyContractDTO supplyContractDTO : supplyContractControllerDTO.getAllSupplyContracts()) {
+            SupplyContract supplyContract = supplyContractDTO.convertDTOToEntity();
+            for (SupplyContractProductDataDTO productDataDTO : supplyContractControllerDTO.getSupplyContractProductDataByContractID(supplyContractDTO))
+                supplyContract.addSupplyContractProductData(productDataDTO.convertDTOToEntity());
 
-        InputStream in = SupplyContractController.class.getResourceAsStream("/contracts_data.csv");
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;  // skip header
-                    continue;
-                }
-
-                String[] parts = line.split(",");
-                for (int i = 0; i < parts.length; i++) {
-                    parts[i] = parts[i].trim();
-                    if (parts[i].startsWith("\"") && parts[i].endsWith("\"")) {
-                        parts[i] = parts[i].substring(1, parts[i].length() - 1);
-                    }
-                }
-
-                int supplierID = Integer.parseInt(parts[0]);
-                int productId = Integer.parseInt(parts[1]);
-                double productPrice = Double.parseDouble(parts[2]);
-                int quantityForDiscount = Integer.parseInt(parts[3]);
-                double discountPercentage = Double.parseDouble(parts[4]);
-                int contractID = Integer.parseInt(parts[5]);
-
-                String uniqueKey = supplierID + "_" + contractID;
-
-                SupplyContract contract = uniqueContractLookup.get(uniqueKey);
-                if (contract == null) {
-                    contract = new SupplyContract(supplierID, contractID);
-                    uniqueContractLookup.put(uniqueKey, contract);
-                    supplierToContracts
-                            .computeIfAbsent(supplierID, k -> new ArrayList<>())
-                            .add(contract);
-                }
-
-                // Now all products with the same supplierID+contractID
-                // end up in the same SupplyContract
-                contract.supplyContractProductsDataArray.add(
-                        new SupplyContractProductData(
-                                productId,
-                                productPrice,
-                                quantityForDiscount,
-                                discountPercentage
-                        )
-                );
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error reading CSV file: " + e.getMessage());
-        }
-
-        for (List<SupplyContract> list : supplierToContracts.values()) {
-            this.supplyContractsArrayList.addAll(list);
+            this.supplyContractsArrayList.add(supplyContract);
+            this.contractID++;
         }
     }
 
     public SupplyContract registerNewContract(int supplierID, ArrayList<int[]> dataList, SupplyMethod method) {
         ArrayList<SupplyContractProductData> supplyContractProductDataArrayList = new ArrayList<>();
         for (int[] data : dataList) {
-            int productID = data[1];
-            int price = data[2];
-            int quantityForDiscount = data[3];
-            int discountPercentage = data[4];
-            SupplyContractProductData supplyContractProductData = new SupplyContractProductData(productID, price, quantityForDiscount, discountPercentage);
+            int productID = data[0];
+            int price = data[1];
+            int quantityForDiscount = data[2];
+            int discountPercentage = data[3];
+
+            SupplyContractProductData supplyContractProductData = new SupplyContractProductData(contractID, productID, price, quantityForDiscount, discountPercentage);
+
             supplyContractProductDataArrayList.add(supplyContractProductData);
+            supplyContractProductData.supplyContractProductDataDTO.Insert();
         }
 
         SupplyContract supplyContract = new SupplyContract(contractID, supplierID, method, supplyContractProductDataArrayList);
+        supplyContract.supplyContractDTO.Insert();
+        supplyContractsArrayList.add(supplyContract);
         contractID++;
+
         return supplyContract;
     }
 
