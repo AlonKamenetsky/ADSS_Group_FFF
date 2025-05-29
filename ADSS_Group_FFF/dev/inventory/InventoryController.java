@@ -31,6 +31,9 @@ public class InventoryController {
         this.supplierService = supplierService;
     }
 
+    public int lowstockStratergy(InventoryItem i){
+        return i.getMinThreshold()*2;
+    }
 
     public void checkAndReorderLowStockItems() {
         if (supplierService == null) {
@@ -39,36 +42,19 @@ public class InventoryController {
         }
 
         for (InventoryItem item : getLowStockItems()) {
-            List<SupplierQuote> quotes = supplierService.getQuotesSingleProduct(item.getId());
-            if (quotes.isEmpty()) {
-                System.out.println("No suppliers found for item " + item.getId());
-                continue;
-            }
 
-            SupplierQuote best = selectBestQuote(quotes, item);
-            int reorderAmount = Math.max(best.getMinimumOrderQuantity(), item.getMinThreshold() * 2); // strategy
-            SupplierOrder order = new SupplierOrder(best.getSupplierId(), item.getId(), reorderAmount);
-            OrderConfirmation confirmation = supplierService.placeOrderSingleProduct(order);
+            SupplierOrder order = new SupplierOrder(null, item.getId(), lowstockStratergy(item));
+             supplierService.placeOrderSingleProduct(order);
 
-            if (confirmation.isSuccess()) {
-                System.out.println("Auto-order placed for item " + item.getId());
-            } else {
-                System.out.println("Order failed for item " + item.getId());
-            }
         }
     }
 
-    private SupplierQuote selectBestQuote(List<SupplierQuote> quotes, InventoryItem item) {
-        // naive best price selector (can add tie-breakers on delivery days etc.)
-        return quotes.stream()
-                .filter(q -> q.getMinimumOrderQuantity() <= item.getMinThreshold() * 3)
-                .min(Comparator.comparingDouble(SupplierQuote::getPricePerUnit))
-                .orElse(quotes.get(0));
-    }
 
     // ass2
 
+    //add InventoryService interface and make it have a function RecieveItemsfromSuplier(MutualItem)
 
+    
     public void addItem(InventoryItem item) {
         if (items.containsKey(item.getId())) {
             throw new IllegalArgumentException("Item ID already exists: " + item.getId());
