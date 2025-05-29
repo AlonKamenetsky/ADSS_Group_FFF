@@ -1,4 +1,4 @@
-package Transportation.Tests;
+package Transportation.Tests.Domain;
 
 import Transportation.Domain.TruckManager;
 import Transportation.DTO.TruckDTO;
@@ -6,13 +6,11 @@ import Transportation.Domain.Repositories.TruckRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.management.InstanceAlreadyExistsException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -113,7 +111,6 @@ public class TruckManagerTest {
         when(repository.findTruckByLicense("123-ABC")).thenReturn(Optional.of(truckDTO));
 
         int id = manager.getTruckIdByLicense("123-ABC");
-
         assertEquals(1, id);
     }
 

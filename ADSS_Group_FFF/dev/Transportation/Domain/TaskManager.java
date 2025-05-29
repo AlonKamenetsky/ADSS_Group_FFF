@@ -26,6 +26,16 @@ public class TaskManager {
         truckManager = new TruckManager();
     }
 
+    public TaskManager(TransportationDocRepository docRepo, TransportationTaskRepository taskRepo, SiteManager siteManager, DriverManager driverManager, TruckManager truckManager, ItemManager itemManager) {
+        this.docRepository = docRepo;
+        this.taskRepository = taskRepo;
+        this.siteManager = siteManager;
+        this.driverManager = driverManager;
+        this.truckManager = truckManager;
+        this.itemManager = itemManager;
+    }
+
+
     public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
         Optional<SiteDTO> site = siteManager.findSiteByAddress(taskSourceSite);
         if (site.isEmpty()) {
