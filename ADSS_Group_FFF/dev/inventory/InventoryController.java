@@ -5,7 +5,7 @@ import communicationInventoryAndSupplier.*;
 import java.time.DayOfWeek;
 import java.util.*;
 
-public class InventoryController {
+public class InventoryController implements InventoryInterface {
     private Map<String, InventoryItem> items;
     private Map<String, Category> categories;
     private Map<String, Discount> itemDiscounts;
