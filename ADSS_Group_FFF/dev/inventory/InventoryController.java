@@ -52,9 +52,9 @@ public class InventoryController {
 
     // ass2
 
-    //add InventoryService interface and make it have a function RecieveItemsfromSuplier(MutualItem)
+    //add InventoryService interface and make it have a function updateItemQuantity(String itemId, int shelfDelta, int backroomDelta)
 
-    
+
     public void addItem(InventoryItem item) {
         if (items.containsKey(item.getId())) {
             throw new IllegalArgumentException("Item ID already exists: " + item.getId());
@@ -120,6 +120,12 @@ public class InventoryController {
     }
 
 
+    public boolean takInSupplierDelivery(String itemId,  int backroomDelta)
+    {
+        updateItemQuantity(itemId,0,backroomDelta);
+        return true; //if we want we can add logic to make sure order was accepteed
+    }
+
     //method for both adding "buying" and subtracting "selling" Stock
     public void updateItemQuantity(String itemId, int shelfDelta, int backroomDelta) {
         InventoryItem item = items.get(itemId);
@@ -127,7 +133,10 @@ public class InventoryController {
             item.setShelfQuantity(item.getShelfQuantity() + shelfDelta);
             item.setBackroomQuantity(item.getBackroomQuantity() + backroomDelta);
         }
-        checkAndReorderLowStockItems();
+        if(shelfDelta < 0 || backroomDelta <0)
+        {
+            checkAndReorderLowStockItems();
+        }
     }
 
     public void addDiscount(Discount discount) {

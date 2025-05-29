@@ -22,10 +22,6 @@ public class PeriodicOrder extends SupplierOrder {
         return orderDay;
     }
 
-    private setSupplier(int supplierId)
-    {
-
-    }
 
     @Override
     public String toString() {
