@@ -9,58 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="modified Menus and rest">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/ADSS_Group_FFF.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/HR_ass1Fix.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/release.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteSiteDAOTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteTaskDAOTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteZoneDAOTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/SiteManagerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/SiteZoneManagerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/TaskManagerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/ZoneManagerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/ItemServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/SiteServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/TaskServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/TruckServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/ZoneSeriveTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="Add service and manager tests">
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TaskManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TaskManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/SiteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/SiteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/TruckService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/TruckService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/ZoneService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/ZoneService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/TruckManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/TruckManagerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/UnitTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/UnitTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/release/ADSS_Group_FFF.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/release/adss2025_v01.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/release/adss_v0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeeDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeeDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeeDAOImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeeDAOImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeesRepo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeesRepo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RoleDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RoleDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RoleDAOImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RoleDAOImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RolesRepo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RolesRepo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftAssignmentDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftAssignmentDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftAssignmentDAOImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftAssignmentDAOImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftDAOImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftDAOImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/SwapDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/SwapDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Employee.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Employee.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Role.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Role.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Shift$ShiftTime.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Shift$ShiftTime.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Shift.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Shift.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/ShiftAssignment.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/ShiftAssignment.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/SwapRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/SwapRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/WeeklyAvailability.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/WeeklyAvailability.class" afterDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
@@ -220,7 +171,7 @@
       <workItem from="1747671503587" duration="2483000" />
       <workItem from="1748030229296" duration="1951000" />
       <workItem from="1748258704798" duration="292000" />
-      <workItem from="1748510588742" duration="8984000" />
+      <workItem from="1748510588742" duration="10047000" />
     </task>
     <task id="LOCAL-00001" summary="Domain Layer &amp; Presentation Layer update + skeleton and functionalities&#10;raw interfaces">
       <option name="closed" value="true" />
@@ -326,7 +277,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748466516590</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL‎-00014" summary="Add service and manager tests">
+      <option name="closed" value="true" />
+      <created>1748537174833</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL‎-00014" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1748537174833</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -354,7 +313,8 @@
     <MESSAGE value="modified Truck logic, Zone logic" />
     <MESSAGE value="modified Menus and services" />
     <MESSAGE value="modified Menus and rest" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified Menus and rest" />
+    <MESSAGE value="Add service and manager tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add service and manager tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
