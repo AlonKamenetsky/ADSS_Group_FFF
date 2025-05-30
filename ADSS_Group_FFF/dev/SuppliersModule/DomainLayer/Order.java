@@ -1,9 +1,13 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.OrderDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,6 +29,8 @@ public class Order {
 
     OrderStatus orderStatus;
 
+    OrderDTO orderDTO;
+
     public Order(int orderID, int supplierID, ArrayList<OrderProductData> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
         this.orderID = orderID;
         this.supplierID = supplierID;
@@ -36,6 +42,35 @@ public class Order {
         this.productArrayList = dataList;
         this.supplyMethod = supplyMethod;
         this.orderStatus = OrderStatus.IN_PROCESS;
+
+        this.orderDTO = new OrderDTO(orderID, supplierID, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name,
+                                        deliveringMethod.toString(), orderDate.toString(), deliveryDate.toString(), totalPrice ,orderStatus.toString(), supplyMethod.toString());
+    }
+
+    public Order(OrderDTO orderDTO) {
+        this.orderID = orderDTO.orderID;
+        this.supplierID = orderDTO.supplierID;
+
+        ContactInfo contactInfo = new ContactInfo(orderDTO.phoneNumber, orderDTO.physicalAddress, orderDTO.emailAddress, orderDTO.contactName);
+        this.supplierContactInfo = contactInfo;
+
+        this.deliveringMethod = DeliveringMethod.valueOf(orderDTO.deliveryMethod);
+
+        LocalDate localDate = LocalDate.parse(orderDTO.orderDate, DateTimeFormatter.ISO_LOCAL_DATE);
+        this.orderDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        localDate = LocalDate.parse(orderDTO.deliveryDate, DateTimeFormatter.ISO_LOCAL_DATE);
+        this.supplyDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());;
+
+        this.totalPrice = orderDTO.totalPrice;
+
+        this.productArrayList = new ArrayList<>();
+
+        this.supplyMethod = SupplyMethod.valueOf(orderDTO.supplyMethod);
+
+        this.orderStatus = OrderStatus.valueOf(orderDTO.orderStatus);
+
+        this.orderDTO = orderDTO;
     }
 
     public int getSupplierID(){
@@ -61,6 +96,9 @@ public class Order {
     }
     public void setProductArrayList(ArrayList<OrderProductData> productArrayList){
         this.productArrayList = productArrayList;
+    }
+    public void addOrderProductData(OrderProductData orderProductData){
+        this.productArrayList.add(orderProductData);
     }
     public void setSupplyMethod(SupplyMethod supplyMethod) {
         this.supplyMethod = supplyMethod;

@@ -1,5 +1,8 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.OrderControllerDTO;
+import SuppliersModule.DataLayer.OrderDTO;
+import SuppliersModule.DataLayer.OrderProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
@@ -13,60 +16,21 @@ import java.util.Date;
 
 public class OrderController {
     int orderID;
-    ArrayList<Order> ordersArrayList; // TEMP DATA STRUCTURE
+    ArrayList<Order> ordersArrayList;
+    OrderControllerDTO orderControllerDTO;
 
     public OrderController() {
         this.orderID = 0;
+
         this.ordersArrayList = new ArrayList<>();
-    }
 
-    public void ReadOrdersFromCSVFile() {
-        InputStream in = OrderController.class.getResourceAsStream("/orders_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        this.orderControllerDTO = OrderControllerDTO.getInstance();
+        for (OrderDTO dto : orderControllerDTO.getAllOrders()) {
+            Order order = dto.convertDTOToEntity();
+            for (OrderProductDataDTO pdDTO : orderControllerDTO.getOrderProductDataByOrderID(dto))
+                order.addOrderProductData(pdDTO.convertDTOToEntity());
 
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-
-                String[] parts = line.split(",", 11); // first 10 fields + products
-                int supplierId = Integer.parseInt(parts[0]);
-                Date orderDate = sdf.parse(parts[1]);
-                Date supplyDate = sdf.parse(parts[2]);
-
-                DeliveringMethod deliveringMethod = DeliveringMethod.valueOf(parts[3].toUpperCase());
-                SupplyMethod supplyMethod = SupplyMethod.valueOf(parts[4].toUpperCase());
-
-                String contactName = parts[5];
-                String phone = parts[6];
-                String address = parts[7];
-                String email = parts[8];
-
-                double totalPrice = Double.parseDouble(parts[9]);
-
-                // Parse products
-                ArrayList<int[]> productList = new ArrayList<>();
-                String[] productEntries = parts[10].split(";");
-                for (String productEntry : productEntries) {
-                    String[] prod = productEntry.split(":");
-                    int productId = Integer.parseInt(prod[0]);
-                    int quantity = Integer.parseInt(prod[1]);
-                    productList.add(new int[]{productId, quantity});
-                }
-
-                ContactInfo contactInfo = new ContactInfo(contactName, email, phone, address);
-
-                Order order = new Order(orderID, supplierId, buildProductDataArray(productList, null), totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
-                ordersArrayList.add(order);
-                this.orderID++;
-
-            }
-        } catch (Exception e) {
-            System.err.println("Error reading orders CSV: " + e.getMessage());
+            ordersArrayList.add(order);
         }
     }
 
@@ -125,11 +89,14 @@ public class OrderController {
         double totalOrderValue = calculateTotalPrice(orderProductDataList);
 
         Order order = new Order(orderID, supplierId, orderProductDataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
+
+        this.orderControllerDTO.insertOrder(order.orderDTO);
+        for (OrderProductData orderProductData : orderProductDataList)
+            orderProductData.orderProductDataDTO.Insert();
+
         ordersArrayList.add(order);
 
         this.orderID++;
-
-
         return true;
     }
 

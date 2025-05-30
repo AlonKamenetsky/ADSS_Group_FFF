@@ -21,6 +21,14 @@ public class ScheduledOrder {
         this.productsData.addAll(productsData);
     }
 
+    public ScheduledOrder(int supplierID, WeekDay day) {
+        this.supplierID = supplierID;
+
+        this.day = day;
+
+        this.productsData = new HashSet<>();
+    }
+
     public int getSupplierID() {
         return supplierID;
     }

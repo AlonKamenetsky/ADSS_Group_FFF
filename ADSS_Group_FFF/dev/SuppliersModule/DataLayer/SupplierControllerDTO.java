@@ -122,7 +122,10 @@ public class SupplierControllerDTO extends DbController {
                 while (rs.next()) {
                     SupplierDaysDTO supplierDaysDTO = new SupplierDaysDTO(
                             rs.getInt(SupplierDaysDTO.ID_COLUMN_NAME),
-                            rs.getString(SupplierDaysDTO.DAY_COLUMN_NAME));
+                            rs.getString(SupplierDaysDTO.DAY_COLUMN_NAME),
+                            rs.getInt(SupplierDaysDTO.PRODUCT_ID_COLUMN_NAME),
+                            rs.getInt(SupplierDaysDTO.PRODUCT_QUANTITY_COLUMN_NAME),
+                            rs.getDouble(SupplierDaysDTO.PRODUCT_PRICE_COLUMN_NAME));
 
                     suppliersDays.add(supplierDaysDTO);
                 }
@@ -139,7 +142,7 @@ public class SupplierControllerDTO extends DbController {
 
     public void insertSupplierDays(SupplierDaysDTO supplierDays) {
         String sql = String.format(
-                "INSERT INTO %s (%s, %s) VALUES (?, ?)",
+                "INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
                 this.suppliersDaysTableName,
                 SupplierDaysDTO.ID_COLUMN_NAME,
                 SupplierDaysDTO.DAY_COLUMN_NAME
@@ -148,6 +151,10 @@ public class SupplierControllerDTO extends DbController {
         try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
             pstmt.setInt(1, supplierDays.supplierID);
             pstmt.setString(2, supplierDays.day);
+            pstmt.setInt(3, supplierDays.productID);
+            pstmt.setInt(3, supplierDays.productQuantity);
+            pstmt.setDouble(4, supplierDays.productPrice);
+
             int result = pstmt.executeUpdate();
         }
         catch (SQLException e) {
