@@ -1,5 +1,7 @@
 package Transportation.DataAccess;
 
+import Transportation.DTO.ItemsListDTO;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -10,4 +12,5 @@ public interface ItemsListDAO {
     float findWeight(int listId) throws SQLException;
     HashMap<Integer, Integer> getItemsInList(int listId) throws SQLException;
     void delete(int listId) throws SQLException;
+    ItemsListDTO findItemListByID(int listId) throws SQLException;
 }

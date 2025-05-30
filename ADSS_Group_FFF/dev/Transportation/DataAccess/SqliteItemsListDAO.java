@@ -1,9 +1,13 @@
 package Transportation.DataAccess;
 
+import Transportation.DTO.ItemsListDTO;
 import Util.Database;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SqliteItemsListDAO implements ItemsListDAO {
 
@@ -84,6 +88,23 @@ public class SqliteItemsListDAO implements ItemsListDAO {
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, listId);
             ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public ItemsListDTO findItemListByID(int listId) throws SQLException {
+        String sql = "SELECT item_id, quantity FROM items_in_list WHERE list_id = ?";
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, listId);
+            try (ResultSet rs = ps.executeQuery()) {
+                Map<Integer, Integer> itemsMap = new HashMap<>();
+                while (rs.next()) {
+                    int itemId = rs.getInt("item_id");
+                    int quantity = rs.getInt("quantity");
+                    itemsMap.put(itemId, quantity);
+                }
+                return new ItemsListDTO(listId, itemsMap);
+            }
         }
     }
 }
