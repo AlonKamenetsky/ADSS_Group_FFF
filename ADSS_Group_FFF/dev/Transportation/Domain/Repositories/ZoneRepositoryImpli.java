@@ -106,4 +106,9 @@ public class ZoneRepositoryImpli implements ZoneRepository {
         }
         return null;
     }
+
+    public void clearCache() {
+        tempZoneList.clear();
+    }
 }
+

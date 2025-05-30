@@ -94,4 +94,8 @@ public class TruckRepositoryImpli implements TruckRepository {
         }
         return null;
     }
+
+    public void clearCache() {
+        tempTruckList.clear();
+    }
 }

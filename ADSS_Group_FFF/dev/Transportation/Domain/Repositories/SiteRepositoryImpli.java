@@ -3,6 +3,7 @@ package Transportation.Domain.Repositories;
 import Transportation.DTO.SiteDTO;
 import Transportation.DataAccess.SiteDAO;
 import Transportation.DataAccess.SqliteSiteDAO;
+import Transportation.Domain.Site;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -49,5 +50,15 @@ public class SiteRepositoryImpli implements SiteRepository {
     @Override
     public Optional<SiteDTO> findBySiteAddress(String address) throws SQLException {
         return siteDAO.findByAddress(address);
+    }
+
+    public SiteDTO toDTO(Site site) {
+        return new SiteDTO(site.getSiteId(), site.getAddress(), site.getContactName(), site.getPhoneNumber(), site.getZone());
+    }
+
+    @Override
+    public Site fromSiteDTO(SiteDTO siteDTO) {
+        return new Site(siteDTO.siteId(),siteDTO.siteAddress(),siteDTO.contactName(),siteDTO.contactName(),siteDTO.zoneId());
+
     }
 }
