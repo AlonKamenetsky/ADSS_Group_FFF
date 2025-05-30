@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
-
+//ffff
 ////import static java.lang.foreign.MemorySegment.NULL;
 //import static java.sql.JDBCType.INTEGER;
 //import static SSjdk.incubator.vector.VectorOperators.NOT;
