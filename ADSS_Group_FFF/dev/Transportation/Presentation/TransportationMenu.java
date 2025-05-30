@@ -6,14 +6,14 @@ import java.util.Scanner;
 
 public class TransportationMenu {
     private final TManagerRoleMenu TManagerMenuUI;
-    private final DriverRoleMenu DriverRoleMenuUI;
-    private final DataService dataService;
+    // private final DriverRoleMenu DriverRoleMenuUI;
+    //private final DataService dataService;
     private final Scanner input;
 
-    public TransportationMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService, ItemService itemService, DataService dataService) {
+    public TransportationMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService, ItemService itemService /*DataService dataService*/) {
         this.TManagerMenuUI = new TManagerRoleMenu(driverService, truckService, taskService, zoneService, siteService, itemService, siteZoneService);
-        this.DriverRoleMenuUI = new DriverRoleMenu(driverService, taskService);
-        this.dataService = dataService;
+      //  this.DriverRoleMenuUI = new DriverRoleMenu(driverService, taskService);
+        //this.dataService = dataService;
         input = new Scanner(System.in);
     }
 
@@ -24,14 +24,14 @@ public class TransportationMenu {
             String answer = input.nextLine();
             switch (answer) {
                 case "Y":
-                    dataService.loadItemData();
+                   // dataService.loadItemData();
                     validChoice1 = true;
                     showHelper();
                     break;
 
                 case "N":
-                    dataService.loadItemData();
-                    dataService.loadExtraData();
+                  //  dataService.loadItemData();
+                   // dataService.loadExtraData();
                     showHelper();
                     validChoice1 = true;
                     break;
@@ -51,8 +51,8 @@ public class TransportationMenu {
                 case "driver":
                     System.out.println("What is your id?");
                     choice = input.nextLine();
-                    DriverRoleMenuUI.modifyDriverId(choice);
-                    DriverRoleMenuUI.show();
+                    //DriverRoleMenuUI.modifyDriverId(choice);
+                    //DriverRoleMenuUI.show();
                     validChoice = true;
                     break;
                 case "manager":

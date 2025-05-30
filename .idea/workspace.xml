@@ -9,9 +9,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="Add service and manager tests">
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" afterDir="false" />
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="Create DatabaseInitializer class with dummy data">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/DriverRoleMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/DriverRoleMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/TransportationMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Presentation/TransportationMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/DataService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/SystemInitializer/SystemInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/SystemInitializer/SystemInitializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteSiteDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteSiteDAOTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" afterDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,10 +74,12 @@
     "JUnit.RoleTest.executor": "Run",
     "JUnit.RolesRepoTest.executor": "Run",
     "JUnit.ShiftTest.executor": "Run",
+    "JUnit.SqliteSiteDAOTest.executor": "Run",
     "JUnit.TruckManagerTest.executor": "Run",
     "JUnit.Unnamed.executor": "Run",
     "JUnit.ZoneManagerTest (1).executor": "Run",
     "JUnit.ZoneManagerTest.executor": "Run",
+    "Maven.adss-group [test].executor": "Run",
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
     "Repository.Attach.Sources": "false",
@@ -101,7 +109,22 @@
       <recent name="C:\Users\lidor\IdeaProjects\TransportationModule\ADSS_Group_FFF\dev\HR" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ZoneManagerTest (1)">
+  <component name="RunManager" selected="JUnit.SqliteSiteDAOTest">
+    <configuration name="SqliteSiteDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Transportation.Tests.DB.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Transportation.Tests.DB" />
+      <option name="MAIN_CLASS_NAME" value="Transportation.Tests.DB.SqliteSiteDAOTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ZoneManagerTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ADSS_Group_FFF" />
       <extension name="coverage">
@@ -133,11 +156,13 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="JUnit.SqliteSiteDAOTest" />
       <item itemvalue="JUnit.ZoneManagerTest (1)" />
       <item itemvalue="JUnit.ZoneManagerTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.SqliteSiteDAOTest" />
         <item itemvalue="JUnit.ZoneManagerTest (1)" />
         <item itemvalue="JUnit.ZoneManagerTest" />
       </list>
@@ -171,7 +196,7 @@
       <workItem from="1747671503587" duration="2483000" />
       <workItem from="1748030229296" duration="1951000" />
       <workItem from="1748258704798" duration="292000" />
-      <workItem from="1748510588742" duration="10047000" />
+      <workItem from="1748510588742" duration="14366000" />
     </task>
     <task id="LOCAL-00001" summary="Domain Layer &amp; Presentation Layer update + skeleton and functionalities&#10;raw interfaces">
       <option name="closed" value="true" />
@@ -285,7 +310,15 @@
       <option name="project" value="LOCAL‎" />
       <updated>1748537174833</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL‎-00015" summary="Create DatabaseInitializer class with dummy data">
+      <option name="closed" value="true" />
+      <created>1748538548357</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL‎-00015" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1748538548357</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -314,7 +347,8 @@
     <MESSAGE value="modified Menus and services" />
     <MESSAGE value="modified Menus and rest" />
     <MESSAGE value="Add service and manager tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add service and manager tests" />
+    <MESSAGE value="Create DatabaseInitializer class with dummy data" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create DatabaseInitializer class with dummy data" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

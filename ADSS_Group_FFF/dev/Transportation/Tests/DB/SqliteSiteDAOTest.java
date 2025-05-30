@@ -11,9 +11,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.foreign.MemorySegment.NULL;
-import static java.sql.JDBCType.INTEGER;
-import static jdk.incubator.vector.VectorOperators.NOT;
+////import static java.lang.foreign.MemorySegment.NULL;
+//import static java.sql.JDBCType.INTEGER;
+//import static SSjdk.incubator.vector.VectorOperators.NOT;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
