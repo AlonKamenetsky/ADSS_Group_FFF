@@ -19,6 +19,10 @@ public class ItemsList {
         return listId;
     }
 
+    public HashMap<Item, Integer> getItemsMap() {
+        return itemsList;
+    }
+
     public void removeItemFromList(Item removeItem) {
         itemsList.remove(removeItem);
     }

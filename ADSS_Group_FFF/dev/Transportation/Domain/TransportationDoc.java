@@ -23,11 +23,14 @@ public class TransportationDoc {
     public int getDocId() {
         return docId;
     }
-
     public float getDocWeight() {
         return docItems.getListWeight();
     }
 
+
+    public int getItemListId() {
+        return docItems.getListId();
+    }
     public int getTaskId(){
         return taskId;
     }

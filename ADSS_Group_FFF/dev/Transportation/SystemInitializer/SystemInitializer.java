@@ -19,9 +19,9 @@ public class SystemInitializer {
         ZoneService zoneService = new ZoneService();
         ItemService itemService = new ItemService(itemManager);
         SiteZoneService siteZoneService = new SiteZoneService();
-        DataService dataService = new DataService(itemService,driverService,truckService,zoneService,siteService,taskService, siteZoneService);
+       // DataService dataService = new DataService(itemService,driverService,truckService,zoneService,siteService,taskService);
 
         // === Menus (pass services) ===
-        return new TransportationMenu(driverService, truckService, taskService, zoneService, siteService, siteZoneService, itemService, dataService);
+        return new TransportationMenu(driverService, truckService, taskService, zoneService, siteService, siteZoneService, itemService /*dataService*/);
     }
 }

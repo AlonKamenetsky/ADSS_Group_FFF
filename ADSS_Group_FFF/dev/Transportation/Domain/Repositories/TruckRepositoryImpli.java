@@ -3,6 +3,7 @@ package Transportation.Domain.Repositories;
 import Transportation.DTO.TruckDTO;
 import Transportation.DataAccess.SqliteTruckDAO;
 import Transportation.DataAccess.TruckDAO;
+import Transportation.Domain.Repositories.TruckRepository;
 import Transportation.Domain.Truck;
 import Transportation.Domain.TruckType;
 
@@ -80,7 +81,6 @@ public class TruckRepositoryImpli implements TruckRepository {
         truckDAO.setAvailability(truckId, status);
     }
 
-
     // helper methods
     private TruckDTO toDTO(Truck truck) {
         return new TruckDTO(truck.getTruckID(), truck.getTruckType().toString(), truck.getLicenseNumber(), truck.getModel(), truck.getNetWeight(), truck.getMaxWeight(), truck.isFree());
@@ -93,5 +93,9 @@ public class TruckRepositoryImpli implements TruckRepository {
             }
         }
         return null;
+    }
+
+    public void clearCache() {
+        tempTruckList.clear();
     }
 }

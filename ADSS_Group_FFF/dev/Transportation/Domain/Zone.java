@@ -13,6 +13,12 @@ public class Zone {
         sitesRelated = new ArrayList<>();
     }
 
+    public Zone(int _zoneId, String _zoneName, ArrayList<Site> _sitesRelated) {
+        zoneId = _zoneId;
+        zoneName = _zoneName;
+        sitesRelated = _sitesRelated;
+    }
+
     public void addSiteToZone(Site site) {
         sitesRelated.add(site);
     }
