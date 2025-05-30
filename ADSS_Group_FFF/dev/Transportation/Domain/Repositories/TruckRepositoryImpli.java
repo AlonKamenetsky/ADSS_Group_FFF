@@ -3,6 +3,7 @@ package Transportation.Domain.Repositories;
 import Transportation.DTO.TruckDTO;
 import Transportation.DataAccess.SqliteTruckDAO;
 import Transportation.DataAccess.TruckDAO;
+import Transportation.Domain.Repositories.TruckRepository;
 import Transportation.Domain.Truck;
 import Transportation.Domain.TruckType;
 
@@ -79,7 +80,6 @@ public class TruckRepositoryImpli implements TruckRepository {
         }
         truckDAO.setAvailability(truckId, status);
     }
-
 
     // helper methods
     private TruckDTO toDTO(Truck truck) {

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class TransportationDocRepositoryImpli implements TransportationDocRepository {
-
     private final TransportationDocDAO docDAO;
     public TransportationDocRepositoryImpli() {
         this.docDAO = new SqliteTransportationDocDAO();
