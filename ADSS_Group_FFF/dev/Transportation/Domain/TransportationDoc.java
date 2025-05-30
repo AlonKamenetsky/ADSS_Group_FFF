@@ -28,6 +28,10 @@ public class TransportationDoc {
         return docItems.getListWeight();
     }
 
+
+    public int getItemListId() {
+        return docItems.getListId();
+    }
     public int getTaskId(){
         return taskId;
     }

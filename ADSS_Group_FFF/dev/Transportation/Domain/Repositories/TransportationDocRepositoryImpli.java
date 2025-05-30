@@ -48,7 +48,7 @@ public class TransportationDocRepositoryImpli implements TransportationDocReposi
     public int findDocItemsListId(int docId) throws SQLException {
         for (TransportationDoc doc : tempDocList) {
             if (doc.getDocId() == docId) {
-                return doc.getDocWeight() > 0 ? doc.getDocId() : -1; // simplified logic, you can adjust
+                return doc.getDocWeight() > 0 ? doc.getDocId() : doc.getItemListId();
             }
         }
         return docDAO.findDocItemsListId(docId);
@@ -62,7 +62,7 @@ public class TransportationDocRepositoryImpli implements TransportationDocReposi
                         doc.getDocId(),
                         doc.getTaskId(),
                         doc.getDestinationSite().getSiteId(),
-                        -1)); //
+                        doc.getItemListId())); //
             }
         }
         return docDAO.findById(docId);
@@ -77,7 +77,7 @@ public class TransportationDocRepositoryImpli implements TransportationDocReposi
                         doc.getDocId(),
                         doc.getTaskId(),
                         doc.getDestinationSite().getSiteId(),
-                        -1)); // no getItemsListId method
+                        doc.getItemListId()));
             }
         }
         if (!results.isEmpty()) {
