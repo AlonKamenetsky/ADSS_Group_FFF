@@ -18,7 +18,7 @@ public class ItemManager {
     }
 
     public void addItem(String itemName, float itemWeight) throws SQLException {
-        itemRepository.addItem(itemName.toLowerCase(), itemWeight);
+        itemRepository.addItem(itemName, itemWeight);
     }
 
     public Integer getItemIdByName(int itemId) throws SQLException {
