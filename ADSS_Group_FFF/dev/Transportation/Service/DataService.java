@@ -11,14 +11,16 @@ public class DataService {
     private final ZoneService zoneService;
     private final SiteService siteService;
     private final TaskService taskService;
+    private final SiteZoneService siteZoneService;
 
-    public DataService(ItemService itemService, DriverService driverService, TruckService truckService, ZoneService zoneService, SiteService siteService, TaskService taskService) {
+    public DataService(ItemService itemService, DriverService driverService, TruckService truckService, ZoneService zoneService, SiteService siteService, TaskService taskService, SiteZoneService siteZoneService) {
         this.itemService = itemService;
         this.driverService = driverService;
         this.truckService = truckService;
         this.zoneService = zoneService;
         this.siteService = siteService;
         this.taskService = taskService;
+        this.siteZoneService = siteZoneService;
     }
 
     public void loadItemData() {
@@ -32,11 +34,15 @@ public class DataService {
     }
 
     public void loadExtraData() {
-        addDriversMock();
-        addTrucksMock();
-        addZonesMock();
-        addSitesMock();
-        addTasksMock();
+        try {
+            addDriversMock();
+            addTrucksMock();
+            addZonesMock();
+            addSitesMock();
+            addTasksMock();
+        } catch (InstanceAlreadyExistsException e) {
+            System.out.println();
+        }
     }
 
     public void addDriversMock() {
@@ -64,18 +70,27 @@ public class DataService {
         }
     }
 
-    public void addZonesMock() {
+    public void addZonesMock() throws InstanceAlreadyExistsException {
         zoneService.AddZone("CENTRAL");
         zoneService.AddZone("NORTH");
     }
 
-    public void addSitesMock() {
-        siteService.addSite("Baraket 20 Shoham", "Liel", "0506309997", "CENTRAL");
-        siteService.addSite("Bazel 12 Tel Aviv", "Lee", "0506304499", "CENTRAL");
-        siteService.addSite("Baraket 45 Hadera", "Ron", "0546677889", "NORTH");
-        siteService.addSite("Medical Center of Galil", "Yaara", "0524667444", "NORTH");
+    public void addSitesMock() throws InstanceAlreadyExistsException {
+        siteService.addSite("Baraket 20 Shoham", "Liel", "0506309997");
+        siteService.addSite("Bazel 12 Tel Aviv", "Lee", "0506304499");
+        siteService.addSite("Baraket 45 Hadera", "Ron", "0546677889");
+        siteService.addSite("Medical Center of Galil", "Yaara", "0524667444");
     }
 
+    public void assignSitesMock() {
+        siteZoneService.addSiteToZone("Baraket 20 Shoham", "Central");
+        siteZoneService.addSiteToZone("Bazel 12 Tel Aviv", "Central");
+        siteZoneService.addSiteToZone("Baraket 45 Hadera", "north");
+        siteZoneService.addSiteToZone("Medical Center of Galil", "NORTH");
+
+
+
+    }
     public void addTasksMock() {
         try {
             // picking items

@@ -18,7 +18,7 @@ public class ItemService {
             return;
         }
         try {
-            itemManager.addItem(itemName, weight);
+            itemManager.addItem(itemName.toLowerCase(), weight);
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");
         }

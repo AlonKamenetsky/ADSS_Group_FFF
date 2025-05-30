@@ -32,7 +32,7 @@ public class DriverRoleMenu {
                     viewMyInfo();
                     break;
                 case "2":
-                    viewMyTasks();
+                    //viewMyTasks();
                     break;
                 case "0":
                     System.out.println("Bye!");
@@ -47,13 +47,13 @@ public class DriverRoleMenu {
         System.out.println(driverHandler.getDriverById(driverId));
     }
 
-    private void viewMyTasks() {
-        String tasksOutput = driverTaskHandler.getTasksByDriverId(driverId);
-
-        if (tasksOutput.isBlank()) {
-            System.out.println("No tasks assigned for this driver.");
-        } else {
-            System.out.println(tasksOutput);
-        }
-    }
+//    private void viewMyTasks() {
+//        String tasksOutput = driverTaskHandler.getTasksByDriverId(driverId);
+//
+//        if (tasksOutput.isBlank()) {
+//            System.out.println("No tasks assigned for this driver.");
+//        } else {
+//            System.out.println(tasksOutput);
+//        }
+//    }
 }
