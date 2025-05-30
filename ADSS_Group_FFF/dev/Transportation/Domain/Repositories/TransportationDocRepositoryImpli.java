@@ -48,7 +48,7 @@ public class TransportationDocRepositoryImpli implements TransportationDocReposi
     public int findDocItemsListId(int docId) throws SQLException {
         for (TransportationDoc doc : tempDocList) {
             if (doc.getDocId() == docId) {
-                return doc.getDocWeight() > 0 ? doc.getDocId() : doc.getItemListId();
+                return doc.getItemListId();
             }
         }
         return docDAO.findDocItemsListId(docId);
