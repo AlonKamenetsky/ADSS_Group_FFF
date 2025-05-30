@@ -1,11 +1,10 @@
 package HR.Service;
 
+import HR.DataAccess.DriverInfoDAO;
+import HR.DataAccess.DriverInfoDAOImpl;
 import HR.DataAccess.WeeklyAvailabilityDAO;
-import HR.Domain.Employee;
+import HR.Domain.*;
 import HR.DataAccess.EmployeesRepo;
-import HR.Domain.Role;
-import HR.Domain.Shift;
-import HR.Domain.WeeklyAvailability;
 import HR.Presentation.PresentationUtils;
 
 import java.text.SimpleDateFormat;
@@ -18,6 +17,7 @@ public class EmployeeService {
 
     private static EmployeeService instance;
     private final EmployeesRepo repo;
+    private final DriverInfoDAO driverInfoDAO = new DriverInfoDAOImpl();
 
     private EmployeeService() {
         repo = EmployeesRepo.getInstance();
@@ -41,12 +41,33 @@ public class EmployeeService {
         Employee newEmployee = new Employee(id, rolesList, name, password, bankAccount, salary, employmentDate);
         repo.addEmployee(newEmployee);
     }
+    public void addEmployee(String id, List<Role> rolesList, String name, String password,
+                            String bankAccount, Float salary, Date employmentDate,
+                            String licenseTypeIfDriver) {
+        Employee newEmployee = new Employee(id, rolesList, name, password, bankAccount, salary, employmentDate);
+
+        boolean isDriver = hasDriverRole(newEmployee);
+
+        if (isDriver && (licenseTypeIfDriver == null || licenseTypeIfDriver.isBlank())) {
+            throw new IllegalArgumentException("Driver must have a license type.");
+        }
+
+        repo.addEmployee(newEmployee);
+
+        if (isDriver) {
+            driverInfoDAO.insert(new DriverInfo(id, licenseTypeIfDriver));
+        }
+    }
 
 
     public String getEmployeeId(Employee e) { return e.getId(); }
     public String getEmployeeName(Employee e) { return e.getName(); }
 
     public void removeEmployee(Employee employee) {
+
+        if (hasDriverRole(employee)) {
+            driverInfoDAO.delete(employee.getId());
+        }
         repo.removeEmployee(employee);
     }
 
@@ -98,6 +119,25 @@ public class EmployeeService {
         if (employee.getHolidays().isEmpty()) {
             PresentationUtils.typewriterPrint("No vacations scheduled.", 20
             );
+        }
     }
+    private boolean hasDriverRole(Employee e) {
+        return e.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase("Driver"));
     }
+
+    public DriverInfo getDriverInfo(Employee e) {
+        if (!hasDriverRole(e)) return null;
+        return driverInfoDAO.getByEmployeeId(e.getId());
+    }
+
+    public void updateDriverLicense(String employeeId, String newLicenseType) {
+        DriverInfo existing = driverInfoDAO.getByEmployeeId(employeeId);
+        if (existing != null) {
+            driverInfoDAO.update(new DriverInfo(employeeId, newLicenseType));
+        } else {
+            driverInfoDAO.insert(new DriverInfo(employeeId, newLicenseType));
+        }
+    }
+
+
 }

@@ -1,5 +1,7 @@
 package Transportation.Domain;
 
+import HR.Domain.Driver;
+
 import javax.management.InstanceAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.HashMap;

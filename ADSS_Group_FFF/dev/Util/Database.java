@@ -161,6 +161,14 @@ public final class Database {
                             FOREIGN KEY (role_name) REFERENCES roles(name)
                         );
                         """);
+                st.executeUpdate("""
+                        CREATE TABLE IF NOT EXISTS driver_info (
+                            employee_id TEXT PRIMARY KEY,
+                            license_type TEXT NOT NULL,
+                            FOREIGN KEY (employee_id) REFERENCES employees(id)
+                        );
+                        """);
+
 
 
             }
