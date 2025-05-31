@@ -3,7 +3,7 @@ package inventory;
 import java.util.Date;
 
 public class AppInitializer {
-    public static void loadSampleData(InventoryController controller) {
+    public static void loadSampleData(InventoryService controller) {
         // Categories
         Category dairy = new Category("Dairy", null);
         Category milk = new Category("Milk", dairy);

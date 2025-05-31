@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class SwingGUIManager extends JFrame {
-    private InventoryController service;
+    private InventoryService service;
     private int nextButtonY = 20;
     private static final int BUTTON_SPACING = 40;
 
-    public SwingGUIManager(InventoryController service) {
+    public SwingGUIManager(InventoryService service) {
         this.service = service;
         setupGUI();
     }

@@ -1,15 +1,13 @@
 package inventory;
 
-import communicationInventoryAndSupplier.PeriodicOrder;
-
 import java.time.DayOfWeek;
 import java.util.*;
 
 public class InventoryCLI {
-    private final InventoryController controller;
+    private final InventoryService controller;
     private final Scanner scanner = new Scanner(System.in);
 
-    public InventoryCLI(InventoryController controller) {
+    public InventoryCLI(InventoryService controller) {
         this.controller = controller;
     }
 

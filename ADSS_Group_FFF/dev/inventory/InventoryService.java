@@ -1,11 +1,11 @@
 package inventory;
 
-import communicationInventoryAndSupplier.*;
+import IntegrationInventoryAndSupplier.*;
 
 import java.time.DayOfWeek;
 import java.util.*;
 
-public class InventoryController implements InventoryInterface {
+public class InventoryService implements InventoryInterface {
     private Map<String, InventoryItem> items;
     private Map<String, Category> categories;
     private Map<String, Discount> itemDiscounts;
@@ -14,9 +14,9 @@ public class InventoryController implements InventoryInterface {
     private List<PeriodicOrder> periodicOrders;
     private SimulationClock simulationClock;
 
-    private SupplierService supplierService;
+    private SupplierInterface supplierInterface;
 
-    public InventoryController() {
+    public InventoryService() {
         this.items = new HashMap<>();
         this.categories = new HashMap<>();
         this.itemDiscounts = new HashMap<>();
@@ -24,11 +24,12 @@ public class InventoryController implements InventoryInterface {
         this.reports = new ArrayList<>();
         this.simulationClock = new SimulationClock();
         periodicOrders = new ArrayList<>();
+        // supplierService.getInstance();
     }
 
 
-    public void setSupplierService(SupplierService supplierService) {
-        this.supplierService = supplierService;
+    public void setSupplierService(SupplierInterface supplierInterface) {
+        this.supplierInterface = supplierInterface;
     }
 
     public int lowstockStratergy(InventoryItem i){
@@ -36,7 +37,7 @@ public class InventoryController implements InventoryInterface {
     }
 
     public void checkAndReorderLowStockItems() {
-        if (supplierService == null) {
+        if (supplierInterface == null) {
             System.err.println("SupplierService not set.");
             return;
         }
@@ -44,7 +45,7 @@ public class InventoryController implements InventoryInterface {
         for (InventoryItem item : getLowStockItems()) {
 
             SupplierOrder order = new SupplierOrder(null, item.getId(), lowstockStratergy(item));
-             supplierService.placeOrderSingleProduct(order);
+             supplierInterface.placeOrderSingleProduct(order);
         }
     }
 
@@ -156,7 +157,7 @@ public class InventoryController implements InventoryInterface {
         PeriodicOrder p1 = new PeriodicOrder(productId, quantity, orderDay);
         periodicOrders.add(p1);
         //DB Access
-        supplierService.takePeriodicOrder(p1);
+        supplierInterface.takePeriodicOrder(p1);
     }
 
 
@@ -171,3 +172,21 @@ public class InventoryController implements InventoryInterface {
 
 
 }
+
+
+
+//
+//
+//
+//=== Inventory Management Menu ===
+//        1. View all inventory
+//2. View low stock items
+//3. View categories
+//4. Update item quantities
+//5. Mark item as DAMAGED or EXPIRED
+//6. Generate inventory report
+//7. Add a new item to inventory
+//8. Exit
+//9. Add Item (from available)
+//
+//Enter your choice:

@@ -1,4 +1,4 @@
-package communicationInventoryAndSupplier;
+package IntegrationInventoryAndSupplier;
 
 import java.time.DayOfWeek;
 

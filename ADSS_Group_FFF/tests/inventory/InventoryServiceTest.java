@@ -11,14 +11,14 @@ import java.util.Collections;
 import java.util.Date;
 
 
-public class InventoryControllerTest {
-    private InventoryController service;
+public class InventoryServiceTest {
+    private InventoryService service;
     private Category dairy;
     private InventoryItem milk;
 
     @BeforeEach
     public void setup() {
-        service = new InventoryController();
+        service = new InventoryService();
         dairy = new Category("Dairy", null);
         service.addCategory(dairy);
 

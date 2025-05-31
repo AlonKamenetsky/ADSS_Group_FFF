@@ -103,6 +103,7 @@ public class SupplierService {
         return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
     }
 
+
     public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
         WeekDay d = WeekDay.values()[day - 1];
         return this.supplierController.registerNewScheduledOrder(d, dataList);
