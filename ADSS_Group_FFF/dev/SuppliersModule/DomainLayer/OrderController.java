@@ -1,5 +1,8 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.OrderControllerDTO;
+import SuppliersModule.DataLayer.OrderDTO;
+import SuppliersModule.DataLayer.OrderProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
@@ -10,63 +13,25 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class OrderController {
     int orderID;
-    ArrayList<Order> ordersArrayList; // TEMP DATA STRUCTURE
+    ArrayList<Order> ordersArrayList;
+    OrderControllerDTO orderControllerDTO;
 
     public OrderController() {
         this.orderID = 0;
+
         this.ordersArrayList = new ArrayList<>();
-    }
 
-    public void ReadOrdersFromCSVFile() {
-        InputStream in = OrderController.class.getResourceAsStream("/orders_data.csv");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            boolean isFirstLine = true;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        this.orderControllerDTO = OrderControllerDTO.getInstance();
+        for (OrderDTO dto : orderControllerDTO.getAllOrders()) {
+            Order order = dto.convertDTOToEntity();
+            for (OrderProductDataDTO pdDTO : orderControllerDTO.getOrderProductDataByOrderID(dto))
+                order.addOrderProductData(pdDTO.convertDTOToEntity());
 
-            while ((line = reader.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-
-                String[] parts = line.split(",", 11); // first 10 fields + products
-                int supplierId = Integer.parseInt(parts[0]);
-                Date orderDate = sdf.parse(parts[1]);
-                Date supplyDate = sdf.parse(parts[2]);
-
-                DeliveringMethod deliveringMethod = DeliveringMethod.valueOf(parts[3].toUpperCase());
-                SupplyMethod supplyMethod = SupplyMethod.valueOf(parts[4].toUpperCase());
-
-                String contactName = parts[5];
-                String phone = parts[6];
-                String address = parts[7];
-                String email = parts[8];
-
-                double totalPrice = Double.parseDouble(parts[9]);
-
-                // Parse products
-                ArrayList<int[]> productList = new ArrayList<>();
-                String[] productEntries = parts[10].split(";");
-                for (String productEntry : productEntries) {
-                    String[] prod = productEntry.split(":");
-                    int productId = Integer.parseInt(prod[0]);
-                    int quantity = Integer.parseInt(prod[1]);
-                    productList.add(new int[]{productId, quantity});
-                }
-
-                ContactInfo contactInfo = new ContactInfo(contactName, email, phone, address);
-
-                Order order = new Order(orderID, supplierId, buildProductDataArray(productList, null), totalPrice, orderDate, supplyDate, deliveringMethod, supplyMethod, contactInfo);
-                ordersArrayList.add(order);
-                this.orderID++;
-
-            }
-        } catch (Exception e) {
-            System.err.println("Error reading orders CSV: " + e.getMessage());
+            ordersArrayList.add(order);
         }
     }
 
@@ -125,11 +90,14 @@ public class OrderController {
         double totalOrderValue = calculateTotalPrice(orderProductDataList);
 
         Order order = new Order(orderID, supplierId, orderProductDataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
+
+        this.orderControllerDTO.insertOrder(order.orderDTO);
+        for (OrderProductData orderProductData : orderProductDataList)
+            orderProductData.orderProductDataDTO.Insert();
+
         ordersArrayList.add(order);
 
         this.orderID++;
-
-
         return true;
     }
 
@@ -142,7 +110,11 @@ public class OrderController {
     }
 
     public boolean deleteOrder(int orderID){
-        return this.ordersArrayList.removeIf(order -> order.orderID == orderID);
+        Order order = getOrderByID(orderID);
+
+        order.orderDTO.Delete();
+
+        return this.ordersArrayList.removeIf(o -> o.orderID == orderID);
     }
 
     public boolean removeAllSupplierOrders(int supplierID) {
@@ -159,11 +131,11 @@ public class OrderController {
     public boolean updateOrderContactInfo(int orderID, String phoneNumber, String address, String email, String contactName){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
-                ContactInfo contactInfo = order.getOrderContactInfo();
-                contactInfo.setPhoneNumber(phoneNumber);
-                contactInfo.setAddress(address);
-                contactInfo.setEmail(email);
-                contactInfo.setName(contactName);
+                ContactInfo newContactInfo = new ContactInfo(phoneNumber, address, email, contactName);
+
+                order.setSupplierContactInfo(newContactInfo);
+                order.orderDTO.Update();
+
                 return true;
             }
         }
@@ -173,20 +145,29 @@ public class OrderController {
     public boolean updateOrderSupplyDate(int orderID, Date supplyDate){
         for (Order order : ordersArrayList) {
             if(order.orderID == orderID){
-                order.supplyDate = supplyDate;
+                order.setSupplyDate(supplyDate);
+                order.orderDTO.Update();
                 return true;
             }
         }
         return false;
     }
 
-    public boolean updateOrderStatus(int orderID, OrderStatus orderStatus){
+    public HashMap<Integer, Integer> updateOrderStatus(int orderID, OrderStatus orderStatus){
         Order order = getOrderByID(orderID);
         if (order != null) {
-            order.orderStatus = orderStatus;
-            return true;
+            order.setOrderStatus(orderStatus);
+            order.orderDTO.Update();
+
+            if (order.orderStatus == OrderStatus.ARRIVED) {
+                HashMap<Integer, Integer> map = new HashMap<>();
+                for (OrderProductData orderProductData : order.getProductArrayList())
+                    map.put(orderProductData.getProductID(), orderProductData.getProductQuantity());
+                return map;
+            }
+
         }
-        return false;
+        return null;
     }
 
     public Date getOrderSupplyDate(int orderID){
@@ -204,6 +185,9 @@ public class OrderController {
             return false;
 
         ArrayList<OrderProductData> newProducts = buildProductDataArray(dataList, supplyContracts);
+        for (OrderProductData orderProductData : newProducts)
+            orderProductData.orderProductDataDTO.Insert();
+
         products.addAll(newProducts);
 
         double totalPrice = calculateTotalPrice(products);
@@ -260,6 +244,7 @@ public class OrderController {
             return false;
 
         order.setProductArrayList(productArrayList);
+        order.orderDTO.Update();
         return true;
     }
 
@@ -269,6 +254,7 @@ public class OrderController {
             return false;
 
         order.setTotalPrice(price);
+        order.orderDTO.Update();
         return true;
     }
 

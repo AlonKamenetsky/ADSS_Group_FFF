@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class ServiceController {
     SupplierService supplierService;
@@ -180,7 +181,6 @@ public class ServiceController {
         return this.supplierService.getAllContractToStrings();
     }
 
-
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
@@ -221,10 +221,10 @@ public class ServiceController {
         return this.supplierService.updateOrderSupplyDate(orderID, supplyDateAsDate);
     }
 
-    public boolean updateOrderStatus(int orderID, int orderStatus) {
+    public HashMap<Integer, Integer> updateOrderStatus(int orderID, int orderStatus) {
         if (this.validateOrderStatus(orderID))
             return this.supplierService.updateOrderStatus(orderID, orderStatus);
-        return false;
+        return null;
     }
 
     public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {

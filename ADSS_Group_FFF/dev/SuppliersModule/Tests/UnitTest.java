@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 //import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UnitTest {

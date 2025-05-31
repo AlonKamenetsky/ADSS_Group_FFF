@@ -7,6 +7,7 @@ import SuppliersModule.DomainLayer.Enums.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 
 public class SupplierService {
     SupplierController supplierController;
@@ -115,7 +116,7 @@ public class SupplierService {
         return this.supplierController.updateOrderSupplyDate(orderID, supplyDate);
     }
 
-    public boolean updateOrderStatus(int orderID, int orderStatus) {
+    public HashMap<Integer, Integer> updateOrderStatus(int orderID, int orderStatus) {
         OrderStatus os = OrderStatus.values()[orderStatus];
         return this.supplierController.updateOrderStatus(orderID, os);
     }

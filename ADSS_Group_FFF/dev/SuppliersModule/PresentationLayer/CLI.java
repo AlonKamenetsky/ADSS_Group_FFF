@@ -374,10 +374,9 @@ public class CLI {
         System.out.println("Enter order status: ");
         int status = readInt();
 
-        if (serviceController.updateOrderStatus(orderID, status))
-            System.out.println("Order status updated successfully.");
-        else
-            System.out.println("Order status update failed.");
+        HashMap<Integer, Integer> map = serviceController.updateOrderStatus(orderID, status);
+        if (map != null)
+            System.out.println("Order items retrived!");
     }
 
     private void removeProductsFromOrder(int orderID) {

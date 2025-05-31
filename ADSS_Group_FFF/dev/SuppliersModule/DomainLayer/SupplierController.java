@@ -7,9 +7,7 @@ import SuppliersModule.DataLayer.SupplierDTO;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumSet;
+import java.util.*;
 
 import static SuppliersModule.DomainLayer.OrderController.buildProductDataArray;
 
@@ -41,11 +39,19 @@ public class SupplierController {
                 supplier = new OnDemandSupplier(dto.supplierID, dto.supplierName, ProductCategory.valueOf(dto.productCategory), DeliveringMethod.valueOf(dto.deliveryMethod), supplierContactInfo, supplierPaymentInfo);
             else if (SupplyMethod.valueOf(dto.supplyMethod) == SupplyMethod.SCHEDULED) {
                 ArrayList<SupplierDaysDTO> supplierDaysDTOList = supplierControllerDTO.getSupplierDaysOfSupplier(dto);
+
                 EnumSet<WeekDay> days = EnumSet.noneOf(WeekDay.class);
-                for (SupplierDaysDTO supplierDaysDTO : supplierDaysDTOList)
+                ArrayList<ScheduledOrder> scheduledOrders = new ArrayList<>();
+                for (SupplierDaysDTO supplierDaysDTO : supplierDaysDTOList) {
                     days.add(WeekDay.valueOf(supplierDaysDTO.day));
+                    scheduledOrders.add(new ScheduledOrder(dto.supplierID, WeekDay.valueOf(supplierDaysDTO.day)));
+                }
 
                 supplier = new ScheduledSupplier(dto.supplierID, dto.supplierName, ProductCategory.valueOf(dto.productCategory), DeliveringMethod.valueOf(dto.deliveryMethod), supplierContactInfo, supplierPaymentInfo, days);
+                for (ScheduledOrder scheduledOrder : scheduledOrders) {
+                    ScheduledSupplier scheduledSupplier = (ScheduledSupplier)supplier;
+                    scheduledSupplier.addScheduledOrder(scheduledOrder.getDay(), scheduledOrder);
+                }
             }
 
             for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(dto.supplierID))
@@ -75,9 +81,13 @@ public class SupplierController {
 
         if (supplyMethod == SupplyMethod.SCHEDULED) {
             ScheduledSupplier scheduledSupplier = (ScheduledSupplier)supplier;
-            for (WeekDay day : scheduledSupplier.getSupplyDays()) {
-                SupplierDaysDTO dto = new SupplierDaysDTO(scheduledSupplier.getSupplierId(), day.toString());
-                dto.Insert();
+            for (Map.Entry<WeekDay, ScheduledOrder> entry: scheduledSupplier.getScheduledOrders().entrySet()) {
+                WeekDay day = entry.getKey();
+                ScheduledOrder scheduledOrder = entry.getValue();
+                for (OrderProductData orderProductData : scheduledOrder.getProductsData()) {
+                    SupplierDaysDTO dto = new SupplierDaysDTO(scheduledSupplier.getSupplierId(), day.toString(), orderProductData.getProductID(), orderProductData.getProductQuantity(), orderProductData.getProductQuantity());
+                    dto.Insert();
+                }
             }
         }
 
@@ -330,7 +340,7 @@ public class SupplierController {
         return this.orderController.updateOrderSupplyDate(orderID, supplyDate);
     }
 
-    public boolean updateOrderStatus(int orderID, OrderStatus orderStatus) {
+    public HashMap<Integer, Integer> updateOrderStatus(int orderID, OrderStatus orderStatus) {
         return this.orderController.updateOrderStatus(orderID, orderStatus);
     }
 
