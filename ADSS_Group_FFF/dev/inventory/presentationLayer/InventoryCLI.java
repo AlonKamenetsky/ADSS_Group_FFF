@@ -1,4 +1,8 @@
-package inventory;
+package inventory.presentationLayer;
+
+
+import inventory.domainLayer.*;
+import inventory.serviceLayer.InventoryService;
 
 import java.time.DayOfWeek;
 import java.util.*;
@@ -47,9 +51,6 @@ public class InventoryCLI {
         System.out.println("Goodbye!");
     }
 
-    private void advanceDay() {
-        controller.advanceDay();
-    }
 
     private void printMenu() {
         System.out.println("\nChoose an option:");
@@ -71,13 +72,13 @@ public class InventoryCLI {
     }
 
     private void listAllItems() {
-        for (InventoryItem item : controller.getAllItems()) {
+        for (InventoryProduct item : controller.getAllItems()) {
             System.out.println(item);
         }
     }
 
     private void listLowStockItems() {
-        for (InventoryItem item : controller.getLowStockItems()) {
+        for (InventoryProduct item : controller.getLowStockItems()) {
             System.out.println(item);
         }
     }
@@ -102,7 +103,7 @@ public class InventoryCLI {
     private void markItemAsDamaged() {
         System.out.print("Enter item ID to mark as damaged: ");
         String id = scanner.nextLine().trim();
-        InventoryItem item = getItemById(id);
+        InventoryProduct item = getItemById(id);
         if (item != null) {
             item.setStatus(ItemStatus.DAMAGED);
             System.out.println("Item marked as damaged.");
@@ -150,7 +151,7 @@ public class InventoryCLI {
         System.out.print("Min threshold: ");
         int min = Integer.parseInt(scanner.nextLine());
 
-        InventoryItem item = new InventoryItem(
+        InventoryProduct item = new InventoryProduct(
                 id, name, manufacturer, shelf, backroom, min,
                 purchasePrice, salePrice, ItemStatus.NORMAL, category
         );
@@ -173,8 +174,8 @@ public class InventoryCLI {
     }
 
     // Utility lookup methods
-    private InventoryItem getItemById(String id) {
-        for (InventoryItem item : controller.getAllItems()) {
+    private InventoryProduct getItemById(String id) {
+        for (InventoryProduct item : controller.getAllItems()) {
             if (item.getId().equals(id)) return item;
         }
         return null;
@@ -275,3 +276,4 @@ public class InventoryCLI {
 
 
 }
+

@@ -1,30 +1,34 @@
-package inventory;
+package inventory.serviceLayer;
 
 import IntegrationInventoryAndSupplier.*;
+import inventory.domainLayer.*;
 
-import java.time.DayOfWeek;
 import java.util.*;
 
 public class InventoryService implements InventoryInterface {
-    private Map<String, InventoryItem> items;
+    private Map<Integer, InventoryProduct> products;
     private Map<String, Category> categories;
-    private Map<String, Discount> itemDiscounts;
+    private Map<Integer, Discount> productDiscounts;
     private Map<String, Discount> categoryDiscounts;
     private List<InventoryReport> reports;
-    private List<PeriodicOrder> periodicOrders;
-    private SimulationClock simulationClock;
+    private static InventoryService instance = null;
 
     private SupplierInterface supplierInterface;
 
-    public InventoryService() {
-        this.items = new HashMap<>();
+    private InventoryService() {
+        this.products = new HashMap<>();
         this.categories = new HashMap<>();
-        this.itemDiscounts = new HashMap<>();
+        this.productDiscounts = new HashMap<>();
         this.categoryDiscounts = new HashMap<>();
         this.reports = new ArrayList<>();
-        this.simulationClock = new SimulationClock();
-        periodicOrders = new ArrayList<>();
-        // supplierService.getInstance();
+        supplierInterface = supplierInterface.getInstance();
+    }
+
+    public static InventoryService getInstance() {
+        if (instance == null)
+            instance = new InventoryService();
+
+        return instance;
     }
 
 
@@ -32,8 +36,8 @@ public class InventoryService implements InventoryInterface {
         this.supplierInterface = supplierInterface;
     }
 
-    public int lowstockStratergy(InventoryItem i){
-        return i.getMinThreshold()*2;
+    public int orderAmountWhenLowStock(InventoryProduct i) {
+        return i.getMinThreshold() * 2;
     }
 
     public void checkAndReorderLowStockItems() {
@@ -42,29 +46,26 @@ public class InventoryService implements InventoryInterface {
             return;
         }
 
-        for (InventoryItem item : getLowStockItems()) {
-
-            SupplierOrder order = new SupplierOrder(null, item.getId(), lowstockStratergy(item));
-             supplierInterface.placeOrderSingleProduct(order);
+        for (InventoryProduct product : getLowStockItems()) {
+            supplierInterface.placeUrgentOrderSingleProduct(product.getId(), orderAmountWhenLowStock(product));
         }
     }
 
 
-    // ass2
 
     //add InventoryService interface and make it have a function updateItemQuantity(String itemId, int shelfDelta, int backroomDelta)
 
 
-    public void addItem(InventoryItem item) {
-        if (items.containsKey(item.getId())) {
+    public void addItem(InventoryProduct item) {
+        if (products.containsKey(item.getId())) {
             throw new IllegalArgumentException("Item ID already exists: " + item.getId());
         }
-        items.put(item.getId(), item);
+        products.put(item.getId(), item);
     }
 
-    public List<InventoryItem> getLowStockItems() {
-        List<InventoryItem> lowStock = new ArrayList<>();
-        for (InventoryItem item : items.values()) {
+    public List<InventoryProduct> getLowStockItems() {
+        List<InventoryProduct> lowStock = new ArrayList<>();
+        for (InventoryProduct item : products.values()) {
             int totalQty = item.getShelfQuantity() + item.getBackroomQuantity();
             if (totalQty < item.getMinThreshold()) {
                 lowStock.add(item);
@@ -73,10 +74,10 @@ public class InventoryService implements InventoryInterface {
         return lowStock;
     }
 
-    public Discount getDiscountForItem(InventoryItem item) {
+    public Discount getDiscountForItem(InventoryProduct item) {
         Date now = new Date();
         // First try item-specific discount
-        Discount discount = itemDiscounts.get(item.getId());
+        Discount discount = productDiscounts.get(item.getId());
         if (discount != null && !now.before(discount.getStartDate()) && !now.after(discount.getEndDate())) {
             return discount;
         }
@@ -90,8 +91,8 @@ public class InventoryService implements InventoryInterface {
         return null;
     }
 
-    public Collection<InventoryItem> getAllItems() {
-        return items.values();
+    public Collection<InventoryProduct> getAllItems() {
+        return products.values();
     }
 
     public void addCategory(Category category) {
@@ -106,8 +107,8 @@ public class InventoryService implements InventoryInterface {
     }
 
     public InventoryReport generateReport(String reportId, List<Category> filterCategories, ItemStatus statusFilter) {
-        List<InventoryItem> filtered = new ArrayList<>();
-        for (InventoryItem item : items.values()) {
+        List<InventoryProduct> filtered = new ArrayList<>();
+        for (InventoryProduct item : products.values()) {
             boolean matchesCategory = filterCategories == null || filterCategories.contains(item.getCategory());
             boolean matchesStatus = statusFilter == null || item.getStatus() == statusFilter;
             if (matchesCategory && matchesStatus) {
@@ -120,28 +121,26 @@ public class InventoryService implements InventoryInterface {
     }
 
 
-    public boolean takInSupplierDelivery(String itemId,  int backroomDelta)
-    {
-        updateItemQuantity(itemId,0,backroomDelta);
+    public boolean takInSupplierDelivery(String itemId, int backroomDelta) {
+        updateItemQuantity(itemId, 0, backroomDelta);
         return true; //if we want we can add logic to make sure order was accepteed
     }
 
     //method for both adding "buying" and subtracting "selling" Stock
     public void updateItemQuantity(String itemId, int shelfDelta, int backroomDelta) {
-        InventoryItem item = items.get(itemId);
+        InventoryProduct item = products.get(itemId);
         if (item != null) {
             item.setShelfQuantity(item.getShelfQuantity() + shelfDelta);
             item.setBackroomQuantity(item.getBackroomQuantity() + backroomDelta);
         }
-        if(shelfDelta < 0 || backroomDelta <0)
-        {
+        if (shelfDelta < 0 || backroomDelta < 0) {
             checkAndReorderLowStockItems();
         }
     }
 
     public void addDiscount(Discount discount) {
         if (discount.getAppliesToItem() != null) {
-            itemDiscounts.put(discount.getAppliesToItem().getId(), discount);
+            productDiscounts.put(discount.getAppliesToItem().getId(), discount);
         } else if (discount.getAppliesToCategory() != null) {
             categoryDiscounts.put(discount.getAppliesToCategory().getName(), discount);
         } else {
@@ -153,40 +152,11 @@ public class InventoryService implements InventoryInterface {
         return reports;
     }
 
-    public void addPeriodicOrder(String productId, int quantity, DayOfWeek orderDay) {
-        PeriodicOrder p1 = new PeriodicOrder(productId, quantity, orderDay);
-        periodicOrders.add(p1);
-        //DB Access
-        supplierInterface.takePeriodicOrder(p1);
+
+    @Override
+    public boolean acceptDelivery(int itemId, int quantity) {
+        return false;
     }
-
-
-
-    public List<PeriodicOrder> getAllPeriodicOrders() {
-        return periodicOrders;
-    }
-
-    public boolean removePeriodicOrderById(int id) {
-        return periodicOrders.removeIf(order -> order.getOrderID() == id);
-    }
-
-
 }
 
 
-
-//
-//
-//
-//=== Inventory Management Menu ===
-//        1. View all inventory
-//2. View low stock items
-//3. View categories
-//4. Update item quantities
-//5. Mark item as DAMAGED or EXPIRED
-//6. Generate inventory report
-//7. Add a new item to inventory
-//8. Exit
-//9. Add Item (from available)
-//
-//Enter your choice:

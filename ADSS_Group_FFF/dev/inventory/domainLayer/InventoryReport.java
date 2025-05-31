@@ -1,5 +1,5 @@
-package inventory;
-import java.util.*;
+package inventory.domainLayer;
+
 
 import java.util.Date;
 import java.util.List;
@@ -7,9 +7,9 @@ import java.util.List;
 public class InventoryReport {
     private String id;
     private Date dateGenerated;
-    private List<InventoryItem> items;
+    private List<InventoryProduct> items;
 
-    public InventoryReport(String id, Date dateGenerated, List<InventoryItem> items) {
+    public InventoryReport(String id, Date dateGenerated, List<InventoryProduct> items) {
         this.id = id;
         this.dateGenerated = dateGenerated;
         this.items = items;
@@ -24,7 +24,7 @@ public class InventoryReport {
         return dateGenerated;
     }
 
-    public List<InventoryItem> getItems() {
+    public List<InventoryProduct> getItems() {
         return items;
     }
 
@@ -37,3 +37,4 @@ public class InventoryReport {
                 '}';
     }
 }
+

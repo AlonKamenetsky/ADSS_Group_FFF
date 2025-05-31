@@ -1,5 +1,7 @@
 package inventory;
 
+import inventory.domainLayer.*;
+import inventory.serviceLayer.InventoryService;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +16,7 @@ import java.util.Date;
 public class InventoryServiceTest {
     private InventoryService service;
     private Category dairy;
-    private InventoryItem milk;
+    private InventoryProduct milk;
 
     @BeforeEach
     public void setup() {
@@ -22,7 +24,7 @@ public class InventoryServiceTest {
         dairy = new Category("Dairy", null);
         service.addCategory(dairy);
 
-        milk = new InventoryItem("001", "Milk", "Tnuva", 2, 1, 5,
+        milk = new InventoryProduct("001", "Milk", "Tnuva", 2, 1, 5,
                 2.5, 5.0, ItemStatus.NORMAL, dairy);
         service.addItem(milk);
     }
@@ -40,7 +42,7 @@ public class InventoryServiceTest {
     @Test
     public void testUpdateItemQuantity() {
         service.updateItemQuantity("001", 5, 5);
-        InventoryItem item = service.getAllItems().get(0);
+        InventoryProduct item = service.getAllItems().get(0);
         assertEquals(7, item.getShelfQuantity());
         assertEquals(6, item.getBackroomQuantity());
     }

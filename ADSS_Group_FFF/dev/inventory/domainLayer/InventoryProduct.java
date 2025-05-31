@@ -1,7 +1,7 @@
-package inventory;
+package inventory.domainLayer;
 
-public class InventoryItem {
-    private String id;
+public class InventoryProduct {
+    private int id;
     private String name;
     private String manufacturer;
     private int shelfQuantity;
@@ -13,9 +13,9 @@ public class InventoryItem {
     private Category category;
 
     // Full constructor
-    public InventoryItem(String id, String name, String manufacturer, int shelfQuantity,
-                         int backroomQuantity, int minThreshold, double purchasePrice,
-                         double salePrice, ItemStatus status, Category category) {
+    public InventoryProduct(int id, String name, String manufacturer, int shelfQuantity,
+                            int backroomQuantity, int minThreshold, double purchasePrice,
+                            double salePrice, ItemStatus status, Category category) {
         this.id = id;
         this.name = name;
         this.manufacturer = manufacturer;
@@ -29,7 +29,7 @@ public class InventoryItem {
     }
 
     // Getters
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -99,25 +99,25 @@ public class InventoryItem {
         return("----------------------------------\n"+toRowString());
     }
 
-        public String toRowString() {
-            return String.format(
-                    "%-10s | %-15s | %-17s | %-5d | %-8d | %-5d | %-8s | %-10s",
-                    id,
-                    name,
-                    manufacturer,
-                    shelfQuantity,
-                    backroomQuantity,
-                    minThreshold,
-                    status,
-                    category != null ? category.getName() : "None"
-            );
-        }
-
-        public static String getTableHeader() {
-            return String.format(
-                    "%-10s | %-15s | %-17s | %-5s | %-8s | %-5s | %-8s | %-10s",
-                    "ID", "Name", "Manufacturer", "Shelf", "Backroom", "Min", "Status", "Category"
-            );
-        }
+    public String toRowString() {
+        return String.format(
+                "%-10s | %-15s | %-17s | %-5d | %-8d | %-5d | %-8s | %-10s",
+                id,
+                name,
+                manufacturer,
+                shelfQuantity,
+                backroomQuantity,
+                minThreshold,
+                status,
+                category != null ? category.getName() : "None"
+        );
     }
+
+    public static String getTableHeader() {
+        return String.format(
+                "%-10s | %-15s | %-17s | %-5s | %-8s | %-5s | %-8s | %-10s",
+                "ID", "Name", "Manufacturer", "Shelf", "Backroom", "Min", "Status", "Category"
+        );
+    }
+}
 

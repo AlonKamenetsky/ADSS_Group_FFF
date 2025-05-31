@@ -1,4 +1,7 @@
-package inventory;
+package inventory.presentationLayer;
+
+import inventory.domainLayer.*;
+import inventory.serviceLayer.InventoryService;
 
 import javax.swing.*;
 import java.io.File;
@@ -80,7 +83,7 @@ public class SwingGUIManager extends JFrame {
                 return;
             }
 
-            InventoryItem newItem = buildItem(id);
+            InventoryProduct newItem = buildItem(id);
             service.addItem(newItem);
             showInfo("Item added successfully!");
         } catch (Exception ex) {
@@ -104,7 +107,7 @@ public class SwingGUIManager extends JFrame {
 
     private void updateQuantities() {
         try {
-            InventoryItem item = findItemById();
+            InventoryProduct item = findItemById();
             if (item == null) return;
 
             int[] changes = promptQuantityChange();
@@ -116,7 +119,7 @@ public class SwingGUIManager extends JFrame {
     }
 
     private void markItemStatus() {
-        InventoryItem item = findItemById();
+        InventoryProduct item = findItemById();
         if (item == null) return;
 
         ItemStatus status = chooseStatus();
@@ -151,7 +154,7 @@ public class SwingGUIManager extends JFrame {
         return service.getAllItems().stream().anyMatch(item -> item.getId().equals(id));
     }
 
-    private InventoryItem buildItem(String id) {
+    private InventoryProduct buildItem(String id) {
         String name = promptForInput("Enter item name:");
         String manufacturer = promptForInput("Enter manufacturer:");
         int shelfQuantity = promptForInt("Enter shelf quantity:");
@@ -161,7 +164,7 @@ public class SwingGUIManager extends JFrame {
         double salePrice = promptForDouble("Enter sale price:");
         Category category = selectCategory();
 
-        return new InventoryItem(id, name, manufacturer, shelfQuantity, backroomQuantity,
+        return new InventoryProduct(id, name, manufacturer, shelfQuantity, backroomQuantity,
                 minThreshold, purchasePrice, salePrice, ItemStatus.NORMAL, category);
     }
 
@@ -177,7 +180,7 @@ public class SwingGUIManager extends JFrame {
         return Double.parseDouble(promptForInput(message));
     }
 
-    private InventoryItem findItemById() {
+    private InventoryProduct findItemById() {
         String id = promptForInput("Enter Item ID:");
         return service.getAllItems().stream().filter(i -> i.getId().equals(id)).findFirst().orElse(null);
     }
@@ -257,7 +260,7 @@ public class SwingGUIManager extends JFrame {
         return null;
     }
 
-    private void displayItems(Collection<InventoryItem> items, int sortChoice) {
+    private void displayItems(Collection<InventoryProduct> items, int sortChoice) {
         StringBuilder sb = new StringBuilder();
         items.stream()
                 .sorted((a, b) -> sortChoice == 1 ? a.getName().compareToIgnoreCase(b.getName()) : a.getId().compareToIgnoreCase(b.getId()))
@@ -286,7 +289,7 @@ public class SwingGUIManager extends JFrame {
         sb.append("Report ID: ").append(report.getId()).append("\n");
         sb.append("Generated on: ").append(report.getDateGenerated()).append("\n\n");
         sb.append("Items in Report:\n");
-        for (InventoryItem item : report.getItems()) {
+        for (InventoryProduct item : report.getItems()) {
             sb.append(formatItem(item)).append("\n-----------------------------\n\n");
         }
         showMessage(sb.toString(), "Inventory Report");
@@ -313,7 +316,7 @@ public class SwingGUIManager extends JFrame {
             StringBuilder sb = new StringBuilder();
             if ("csv".equals(type)) {
                 sb.append("Item ID,Name,Manufacturer,Shelf Quantity,Backroom Quantity,Min Threshold,Purchase Price,Sale Price,Status,Category\n");
-                for (InventoryItem item : service.getAllItems()) {
+                for (InventoryProduct item : service.getAllItems()) {
                     sb.append(item.getId()).append(",")
                             .append(item.getName()).append(",")
                             .append(item.getManufacturer()).append(",")
@@ -327,7 +330,7 @@ public class SwingGUIManager extends JFrame {
                             .append("\n");
                 }
             } else {
-                for (InventoryItem item : service.getAllItems()) {
+                for (InventoryProduct item : service.getAllItems()) {
                     sb.append(formatItem(item)).append("\n-----------------------------\n\n");
                 }
             }
@@ -338,7 +341,7 @@ public class SwingGUIManager extends JFrame {
         }
     }
 
-    private String formatItem(InventoryItem item) {
+    private String formatItem(InventoryProduct item) {
         return "Item ID: " + item.getId() + "\n" +
                 "Name: " + item.getName() + "\n" +
                 "Manufacturer: " + item.getManufacturer() + "\n" +

@@ -1,4 +1,4 @@
-package inventory;
+package inventory.domainLayer;
 
 import java.util.Date;
 
@@ -8,10 +8,10 @@ public class Discount {
     private Date startDate;
     private Date endDate;
     private Category appliesToCategory;       // nullable
-    private InventoryItem appliesToItem;      // nullable
+    private InventoryProduct appliesToItem;      // nullable
 
     public Discount(String id, double percent, Date startDate, Date endDate,
-                    Category appliesToCategory, InventoryItem appliesToItem) {
+                    Category appliesToCategory, InventoryProduct appliesToItem) {
         this.id = id;
         this.percent = percent;
         this.startDate = startDate;
@@ -40,7 +40,7 @@ public class Discount {
         return appliesToCategory;
     }
 
-    public InventoryItem getAppliesToItem() {
+    public InventoryProduct getAppliesToItem() {
         return appliesToItem;
     }
 

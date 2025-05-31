@@ -1,6 +1,8 @@
 package inventory;
 
 import IntegrationInventoryAndSupplier.FakeSupplierService;
+import inventory.presentationLayer.InventoryCLI;
+import inventory.serviceLayer.InventoryService;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,4 +1,5 @@
-package inventory;
+package inventory.domainLayer;
+
 
 public enum ItemStatus {
     NORMAL,

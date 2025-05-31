@@ -1,4 +1,4 @@
-package inventory;
+package inventory.domainLayer;
 
 import java.util.ArrayList;
 import java.util.List;
