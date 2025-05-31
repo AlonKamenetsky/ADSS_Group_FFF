@@ -18,8 +18,8 @@ public class TaskManager {
     private final TransportationTaskRepository taskRepository;
 
     public TaskManager() {
-        docRepository = new TransportationDocRepositoryImpli();
-        taskRepository = new TransportationTaskRepositoryImpli();
+        docRepository = new TransportationDocRepositoryImpli(new SiteRepositoryImpli());
+        taskRepository = new TransportationTaskRepositoryImpli(new SiteRepositoryImpli());
         itemManager = new ItemManager();
         siteManager = new SiteManager();
         driverManager = new DriverManager();
@@ -145,7 +145,7 @@ public class TaskManager {
     }
 
     public String getAllTasksString() throws SQLException {
-        List<TransportationTaskDTO> allTasks = taskRepository.findAllTasks();
+        List<TransportationTaskDTO> allTasks = taskRepository.getAllTasks();
         int counter = 1;
         StringBuilder sb = new StringBuilder("All Tasks:\n");
 

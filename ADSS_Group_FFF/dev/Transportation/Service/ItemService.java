@@ -58,17 +58,4 @@ public class ItemService {
             throw new RuntimeException("Database access error");
         }
     }
-//
-//    public List<ItemDTO> getAllItemDTOs() {
-//        return itemManager.getAllItems()
-//                .stream()
-//                .map(ItemDTO::fromEntity)
-//                .collect(Collectors.toList());
-//    }
-//
-//    public ItemDTO getItemDTOByName(String itemName) {
-//        Item item = itemManager.getItemByName(itemName);
-//        return item != null ? ItemDTO.fromEntity(item) : null;
-//    }
-
 }

@@ -1,12 +1,9 @@
 package Transportation.Domain.Repositories;
 
-import Transportation.DTO.TruckDTO;
 import Transportation.DataAccess.SqliteZoneDAO;
 import Transportation.DTO.ZoneDTO;
 import Transportation.DataAccess.ZoneDAO;
 import Transportation.Domain.Site;
-import Transportation.Domain.Truck;
-import Transportation.Domain.TruckType;
 import Transportation.Domain.Zone;
 
 import java.sql.SQLException;
@@ -79,9 +76,10 @@ public class ZoneRepositoryImpli implements ZoneRepository {
     @Override
     public Optional<ZoneDTO> findByZoneName(String name) throws SQLException {
         for (Zone zone : tempZoneList) {
-            zone.getName().equals(name);
-            ZoneDTO zoneDTO = toDTO(zone);
-            return Optional.of(zoneDTO);
+            if (zone.getName().equals(name)) {
+                ZoneDTO zoneDTO = toDTO(zone);
+                return Optional.of(zoneDTO);
+            }
         }
         return zoneDAO.findByName(name);
     }
@@ -93,11 +91,6 @@ public class ZoneRepositoryImpli implements ZoneRepository {
                 .collect(Collectors.toCollection(ArrayList::new)));
     }
 
-    private Zone fromDTO(ZoneDTO dto) {
-        return new Zone(dto.zoneId(), dto.zoneName());
-    }
-
-
     private Zone findZoneInList(int zoneId) {
         for (Zone currZone : tempZoneList) {
             if (currZone.getZoneId() == zoneId) {
@@ -106,9 +99,4 @@ public class ZoneRepositoryImpli implements ZoneRepository {
         }
         return null;
     }
-
-    public void clearCache() {
-        tempZoneList.clear();
-    }
 }
-

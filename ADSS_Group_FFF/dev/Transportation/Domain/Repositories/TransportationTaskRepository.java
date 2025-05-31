@@ -14,7 +14,7 @@ public interface TransportationTaskRepository {
     void deleteTask(int taskId) throws SQLException;
     Optional<TransportationTaskDTO> findTask(int taskId) throws SQLException;
     Optional<TransportationTaskDTO> findTaskByDateTimeAndSource(LocalDate taskDate, LocalTime departureTime , int sourceSiteId) throws SQLException;
-    List<TransportationTaskDTO> findAllTasks() throws SQLException;
+    List<TransportationTaskDTO> getAllTasks() throws SQLException;
     List<TransportationTaskDTO> findTaskBySourceAddress(int sourceSiteId) throws SQLException;
     boolean hasDestination(int taskId, int siteId) throws SQLException;
     TransportationTaskDTO addDestination(int taskId, int destinationSiteId) throws SQLException;

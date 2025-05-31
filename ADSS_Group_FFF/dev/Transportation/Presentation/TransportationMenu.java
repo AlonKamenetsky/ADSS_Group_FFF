@@ -2,18 +2,15 @@ package Transportation.Presentation;
 
 import Transportation.Service.*;
 
-import javax.management.InstanceAlreadyExistsException;
 import java.util.Scanner;
 
 public class TransportationMenu {
     private final TManagerRoleMenu TManagerMenuUI;
-    // private final DriverRoleMenu DriverRoleMenuUI;
     //private final DataService dataService;
     private final Scanner input;
 
     public TransportationMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService, ItemService itemService /*DataService dataService*/) {
         this.TManagerMenuUI = new TManagerRoleMenu(driverService, truckService, taskService, zoneService, siteService, itemService, siteZoneService);
-      //  this.DriverRoleMenuUI = new DriverRoleMenu(driverService, taskService);
         //this.dataService = dataService;
         input = new Scanner(System.in);
     }
@@ -52,7 +49,7 @@ public class TransportationMenu {
                 case "driver":
                     System.out.println("What is your id?");
                     choice = input.nextLine();
-                    //DriverRoleMenuUI.modifyDriverId(choice);
+                    //Show employees menu
                     //DriverRoleMenuUI.show();
                     validChoice = true;
                     break;

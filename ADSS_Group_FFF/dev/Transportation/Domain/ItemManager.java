@@ -60,12 +60,8 @@ public class ItemManager {
         return itemRepository.findWeightList(itemsListId);
     }
 
-    public void removeItem(int itemId) {
-        try {
-            itemRepository.delete(itemId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void removeItem(int itemId) throws SQLException {
+        itemRepository.delete(itemId);
     }
 
     public ItemsListDTO getItemsList(int itemsListId) throws SQLException {

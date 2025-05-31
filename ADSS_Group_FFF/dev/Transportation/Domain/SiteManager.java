@@ -46,7 +46,7 @@ public class SiteManager {
     }
 
     public List<SiteDTO> getAllSites() throws SQLException {
-        return siteRepository.findAll();
+        return siteRepository.getAllSites();
     }
 
     // new methods for part B

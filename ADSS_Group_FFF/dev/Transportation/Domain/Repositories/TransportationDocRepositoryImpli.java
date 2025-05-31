@@ -1,14 +1,10 @@
 package Transportation.Domain.Repositories;
 
-import Transportation.DTO.SiteDTO;
 import Transportation.DTO.TransportationDocDTO;
 import Transportation.DataAccess.SqliteTransportationDocDAO;
 import Transportation.DataAccess.TransportationDocDAO;
-import Transportation.Domain.ItemsList;
 import Transportation.Domain.Site;
 import Transportation.Domain.TransportationDoc;
-import Transportation.Domain.Item;
-import Transportation.Domain.Repositories.SiteRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -62,7 +58,7 @@ public class TransportationDocRepositoryImpli implements TransportationDocReposi
                         doc.getDocId(),
                         doc.getTaskId(),
                         doc.getDestinationSite().getSiteId(),
-                        doc.getItemListId())); //
+                        doc.getItemListId()));
             }
         }
         return docDAO.findById(docId);
@@ -70,23 +66,21 @@ public class TransportationDocRepositoryImpli implements TransportationDocReposi
 
     @Override
     public List<TransportationDocDTO> findDocByTaskId(int taskId) throws SQLException {
-        List<TransportationDocDTO> results = new ArrayList<>();
-        for (TransportationDoc doc : tempDocList) {
-            if (doc.getTaskId() == taskId) {
-                results.add(new TransportationDocDTO(
-                        doc.getDocId(),
-                        doc.getTaskId(),
-                        doc.getDestinationSite().getSiteId(),
-                        doc.getItemListId()));
+        if (!tempDocList.isEmpty()) {
+            List<TransportationDocDTO> results = new ArrayList<>();
+            for (TransportationDoc doc : tempDocList) {
+                if (doc.getTaskId() == taskId) {
+                    results.add(new TransportationDocDTO(
+                            doc.getDocId(),
+                            doc.getTaskId(),
+                            doc.getDestinationSite().getSiteId(),
+                            doc.getItemListId()));
+                }
+            }
+            if (!results.isEmpty()) {
+                return results;
             }
         }
-        if (!results.isEmpty()) {
-            return results;
-        }
         return docDAO.findByTaskId(taskId);
-    }
-
-    public void clearCache() {
-        tempDocList.clear();
     }
 }

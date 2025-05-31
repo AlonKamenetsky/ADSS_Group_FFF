@@ -2,14 +2,12 @@ package Transportation.Domain.Repositories;
 
 import Transportation.DTO.ItemDTO;
 import Transportation.DTO.ItemsListDTO;
-import Transportation.DTO.TruckDTO;
 import Transportation.DataAccess.ItemDAO;
 import Transportation.DataAccess.ItemsListDAO;
 import Transportation.DataAccess.SqliteItemDAO;
 import Transportation.DataAccess.SqliteItemsListDAO;
 import Transportation.Domain.Item;
 import Transportation.Domain.ItemsList;
-import Transportation.Domain.Truck;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -61,10 +59,13 @@ public class ItemRepositoryImpli implements ItemRepository {
     @Override
     public int makeList(HashMap<String, Integer> itemsInList) throws SQLException {
         int listId = listDAO.createEmptyList();
+        ItemsList itemsList = new ItemsList(listId);
         for (HashMap.Entry<String, Integer> entry : itemsInList.entrySet()) {
             Optional<ItemDTO> maybeItem = itemDAO.findByName(entry.getKey());
             if (maybeItem.isPresent()) {
                 int currItemId = maybeItem.get().itemId();
+                Item chosenItem = new Item(currItemId, maybeItem.get().itemName(), maybeItem.get().itemWeight());
+                itemsList.addItemToList(chosenItem, entry.getValue());
                 listDAO.addItemToList(listId, currItemId, entry.getValue());
             }
         }
@@ -112,21 +113,5 @@ public class ItemRepositoryImpli implements ItemRepository {
     //Helping methods
     private ItemDTO toDTO(Item item) {
         return new ItemDTO(item.getItemId(),item.getItemName(),item.getWeight());
-    }
-
-    private Item findItemInList(int itemId) {
-        for (Item currItem: tempItemList) {
-            if (currItem.getItemId() == itemId) {
-                return currItem;
-            }
-        }
-        return null;
-    }
-
-    public void clearCacheI(){
-        tempItemList.clear();
-    }
-    public void clearCacheIL() {
-        tempItemsList.clear();
     }
 }

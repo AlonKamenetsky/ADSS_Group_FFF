@@ -3,7 +3,6 @@ package Transportation.Domain.Repositories;
 import Transportation.DTO.TruckDTO;
 import Transportation.DataAccess.SqliteTruckDAO;
 import Transportation.DataAccess.TruckDAO;
-import Transportation.Domain.Repositories.TruckRepository;
 import Transportation.Domain.Truck;
 import Transportation.Domain.TruckType;
 
@@ -31,7 +30,7 @@ public class TruckRepositoryImpli implements TruckRepository {
     @Override
     public Optional<TruckDTO> findTruckByLicense(String licenseNumber) throws SQLException {
         for (Truck currTruck : tempTruckList) {
-            if (currTruck.getLicenseNumber() == licenseNumber) {
+            if (currTruck.getLicenseNumber().equals(licenseNumber)) {
                 TruckDTO foundTruck = new TruckDTO(currTruck.getTruckID(), currTruck.getTruckType().toString(), currTruck.getLicenseNumber(), currTruck.getModel(), currTruck.getNetWeight(), currTruck.getMaxWeight(), currTruck.isFree());
                 return Optional.of(foundTruck);
             }
@@ -93,9 +92,5 @@ public class TruckRepositoryImpli implements TruckRepository {
             }
         }
         return null;
-    }
-
-    public void clearCache() {
-        tempTruckList.clear();
     }
 }

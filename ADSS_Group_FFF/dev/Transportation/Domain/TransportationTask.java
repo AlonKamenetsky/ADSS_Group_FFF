@@ -60,6 +60,10 @@ public class TransportationTask {
         weightBeforeLeaving = totalWeight[0];
     }
 
+    public void setWeightBeforeLeaving(float weight) {
+        weightBeforeLeaving = weight;
+    }
+
     public float getWeightBeforeLeaving() {
         return weightBeforeLeaving;
     }
@@ -107,5 +111,9 @@ public class TransportationTask {
             }
         }
         return false;
+    }
+
+    public void addDestination(Site destinationSite) {
+        destinationSites.add(destinationSite);
     }
 }
