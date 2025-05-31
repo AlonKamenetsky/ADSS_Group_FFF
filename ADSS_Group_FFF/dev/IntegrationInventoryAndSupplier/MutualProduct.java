@@ -8,4 +8,16 @@ public class MutualProduct {
     String productCompanyName;
     ProductCategory productCategory;
 
+    public int getId() {
+        return productId;
+    }
+
+    public String getName() {
+        return productName;
+    }
+
+    public String getManufacturer() {
+        return productCompanyName;
+    }
+
 }

@@ -1,34 +1,415 @@
 package inventory.serviceLayer;
 
 import IntegrationInventoryAndSupplier.*;
+import inventory.dataLayer.sqlite.SQLiteCategoryDAO;
+import inventory.dataLayer.sqlite.SQLiteDiscountDAO;
+import inventory.dataLayer.sqlite.SQLiteInventoryProductDAO;
+import inventory.dataLayer.sqlite.SQLiteInventoryReportDAO;
 import inventory.domainLayer.*;
+import inventory.dataLayer.daos.*;
 
+import java.sql.SQLException;
 import java.util.*;
 
-public class InventoryService implements InventoryInterface {
-    private Map<Integer, InventoryProduct> products;
-    private Map<String, Category> categories;
-    private Map<Integer, Discount> productDiscounts;
-    private Map<String, Discount> categoryDiscounts;
-    private List<InventoryReport> reports;
-    private static InventoryService instance = null;
+public class InventoryService implements InternalInventoryInterface {
 
+    private final InventoryProductDAO productDAO;
+    private final CategoryDAO categoryDAO;
+    private final DiscountDAO discountDAO;
+    private final InventoryReportDAO reportDAO;
+
+
+    private static InventoryService instance = null;
     private SupplierInterface supplierInterface;
 
+
+    // ─────────────────────────────────────────────────────────────────
+    // 1) Private no-arg constructor: Instantiates default SQLite DAOs
+    // ─────────────────────────────────────────────────────────────────
     private InventoryService() {
-        this.products = new HashMap<>();
-        this.categories = new HashMap<>();
-        this.productDiscounts = new HashMap<>();
-        this.categoryDiscounts = new HashMap<>();
-        this.reports = new ArrayList<>();
-        supplierInterface = supplierInterface.getInstance();
+        try {
+            // 1a) Build Category DAO (creates tables if needed)
+            SQLiteCategoryDAO catDao = new SQLiteCategoryDAO();
+
+            // 1b) Build InventoryProduct DAO, passing Category DAO
+            SQLiteInventoryProductDAO prodDao = new SQLiteInventoryProductDAO(catDao);
+
+            // 1c) Build Discount DAO, passing Category DAO and Product DAO
+            SQLiteDiscountDAO discDao = new SQLiteDiscountDAO(catDao, prodDao);
+
+            // 1d) Build InventoryReport DAO, passing Product DAO
+            SQLiteInventoryReportDAO repDao = new SQLiteInventoryReportDAO(prodDao);
+
+            // 1e) Assign to final fields
+            this.categoryDAO = catDao;
+            this.productDAO = prodDao;
+            this.discountDAO = discDao;
+            this.reportDAO = repDao;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to initialize default SQLite DAOs", e);
+        }
     }
 
+    // ─────────────────────────────────────────────────────────────────
+    // 2) Private constructor: Accepts explicit DAO implementations
+    // ─────────────────────────────────────────────────────────────────
+    private InventoryService(InventoryProductDAO productDAO,
+                             CategoryDAO categoryDAO,
+                             DiscountDAO discountDAO,
+                             InventoryReportDAO reportDAO) {
+        this.productDAO = productDAO;
+        this.categoryDAO = categoryDAO;
+        this.discountDAO = discountDAO;
+        this.reportDAO = reportDAO;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // 3) Public getInstance(): Returns the singleton, instantiating via no-arg constructor if needed
+    // ─────────────────────────────────────────────────────────────────
     public static InventoryService getInstance() {
+        if (instance == null) {
+            instance = new InventoryService();
+        }
+        return instance;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // 4) Public configure method: Inject custom DAO implementations before any getInstance()
+    // ─────────────────────────────────────────────────────────────────
+    public static void configureWithDaos(InventoryProductDAO productDAO,
+                                         CategoryDAO categoryDAO,
+                                         DiscountDAO discountDAO,
+                                         InventoryReportDAO reportDAO) {
+        if (instance != null) {
+            throw new IllegalStateException("InventoryService has already been initialized");
+        }
+        instance = new InventoryService(productDAO, categoryDAO, discountDAO, reportDAO);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // 5) Expose public‐facing interface if desired
+    // ─────────────────────────────────────────────────────────────────
+    public static InventoryInterface getInterface() {
+        return getInstance();
+    }
+
+    public static InternalInventoryInterface getInternalInterfaceInstance() {
+        return getInstance();
+    }
+
+    // for Stav and Blanga internal use
+    public static InternalInventoryInterface getInternalInstance() {
         if (instance == null)
             instance = new InventoryService();
-
         return instance;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // CATEGORY‐RELATED METHODS
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Create a brand‐new Category and persist it.
+     * If parentCategoryName is non‐null but not found, this will throw an exception.
+     */
+    public void addCategory(String name, String parentCategoryName) {
+        Category parent = null;
+        if (parentCategoryName != null) {
+            parent = categoryDAO.findByName(parentCategoryName);
+            if (parent == null) {
+                throw new IllegalArgumentException("Parent category '" + parentCategoryName + "' does not exist.");
+            }
+        }
+        Category newCategory = new Category(name, parent);
+        categoryDAO.save(newCategory);
+    }
+
+    /**
+     * Retrieve one category by its name.
+     */
+    public Category getCategory(String name) {
+        return categoryDAO.findByName(name);
+    }
+
+    /**
+     * Retrieve all categories.
+     */
+    public List<Category> getAllCategories() {
+        return categoryDAO.findAll();
+    }
+
+    /**
+     * Delete a category by name.
+     */
+    public void deleteCategory(String name) {
+        categoryDAO.delete(name);
+    }
+
+    /**
+     * Update an existing category’s data (for instance, change its parent or name).
+     */
+    public void updateCategory(Category updated) {
+        categoryDAO.update(updated);
+    }
+
+
+    // ─────────────────────────────────────────────────────────────────
+    // INVENTORY PRODUCT‐RELATED METHODS
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Add a new product (including category lookup).
+     */
+    public void addProduct(int id, String name, String manufacturer,
+                           int shelfQty, int backroomQty, int minThreshold,
+                           double purchasePrice, double salePrice,
+                           ItemStatus status, String categoryName) {
+
+        // 1) Fetch the Category domain object (or null if categoryName is null)
+        Category category = null;
+        if (categoryName != null) {
+            category = categoryDAO.findByName(categoryName);
+            if (category == null) {
+                throw new IllegalArgumentException("Category '" + categoryName + "' does not exist.");
+            }
+        }
+
+        InventoryProduct product = new InventoryProduct(
+                id,
+                name,
+                manufacturer,
+                shelfQty,
+                backroomQty,
+                minThreshold,
+                purchasePrice,
+                salePrice,
+                status,
+                category
+        );
+        productDAO.save(product);
+    }
+
+    /**
+     * Get one product by its ID.
+     */
+    public InventoryProduct getProductById(int id) {
+        return productDAO.findById(id);
+    }
+
+    /**
+     * Get ALL products (in no particular order).
+     */
+    public List<InventoryProduct> getAllProducts() {
+        return productDAO.findAll();
+    }
+
+    /**
+     * Delete one product by ID.
+     */
+    public void deleteProduct(int id) {
+        productDAO.delete(id);
+    }
+
+    /**
+     * Update a product’s basic fields (name, manufacturer, prices, category, etc.)
+     * If you want to adjust just quantity, you can call adjustProductQuantity instead.
+     */
+    public void updateProduct(InventoryProduct updated) {
+        // NOTE: you may want to re‐check that the category still exists, etc.
+        if (updated.getCategory() != null) {
+            Category cat = categoryDAO.findByName(updated.getCategory().getName());
+            if (cat == null) {
+                throw new IllegalArgumentException("Cannot update product: category '"
+                        + updated.getCategory().getName() + "' not found.");
+            }
+        }
+        productDAO.update(updated);
+    }
+
+    /**
+     * Adjust (add/subtract) shelf or backroom quantity for a product by its ID.
+     * Then persist that change.
+     */
+    public void adjustProductQuantity(int id, int shelfDelta, int backroomDelta) {
+        InventoryProduct p = productDAO.findById(id);
+        if (p == null) {
+            throw new IllegalArgumentException("Product with ID=" + id + " not found.");
+        }
+        int newShelf = p.getShelfQuantity() + shelfDelta;
+        int newBackroom = p.getBackroomQuantity() + backroomDelta;
+        p.setShelfQuantity(newShelf);
+        p.setBackroomQuantity(newBackroom);
+        productDAO.update(p);
+    }
+
+
+    // ─────────────────────────────────────────────────────────────────
+    // DISCOUNT‐RELATED METHODS
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Create a new Discount that applies either to a category or to a specific item.
+     */
+    public void addDiscount(String discountId,
+                            double percent,
+                            Date startDate,
+                            Date endDate,
+                            String appliesToCategoryName,
+                            Integer appliesToProductId) {
+
+        Category cat = null;
+        InventoryProduct prod = null;
+
+        if (appliesToCategoryName != null) {
+            cat = categoryDAO.findByName(appliesToCategoryName);
+            if (cat == null) {
+                throw new IllegalArgumentException("Category '" + appliesToCategoryName + "' not found.");
+            }
+        }
+
+        if (appliesToProductId != null) {
+            prod = productDAO.findById(appliesToProductId);
+            if (prod == null) {
+                throw new IllegalArgumentException("Product with ID=" + appliesToProductId + " not found.");
+            }
+        }
+
+        Discount d = new Discount(discountId, percent, startDate, endDate, cat, prod);
+        discountDAO.save(d);
+    }
+
+    /**
+     * Get a discount by its ID.
+     */
+    public Discount getDiscountById(String discountId) {
+        return discountDAO.findById(discountId);
+    }
+
+    /**
+     * Get all discounts (both category‐level and product‐level).
+     */
+    public List<Discount> getAllDiscounts() {
+        return discountDAO.findAll();
+    }
+
+    /**
+     * Delete a discount by its ID.
+     */
+    public void deleteDiscount(String discountId) {
+        discountDAO.delete(discountId);
+    }
+
+    /**
+     * Update an existing Discount (e.g. time window or percent).
+     */
+    public void updateDiscount(Discount updated) {
+        // Optional: re‐validate that its category and/or item still exist:
+        if (updated.getAppliesToCategory() != null) {
+            Category c = categoryDAO.findByName(updated.getAppliesToCategory().getName());
+            if (c == null) {
+                throw new IllegalArgumentException("Cannot update discount: category '"
+                        + updated.getAppliesToCategory().getName() + "' not found.");
+            }
+        }
+        if (updated.getAppliesToItem() != null) {
+            InventoryProduct ip = productDAO.findById(updated.getAppliesToItem().getId());
+            if (ip == null) {
+                throw new IllegalArgumentException("Cannot update discount: product ID="
+                        + updated.getAppliesToItem().getId() + " not found.");
+            }
+        }
+        discountDAO.update(updated);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // INVENTORY REPORT–RELATED METHODS
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Generate a report for all products whose shelfQuantity + backroomQuantity is below minThreshold.
+     * Persist the report and return it.
+     */
+    public InventoryReport generateLowStockReport() {
+        // 1) Fetch all products
+        List<InventoryProduct> allProducts = productDAO.findAll();
+
+        // 2) Filter “low stock” items
+        List<InventoryProduct> lowStockProducts = allProducts.stream()
+                .filter(p -> (p.getShelfQuantity() + p.getBackroomQuantity()) < p.getMinThreshold())
+                .toList();
+
+        // 3) Create a new InventoryReport
+        String reportId = UUID.randomUUID().toString();
+        InventoryReport report = new InventoryReport(reportId, new Date(), lowStockProducts);
+
+        // 4) Persist the report
+        reportDAO.save(report);
+        return report;
+    }
+
+    /**
+     * Retrieve a previously generated report by ID.
+     */
+    public InventoryReport getReportById(String reportId) {
+        return reportDAO.findById(reportId);
+    }
+
+    /**
+     * Retrieve all stored reports.
+     */
+    public List<InventoryReport> getAllReports() {
+        return reportDAO.findAll();
+    }
+
+    /**
+     * Delete a stored report.
+     */
+    public void deleteReport(String reportId) {
+        reportDAO.delete(reportId);
+    }
+
+    /**
+     * Update an existing report (rarely needed, but included for completeness).
+     */
+    public void updateReport(InventoryReport updatedReport) {
+        reportDAO.update(updatedReport);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // “ACCEPT DELIVERY” / “REORDER” LOGIC FROM SUPPLIER INTERFACE
+    // ─────────────────────────────────────────────────────────────────
+
+    @Override
+    public boolean acceptDelivery(int itemId, int quantity) {
+        // Called by SupplierIntegration when a delivery has arrived.
+        // We simply add 'quantity' to backroom for that product.
+        InventoryProduct p = productDAO.findById(itemId);
+        if (p == null) {
+            return false; // no such product
+        }
+        p.setBackroomQuantity(p.getBackroomQuantity() + quantity);
+        productDAO.update(p);
+        return true;
+    }
+
+    /**
+     * Periodically check all products; if any fall below their minThreshold,
+     * place an urgent order via SupplierInterface.
+     */
+    public void checkAndReorderLowStockItems() {
+        if (supplierInterface == null) {
+            System.err.println("SupplierService not set.");
+            return;
+        }
+        List<InventoryProduct> allProducts = productDAO.findAll();
+        for (InventoryProduct product : allProducts) {
+            int totalQty = product.getShelfQuantity() + product.getBackroomQuantity();
+            if (totalQty < product.getMinThreshold()) {
+                int reorderAmount = // e.g. twice the minThreshold minus current
+                        product.getMinThreshold() * 2 - totalQty;
+                supplierInterface.placeUrgentOrderSingleProduct(product.getId(), reorderAmount);
+            }
+        }
     }
 
 
@@ -36,127 +417,131 @@ public class InventoryService implements InventoryInterface {
         this.supplierInterface = supplierInterface;
     }
 
-    public int orderAmountWhenLowStock(InventoryProduct i) {
-        return i.getMinThreshold() * 2;
-    }
-
-    public void checkAndReorderLowStockItems() {
-        if (supplierInterface == null) {
-            System.err.println("SupplierService not set.");
-            return;
-        }
-
-        for (InventoryProduct product : getLowStockItems()) {
-            supplierInterface.placeUrgentOrderSingleProduct(product.getId(), orderAmountWhenLowStock(product));
-        }
-    }
-
-
-
-    //add InventoryService interface and make it have a function updateItemQuantity(String itemId, int shelfDelta, int backroomDelta)
-
-
-    public void addItem(InventoryProduct item) {
-        if (products.containsKey(item.getId())) {
-            throw new IllegalArgumentException("Item ID already exists: " + item.getId());
-        }
-        products.put(item.getId(), item);
-    }
 
     public List<InventoryProduct> getLowStockItems() {
-        List<InventoryProduct> lowStock = new ArrayList<>();
-        for (InventoryProduct item : products.values()) {
-            int totalQty = item.getShelfQuantity() + item.getBackroomQuantity();
-            if (totalQty < item.getMinThreshold()) {
-                lowStock.add(item);
+        // 1) Ask DAO for all products
+        List<InventoryProduct> all = productDAO.findAll();
+
+        // 2) Filter out the “low stock” ones
+        return all.stream()
+                .filter(p -> (p.getShelfQuantity() + p.getBackroomQuantity()) < p.getMinThreshold())
+                .toList();
+    }
+
+    /**
+     * Return the single applicable Discount (product-level first,
+     * then category-level up the hierarchy), or null if none exist.
+     */
+    public Discount getDiscountForItem(int productId) {
+        // 1) Check product-specific discount
+        Discount itemDisc = discountDAO.findByItemId(productId);
+        if (itemDisc != null) {
+            return itemDisc;
+        }
+
+        // 2) Otherwise, walk up the product’s category chain
+        InventoryProduct product = productDAO.findById(productId);
+        if (product == null) {
+            return null; // no such product
+        }
+        Category cat = product.getCategory();
+        while (cat != null) {
+            Discount catDisc = discountDAO.findByCategoryName(cat.getName());
+            if (catDisc != null) {
+                return catDisc;
             }
+            cat = cat.getParentCategory();
         }
-        return lowStock;
+
+        return null; // no discount found
     }
 
-    public Discount getDiscountForItem(InventoryProduct item) {
-        Date now = new Date();
-        // First try item-specific discount
-        Discount discount = productDiscounts.get(item.getId());
-        if (discount != null && !now.before(discount.getStartDate()) && !now.after(discount.getEndDate())) {
-            return discount;
-        }
-        // Then try category-wide discount
-        if (item.getCategory() != null) {
-            discount = categoryDiscounts.get(item.getCategory().getName());
-            if (discount != null && !now.before(discount.getStartDate()) && !now.after(discount.getEndDate())) {
-                return discount;
-            }
-        }
-        return null;
-    }
 
-    public Collection<InventoryProduct> getAllItems() {
-        return products.values();
-    }
+    /**
+     * Generate a one-off report that includes all products whose
+     * category is in filterCategories (if non-null) AND whose status is statusFilter (if non-null).
+     * Persist the report and return it.
+     */
+    public InventoryReport generateReport(String reportId,
+                                          List<Category> filterCategories,
+                                          ItemStatus statusFilter) {
+        // 1) Fetch every product from the DAO
+        List<InventoryProduct> allProducts = productDAO.findAll();
 
-    public void addCategory(Category category) {
-        if (categories.containsKey(category.getName())) {
-            throw new IllegalArgumentException("Category name already exists: " + category.getName());
-        }
-        categories.put(category.getName(), category);
-    }
+        // 2) Filter in Java according to the passed criteria
+        List<InventoryProduct> filtered = allProducts.stream()
+                .filter(p -> {
+                    boolean matchesCat = (filterCategories == null
+                            || filterCategories.isEmpty()
+                            || filterCategories.contains(p.getCategory())
+                    );
+                    boolean matchesStatus = (statusFilter == null
+                            || p.getStatus() == statusFilter
+                    );
+                    return matchesCat && matchesStatus;
+                })
+                .toList();
 
-    public Collection<Category> getAllCategories() {
-        return categories.values();
-    }
-
-    public InventoryReport generateReport(String reportId, List<Category> filterCategories, ItemStatus statusFilter) {
-        List<InventoryProduct> filtered = new ArrayList<>();
-        for (InventoryProduct item : products.values()) {
-            boolean matchesCategory = filterCategories == null || filterCategories.contains(item.getCategory());
-            boolean matchesStatus = statusFilter == null || item.getStatus() == statusFilter;
-            if (matchesCategory && matchesStatus) {
-                filtered.add(item);
-            }
-        }
+        // 3) Create a new InventoryReport domain object
         InventoryReport report = new InventoryReport(reportId, new Date(), filtered);
-        reports.add(report);
+
+        // 4) Persist the report via the DAO
+        reportDAO.save(report);
+
+        // 5) Return it
         return report;
     }
 
 
-    public boolean takInSupplierDelivery(String itemId, int backroomDelta) {
-        updateItemQuantity(itemId, 0, backroomDelta);
-        return true; //if we want we can add logic to make sure order was accepteed
-    }
-
-    //method for both adding "buying" and subtracting "selling" Stock
-    public void updateItemQuantity(String itemId, int shelfDelta, int backroomDelta) {
-        InventoryProduct item = products.get(itemId);
-        if (item != null) {
-            item.setShelfQuantity(item.getShelfQuantity() + shelfDelta);
-            item.setBackroomQuantity(item.getBackroomQuantity() + backroomDelta);
+    /**
+     * Update an existing product’s shelf/backroom quantities by adding shelfDelta/backroomDelta.
+     * If either delta is negative, re-check for low-stock to automatically reorder.
+     */
+    public void updateItemQuantity(int productId, int shelfDelta, int backroomDelta) {
+        // 1) Fetch the product via DAO
+        InventoryProduct product = productDAO.findById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("Product with ID=" + productId + " not found.");
         }
+
+        // 2) Apply the deltas
+        int newShelf = product.getShelfQuantity() + shelfDelta;
+        int newBackroom = product.getBackroomQuantity() + backroomDelta;
+        product.setShelfQuantity(newShelf);
+        product.setBackroomQuantity(newBackroom);
+
+        // 3) Persist the updated quantities
+        productDAO.update(product);
+
+        // 4) If either delta was negative (i.e. a “sale” of some kind), check to reorder
         if (shelfDelta < 0 || backroomDelta < 0) {
-            checkAndReorderLowStockItems();
+            // We can either reorder if final total < minThreshold,
+            // or just call checkAndReorderLowStockItems() which iterates everything.
+            int totalQty = newShelf + newBackroom;
+            if (totalQty < product.getMinThreshold()) {
+                // Place an urgent order only for this single product:
+                if (supplierInterface != null) {
+                    int reorderAmount = product.getMinThreshold() * 2 - totalQty;
+                    supplierInterface.placeUrgentOrderSingleProduct(product.getId(), reorderAmount);
+                }
+            }
+            // If you prefer to check *every* product in one pass, you can still do:
+            //     checkAndReorderLowStockItems();
         }
     }
 
-    public void addDiscount(Discount discount) {
-        if (discount.getAppliesToItem() != null) {
-            productDiscounts.put(discount.getAppliesToItem().getId(), discount);
-        } else if (discount.getAppliesToCategory() != null) {
-            categoryDiscounts.put(discount.getAppliesToCategory().getName(), discount);
-        } else {
-            throw new IllegalArgumentException("Discount must apply to an item or a category");
+    /**
+     * Return the list of all products available from the supplier module.
+     * If no SupplierInterface has been set, returns an empty list.
+     */
+    public List<MutualProduct> getAllAvailableProducts() {
+        if (supplierInterface == null) {
+            return Collections.emptyList();
         }
-    }
-
-    public List<InventoryReport> getAllReports() {
-        return reports;
+        return supplierInterface.getAllAvailableProducts();
     }
 
 
-    @Override
-    public boolean acceptDelivery(int itemId, int quantity) {
-        return false;
-    }
 }
 
 
