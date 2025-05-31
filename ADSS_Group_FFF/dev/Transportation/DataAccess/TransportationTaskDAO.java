@@ -21,4 +21,6 @@ public interface TransportationTaskDAO {
     TransportationTaskDTO addDestination(int taskId, int destinationSiteId) throws SQLException;
     TransportationTaskDTO updateWeight(int taskId, float weight) throws SQLException;
     TransportationTaskDTO assignTruck(int taskId, String truckLicenseNumber) throws SQLException;
+    TransportationTaskDTO assignDriver(int taskId, String driverId) throws SQLException;
+
 }

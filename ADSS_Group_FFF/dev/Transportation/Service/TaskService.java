@@ -2,6 +2,7 @@ package Transportation.Service;
 
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.Domain.*;
+import HR.Service.EmployeeService;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -13,9 +14,11 @@ import java.util.NoSuchElementException;
 
 public class TaskService {
     private final TaskManager taskManager;
+    private final EmployeeService employeeService;
 
-    public TaskService(TaskManager taskManager) {
-        this.taskManager = taskManager;
+    public TaskService() {
+        this.taskManager = new TaskManager(new HREmployeeAdapter());
+        employeeService = EmployeeService.getInstance();
     }
 
     public TransportationTaskDTO addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException, NoSuchElementException, NullPointerException {
@@ -88,6 +91,7 @@ public class TaskService {
             LocalDate parsedDate = LocalDate.parse(taskDate, dateFormatter);
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime parsedTime = LocalTime.parse(taskDeparture, timeFormatter);
+
             return taskManager.assignDriverAndTruckToTask(parsedDate, parsedTime, taskSourceSite.toLowerCase());
         }
         catch (SQLException e) {

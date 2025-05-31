@@ -145,6 +145,14 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
         return taskDAO.assignTruck(taskId, truckLicenseNumber);
     }
 
+    public TransportationTaskDTO assignDriverToTask(int taskId, String driverId) throws SQLException {
+        TransportationTask task = findTaskInListId(taskId);
+        if (task != null) {
+            task.assignDriver(driverId);
+        }
+        return taskDAO.assignDriver(taskId, driverId);
+    }
+
     //helper methods
 
     private TransportationTask findTaskInListId(int taskId) {

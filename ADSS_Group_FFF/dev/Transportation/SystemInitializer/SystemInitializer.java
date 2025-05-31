@@ -9,12 +9,11 @@ public class SystemInitializer {
         // === HR.tests.Domain Managers ===
         DriverManager driverManager = new DriverManager();
         ItemManager itemManager = new ItemManager();
-        TaskManager taskManager = new TaskManager();
 
         // === Services (pass managers) ===
         DriverService driverService = new DriverService(driverManager);
         TruckService truckService = new TruckService();
-        TaskService taskService = new TaskService(taskManager);
+        TaskService taskService = new TaskService();
         SiteService siteService = new SiteService();
         ZoneService zoneService = new ZoneService();
         ItemService itemService = new ItemService(itemManager);

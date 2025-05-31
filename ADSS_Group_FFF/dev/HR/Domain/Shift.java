@@ -1,5 +1,6 @@
 package HR.Domain;
 
+import java.time.LocalTime;
 import java.util.*;
 
 public class Shift {
@@ -25,6 +26,23 @@ public class Shift {
         this.requiredCounts = requiredCounts;
         this.assignedEmployees = new ArrayList<>();
     }
+
+    public static ShiftTime fromTime(LocalTime time) {
+        LocalTime startMorning = LocalTime.of(8, 0);    // 08:00
+        LocalTime endMorning = LocalTime.of(17, 0);     // 17:00 (start of evening)
+
+        if (!time.isBefore(startMorning) && time.isBefore(endMorning)) {
+            return ShiftTime.Morning;
+        }
+
+        if (!time.isBefore(endMorning)) {
+            return ShiftTime.Evening;
+        }
+
+        // 00:00 to 07:59 — closed
+        return null;
+    }
+
 
     public String getID() {
         return ID;

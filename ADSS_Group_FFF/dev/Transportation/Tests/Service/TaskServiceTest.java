@@ -27,7 +27,7 @@ public class TaskServiceTest {
 
     @BeforeEach
     void setUp() {
-        taskService = new TaskService(taskManager);
+        taskService = new TaskService();
     }
 
     @Test

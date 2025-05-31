@@ -1,5 +1,7 @@
 package Transportation.Domain;
 
+import HR.Domain.Employee;
+import HR.Domain.Shift;
 import Transportation.DTO.*;
 import Transportation.Domain.Repositories.*;
 
@@ -16,23 +18,26 @@ public class TaskManager {
     private final ItemManager itemManager;
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
+    private final EmployeeProvider employeeProvider;
 
-    public TaskManager() {
+    public TaskManager(EmployeeProvider employeeProvider) {
         docRepository = new TransportationDocRepositoryImpli(new SiteRepositoryImpli());
         taskRepository = new TransportationTaskRepositoryImpli(new SiteRepositoryImpli());
         itemManager = new ItemManager();
         siteManager = new SiteManager();
         driverManager = new DriverManager();
         truckManager = new TruckManager();
+        this.employeeProvider = employeeProvider;
     }
 
-    public TaskManager(TransportationDocRepository docRepo, TransportationTaskRepository taskRepo, SiteManager siteManager, DriverManager driverManager, TruckManager truckManager, ItemManager itemManager) {
+    public TaskManager(TransportationDocRepository docRepo, TransportationTaskRepository taskRepo, SiteManager siteManager, DriverManager driverManager, TruckManager truckManager, ItemManager itemManager, EmployeeProvider employeeProvider) {
         this.docRepository = docRepo;
         this.taskRepository = taskRepo;
         this.siteManager = siteManager;
         this.driverManager = driverManager;
         this.truckManager = truckManager;
         this.itemManager = itemManager;
+        this.employeeProvider = employeeProvider;
     }
 
 
@@ -98,17 +103,30 @@ public class TaskManager {
             if (nextAvailableTruck.isEmpty()) {
                 throw new NoSuchElementException();
             }
-            //Optional<DriverDTO> nextFittingDriver = driverManager.getAvailableDriverByLicense(String.valueOf((LicenseMapper.getRequiredLicense(TruckType.fromString(nextAvailableTruck.get().truckType())))));
-            //if (nextFittingDriver.isEmpty()) {
-            //    throw new NoSuchElementException();
-            //}
+
+            String licenseTypeNeeded = LicenseMapper.getRequiredLicense(TruckType.fromString(nextAvailableTruck.get().truckType())).toString();
+            Shift.ShiftTime shiftTime = Shift.fromTime(taskDeparture);
+            Date shiftDate = java.sql.Date.valueOf(taskDate);
+
+            // needs to be DTOs for employees
+            List<Employee> availableDrivers = employeeProvider.findAvailableDrivers(licenseTypeNeeded, shiftDate, shiftTime);
+
+            if (availableDrivers.isEmpty()) {
+                throw new NoSuchElementException();
+            }
+
+            // assign warehouse worker
+//            boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
+//
+//            if (!availableWarehouseWorker) {
+//                throw new NoSuchElementException();
+//            }
 
             // All good → assign
-            //taskRepository.assignDriverToTask(nextFittingDriver.get().driverId;
+            taskRepository.assignDriverToTask(task.get().taskId(), availableDrivers.getFirst().getId());
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
-            //nextFittingDriver.setAvailability(false);
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
-
+            // add availability setter for driver to false
             return true;
         } else {
             throw new NoSuchElementException();
