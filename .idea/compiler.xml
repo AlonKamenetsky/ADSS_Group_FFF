@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="transportation-project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ADSS_Group_FFF" target="17" />
+      <module name="transportation-project" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

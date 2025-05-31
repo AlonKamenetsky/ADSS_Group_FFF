@@ -12,6 +12,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/pom.xml" />
+        <option value="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" />
       </set>
     </option>
   </component>

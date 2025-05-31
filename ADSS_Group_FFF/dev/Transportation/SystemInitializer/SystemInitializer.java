@@ -3,6 +3,10 @@ package Transportation.SystemInitializer;
 import Transportation.Domain.*;
 import Transportation.Presentation.TransportationMenu;
 import Transportation.Service.*;
+import Util.DatabaseInitializer;
+
+import java.sql.SQLException;
+import java.util.Scanner;
 
 public class SystemInitializer {
     public static TransportationMenu buildApplication() {
@@ -18,9 +22,36 @@ public class SystemInitializer {
         ZoneService zoneService = new ZoneService();
         ItemService itemService = new ItemService(itemManager);
         SiteZoneService siteZoneService = new SiteZoneService();
-       // DataService dataService = new DataService(itemService,driverService,truckService,zoneService,siteService,taskService);
 
-        // === Menus (pass services) ===
-        return new TransportationMenu(driverService, truckService, taskService, zoneService, siteService, siteZoneService, itemService /*dataService*/);
+        // === Database Initializer ===
+        DatabaseInitializer dbInit = new DatabaseInitializer();
+
+        Scanner scanner = new Scanner(System.in);
+        boolean validChoice = false;
+
+        while (!validChoice) {
+            System.out.println("Do you want to initialize a new system? (Y/N)");
+            String answer = scanner.nextLine().trim().toUpperCase();
+            try {
+                switch (answer) {
+                    case "Y":
+                        dbInit.loadItems();
+                        validChoice = true;
+                        break;
+                    case "N":
+                        dbInit.loadTransportaionFakeData();
+                        dbInit.loadItems();
+                        validChoice = true;
+                        break;
+                    default:
+                        System.out.println("Invalid choice.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error during DB initialization: " + e.getMessage());
+            }
+        }
+
+        // === Transportation Menu ===
+        return new TransportationMenu(driverService, truckService, taskService, zoneService, siteService, siteZoneService, itemService);
     }
 }
