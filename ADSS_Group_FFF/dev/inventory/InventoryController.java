@@ -45,7 +45,6 @@ public class InventoryController implements InventoryInterface {
 
             SupplierOrder order = new SupplierOrder(null, item.getId(), lowstockStratergy(item));
              supplierService.placeOrderSingleProduct(order);
-
         }
     }
 
@@ -157,23 +156,10 @@ public class InventoryController implements InventoryInterface {
         PeriodicOrder p1 = new PeriodicOrder(productId, quantity, orderDay);
         periodicOrders.add(p1);
         //DB Access
+        supplierService.takePeriodicOrder(p1);
     }
 
-    public void advanceDay() {
-        simulationClock.advanceDay();
-        OrdersToday();
-    }
 
-    private void OrdersToday()
-    {
-        for (PeriodicOrder p1 : periodicOrders)
-        {
-            if (p1.getOrderDay() == simulationClock.getCurrentDay()) {
-                p1.SetSupplierId(getbestsupplier(p1.getProductId()));
-                p1.placeOrder();
-            }
-        }
-    }
 
     public List<PeriodicOrder> getAllPeriodicOrders() {
         return periodicOrders;
