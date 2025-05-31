@@ -11,14 +11,10 @@ public class Employee extends User {
     private Float salary;
     private Date employmentDate;
 
-    // Two separate lists for current‑week and next‑week
     private final List<WeeklyAvailability> availabilityThisWeek = new ArrayList<>();
     private final List<WeeklyAvailability> availabilityNextWeek = new ArrayList<>();
 
-    // List of all assigned shifts (backed by ShiftsRepo)
-    private final List<Shift> shifts = ShiftsRepo.getInstance().getCurrentWeekShifts();
-
-    // Holidays
+    private final List<Shift> shifts = new ArrayList<>();
     private final List<Date> holidays = new ArrayList<>();
 
     public Employee(
@@ -53,6 +49,12 @@ public class Employee extends User {
     public List<Shift> getShifts()       { return shifts; }
     public List<Date>  getHolidays()     { return holidays; }
 
+    public void addShift(Shift shift) {
+        if (!shifts.contains(shift)) {
+            shifts.add(shift);
+        }
+    }
+
     public void ShowInfo(){
         System.out.println("Employee Name: " + getName());
         System.out.println("Employee ID: " + getId());
@@ -64,17 +66,12 @@ public class Employee extends User {
 
     // --- Availability Management ---------------------------------------
 
-    /** Called Saturday evening to roll nextWeek → thisWeek. */
     public void swapAvailability() {
         availabilityThisWeek.clear();
         availabilityThisWeek.addAll(availabilityNextWeek);
         availabilityNextWeek.clear();
     }
 
-    /**
-     * Employee declares availability for a day-of-week + shift-time slot
-     * for next week.
-     */
     public void addAvailability(DayOfWeek day, Shift.ShiftTime time) {
         WeeklyAvailability slot = new WeeklyAvailability(day, time);
         if (!availabilityNextWeek.contains(slot)) {
@@ -88,10 +85,6 @@ public class Employee extends User {
         );
     }
 
-
-    /**
-     * Checks if the employee is available THIS WEEK for the date+time slot.
-     */
     public boolean isAvailable(Date date, Shift.ShiftTime time) {
         DayOfWeek dow = date.toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -100,13 +93,9 @@ public class Employee extends User {
                 .anyMatch(w -> w.getDay() == dow && w.getTime() == time);
     }
 
-    // --- Vacation Management -------------------------------------------
-
-    /** Add a new holiday (vacation) date. */
     public void addHoliday(Date date) {
         if (!holidays.contains(date)) {
             holidays.add(date);
         }
     }
-
 }
