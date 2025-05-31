@@ -8,4 +8,8 @@ public interface RoleDAO {
     void delete(String roleName);
     Role selectByName(String roleName);
     List<Role> selectAll();
+
+    List<Role> findAll();
+
+    Role findByName(String name);
 }

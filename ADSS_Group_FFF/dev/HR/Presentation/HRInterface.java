@@ -4,9 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import HR.DataAccess.EmployeesRepo;
-import HR.DataAccess.RolesRepo;
-import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.*;
 import HR.Service.EmployeeService;
 import HR.Service.RoleService;
@@ -387,8 +384,24 @@ public class HRInterface {
         }
         if (rolesList.isEmpty()) {
             PresentationUtils.typewriterPrint("No roles selected. Adding employee without any role.", 20);
+            employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate);
+            return;
         }
-        employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate);
+
+// Check if "Driver" is one of the selected roles
+        boolean isDriver = rolesList.stream().anyMatch(role -> role.getName().equalsIgnoreCase("Driver"));
+        if (isDriver) {
+            PresentationUtils.typewriterPrint("Enter Driver License Type (e.g., B, C, D):", 20);
+            String licenseType = scanner.nextLine().trim();
+            if (licenseType.isEmpty()) {
+                PresentationUtils.typewriterPrint("Driver license type is required for Driver role. Employee not added.", 20);
+                return;
+            }
+
+            employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate, licenseType);
+        } else {
+            employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate);
+        }
 
     }
     // New method: RemoveEmployee

@@ -1,9 +1,5 @@
 package HR.tests.PresentationTests;
 
-import HR.DataAccess.EmployeesRepo;
-import HR.DataAccess.RolesRepo;
-import HR.DataAccess.ShiftsRepo;
-import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Presentation.DemoDataLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

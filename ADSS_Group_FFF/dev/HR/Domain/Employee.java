@@ -1,8 +1,5 @@
 package HR.Domain;
 
-import HR.DataAccess.ShiftsRepo;
-import HR.DataAccess.WeeklyAvailabilityDAO;
-
 import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.util.ArrayList;

@@ -1,16 +1,18 @@
 package HR.Service;
 
-import HR.DataAccess.RolesRepo;
-import HR.Domain.Role;
+import HR.DataAccess.*;
+import HR.Domain.*;
+import HR.Presentation.PresentationUtils;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class RoleService {
     private static RoleService instance;
-    private final RolesRepo repo;
+    private final RoleDAO roleDAO;
 
     private RoleService() {
-        repo = RolesRepo.getInstance();
+        this.roleDAO = new RoleDAOImpl();
     }
 
     public static RoleService getInstance() {
@@ -19,21 +21,21 @@ public class RoleService {
         }
         return instance;
     }
+
     public void addRole(String name) {
         Role role = new Role(name);
-        repo.addRole(role);
+        roleDAO.insert(role);
     }
 
-
     public void removeRole(Role role) {
-        repo.removeRole(role);
+        roleDAO.delete(role.getName());
     }
 
     public List<Role> getRoles() {
-        return repo.getRoles();
+        return roleDAO.findAll();
     }
 
     public Role getRoleByName(String name) {
-        return repo.getRoleByName(name);
+        return roleDAO.findByName(name);
     }
 }

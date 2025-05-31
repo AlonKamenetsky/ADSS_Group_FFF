@@ -7,6 +7,12 @@ import java.sql.*;
 
 public class DriverInfoDAOImpl implements DriverInfoDAO {
 
+    private final Connection connection;
+
+    public DriverInfoDAOImpl(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
     public void insert(DriverInfo info) {
         String sql = "INSERT INTO driver_info (employee_id, license_type) VALUES (?, ?)";

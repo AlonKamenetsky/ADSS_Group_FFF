@@ -1,26 +1,27 @@
 package HR.Service;
 
-import HR.DataAccess.DriverInfoDAO;
-import HR.DataAccess.DriverInfoDAOImpl;
-import HR.DataAccess.WeeklyAvailabilityDAO;
+import HR.DataAccess.*;
 import HR.Domain.*;
-import HR.DataAccess.EmployeesRepo;
 import HR.Presentation.PresentationUtils;
+import Util.Database;
 
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EmployeeService {
 
     private static EmployeeService instance;
-    private final EmployeesRepo repo;
-    private final DriverInfoDAO driverInfoDAO = new DriverInfoDAOImpl();
+    private final EmployeeDAO employeeDAO;
+    private final DriverInfoDAO driverInfoDAO;
 
     private EmployeeService() {
-        repo = EmployeesRepo.getInstance();
+        Connection conn = Database.getConnection();
+        this.employeeDAO = new EmployeeDAOImpl(conn);
+        this.driverInfoDAO = new DriverInfoDAOImpl(conn);
     }
 
     public static EmployeeService getInstance() {
@@ -29,18 +30,20 @@ public class EmployeeService {
         }
         return instance;
     }
+
     public List<Employee> getEmployees() {
-        return repo.getEmployees();
+        return employeeDAO.selectAll();
     }
 
     public Employee getEmployeeById(String id) {
-        return repo.getEmployeeById(id);
+        return employeeDAO.selectById(id);
     }
 
     public void addEmployee(String id, List<Role> rolesList, String name, String password, String bankAccount, Float salary, Date employmentDate) {
         Employee newEmployee = new Employee(id, rolesList, name, password, bankAccount, salary, employmentDate);
-        repo.addEmployee(newEmployee);
+        employeeDAO.insert(newEmployee);
     }
+
     public void addEmployee(String id, List<Role> rolesList, String name, String password,
                             String bankAccount, Float salary, Date employmentDate,
                             String licenseTypeIfDriver) {
@@ -52,23 +55,18 @@ public class EmployeeService {
             throw new IllegalArgumentException("Driver must have a license type.");
         }
 
-        repo.addEmployee(newEmployee);
+        employeeDAO.insert(newEmployee);
 
         if (isDriver) {
             driverInfoDAO.insert(new DriverInfo(id, licenseTypeIfDriver));
         }
     }
 
-
-    public String getEmployeeId(Employee e) { return e.getId(); }
-    public String getEmployeeName(Employee e) { return e.getName(); }
-
     public void removeEmployee(Employee employee) {
-
         if (hasDriverRole(employee)) {
             driverInfoDAO.delete(employee.getId());
         }
-        repo.removeEmployee(employee);
+        employeeDAO.delete(employee.getId());
     }
 
     public String getBankAccount(Employee e)       { return e.getBankAccount(); }
@@ -95,32 +93,22 @@ public class EmployeeService {
         PresentationUtils.typewriterPrint("Vacation added: " + date.toString(), 20);
     }
 
-
-// In file: HR/Service/EmployeeService.java
-
     public void updateWeeklyAvailability(Employee employee, Set<WeeklyAvailability> newAvailabilities) {
-        // Update the employee's next week availability
         employee.getAvailabilityNextWeek().clear();
         employee.getAvailabilityNextWeek().addAll(newAvailabilities);
-        // Persist the change if using a DAO or repository
-/*      WeeklyAvailabilityDAO dao = new WeeklyAvailabilityDAO();
-        dao.updateEmployeeNextWeekAvailability(employee.getId(), newAvailabilities);
-    */
     }
 
     public void viewHolidays(Employee employee) {
-        PresentationUtils.typewriterPrint("\nYour Vacations:", 20
-        );
+        PresentationUtils.typewriterPrint("\nYour Vacations:", 20);
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy‑MM‑dd");
         for (Date d : employee.getHolidays()) {
-            PresentationUtils.typewriterPrint("• " + fmt.format(d), 20
-            );
+            PresentationUtils.typewriterPrint("• " + fmt.format(d), 20);
         }
         if (employee.getHolidays().isEmpty()) {
-            PresentationUtils.typewriterPrint("No vacations scheduled.", 20
-            );
+            PresentationUtils.typewriterPrint("No vacations scheduled.", 20);
         }
     }
+
     private boolean hasDriverRole(Employee e) {
         return e.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase("Driver"));
     }
@@ -139,5 +127,15 @@ public class EmployeeService {
         }
     }
 
-
+    public List<Employee> findAvailableDrivers(String licenseType, Date date, Shift.ShiftTime shiftTime) {
+        return employeeDAO.selectAll().stream()
+                .filter(this::hasDriverRole)
+                .filter(e -> {
+                    DriverInfo info = driverInfoDAO.getByEmployeeId(e.getId());
+                    return info != null && info.getLicenseType().equalsIgnoreCase(licenseType);
+                })
+                .filter(e -> !e.getHolidays().contains(date))
+                .filter(e -> e.getAvailabilityThisWeek().isEmpty() || e.isAvailable(date, shiftTime))
+                .collect(Collectors.toList());
+    }
 }

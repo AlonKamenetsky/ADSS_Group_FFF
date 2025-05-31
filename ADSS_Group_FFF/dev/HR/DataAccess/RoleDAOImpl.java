@@ -64,4 +64,33 @@ public class RoleDAOImpl implements RoleDAO {
         }
         return roles;
     }
+
+    @Override
+    public List<Role> findAll() {
+        List<Role> roles = new ArrayList<>();
+        String sql = "SELECT * FROM roles";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                roles.add(new Role(rs.getString("name")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Select all roles failed", e);
+        }
+        return roles;
+    }
+
+    @Override
+    public Role findByName(String name) {
+        String sql = "SELECT * FROM roles WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return new Role(rs.getString("name"));
+        } catch (SQLException e) {
+            throw new RuntimeException("Select role failed", e);
+        }
+        return null;
+    }
+
 }

@@ -1,9 +1,5 @@
 package HR.tests.PresentationTests;
 
-import HR.DataAccess.ShiftDAOImpl;
-import HR.DataAccess.ShiftsRepo;
-import HR.DataAccess.SwapRequestsRepo;
-import HR.DataAccess.WeeklyAvailabilityDAO;
 import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.ShiftTemplate;

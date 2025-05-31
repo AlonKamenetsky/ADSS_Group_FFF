@@ -1,9 +1,5 @@
 package HR.tests.PresentationTests;
 
-import HR.DataAccess.*;
-import HR.DataAccess.EmployeesRepo;
-import HR.DataAccess.ShiftsRepo;
-import HR.DataAccess.SwapRequestsRepo;
 import HR.Domain.*;
 import HR.Presentation.HRInterface;
 import org.junit.jupiter.api.*;

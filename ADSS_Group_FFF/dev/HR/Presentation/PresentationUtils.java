@@ -1,7 +1,6 @@
 // src/HR.tests.Presentation/ConsoleUtils.java
 package HR.Presentation;
 
-import HR.DataAccess.EmployeesRepo;
 import HR.Domain.Shift;
 import HR.Domain.ShiftAssignment;
 

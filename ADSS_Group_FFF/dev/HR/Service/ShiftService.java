@@ -1,10 +1,11 @@
 package HR.Service;
 
-import HR.DataAccess.ShiftsRepo;
-import HR.DataAccess.WeeklyAvailabilityDAO;
+import HR.DataAccess.*;
 import HR.Domain.*;
 import HR.Presentation.PresentationUtils;
+import Util.Database;
 
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,10 +14,13 @@ public class ShiftService {
 
     private final RoleService roleService = RoleService.getInstance();
     private static ShiftService instance;
-    private final ShiftsRepo repo;
+    private final ShiftDAO shiftDAO;
+    private final ShiftTemplateDAO templateDAO;
 
     private ShiftService() {
-        repo = ShiftsRepo.getInstance();
+        Connection conn = Database.getConnection();
+        this.shiftDAO = new ShiftDAOImpl(conn);
+        this.templateDAO = new ShiftTemplateDAOImpl(conn);
     }
 
     public static ShiftService getInstance() {
@@ -26,82 +30,33 @@ public class ShiftService {
         return instance;
     }
 
-
     public Shift getShiftById(String id) {
-        return repo.getShiftByID(id);
+        return shiftDAO.selectById(id);
     }
-
 
     public void AssignEmployeeToShift(Shift shift, Employee employee, Role role) {
         shift.assignEmployee(employee, role);
+        shiftDAO.update(shift); // persist the assignment
         System.out.println("Employee " + employee.getName() + " assigned to role " +
                 role.getName() + " in shift " + shift.getID());
     }
 
-
-
-    public Shift getShiftsForDate(Shift.ShiftTime shiftTime, Date date) {
-        repo.ensureUpToDate();
-        List<Shift> shifts = new ArrayList<>();
-        shifts.addAll(repo.getCurrentWeekShifts());
-        shifts.addAll(repo.getNextWeekShifts());
-        for (Shift shift : shifts) {
-            if (repo.isSameDay(shift.getDate(), date)&&shift.getType()==shiftTime) {
-                return shift;
-            }
-        }
-        return null;
+    public List<Shift> getShiftsForDate(Date date) {
+        return shiftDAO.selectByDate(date);
     }
-
-
-    public void GenerateWeeklyShifts() {
-        repo.ensureUpToDate();
-    }
-
 
     public List<Shift> getCurrentWeekShifts() {
-        return repo.getCurrentWeekShifts();
+        return shiftDAO.getCurrentWeekShifts();
     }
 
     public List<Shift> getNextWeekShifts() {
-        return repo.getNextWeekShifts();
+        return shiftDAO.getNextWeekShifts();
     }
-
-    public String getShiftID(Shift shift) {
-        return shift.getID();
-    }
-    public Date getDate(Shift shift) {
-        return shift.getDate();
-    }
-    public String getDateString(Shift shift) {
-        return shift.getDate().toString();
-    }
-    public Shift.ShiftTime getShiftType(Shift shift) {
-        return shift.getType();
-    }
-    public Map<Role, ArrayList<Employee>> getRequiredRoles(Shift shift) {
-        return shift.getRequiredRoles();
-    }
-
-    public Map<Role, Integer> getRequiredCounts(Shift shift) {
-        return shift.getRequiredCounts();
-    }
-
-    public List<ShiftAssignment> getAssignedEmployees(Shift shift) {
-        return shift.getAssignedEmployees();
-    }
-
-    public void ensureShiftsRepoUpToDate() {
-        repo.ensureUpToDate();
-    }
-
-// In ShiftService.java
 
     public void ConfigureShiftRoles(Shift shift, Map<Role, Integer> requiredCounts) {
         Role managerRole = roleService.getRoleByName("Shift Manager");
         Role hrRole = roleService.getRoleByName("HR Manager");
 
-        // Always set Shift Manager to 1
         shift.getRequiredCounts().put(managerRole, 1);
         shift.getRequiredRoles().put(managerRole, new ArrayList<>(1));
 
@@ -112,11 +67,12 @@ public class ShiftService {
             shift.getRequiredCounts().put(role, cnt);
             shift.getRequiredRoles().put(role, new ArrayList<>(cnt));
         }
+        shiftDAO.update(shift);
         PresentationUtils.typewriterPrint("Shift roles updated successfully.", 20);
     }
 
     public void GetAssignedShifts(Employee employee) {
-        List<Shift> shifts = repo.getCurrentWeekShifts();
+        List<Shift> shifts = getCurrentWeekShifts();
         boolean found = false;
         System.out.println("\nYour Assigned Shifts:");
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
@@ -137,32 +93,43 @@ public class ShiftService {
     }
 
     public List<Shift> getAssignedShifts(Employee employee) {
-        return this.getCurrentWeekShifts().stream().filter(s -> this.getAssignedEmployees(s).stream().anyMatch(sa -> sa.getEmployeeId().equals(employee.getId()))).collect(Collectors.toList());
+        return getCurrentWeekShifts().stream()
+                .filter(s -> s.getAssignedEmployees().stream()
+                        .anyMatch(sa -> sa.getEmployeeId().equals(employee.getId())))
+                .collect(Collectors.toList());
     }
 
     public Role getMyRoleForShift(Employee employee, Shift target) {
-        return this.getAssignedEmployees(target).stream().filter(sa -> sa.getEmployeeId().equals(employee.getId())).findFirst().map(ShiftAssignment::getRole).orElse(null);
+        return target.getAssignedEmployees().stream()
+                .filter(sa -> sa.getEmployeeId().equals(employee.getId()))
+                .findFirst()
+                .map(ShiftAssignment::getRole)
+                .orElse(null);
     }
 
     public void getCurrentShift() {
-        Optional<Shift> currentShift = repo.getCurrentShift();
+        Optional<Shift> currentShift = shiftDAO.getCurrentShift();
         if (currentShift.isPresent()) {
             PresentationUtils.printShift(currentShift.get());
         } else {
-            PresentationUtils.typewriterPrint("There is no shift currently active.",20);
+            PresentationUtils.typewriterPrint("There is no shift currently active.", 20);
         }
     }
 
     public void addTemplate(ShiftTemplate shiftTemplate) {
-        repo.addTemplate(shiftTemplate);
+        templateDAO.insert(shiftTemplate);
     }
 
     public List<ShiftTemplate> getTemplates() {
-        return repo.getTemplates();
+        return templateDAO.selectAll();
     }
 
     public WeeklyShiftsSchedule getSchedule() {
-        return repo.getSchedule();
+        return shiftDAO.getSchedule();
     }
-}
 
+    public boolean isWarehouseAssigned(String shiftId) {
+        return shiftDAO.isWarehouseEmployeeAssigned(shiftId);
+    }
+
+}

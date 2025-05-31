@@ -1,7 +1,5 @@
 package HR.Service;
 
-import HR.DataAccess.ShiftDAOImpl;
-import HR.DataAccess.SwapRequestsRepo;
 import HR.Domain.*;
 
 import java.util.List;
