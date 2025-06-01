@@ -11,11 +11,9 @@ import java.util.Scanner;
 public class SystemInitializer {
     public static TransportationMenu buildApplication() {
         // === HR.tests.Domain Managers ===
-        DriverManager driverManager = new DriverManager();
         ItemManager itemManager = new ItemManager();
 
         // === Services (pass managers) ===
-        DriverService driverService = new DriverService(driverManager);
         TruckService truckService = new TruckService();
         TaskService taskService = new TaskService();
         SiteService siteService = new SiteService();
@@ -52,6 +50,6 @@ public class SystemInitializer {
         }
 
         // === Transportation Menu ===
-        return new TransportationMenu(driverService, truckService, taskService, zoneService, siteService, siteZoneService, itemService);
+        return new TransportationMenu( truckService, taskService, zoneService, siteService, siteZoneService, itemService);
     }
 }

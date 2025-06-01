@@ -5,14 +5,12 @@ import Transportation.Service.*;
 import java.util.Scanner;
 
 public class TManagerRoleMenu {
-    private final DriverMenu DriverMenuUI;
     private final TaskMenu TaskMenuUI;
     private final TruckMenu TruckMenuUI;
     private final SiteMenu SiteMenuUI;
     private final ZoneMenu ZoneMenuUI;
 
-    public TManagerRoleMenu(DriverService driverService, TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, ItemService itemService, SiteZoneService siteZoneService) {
-        DriverMenuUI = new DriverMenu(driverService, this);
+    public TManagerRoleMenu( TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, ItemService itemService, SiteZoneService siteZoneService) {
         TaskMenuUI = new TaskMenu(taskService, itemService, this);
         TruckMenuUI = new TruckMenu(this);
         SiteMenuUI = new SiteMenu(this);
@@ -33,18 +31,15 @@ public class TManagerRoleMenu {
             String choiceManager = input.nextLine();
             switch (choiceManager) {
                 case "1":
-                    DriverMenuUI.show();
-                    break;
-                case "2":
                     TruckMenuUI.show();
                     break;
-                case "3":
+                case "2":
                     TaskMenuUI.show();
                     break;
-                case "4":
+                case "3":
                     SiteMenuUI.show();
                     break;
-                case "5":
+                case "4":
                     ZoneMenuUI.show();
                     break;
                 case "0":

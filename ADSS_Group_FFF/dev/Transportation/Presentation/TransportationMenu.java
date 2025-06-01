@@ -1,17 +1,16 @@
 package Transportation.Presentation;
 
 import Transportation.Service.*;
-
 import java.util.Scanner;
 
 public class TransportationMenu {
     private final TManagerRoleMenu TManagerMenuUI;
     private final Scanner input;
 
-    public TransportationMenu(DriverService driverService, TruckService truckService, TaskService taskService,
+    public TransportationMenu( TruckService truckService, TaskService taskService,
                               ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService,
                               ItemService itemService) {
-        this.TManagerMenuUI = new TManagerRoleMenu(driverService, truckService, taskService, zoneService, siteService, itemService, siteZoneService);
+        this.TManagerMenuUI = new TManagerRoleMenu(truckService, taskService, zoneService, siteService, itemService, siteZoneService);
         this.input = new Scanner(System.in);
     }
 
