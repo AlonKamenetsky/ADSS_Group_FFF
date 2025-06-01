@@ -5,6 +5,8 @@ import java.util.*;
 
 public class Shift {
 
+
+
     public enum ShiftTime {
         Morning, Evening
     }
@@ -84,7 +86,10 @@ public class Shift {
             }
         }
     }
-
+    public void setAssignedEmployees(List<ShiftAssignment> assignments) {
+        this.assignedEmployees.clear();
+        this.assignedEmployees.addAll(assignments);
+    }
     public List<ShiftAssignment> getAssignedEmployees() {
         return assignedEmployees;
     }

@@ -16,7 +16,11 @@ public class ShiftAssignment {
     public Role getRole() { return role; }
 
 
-
-
-
+    public void setShift(Shift s) {
+        if (s != null) {
+            this.shiftId = s.getID();
+        } else {
+            this.shiftId = null;
+        }
+    }
 }
