@@ -11,13 +11,13 @@ import HR.Service.ShiftService;
 import HR.Service.SwapService;
 
 public class HRInterface {
-    private static final Role HR_ROLE = RolesRepo.getInstance().getRoleByName("HR");
     private final String currentUserId;
     private Role currentUserRole;
     private final ShiftService shiftService = ShiftService.getInstance();
     private final SwapService swapService = SwapService.getInstance();
     private final EmployeeService employeeService = EmployeeService.getInstance();
     private final RoleService roleService = RoleService.getInstance();
+    private final Role HR_ROLE = roleService.getRoleByName("HR");
     private final Employee  currentUser;
 
 
@@ -33,9 +33,9 @@ public class HRInterface {
             return;
         }
 
-        shiftService.ensureShiftsRepoUpToDate();
+//        shiftService.ensureShiftsRepoUpToDate();
         List<Shift> shifts = shiftService.getCurrentWeekShifts();
-        List<Employee> employees = EmployeesRepo.getInstance().getEmployees();
+        List<Employee> employees = employeeService.getEmployees();
 
         if (shifts.isEmpty()) {
             PresentationUtils.typewriterPrint("No shifts scheduled for this week.", 20);
@@ -216,24 +216,16 @@ public class HRInterface {
 );
     }
     public void updateEmployeeData(Scanner scanner) {
-        List<Employee> employees = employeeService.getEmployees();
         if (!currentUserRole.equals(HR_ROLE)) {
             PresentationUtils.typewriterPrint("Access Denied: Only HR Manager can update employee data.", 20
 );
             return;
         }
 
-        PresentationUtils.typewriterPrint("Select Employee to Update:", 20
+        PresentationUtils.typewriterPrint("Enter Employee's ID to Update:", 20
 );
-        for (int i = 0; i < employees.size(); i++) {
-            PresentationUtils.typewriterPrint(i + 1 + ". " + employees.get(i).getName(), 20
-);
-        }
-
-        int employeeIndex = scanner.nextInt() - 1;
-        scanner.nextLine();
-
-        Employee employee = employees.get(employeeIndex);
+        String input = scanner.nextLine().trim();
+        Employee employee = employeeService.getEmployeeById(input);
 
         boolean exit = false;
         while (!exit) {
@@ -243,7 +235,9 @@ public class HRInterface {
 );
             PresentationUtils.typewriterPrint("2. Salary", 20
 );
-            PresentationUtils.typewriterPrint("3. Exit", 20
+            PresentationUtils.typewriterPrint("3. Update Licenses (for drivers only)", 20
+);
+            PresentationUtils.typewriterPrint("4. Exit", 20
 );
 
             int choice = scanner.nextInt();
@@ -268,6 +262,50 @@ public class HRInterface {
 );
                     break;
                 case 3:
+                    if (!employee.getRoles().stream().anyMatch(role -> role.getName().equalsIgnoreCase("Driver"))) {
+                        PresentationUtils.typewriterPrint("This employee is not a driver. Cannot update licenses.", 20);
+                        break;}
+                    // Assume 'employee' is the selected Employee and is a driver
+                    List<DriverInfo.LicenseType> allTypes = Arrays.asList(DriverInfo.LicenseType.values());
+                    Set<DriverInfo.LicenseType> currentLicenses = new HashSet<>(employeeService.getDriverLicenses(employee));
+
+                    while (true) {
+                        PresentationUtils.typewriterPrint("Driver Licenses (toggle selection):", 20);
+                        for (int i = 0; i < allTypes.size(); i++) {
+                            DriverInfo.LicenseType type = allTypes.get(i);
+                            boolean has = currentLicenses.contains(type);
+                            String mark = has ? "[X]" : "[ ]";
+                            PresentationUtils.typewriterPrint((i + 1) + ") " + mark + " " + type.name(), 20);
+                        }
+                        PresentationUtils.typewriterPrint("Enter number to toggle license, or 0 to finish:", 20);
+
+                        String _input = scanner.nextLine().trim();
+                        int num;
+                        try {
+                            num = Integer.parseInt(_input);
+                        } catch (NumberFormatException e) {
+                            PresentationUtils.typewriterPrint("Invalid input. Please enter a number.", 20);
+                            continue;
+                        }
+                        if (num == 0) break;
+                        if (num < 1 || num > allTypes.size()) {
+                            PresentationUtils.typewriterPrint("Invalid selection.", 20);
+                            continue;
+                        }
+                        DriverInfo.LicenseType selected = allTypes.get(num - 1);
+                        if (currentLicenses.contains(selected)) {
+                            currentLicenses.remove(selected);
+                            PresentationUtils.typewriterPrint("Removed license: " + selected, 20);
+                        } else {
+                            currentLicenses.add(selected);
+                            PresentationUtils.typewriterPrint("Added license: " + selected, 20);
+                        }
+                    }
+
+                    // Update the employee's licenses
+                    employeeService.setDriverLicenses(employee, new ArrayList<>(currentLicenses));
+                    PresentationUtils.typewriterPrint("Driver licenses updated.", 20);
+                case 4:
                     exit = true;
                     break;
                 default:
@@ -378,7 +416,7 @@ public class HRInterface {
             if (!rolesList.contains(selectedRole)) {
                 rolesList.add(selectedRole);
                 PresentationUtils.typewriterPrint("Added role: " + selectedRole.getName(), 20);
-        } else {
+                } else {
                 PresentationUtils.typewriterPrint("Role already added.", 20);
             }
         }
@@ -391,14 +429,41 @@ public class HRInterface {
 // Check if "Driver" is one of the selected roles
         boolean isDriver = rolesList.stream().anyMatch(role -> role.getName().equalsIgnoreCase("Driver"));
         if (isDriver) {
-            PresentationUtils.typewriterPrint("Enter Driver License Type (e.g., B, C, D):", 20);
-            String licenseType = scanner.nextLine().trim();
-            if (licenseType.isEmpty()) {
-                PresentationUtils.typewriterPrint("Driver license type is required for Driver role. Employee not added.", 20);
+            PresentationUtils.typewriterPrint("Driver role selected. Please select license type(s):", 20);
+            List<DriverInfo.LicenseType> licenseTypes = new ArrayList<>();
+            while (true) {
+                PresentationUtils.typewriterPrint("License Type (Truck Size):", 20);
+                PresentationUtils.typewriterPrint("1) B (Small)", 20);
+                PresentationUtils.typewriterPrint("2) C (Medium)", 20);
+                PresentationUtils.typewriterPrint("3) C1 (Large)", 20);
+                PresentationUtils.typewriterPrint("Enter the number of a license to add (0 to finish):", 20);
+
+                String input = scanner.nextLine().trim();
+                int licenseNum;
+                try {
+                    licenseNum = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    PresentationUtils.typewriterPrint("Invalid input. Please enter a number.", 20);
+                    continue;
+                }
+                if (licenseNum == 0) break;
+                try {
+                    DriverInfo.LicenseType licenseType = employeeService.getDriverLicenseType(licenseNum);
+                    if (!licenseTypes.contains(licenseType)) {
+                        licenseTypes.add(licenseType);
+                        PresentationUtils.typewriterPrint("Added license type: " + licenseType, 20);
+                    } else {
+                        PresentationUtils.typewriterPrint("License type already added.", 20);
+                    }
+                } catch (IllegalArgumentException e) {
+                    PresentationUtils.typewriterPrint("Invalid license type selected.", 20);
+                }
+            }
+            if (licenseTypes.isEmpty()) {
+                PresentationUtils.typewriterPrint("Driver must have at least one license type. Employee not added.", 20);
                 return;
             }
-
-            employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate, licenseType);
+            employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate, licenseTypes);
         } else {
             employeeService.addEmployee(id, rolesList, name, password, bankAccount, salary, employmentDate);
         }
@@ -449,7 +514,7 @@ public class HRInterface {
             return;
         }
 
-        shiftService.ensureShiftsRepoUpToDate();
+//        shiftService.ensureShiftsRepoUpToDate();
 
         PresentationUtils.typewriterPrint("Configure roles for: 1) Current week   2) Next week", 20);
         int wk = scanner.nextInt(); scanner.nextLine();

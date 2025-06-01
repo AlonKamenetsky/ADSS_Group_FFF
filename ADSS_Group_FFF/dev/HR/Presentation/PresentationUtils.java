@@ -3,6 +3,7 @@ package HR.Presentation;
 
 import HR.Domain.Shift;
 import HR.Domain.ShiftAssignment;
+import HR.Service.EmployeeService;
 
 public class PresentationUtils {
     /**
@@ -28,7 +29,7 @@ public class PresentationUtils {
         System.out.println("Type: " + shift.getType());
         System.out.println("Assigned employees:");
         for (ShiftAssignment sa : shift.getAssignedEmployees()) {
-            String employeeName = EmployeesRepo.getInstance().getEmployeeById(sa.getEmployeeId()).getName();
+            String employeeName = EmployeeService.getInstance().getEmployeeById(sa.getEmployeeId()).getName();
             System.out.println("- " + employeeName + " as " + sa.getRole().getName());
         }
     }

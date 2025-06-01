@@ -1,15 +1,20 @@
 package HR.Service;
 
+import HR.DataAccess.SwapDAO;
+import HR.DataAccess.SwapDAOImpl;
 import HR.Domain.*;
+import Util.Database;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class SwapService {
     private static SwapService instance;
-    private final SwapRequestsRepo repo;
+    private final SwapDAO swapDAO;
 
     private SwapService() {
-        repo = SwapRequestsRepo.getInstance();
+        Connection conn = Database.getConnection();
+        this.swapDAO = new SwapDAOImpl(conn);
     }
 
     public static SwapService getInstance() {
@@ -20,11 +25,11 @@ public class SwapService {
     }
     public void SendSwapRequest(Employee employee, Shift shift, Role role) {
         SwapRequest request = new SwapRequest(employee, shift, role);
-        repo.addSwapRequest(request);
+        swapDAO.insert(request);
     }
 
     public void CancelSwapRequest(SwapRequest request) {
-        repo.removeSwapRequest(request);
+        swapDAO.delete(request.getId());
     }
 
     public void AcceptSwapRequests(SwapRequest req1,SwapRequest req2) {
@@ -44,14 +49,14 @@ public class SwapService {
                 e1.getName(), e2.getName(), r.getName(), s1.getID(), s2.getID());
 
         // Remove processed requests
-        repo.removeSwapRequest(req1);
-        repo.removeSwapRequest(req2);
+        swapDAO.delete(req1.getId());
+        swapDAO.delete(req2.getId());
 
     }
 
 
     public List<SwapRequest> getSwapRequests(){
-        return repo.getSwapRequests();
+        return swapDAO.selectAll();
     }
 
 

@@ -1,29 +1,41 @@
 package HR.Domain;
 
-public class DriverInfo {
-    private String employeeId;
-    private String licenseType;
+import Transportation.Domain.LicenseMapper;
+import Transportation.Domain.LicenseType;
 
-    public DriverInfo(String employeeId, String licenseType) {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DriverInfo {
+    private final String employeeId;
+    private List<LicenseType> licenseType;
+
+    public enum LicenseType {
+        B, C, C1;
+    }
+
+    public DriverInfo(String employeeId, List<LicenseType> licenseType) {
         this.employeeId = employeeId;
         this.licenseType = licenseType;
+    }
+
+    public void setLicenses(ArrayList<LicenseType> licenseTypes) {
+        this.licenseType = licenseTypes;
     }
 
     public String getEmployeeId() {
         return employeeId;
     }
 
-    public String getLicenseType() {
+    public List<LicenseType> getLicenses() {
         return licenseType;
     }
 
-    public void setLicenseType(String licenseType) {
-        this.licenseType = licenseType;
+    public void AddLicenseType(LicenseType licenseType) {
+        this.licenseType.add(licenseType);
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
+    public void RemoveLicenseType(LicenseType licenseType) {this.licenseType.remove(licenseType);}
 
     @Override
     public String toString() {

@@ -7,6 +7,7 @@ import Util.Database;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -46,18 +47,19 @@ public class EmployeeService {
 
     public void addEmployee(String id, List<Role> rolesList, String name, String password,
                             String bankAccount, Float salary, Date employmentDate,
-                            String licenseTypeIfDriver) {
+                            List<DriverInfo.LicenseType> licenseTypeIfDriver) {
         Employee newEmployee = new Employee(id, rolesList, name, password, bankAccount, salary, employmentDate);
 
         boolean isDriver = hasDriverRole(newEmployee);
 
-        if (isDriver && (licenseTypeIfDriver == null || licenseTypeIfDriver.isBlank())) {
+        if (isDriver && (licenseTypeIfDriver == null || licenseTypeIfDriver.isEmpty())) {
             throw new IllegalArgumentException("Driver must have a license type.");
         }
 
         employeeDAO.insert(newEmployee);
 
         if (isDriver) {
+
             driverInfoDAO.insert(new DriverInfo(id, licenseTypeIfDriver));
         }
     }
@@ -93,6 +95,15 @@ public class EmployeeService {
         PresentationUtils.typewriterPrint("Vacation added: " + date.toString(), 20);
     }
 
+    public DriverInfo.LicenseType getDriverLicenseType(Integer type) {
+        return switch (type) {
+            case 1 -> DriverInfo.LicenseType.B;
+            case 2 -> DriverInfo.LicenseType.C;
+            case 3 -> DriverInfo.LicenseType.C1;
+            default -> throw new IllegalArgumentException("Invalid license type");
+        };
+    }
+
     public void updateWeeklyAvailability(Employee employee, Set<WeeklyAvailability> newAvailabilities) {
         employee.getAvailabilityNextWeek().clear();
         employee.getAvailabilityNextWeek().addAll(newAvailabilities);
@@ -118,24 +129,28 @@ public class EmployeeService {
         return driverInfoDAO.getByEmployeeId(e.getId());
     }
 
-    public void updateDriverLicense(String employeeId, String newLicenseType) {
-        DriverInfo existing = driverInfoDAO.getByEmployeeId(employeeId);
-        if (existing != null) {
-            driverInfoDAO.update(new DriverInfo(employeeId, newLicenseType));
-        } else {
-            driverInfoDAO.insert(new DriverInfo(employeeId, newLicenseType));
-        }
-    }
-
-    public List<Employee> findAvailableDrivers(String licenseType, Date date, Shift.ShiftTime shiftTime) {
+    public List<Employee> findAvailableDrivers(DriverInfo.LicenseType licenseType, Date date, Shift.ShiftTime shiftTime) {
         return employeeDAO.selectAll().stream()
                 .filter(this::hasDriverRole)
                 .filter(e -> {
                     DriverInfo info = driverInfoDAO.getByEmployeeId(e.getId());
-                    return info != null && info.getLicenseType().equalsIgnoreCase(licenseType);
+                    return info != null && info.getLicenses().contains(licenseType);
                 })
                 .filter(e -> !e.getHolidays().contains(date))
                 .filter(e -> e.getAvailabilityThisWeek().isEmpty() || e.isAvailable(date, shiftTime))
                 .collect(Collectors.toList());
+    }
+
+    public List<DriverInfo.LicenseType> getDriverLicenses(Employee employee) {
+        return getDriverInfo(employee).getLicenses();}
+
+    public void setDriverLicenses(Employee employee, ArrayList<DriverInfo.LicenseType> licenseTypes) {
+        DriverInfo driverInfo = getDriverInfo(employee);
+        if (driverInfo != null) {
+            driverInfo.setLicenses(licenseTypes);
+            driverInfoDAO.update(driverInfo);
+        } else {
+            throw new IllegalArgumentException("Employee is not a driver or has no driver info.");
+        }
     }
 }

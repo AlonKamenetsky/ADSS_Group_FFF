@@ -3,7 +3,9 @@ package HR.Service;
 import HR.DataAccess.*;
 import HR.Domain.*;
 import HR.Presentation.PresentationUtils;
+import Util.Database;
 
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -12,7 +14,8 @@ public class RoleService {
     private final RoleDAO roleDAO;
 
     private RoleService() {
-        this.roleDAO = new RoleDAOImpl();
+        Connection conn = Database.getConnection();
+        this.roleDAO = new RoleDAOImpl(conn);
     }
 
     public static RoleService getInstance() {

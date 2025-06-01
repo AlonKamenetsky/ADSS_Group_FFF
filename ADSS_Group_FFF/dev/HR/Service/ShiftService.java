@@ -7,6 +7,7 @@ import Util.Database;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,8 @@ public class ShiftService {
                 role.getName() + " in shift " + shift.getID());
     }
 
-    public List<Shift> getShiftsForDate(Date date) {
-        return shiftDAO.selectByDate(date);
+    public List<Shift> getShiftsForDate(LocalDate date) {
+        return shiftDAO.getShiftsByDate(date);
     }
 
     public List<Shift> getCurrentWeekShifts() {
