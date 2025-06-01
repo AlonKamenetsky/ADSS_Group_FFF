@@ -3,13 +3,12 @@ package inventory.dataLayer.sqlite;
 import inventory.dataLayer.daos.InventoryReportDAO;
 import inventory.domainLayer.InventoryProduct;
 import inventory.domainLayer.InventoryReport;
-import inventory.dataLayer.utils.DatabaseManager;
+import IntegrationInventoryAndSupplier.DatabaseManager;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class SQLiteInventoryReportDAO implements InventoryReportDAO {
     private final Connection conn;

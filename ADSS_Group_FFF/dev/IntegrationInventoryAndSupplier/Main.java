@@ -1,5 +1,6 @@
 package IntegrationInventoryAndSupplier;
 
+import SuppliersModule.ServiceLayer.ServiceController;
 import inventory.presentationLayer.InventoryCLI;
 import inventory.serviceLayer.InventoryService;
 
@@ -16,6 +17,7 @@ public class Main {
 
         System.out.println("testing main");
         InventoryService inventoryService = InventoryService.getInstance();
+//        ServiceController serviceController = ServiceController.GetInstance();
         InventoryCLI inventoryCLI = new InventoryCLI(inventoryService);
         inventoryCLI.run();
 
