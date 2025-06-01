@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,6 +90,14 @@ public class OrderController {
             orderProductData.setOrderID(orderID);
 
         double totalOrderValue = calculateTotalPrice(orderProductDataList);
+
+        if (creationDate == null) {
+            LocalDate today = LocalDate.now();
+            creationDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            if (deliveryDate == null)
+                deliveryDate = Date.from(today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        }
 
         Order order = new Order(orderID, supplierId, orderProductDataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
 

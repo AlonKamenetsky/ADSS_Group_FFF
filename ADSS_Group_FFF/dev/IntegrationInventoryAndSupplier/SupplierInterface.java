@@ -1,17 +1,20 @@
 package IntegrationInventoryAndSupplier;
 
-import SuppliersModule.ServiceLayer.SupplierService;
+import SuppliersModule.ServiceLayer.ServiceController;
 
 import java.util.List;
 
 public interface SupplierInterface {
 
+    static ServiceController GetInstance() {
+        return null;
+    }
 
-     public SupplierService GetInstance();
+    // What about Add product?
+
+    List<MutualProduct> getAllAvailableProduct();
+    List<MutualProduct> getAllAvailableProductForOrder();
+
     // with this method inventory module will ask supplier module to order a single product that is out of stock
-    public void placeUrgentOrderSingleProduct(int ItemID, int quantity);
-
-    public List<MutualProduct> getAllAvailableProducts();
-
-    SupplierInterface getInstance();
+    void placeUrgentOrderSingleProduct(int ItemID, int quantity);
 }

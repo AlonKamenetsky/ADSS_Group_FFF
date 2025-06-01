@@ -1,22 +1,53 @@
 package SuppliersModule.ServiceLayer;
 
+import IntegrationInventoryAndSupplier.MutualProduct;
+import IntegrationInventoryAndSupplier.SupplierInterface;
 import SuppliersModule.DomainLayer.Enums.*;
+import inventory.serviceLayer.InventoryService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
-public class ServiceController {
-    SupplierService supplierService;
-    ProductService productService;
+public class ServiceController implements SupplierInterface {
+    private static final ServiceController instance = new ServiceController();
+    private static final InventoryService inventoryService = InventoryService.getInstance();
+
+
+    private SupplierService supplierService;
+    private ProductService productService;
 
     public ServiceController() {
         this.supplierService = new SupplierService();
         this.productService = new ProductService();
     }
+    public static ServiceController GetInstance() {
+        return instance;
+    }
 
+    // --------------------------- SHARED FUNCTIONS ---------------------------
+
+    public List<MutualProduct> getAllAvailableProduct() {
+        return this.productService.getAllProductAsMutual();
+    }
+
+    public List<MutualProduct> getAllAvailableProductForOrder() {
+        List<MutualProduct> filteredProducts = new ArrayList<>();
+        Set<Integer> productsInContracts = this.supplierService.getAllAvailableProductsInContracts();
+        for (MutualProduct product : this.getAllAvailableProduct())
+            if (productsInContracts.contains(product.getId()))
+                filteredProducts.add(product);
+
+        return filteredProducts;
+    }
+
+    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
+        ArrayList<int[]> dataList = new ArrayList<>();
+        dataList.add(new int[]{ItemID, quantity});
+
+        // null, null will send it as urgent for tommorow.
+        this.supplierService.registerNewOrder(dataList, null, null);
+    }
 
     // --------------------------- VALIDATION FUNCTIONS ---------------------------
 
@@ -109,6 +140,7 @@ public class ServiceController {
         return this.productService.getProductAsString(productID);
     }
 
+
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
     public int registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod,
@@ -158,8 +190,8 @@ public class ServiceController {
     public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
         for (int[] data : dataList)
             if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3])) {
-                System.out.println("1111" + validateSupplierAndProduct(supplierID, data[0]));
-                System.out.println("222" + validateContractProductData(data[1], data[2], data[3]));
+                System.out.println(validateSupplierAndProduct(supplierID, data[0]));
+                System.out.println(validateContractProductData(data[1], data[2], data[3]));
                 return false;
             }
 
@@ -222,8 +254,15 @@ public class ServiceController {
     }
 
     public HashMap<Integer, Integer> updateOrderStatus(int orderID, int orderStatus) {
-        if (this.validateOrderStatus(orderID))
-            return this.supplierService.updateOrderStatus(orderID, orderStatus);
+        if (this.validateOrderStatus(orderID)) {
+            HashMap<Integer, Integer> results = this.supplierService.updateOrderStatus(orderID, orderStatus);
+            if (results == null)
+                return null;
+            for (Map.Entry<Integer, Integer> entry : results.entrySet())
+                this.inventoryService.acceptDelivery(entry.getKey(), entry.getValue());
+            return  results;
+        }
+
         return null;
     }
 

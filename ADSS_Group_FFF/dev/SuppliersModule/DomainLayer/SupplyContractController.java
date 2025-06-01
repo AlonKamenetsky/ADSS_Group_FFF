@@ -10,11 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SupplyContractController {
     int contractID;
@@ -95,6 +91,13 @@ public class SupplyContractController {
             return supplyContract.getSupplyContractProductData();
         }
         return null;
+    }
+
+    public ArrayList<SupplyContract> getAllAvailableContracts() {
+        ArrayList<SupplyContract> copy = new ArrayList<>();
+        Collections.copy(copy, this.supplyContractsArrayList);
+
+        return copy;
     }
 
     // ********** OUTPUT FUNCTIONS **********

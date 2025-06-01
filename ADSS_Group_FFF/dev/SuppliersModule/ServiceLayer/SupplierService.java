@@ -4,10 +4,7 @@ import SuppliersModule.DomainLayer.*;
 
 import SuppliersModule.DomainLayer.Enums.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.*;
 
 public class SupplierService {
     SupplierController supplierController;
@@ -93,8 +90,13 @@ public class SupplierService {
     public String getContractToString(int contractID) {
         return this.supplierController.getContractToString(contractID);
     }
+
     public String[] getAllContractToStrings(){
         return this.supplierController.getAllContractToStrings();
+    }
+
+    public Set<Integer> getAllAvailableProductsInContracts() {
+        return this.supplierController.getAllAvailableProductsInContracts();
     }
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
@@ -102,7 +104,6 @@ public class SupplierService {
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
         return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
     }
-
 
     public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
         WeekDay d = WeekDay.values()[day - 1];

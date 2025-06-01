@@ -19,5 +19,4 @@ public class MutualProduct {
     public String getManufacturer() {
         return productCompanyName;
     }
-
 }
