@@ -538,10 +538,8 @@ public class InventoryService implements InternalInventoryInterface {
         if (supplierInterface == null) {
             return Collections.emptyList();
         }
-        return supplierInterface.getAllAvailableProducts();
+        return supplierInterface.getAllAvailableProduct();
     }
-
-
 }
 
 
