@@ -3,7 +3,8 @@ package inventory.dataLayer.sqlite;
 import inventory.dataLayer.daos.InventoryReportDAO;
 import inventory.domainLayer.InventoryProduct;
 import inventory.domainLayer.InventoryReport;
-import IntegrationInventoryAndSupplier.DatabaseManager;
+import inventory.dataLayer.utils.DatabaseManager;
+
 
 import java.sql.*;
 import java.util.ArrayList;

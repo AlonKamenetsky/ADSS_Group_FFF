@@ -4,7 +4,8 @@ import inventory.dataLayer.daos.DiscountDAO;
 import inventory.domainLayer.Category;
 import inventory.domainLayer.Discount;
 import inventory.domainLayer.InventoryProduct;
-import IntegrationInventoryAndSupplier.DatabaseManager;
+import inventory.dataLayer.utils.DatabaseManager;
+
 
 import java.sql.*;
 import java.util.ArrayList;

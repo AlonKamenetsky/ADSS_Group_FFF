@@ -4,7 +4,8 @@ import inventory.dataLayer.daos.InventoryProductDAO;
 import inventory.domainLayer.Category;
 import inventory.domainLayer.InventoryProduct;
 import inventory.domainLayer.ItemStatus;
-import IntegrationInventoryAndSupplier.DatabaseManager;
+import inventory.dataLayer.utils.DatabaseManager;
+
 
 import java.sql.*;
 import java.util.ArrayList;

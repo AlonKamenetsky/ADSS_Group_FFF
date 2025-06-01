@@ -2,7 +2,7 @@ package inventory.dataLayer.sqlite;
 
 import inventory.dataLayer.daos.CategoryDAO;
 import inventory.domainLayer.Category;
-import IntegrationInventoryAndSupplier.DatabaseManager;
+import inventory.dataLayer.utils.DatabaseManager;
 
 import java.sql.*;
 import java.util.ArrayList;
