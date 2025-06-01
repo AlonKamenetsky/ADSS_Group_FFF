@@ -9,27 +9,33 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-/**
- * SQLite‐backed InventoryReportDAO.
- * We store each report’s header in InventoryReport (id, dateGenerated),
- * and store each (report_id, product_id) pair in InventoryReportItems.
- */
 public class SQLiteInventoryReportDAO implements InventoryReportDAO {
-
     private final Connection conn;
-    private final SQLiteInventoryProductDAO productDAO; // to resolve InventoryProduct from ID
+    private final SQLiteInventoryProductDAO productDAO;
 
     public SQLiteInventoryReportDAO(SQLiteInventoryProductDAO productDAO) throws SQLException {
         this.conn = DatabaseManager.getInstance().getConnection();
         this.productDAO = productDAO;
+        // Assume DatabaseManager already created:
+        // CREATE TABLE IF NOT EXISTS InventoryReport (
+        //   id TEXT PRIMARY KEY,
+        //   dateGenerated INTEGER NOT NULL
+        // );
+        // CREATE TABLE IF NOT EXISTS InventoryReportItems (
+        //   report_id TEXT NOT NULL,
+        //   product_id INTEGER NOT NULL,
+        //   FOREIGN KEY(report_id) REFERENCES InventoryReport(id),
+        //   FOREIGN KEY(product_id) REFERENCES InventoryProduct(id)
+        // );
     }
 
     @Override
     public void save(InventoryReport report) {
-        // 1) Insert into InventoryReport table
-        String headerSql = "INSERT INTO InventoryReport (id, dateGenerated) VALUES (?, ?)";
-        try (PreparedStatement headerStmt = conn.prepareStatement(headerSql)) {
+        String insertHeader = "INSERT INTO InventoryReport (id, dateGenerated) VALUES (?, ?)";
+        String insertItem   = "INSERT INTO InventoryReportItems (report_id, product_id) VALUES (?, ?)";
+        try (PreparedStatement headerStmt = conn.prepareStatement(insertHeader)) {
             headerStmt.setString(1, report.getId());
             headerStmt.setLong(2, report.getDateGenerated().getTime());
             headerStmt.executeUpdate();
@@ -37,81 +43,81 @@ public class SQLiteInventoryReportDAO implements InventoryReportDAO {
             throw new RuntimeException("Failed to save InventoryReport header ID=" + report.getId(), e);
         }
 
-        // 2) Insert each (reportId, productId) into InventoryReportItems
-        String itemsSql = "INSERT INTO InventoryReportItems (report_id, product_id) VALUES (?, ?)";
-        try (PreparedStatement itemsStmt = conn.prepareStatement(itemsSql)) {
+        try (PreparedStatement itemStmt = conn.prepareStatement(insertItem)) {
             for (InventoryProduct p : report.getItems()) {
-                itemsStmt.setString(1, report.getId());
-                itemsStmt.setInt(2, p.getId());
-                itemsStmt.addBatch();
+                itemStmt.setString(1, report.getId());
+                itemStmt.setInt(2, p.getId());
+                itemStmt.addBatch();
             }
-            itemsStmt.executeBatch();
+            itemStmt.executeBatch();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to save InventoryReport items ID=" + report.getId(), e);
+            throw new RuntimeException("Failed to save InventoryReport items for report ID=" + report.getId(), e);
         }
     }
 
     @Override
     public InventoryReport findById(String id) {
-        // 1) Fetch header
-        String headerSql = "SELECT dateGenerated FROM InventoryReport WHERE id = ?";
-        Date dateGen = null;
-        try (PreparedStatement headerStmt = conn.prepareStatement(headerSql)) {
+        // 1) First fetch the header row
+        String fetchHeader = "SELECT dateGenerated FROM InventoryReport WHERE id = ?";
+        Date dateGenerated;
+        try (PreparedStatement headerStmt = conn.prepareStatement(fetchHeader)) {
             headerStmt.setString(1, id);
             try (ResultSet rs = headerStmt.executeQuery()) {
                 if (!rs.next()) {
                     return null;
                 }
-                dateGen = new Date(rs.getLong("dateGenerated"));
+                dateGenerated = new Date(rs.getLong("dateGenerated"));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to read InventoryReport header ID=" + id, e);
+            throw new RuntimeException("Failed to find InventoryReport header ID=" + id, e);
         }
 
-        // 2) Fetch item IDs
-        List<InventoryProduct> products = new ArrayList<>();
-        String itemsSql = "SELECT product_id FROM InventoryReportItems WHERE report_id = ?";
-        try (PreparedStatement itemsStmt = conn.prepareStatement(itemsSql)) {
-            itemsStmt.setString(1, id);
-            try (ResultSet rs = itemsStmt.executeQuery()) {
+        // 2) Fetch all product IDs in this report
+        String fetchItems = "SELECT product_id FROM InventoryReportItems WHERE report_id = ?";
+        List<InventoryProduct> items = new ArrayList<>();
+        try (PreparedStatement itemStmt = conn.prepareStatement(fetchItems)) {
+            itemStmt.setString(1, id);
+            try (ResultSet rs = itemStmt.executeQuery()) {
                 while (rs.next()) {
                     int pid = rs.getInt("product_id");
                     InventoryProduct p = productDAO.findById(pid);
                     if (p != null) {
-                        products.add(p);
+                        items.add(p);
                     }
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to read InventoryReport items ID=" + id, e);
+            throw new RuntimeException("Failed to find InventoryReport items ID=" + id, e);
         }
 
-        return new InventoryReport(id, dateGen, products);
+        return new InventoryReport(id, dateGenerated, items);
     }
 
     @Override
     public List<InventoryReport> findAll() {
         // 1) Get all report IDs
-        List<String> allIds = new ArrayList<>();
         String sql = "SELECT id FROM InventoryReport";
+        List<InventoryReport> result = new ArrayList<>();
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                allIds.add(rs.getString("id"));
+                String rid = rs.getString("id");
+                InventoryReport rpt = findById(rid);
+                if (rpt != null) {
+                    result.add(rpt);
+                }
             }
+            return result;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to list all InventoryReport IDs", e);
+            throw new RuntimeException("Failed to retrieve all InventoryReports", e);
         }
+    }
 
-        // 2) Call findById on each ID
-        List<InventoryReport> out = new ArrayList<>();
-        for (String rid : allIds) {
-            InventoryReport rep = findById(rid);
-            if (rep != null) {
-                out.add(rep);
-            }
-        }
-        return out;
+    @Override
+    public void update(InventoryReport report) {
+        // Simplest strategy: delete old join rows, then re-insert everything
+        delete(report.getId());
+        save(report);
     }
 
     @Override
@@ -122,10 +128,10 @@ public class SQLiteInventoryReportDAO implements InventoryReportDAO {
             pstmt.setString(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete report items for ID=" + id, e);
+            throw new RuntimeException("Failed to delete InventoryReport items for ID=" + id, e);
         }
 
-        // 2) Delete from InventoryReport
+        // 2) Delete from InventoryReport header
         String deleteHeader = "DELETE FROM InventoryReport WHERE id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(deleteHeader)) {
             pstmt.setString(1, id);
@@ -133,12 +139,5 @@ public class SQLiteInventoryReportDAO implements InventoryReportDAO {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete InventoryReport header ID=" + id, e);
         }
-    }
-
-    @Override
-    public void update(InventoryReport report) {
-        // For simplicity, we delete the old join rows and re‐insert:
-        delete(report.getId());
-        save(report);
     }
 }

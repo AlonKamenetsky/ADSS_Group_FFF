@@ -1,8 +1,6 @@
 package inventory.dataLayer.sqlite;
 
 import inventory.dataLayer.daos.InventoryProductDAO;
-import inventory.dataLayer.dtos.InventoryProductDTO;
-import inventory.dataLayer.mappers.InventoryProductMapper;
 import inventory.domainLayer.Category;
 import inventory.domainLayer.InventoryProduct;
 import inventory.domainLayer.ItemStatus;
@@ -12,23 +10,34 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * SQLite‐backed InventoryProductDAO. Depends on CategoryDAO to fetch Category objects.
- */
 public class SQLiteInventoryProductDAO implements InventoryProductDAO {
-
     private final Connection conn;
-    private final SQLiteCategoryDAO categoryDAO; // so we can look up Category by name
+    private final SQLiteCategoryDAO categoryDAO;
 
     public SQLiteInventoryProductDAO(SQLiteCategoryDAO categoryDAO) throws SQLException {
         this.conn = DatabaseManager.getInstance().getConnection();
         this.categoryDAO = categoryDAO;
+        // Assume DatabaseManager already created:
+        // CREATE TABLE IF NOT EXISTS InventoryProduct (
+        //   id INTEGER PRIMARY KEY,
+        //   name TEXT NOT NULL,
+        //   manufacturer TEXT,
+        //   shelfQuantity INTEGER NOT NULL,
+        //   backroomQuantity INTEGER NOT NULL,
+        //   minThreshold INTEGER NOT NULL,
+        //   purchasePrice REAL NOT NULL,
+        //   salePrice REAL NOT NULL,
+        //   status TEXT NOT NULL,
+        //   category_name TEXT,
+        //   FOREIGN KEY(category_name) REFERENCES Category(name)
+        // );
     }
 
     @Override
     public void save(InventoryProduct product) {
         String sql = "INSERT INTO InventoryProduct "
-                + "(id, name, manufacturer, shelfQuantity, backroomQuantity, minThreshold, purchasePrice, salePrice, status, category_name) "
+                + "(id, name, manufacturer, shelfQuantity, backroomQuantity, minThreshold, "
+                + " purchasePrice, salePrice, status, category_name) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, product.getId());
@@ -40,10 +49,17 @@ public class SQLiteInventoryProductDAO implements InventoryProductDAO {
             pstmt.setDouble(7, product.getPurchasePrice());
             pstmt.setDouble(8, product.getSalePrice());
             pstmt.setString(9, product.getStatus().name());
-            pstmt.setString(10, (product.getCategory() != null) ? product.getCategory().getName() : null);
+            pstmt.setString(
+                    10,
+                    (product.getCategory() != null)
+                            ? product.getCategory().getName()
+                            : null
+            );
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to save InventoryProduct ID=" + product.getId(), e);
+            throw new RuntimeException(
+                    "Failed to save InventoryProduct ID=" + product.getId(), e
+            );
         }
     }
 
@@ -56,37 +72,12 @@ public class SQLiteInventoryProductDAO implements InventoryProductDAO {
                 if (!rs.next()) {
                     return null;
                 }
-                // Build domain object
-                String name = rs.getString("name");
-                String manufacturer = rs.getString("manufacturer");
-                int shelfQty = rs.getInt("shelfQuantity");
-                int backroomQty = rs.getInt("backroomQuantity");
-                int minThreshold = rs.getInt("minThreshold");
-                double purchasePrice = rs.getDouble("purchasePrice");
-                double salePrice = rs.getDouble("salePrice");
-                ItemStatus status = ItemStatus.valueOf(rs.getString("status"));
-                String categoryName = rs.getString("category_name");
-
-                Category category = null;
-                if (categoryName != null) {
-                    category = categoryDAO.findByName(categoryName);
-                }
-
-                return new InventoryProduct(
-                        id,
-                        name,
-                        manufacturer,
-                        shelfQty,
-                        backroomQty,
-                        minThreshold,
-                        purchasePrice,
-                        salePrice,
-                        status,
-                        category
-                );
+                return mapRowToInventoryProduct(rs);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to find InventoryProduct by ID=" + id, e);
+            throw new RuntimeException(
+                    "Failed to find InventoryProduct by ID=" + id, e
+            );
         }
     }
 
@@ -98,40 +89,29 @@ public class SQLiteInventoryProductDAO implements InventoryProductDAO {
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
-                InventoryProduct p = findById(id);
-                if (p != null) {
-                    result.add(p);
+                InventoryProduct ip = findById(id);
+                if (ip != null) {
+                    result.add(ip);
                 }
             }
+            return result;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to retrieve all InventoryProduct IDs", e);
-        }
-        return result;
-    }
-
-    @Override
-    public void delete(int id) {
-        String sql = "DELETE FROM InventoryProduct WHERE id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete InventoryProduct ID=" + id, e);
+            throw new RuntimeException("Failed to retrieve all InventoryProducts", e);
         }
     }
 
     @Override
     public void update(InventoryProduct product) {
         String sql = "UPDATE InventoryProduct SET "
-                + "name = ?, "
-                + "manufacturer = ?, "
-                + "shelfQuantity = ?, "
-                + "backroomQuantity = ?, "
-                + "minThreshold = ?, "
-                + "purchasePrice = ?, "
-                + "salePrice = ?, "
-                + "status = ?, "
-                + "category_name = ? "
+                + " name = ?, "
+                + " manufacturer = ?, "
+                + " shelfQuantity = ?, "
+                + " backroomQuantity = ?, "
+                + " minThreshold = ?, "
+                + " purchasePrice = ?, "
+                + " salePrice = ?, "
+                + " status = ?, "
+                + " category_name = ? "
                 + "WHERE id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, product.getName());
@@ -142,11 +122,58 @@ public class SQLiteInventoryProductDAO implements InventoryProductDAO {
             pstmt.setDouble(6, product.getPurchasePrice());
             pstmt.setDouble(7, product.getSalePrice());
             pstmt.setString(8, product.getStatus().name());
-            pstmt.setString(9, (product.getCategory() != null) ? product.getCategory().getName() : null);
+            pstmt.setString(
+                    9,
+                    (product.getCategory() != null)
+                            ? product.getCategory().getName()
+                            : null
+            );
             pstmt.setInt(10, product.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update InventoryProduct ID=" + product.getId(), e);
+            throw new RuntimeException(
+                    "Failed to update InventoryProduct ID=" + product.getId(), e
+            );
         }
+    }
+
+    @Override
+    public void delete(int id) {
+        String sql = "DELETE FROM InventoryProduct WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to delete InventoryProduct ID=" + id, e
+            );
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Private helper: build an InventoryProduct from the current ResultSet row
+    // ─────────────────────────────────────────────────────────────────
+    private InventoryProduct mapRowToInventoryProduct(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        String manufacturer = rs.getString("manufacturer");
+        int shelfQty = rs.getInt("shelfQuantity");
+        int backroomQty = rs.getInt("backroomQuantity");
+        int minThreshold = rs.getInt("minThreshold");
+        double purchasePrice = rs.getDouble("purchasePrice");
+        double salePrice = rs.getDouble("salePrice");
+        ItemStatus status = ItemStatus.valueOf(rs.getString("status"));
+        String categoryName = rs.getString("category_name");
+
+        Category category = (categoryName != null)
+                ? categoryDAO.findByName(categoryName)
+                : null;
+
+        return new InventoryProduct(
+                id, name, manufacturer,
+                shelfQty, backroomQty, minThreshold,
+                purchasePrice, salePrice,
+                status, category
+        );
     }
 }

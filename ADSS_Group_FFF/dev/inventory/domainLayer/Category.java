@@ -37,4 +37,9 @@ public class Category {
                 ", parent=" + (parentCategory != null ? parentCategory.getName() : "none") +
                 '}';
     }
+
+    public void setParentCategory(Category c) {
+        this.parentCategory = c;
+
+    }
 }

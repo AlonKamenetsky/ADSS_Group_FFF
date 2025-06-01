@@ -21,7 +21,7 @@ public class InventoryCLI {
         // One-time sample data load prompt
         System.out.print("Load sample data? (y/n): ");
         if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
-            AppInitializer.loadSampleData(service);
+//            AppInitializer.loadSampleData(service);
             System.out.println("Sample data loaded.");
         }
 
