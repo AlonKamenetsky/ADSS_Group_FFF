@@ -1,7 +1,10 @@
 package SuppliersModule.ServiceLayer;
 
+import IntegrationInventoryAndSupplier.MutualProduct;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.ProductController;
+
+import java.util.List;
 
 
 public class ProductService {
@@ -33,6 +36,10 @@ public class ProductService {
 
     public ProductCategory getProductCategory(int productID) {
         return this.productController.getProductCategory(productID);
+    }
+
+    public List<MutualProduct> getAllProductAsMutual() {
+        return this.productController.getAllProductAsMutual();
     }
 }
 

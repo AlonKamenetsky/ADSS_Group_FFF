@@ -289,6 +289,15 @@ public class SupplierController {
         return this.supplyContractController.getAllContractToStrings();
     }
 
+    public Set<Integer> getAllAvailableProductsInContracts() {
+        Set<Integer> products = new HashSet<>();
+        for (SupplyContract supplyContract : this.supplyContractController.getAllAvailableContracts())
+            for (SupplyContractProductData supplyContractProductData : supplyContract.getSupplyContractProductData())
+                products.add(supplyContractProductData.getProductID());
+
+        return products;
+    }
+
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
