@@ -26,4 +26,8 @@ public class MutualProduct {
     public String getManufacturer() {
         return productCompanyName;
     }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
 }

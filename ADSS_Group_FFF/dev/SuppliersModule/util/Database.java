@@ -24,7 +24,7 @@ public final class Database {
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 name TEXT NOT NULL,
                                 company_name TEXT,
-                                producs_category TEXT
+                                products_category TEXT
                             );
                         """);
 

@@ -35,7 +35,7 @@ public class DatabaseManager {
         runDDL();
     }
 
-    private void runDDL() throws SQLException {
+    public void runDDL() throws SQLException {
         String createCategoryTable =
                 "CREATE TABLE IF NOT EXISTS Category (" +
                         "  name TEXT PRIMARY KEY," +

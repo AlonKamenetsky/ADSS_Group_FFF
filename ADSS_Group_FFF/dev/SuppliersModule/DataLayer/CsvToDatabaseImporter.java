@@ -1,346 +1,223 @@
 package SuppliersModule.DataLayer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import inventory.dataLayer.utils.DatabaseManager;
+
+import java.io.*;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * CsvToDatabaseImporter (corrected commit/rollback logic).
- *
- * Workflow:
- *   1) Open Connection, setAutoCommit(false)
- *   2) DELETE all rows from each table, then conn.commit()
- *   3) INSERT from CSVs, then conn.commit()
- *   4) If any exception occurs in steps 2–3, conn.rollback() to the cleared state
- *   5) Finally setAutoCommit(true) and close
- */
 public class CsvToDatabaseImporter {
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // === CONFIGURATION: adjust paths if needed ===
-    // ────────────────────────────────────────────────────────────────────────────
-    private static final String JDBC_URL = "jdbc:sqlite:data/SuppliersDatabase.db";
+    private static final String INVENTORY_JDBC_URL  = "jdbc:sqlite:data/inventoryDatabase.db";
+    private static final String SUPPLIERS_JDBC_URL  = "jdbc:sqlite:data/SuppliersDatabase.db";
 
-    private static final String PRODUCTS_CSV  = "data/products_data.csv";
-    private static final String SUPPLIERS_CSV = "data/suppliers_data.csv";
-    private static final String ORDERS_CSV    = "data/orders_data.csv";
-    private static final String CONTRACTS_CSV = "data/contracts_data.csv";
-    // ────────────────────────────────────────────────────────────────────────────
+    private static final String PRODUCTS_CSV      = "data/products_data.csv";
+    private static final String SUPPLIERS_CSV     = "data/suppliers_data.csv";
+    private static final String ORDERS_CSV        = "data/orders_data.csv";
+    private static final String CONTRACTS_CSV     = "data/contracts_data.csv";
 
-
-    /**
-     * Public entry point: clears tables and re‐imports CSVs in a single transaction.
-     * Throws Exception on any failure.
-     */
     public static void importAll() throws Exception {
-        Connection conn = null;
+        try (Connection invConn = DriverManager.getConnection(INVENTORY_JDBC_URL)) {
+            invConn.setAutoCommit(false);
+            dropAllUserTables(invConn);
+            invConn.commit();
+            System.out.println("Dropped all tables in inventoryDatabase.db");
+            DatabaseManager.getInstance().runDDL();
+            System.out.println("Recreated all tables in inventoryDatabase.db");
+        }
+
+        Connection suppliersConn = null;
         try {
-            conn = DriverManager.getConnection(JDBC_URL);
-            // 1) Switch into manual‐commit mode
-            conn.setAutoCommit(false);
+            suppliersConn = DriverManager.getConnection(SUPPLIERS_JDBC_URL);
+            suppliersConn.setAutoCommit(false);
 
-            // 2) Clear all tables, then commit that deletion
-            clearAllTables(conn);
-            conn.commit();
+            clearAllSuppliersTables(suppliersConn);
+            suppliersConn.commit();
 
-            // 3) Import each CSV; if any insert fails, rollback below will revert to the "all cleared" state
-            importProducts(conn, PRODUCTS_CSV);
-            importSuppliers(conn, SUPPLIERS_CSV);
-            importOrdersAndOrderProductData(conn, ORDERS_CSV);
-            importContracts(conn, CONTRACTS_CSV);
+            importProducts(suppliersConn, PRODUCTS_CSV);
+            importSuppliers(suppliersConn, SUPPLIERS_CSV);
+            importOrdersAndOrderProductData(suppliersConn, ORDERS_CSV);
+            importContracts(suppliersConn, CONTRACTS_CSV);
 
-            // 4) Commit all inserted rows
-            conn.commit();
-            System.out.println("CSV import completed successfully.");
+            suppliersConn.commit();
+            System.out.println("Suppliers CSV import completed successfully.");
 
         } catch (Exception e) {
-            if (conn != null) {
-                try {
-                    // Roll back to the state after clearAllTables (i.e. empty tables)
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            if (suppliersConn != null) suppliersConn.rollback();
             throw e;
         } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException ignore) { }
+            if (suppliersConn != null) {
+                suppliersConn.setAutoCommit(true);
+                suppliersConn.close();
             }
         }
     }
 
-    /**
-     * Deletes all rows from every table, in dependency order.
-     */
-    private static void clearAllTables(Connection conn) throws SQLException {
+    private static void dropAllUserTables(Connection conn) throws SQLException {
+        Set<String> tableNames = new HashSet<>();
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")) {
+            while (rs.next()) {
+                tableNames.add(rs.getString("name"));
+            }
+        }
         try (Statement stmt = conn.createStatement()) {
-            // 1) order_product_data references orders
-            stmt.executeUpdate("DELETE FROM order_product_data");
-            // 2) orders references suppliers
-            stmt.executeUpdate("DELETE FROM orders");
-            // 3) supply_contract_product_data references supply_contracts
-            stmt.executeUpdate("DELETE FROM supply_contract_product_data");
-            // 4) supply_contracts references suppliers
-            stmt.executeUpdate("DELETE FROM supply_contracts");
-            // 5) suppliers
-            stmt.executeUpdate("DELETE FROM suppliers");
-            // 6) products
-            stmt.executeUpdate("DELETE FROM products");
-
-            System.out.println("Cleared all existing data from tables.");
+            for (String tbl : tableNames) {
+                stmt.executeUpdate("DROP TABLE IF EXISTS \"" + tbl + "\";");
+            }
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // 1) PRODUCTS
-    // ────────────────────────────────────────────────────────────────────────────
-    private static void importProducts(Connection conn, String csvPath) throws SQLException, IOException {
-        String insertProductSql = """
-            INSERT INTO products (id, name, company_name, product_category)
-            VALUES (?, ?, ?, ?)
-        """;
+    private static void clearAllSuppliersTables(Connection conn) throws SQLException {
+        try (Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM order_product_data");
+            stmt.executeUpdate("DELETE FROM orders");
+            stmt.executeUpdate("DELETE FROM supply_contract_product_data");
+            stmt.executeUpdate("DELETE FROM supply_contracts");
+            stmt.executeUpdate("DELETE FROM suppliers");
+            stmt.executeUpdate("DELETE FROM products");
+            System.out.println("Cleared all existing data from Suppliers tables.");
+        }
+    }
 
-        try (PreparedStatement ps = conn.prepareStatement(insertProductSql);
+    private static void importProducts(Connection conn, String csvPath) throws SQLException, IOException {
+        String sql = "INSERT INTO products (name, company_name, product_category) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
 
-            // Skip header line
-            String line = reader.readLine();
-
-            int nextId = 1;
+            reader.readLine(); // skip header
+            String line;
             while ((line = reader.readLine()) != null) {
-                // CSV columns: [0]=productName, [1]=productCompanyName, [2]=productCategory
                 String[] parts = line.split(",", -1);
                 if (parts.length < 3) continue;
-
-                String name            = parts[0].trim();
-                String companyName     = parts[1].trim();
-                String categoryLiteral = parts[2].trim();
-
-                ps.setInt   (1, nextId);
-                ps.setString(2, name);
-                ps.setString(3, companyName);
-                ps.setString(4, categoryLiteral);
+                ps.setString(1, parts[0].trim());
+                ps.setString(2, parts[1].trim());
+                ps.setString(3, parts[2].trim());
                 ps.executeUpdate();
-
-                nextId++;
             }
             System.out.println("Imported products from " + csvPath);
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // 2) SUPPLIERS
-    // ────────────────────────────────────────────────────────────────────────────
     private static void importSuppliers(Connection conn, String csvPath) throws SQLException, IOException {
-        String insertSupplierSql = """
+        String sql = """
             INSERT INTO suppliers (
-                id, name, product_category,
-                contact_name, phone_number, email, address,
-                delivery_method, bank_account, payment_method, supply_method
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                name, product_category, contact_name, phone_number, email,
+                address, delivery_method, bank_account, payment_method, supply_method
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(
+                     new FileInputStream(csvPath), java.nio.charset.StandardCharsets.ISO_8859_1))) {
 
-        try (PreparedStatement ps = conn.prepareStatement(insertSupplierSql);
-             BufferedReader reader = new BufferedReader(
-                     new FileReader(new File(csvPath), java.nio.charset.StandardCharsets.ISO_8859_1)
-             )) {
-            // Skip header
-            String line = reader.readLine();
-
-            int nextId = 1;
+            reader.readLine(); // skip header
+            String line;
             while ((line = reader.readLine()) != null) {
-                // CSV columns (exact order):
-                // [0] supplyMethod
-                // [1] supplierName
-                // [2] productCategory
-                // [3] supplierDeliveringMethod
-                // [4] phoneNumber
-                // [5] address
-                // [6] name           ← contactName
-                // [7] email
-                // [8] supplierBankAccount
-                // [9] supplierPaymentMethod
                 String[] parts = line.split(",", -1);
                 if (parts.length < 10) continue;
-
-                String supplyMethodLiteral      = parts[0].trim();
-                String supplierName             = parts[1].trim();
-                String productCategoryLiteral   = parts[2].trim();
-                String deliveringMethodLiteral  = parts[3].trim();
-                String phoneNumber              = parts[4].trim();
-                String address                  = parts[5].trim();
-                String contactName              = parts[6].trim();   // <—
-                String email                    = parts[7].trim();   // <—
-                String bankAccount              = parts[8].trim();
-                String paymentMethodLiteral     = parts[9].trim();
-
-                ps.setInt   (1, nextId);
-                ps.setString(2, supplierName);
-                ps.setString(3, productCategoryLiteral);
-                ps.setString(4, contactName);
-                ps.setString(5, phoneNumber);
-                ps.setString(6, email);
-                ps.setString(7, address);
-                ps.setString(8, deliveringMethodLiteral);
-                ps.setString(9, bankAccount);
-                ps.setString(10, paymentMethodLiteral);
-                ps.setString(11, supplyMethodLiteral);
-
+                ps.setString(1, parts[1].trim());
+                ps.setString(2, parts[2].trim());
+                ps.setString(3, parts[6].trim());
+                ps.setString(4, parts[4].trim());
+                ps.setString(5, parts[7].trim());
+                ps.setString(6, parts[5].trim());
+                ps.setString(7, parts[3].trim());
+                ps.setString(8, parts[8].trim());
+                ps.setString(9, parts[9].trim());
+                ps.setString(10, parts[0].trim());
                 ps.executeUpdate();
-                nextId++;
             }
             System.out.println("Imported suppliers from " + csvPath);
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // 3) ORDERS + ORDER_PRODUCT_DATA
-    // ────────────────────────────────────────────────────────────────────────────
     private static void importOrdersAndOrderProductData(Connection conn, String csvPath) throws SQLException, IOException {
-        String insertOrderSql = """
+        String orderSql = """
             INSERT INTO orders (
-                id, supplier_id, phone_number, physical_address,
-                email_address, contact_name, delivery_method,
-                order_date, delivery_date, total_price,
-                order_status, supply_method
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                supplier_id, phone_number, physical_address, email_address,
+                contact_name, delivery_method, order_date, delivery_date,
+                total_price, order_status, supply_method
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
-        String insertOrderProductSql = """
+        String productSql = """
             INSERT INTO order_product_data (
                 order_id, product_id, product_quantity, product_price
             ) VALUES (?, ?, ?, ?)
         """;
 
-        try (PreparedStatement psOrder       = conn.prepareStatement(insertOrderSql);
-             PreparedStatement psOrderProduct = conn.prepareStatement(insertOrderProductSql);
-             BufferedReader reader            = new BufferedReader(new FileReader(csvPath))) {
+        try (PreparedStatement psOrder = conn.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement psProduct = conn.prepareStatement(productSql);
+             BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
 
-            // Skip header
-            reader.readLine();
-
-            int nextOrderId = 1;
+            reader.readLine(); // skip header
             String line;
             while ((line = reader.readLine()) != null) {
-                // CSV columns (exact order):
-                // [0] supplierId
-                // [1] orderDate (dd/MM/yyyy)
-                // [2] supplyDate (dd/MM/yyyy)
-                // [3] deliveringMethod
-                // [4] supplyMethod
-                // [5] totalPrice
-                // [6] products (semicolon-separated "productID:quantity")
                 String[] parts = line.split(",", -1);
                 if (parts.length < 7) continue;
 
-                int    supplierId       = Integer.parseInt(parts[0].trim());
-                String orderDate        = parts[1].trim();
-                String supplyDate       = parts[2].trim();
-                String deliveringMethod = parts[3].trim();
-                String supplyMethod     = parts[4].trim();
-                double totalPrice       = Double.parseDouble(parts[5].trim());
-                String productsList     = parts[6].trim();
-
-                // No CSV fields for phone_number, physical_address, email_address, contact_name
-                String phoneNumber      = "";
-                String physicalAddress  = "";
-                String emailAddress     = "";
-                String contactName      = "";
-                // Must match your OrderStatus enum:
-                String defaultOrderStatus = "IN_PROCESS";
-
-                // 3.A Insert into orders
-                psOrder.setInt   (1, nextOrderId);
-                psOrder.setInt   (2, supplierId);
-                psOrder.setString(3, phoneNumber);
-                psOrder.setString(4, physicalAddress);
-                psOrder.setString(5, emailAddress);
-                psOrder.setString(6, contactName);
-                psOrder.setString(7, deliveringMethod);
-                psOrder.setString(8, orderDate);
-                psOrder.setString(9, supplyDate);
-                psOrder.setDouble(10, totalPrice);
-                psOrder.setString(11, defaultOrderStatus);
-                psOrder.setString(12, supplyMethod);
+                psOrder.setInt(1, Integer.parseInt(parts[0].trim()));
+                psOrder.setString(2, "");
+                psOrder.setString(3, "");
+                psOrder.setString(4, "");
+                psOrder.setString(5, "");
+                psOrder.setString(6, parts[3].trim());
+                psOrder.setString(7, parts[1].trim());
+                psOrder.setString(8, parts[2].trim());
+                psOrder.setDouble(9, Double.parseDouble(parts[5].trim()));
+                psOrder.setString(10, "IN_PROCESS");
+                psOrder.setString(11, parts[4].trim());
                 psOrder.executeUpdate();
 
-                // 3.B Parse productsList (e.g. "1:4;16:2;7:4;16:2")
-                if (!productsList.isEmpty()) {
-                    String[] pairs = productsList.split(";");
-                    for (String pair : pairs) {
-                        String[] kv = pair.split(":", 2);
-                        if (kv.length < 2) continue;
-
-                        int productId   = Integer.parseInt(kv[0].trim());
-                        int quantity    = Integer.parseInt(kv[1].trim());
-                        double unitPrice = 0.0; // CSV does not supply item‐price
-
-                        psOrderProduct.setInt   (1, nextOrderId);
-                        psOrderProduct.setInt   (2, productId);
-                        psOrderProduct.setInt   (3, quantity);
-                        psOrderProduct.setDouble(4, unitPrice);
-                        psOrderProduct.executeUpdate();
-                    }
+                int orderId;
+                try (ResultSet keys = psOrder.getGeneratedKeys()) {
+                    if (keys.next()) orderId = keys.getInt(1);
+                    else throw new SQLException("Failed to retrieve generated order ID");
                 }
 
-                nextOrderId++;
+                String[] products = parts[6].split(";");
+                for (String pair : products) {
+                    String[] kv = pair.split(":", 2);
+                    if (kv.length != 2) continue;
+                    psProduct.setInt(1, orderId);
+                    psProduct.setInt(2, Integer.parseInt(kv[0].trim()));
+                    psProduct.setInt(3, Integer.parseInt(kv[1].trim()));
+                    psProduct.setDouble(4, 0.0); // no price in CSV
+                    psProduct.executeUpdate();
+                }
             }
-            System.out.println("Imported orders (and order_product_data) from " + csvPath);
+            System.out.println("Imported orders and order_product_data from " + csvPath);
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // 4) CONTRACTS + SUPPLY_CONTRACT_PRODUCT_DATA
-    // ────────────────────────────────────────────────────────────────────────────
     private static void importContracts(Connection conn, String csvPath) throws SQLException, IOException {
-        String insertContractSql = """
-            INSERT INTO supply_contracts (id, supplier_id)
-            VALUES (?, ?)
-        """;
-
-        String insertContractProductSql = """
+        String contractSql = "INSERT INTO supply_contracts (id, supplier_id) VALUES (?, ?)";
+        String productSql = """
             INSERT INTO supply_contract_product_data (
                 contract_id, product_id, product_price,
                 quantity_for_discount, discount_percentage
             ) VALUES (?, ?, ?, ?, ?)
         """;
 
-        try (PreparedStatement psContract        = conn.prepareStatement(insertContractSql);
-             PreparedStatement psContractProduct = conn.prepareStatement(insertContractProductSql);
-             BufferedReader reader               = new BufferedReader(new FileReader(csvPath))) {
+        try (PreparedStatement psContract = conn.prepareStatement(contractSql);
+             PreparedStatement psProduct = conn.prepareStatement(productSql);
+             BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
 
-            // Skip header
-            reader.readLine();
-
+            reader.readLine(); // skip header
             Set<Integer> seenContracts = new HashSet<>();
             String line;
             while ((line = reader.readLine()) != null) {
-                // CSV columns (exact order):
-                // [0] supplierID
-                // [1] productID
-                // [2] productPrice
-                // [3] quantityForDiscount
-                // [4] discountPercentage
-                // [5] contractID
                 String[] parts = line.split(",", -1);
                 if (parts.length < 6) continue;
 
-                int    supplierId       = Integer.parseInt(parts[0].trim());
-                int    productId        = Integer.parseInt(parts[1].trim());
-                double productPrice     = Double.parseDouble(parts[2].trim());
-                int    quantityForDisc  = Integer.parseInt(parts[3].trim());
-                double discountPct      = Double.parseDouble(parts[4].trim());
-                int    contractId       = Integer.parseInt(parts[5].trim());
+                int supplierId = Integer.parseInt(parts[0].trim());
+                int productId = Integer.parseInt(parts[1].trim());
+                double price = Double.parseDouble(parts[2].trim());
+                int qtyForDisc = Integer.parseInt(parts[3].trim());
+                double discountPct = Double.parseDouble(parts[4].trim());
+                int contractId = Integer.parseInt(parts[5].trim());
 
-                // 4.A Insert into supply_contracts once per contractId
                 if (!seenContracts.contains(contractId)) {
                     psContract.setInt(1, contractId);
                     psContract.setInt(2, supplierId);
@@ -348,22 +225,17 @@ public class CsvToDatabaseImporter {
                     seenContracts.add(contractId);
                 }
 
-                // 4.B Insert into supply_contract_product_data
-                psContractProduct.setInt   (1, contractId);
-                psContractProduct.setInt   (2, productId);
-                psContractProduct.setDouble(3, productPrice);
-                psContractProduct.setInt   (4, quantityForDisc);
-                psContractProduct.setDouble(5, discountPct);
-                psContractProduct.executeUpdate();
+                psProduct.setInt(1, contractId);
+                psProduct.setInt(2, productId);
+                psProduct.setDouble(3, price);
+                psProduct.setInt(4, qtyForDisc);
+                psProduct.setDouble(5, discountPct);
+                psProduct.executeUpdate();
             }
-            System.out.println("Imported contracts (and supply_contract_product_data) from " + csvPath);
+            System.out.println("Imported contracts and supply_contract_product_data from " + csvPath);
         }
     }
 
-    /**
-     * main() delegates to importAll() so you can run this class on its own:
-     *   java SuppliersModule.DataLayer.CsvToDatabaseImporter
-     */
     public static void main(String[] args) {
         try {
             importAll();

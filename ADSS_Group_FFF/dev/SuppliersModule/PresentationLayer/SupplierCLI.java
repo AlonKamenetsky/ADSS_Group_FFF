@@ -463,7 +463,6 @@ public class SupplierCLI {
     // ------------------- CLI print Functions -------------------
 
     public void printMenuOptions() {
-        System.out.println("0. Read data from files");
         System.out.println("1. Product section");
         System.out.println("2. Supplier section");
         System.out.println("3. Supplier contract section");
@@ -705,14 +704,6 @@ public class SupplierCLI {
             System.out.println("Please select an option: ");
             int userInput = readInt();
             switch (userInput) {
-                case 0:
-                    if(!dataRead) {
-//                        boolean success = serviceController.loadData();
-                        dataRead = true;
-                    }
-                    else
-                        System.out.println("Data already loaded.");
-                    break;
                 case 1:
                     printProductOptions();
                     userInput = readInt();

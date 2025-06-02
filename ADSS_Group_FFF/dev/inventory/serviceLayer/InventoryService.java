@@ -66,7 +66,8 @@ public class InventoryService implements InternalInventoryInterface {
     // ─────────────────────────────────────────────────────────────────
     // 3) Public getInstance(): Returns the singleton, instantiating via no-arg constructor if needed
     // ─────────────────────────────────────────────────────────────────
-    public static InventoryService getInstance() {
+    public static InventoryService getInstance()
+    {
         if (instance == null) {
             instance = new InventoryService();
         }
@@ -93,7 +94,8 @@ public class InventoryService implements InternalInventoryInterface {
         return getInstance();
     }
 
-    public static InternalInventoryInterface getInternalInterfaceInstance() {
+    public static InternalInventoryInterface getInternalInterfaceInstance()
+    {
         return getInstance();
     }
 
@@ -134,7 +136,8 @@ public class InventoryService implements InternalInventoryInterface {
     /**
      * Retrieve all categories.
      */
-    public List<Category> getAllCategories() {
+    public List<Category> getAllCategories()
+    {
         return categoryDAO.findAll();
     }
 
@@ -169,8 +172,9 @@ public class InventoryService implements InternalInventoryInterface {
         Category category = null;
         if (categoryName != null) {
             category = categoryDAO.findByName(categoryName);
-            if (category == null) {
-                throw new IllegalArgumentException("Category '" + categoryName + "' does not exist.");
+            if (category == null) { //if category doesnt exist it is added to db
+                Category c1 = new Category(categoryName,null);
+                categoryDAO.save(c1);
             }
         }
 

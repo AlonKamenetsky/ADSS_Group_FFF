@@ -57,7 +57,7 @@ public class InventoryCLI {
         System.out.println("4. Update Quantities");
         System.out.println("5. Mark Damaged");
         System.out.println("6. Generate Report");
-        System.out.println("7. Add New Item");
+        System.out.println("7. Add New Product");
         System.out.println("8. Add New Category");
         System.out.println("9. Exit");
         System.out.print("Choice: ");
@@ -138,7 +138,7 @@ public class InventoryCLI {
         }
 
         // 3) Let user pick one of these IDs
-        System.out.print("Enter the ID of the supplier product you want to add: ");
+        System.out.print("Enter the ID of the product you want to add: ");
         int chosenId;
         try {
             chosenId = Integer.parseInt(scanner.nextLine().trim());
@@ -160,10 +160,8 @@ public class InventoryCLI {
             return;
         }
 
-        // 5) Ask for category and verify
-        System.out.print("Enter category name for this product: ");
-        String categoryName = scanner.nextLine().trim();
-        Category category = service.getCategory(categoryName);
+        // 5) Set Category
+        Category category = new Category(chosenProduct.getProductCategory().toString(),null);
         if (category == null) {
             System.out.println("Category does not exist. Please add it first or choose an existing one.");
             return;
@@ -234,7 +232,7 @@ public class InventoryCLI {
                     purchasePrice,
                     salePrice,
                     ItemStatus.NORMAL,
-                    categoryName
+                    chosenProduct.getProductCategory().toString()
             );
             System.out.println("Product added to inventory.");
         } catch (IllegalArgumentException ex) {

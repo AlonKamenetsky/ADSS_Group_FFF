@@ -20,8 +20,9 @@ public class Main {
         // for example, calls SupplierCLI
         // supplierService.getInstance().CLI.run();
 
-        InventoryService inventoryService = InventoryService.getInstance();
         SupplierInterface serviceController = ServiceController.getInstance();
+        InventoryService inventoryService = InventoryService.getInstance();
+        inventoryService.setSupplierService(serviceController);
 
         System.out.println("testing main");
         System.out.print("Load sample data? PLEASE NOTE THAT CHOOSING YES MEANS DELETING ALL CURRENT DATA ON THE DATABASE (y/n): ");
