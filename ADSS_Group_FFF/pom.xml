@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+           http://maven.apache.org/POM/4.0.0
+           https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <!-- 1) “Umbrella”/aggregator POM for the entire ADSS_Group_FFF project.      -->
+    <!--    • Packaging = “pom” so this root POM itself produces no JAR.        -->
+    <!--    • It lists three child modules:                                      -->
+    <!--         – dev/inventory        (which already has its own pom.xml)      -->
+    <!--         – dev/SuppliersModule  (we’ll add a minimal pom.xml there)      -->
+    <!--         – dev/IntegrationInventoryAndSupplier (also needs a minimal pom)-->
+    <!--    • Because we do NOT put a <parent> reference INSIDE each child’s     -->
+    <!--      pom.xml, the child‐level poms remain fully unchanged.               -->
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>ADSS_Group_FFF</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>ADSS_Group_FFF (Root Project)</name>
+    <description>
+        Top-level aggregator POM.
+        - Declares JUnit 5 in dependencyManagement
+        - Aggregates the three modules under dev/
+        - Leaves each module’s own POM exactly as it is
+    </description>
+
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <!-- 2) List all sub-modules (relative to this root folder).                -->
+    <!--    These folders each must contain a valid pom.xml.                     -->
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <modules>
+        <!--
+          1) “dev/inventory” already has its own pom.xml and should be left intact.
+          2) “dev/SuppliersModule” needs a minimal pom.xml pasted in dev/SuppliersModule/pom.xml
+          3) “dev/IntegrationInventoryAndSupplier” needs a minimal pom.xml pasted in that folder too.
+        -->
+        <module>dev/inventory</module>
+        <module>dev/SuppliersModule</module>
+        <module>dev/IntegrationInventoryAndSupplier</module>
+    </modules>
+
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <!-- 3) Global properties (Java version + JUnit 5 version).                -->
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <properties>
+        <!--
+          Make sure your child modules (especially inventory/pom.xml) compile with the same Java level.
+          If you need Java 11 or Java 17, adjust here and in the child POMs accordingly.
+        -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- The JUnit 5 version that all modules will share, if they opt in. -->
+        <junit.jupiter.version>5.9.2</junit.jupiter.version>
+    </properties>
+
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <!-- 4) dependencyManagement block: declare JUnit 5 here so children don’t re-type the version. -->
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <!-- 5) Configure Surefire plugin (for JUnit 5) at top level so that “mvn test” runs JUnit5. -->
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M7</version>
+                    <configuration>
+                        <!-- default includes for JUnit 5 test classes -->
+                        <includes>
+                            <include>**/*Test.java</include>
+                            <include>**/*Tests.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

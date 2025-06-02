@@ -11,10 +11,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * CsvToDatabaseImporter (enhanced: also clears & rebuilds inventoryDatabase.db).
+ * CsvToDatabaseImporter (enhanced: also clears & rebuilds inventoryDatabase.db,
+ * then populates its first 10 InventoryProduct rows from products_data.csv).
  *
  * Workflow:
  *   0) Connect to inventoryDatabase.db, drop all user tables, commit, then run DDL to recreate.
+ *   0a) After DDL, insert the first 10 products from products_data.csv into (Category + InventoryProduct).
  *   1) Connect to SuppliersDatabase.db, setAutoCommit(false).
  *   2) DELETE all rows from each Suppliers table, then conn.commit().
  *   3) INSERT from Suppliers CSVs, then conn.commit().
@@ -38,7 +40,7 @@ public class CsvToDatabaseImporter {
 
     /**
      * Public entry point: First clears & rebuilds inventoryDatabase.db,
-     * then clears & re‐imports SuppliersDatabase.db from CSV.
+     * populates its first 10 products, then clears & re‐imports SuppliersDatabase.db from CSV.
      */
     public static void importAll() throws Exception {
         // ────────────────────────────────────────────────────────────────────────────
@@ -53,9 +55,14 @@ public class CsvToDatabaseImporter {
             System.out.println("Dropped all tables in inventoryDatabase.db");
 
             // Recreate tables by running DDL through DatabaseManager
-            // (Assumes DatabaseManager.getInstance().runDDL() exists and re‐runs your schema DDL.)
             DatabaseManager.getInstance().runDDL();
+            invConn.commit();
             System.out.println("Recreated all tables in inventoryDatabase.db");
+
+            // 0a) Insert the first 10 products (and their categories) from products_data.csv
+            populateFirstTenProducts(invConn, PRODUCTS_CSV);
+            invConn.commit();
+            System.out.println("Inserted first 10 products into inventoryDatabase.db");
         }
 
 
@@ -126,6 +133,82 @@ public class CsvToDatabaseImporter {
     }
 
     /**
+     * Reads the first ten data rows from products_data.csv and inserts them into:
+     *   1) Category (if not already present)
+     *   2) InventoryProduct
+     *
+     * Uses GENERATED dummy values for quantities/prices/status:
+     *   shelfQuantity = 10, backroomQuantity = 5, minThreshold = 3,
+     *   purchasePrice = 1.00, salePrice = 1.50, status = "OK".
+     *
+     * @param conn     An open Connection to inventoryDatabase.db (in autoCommit = false mode).
+     * @param csvPath  Path to the products_data.csv file.
+     */
+    private static void populateFirstTenProducts(Connection conn, String csvPath)
+            throws SQLException, IOException
+    {
+        // 1) Ensure we have a prepared statement for inserting into Category:
+        String insertCategorySql = "INSERT OR IGNORE INTO Category(name, parent_name) VALUES (?, NULL)";
+        PreparedStatement catStmt = conn.prepareStatement(insertCategorySql);
+
+        // 2) Prepare statement for inserting into InventoryProduct:
+        String insertProductSql = """
+            INSERT INTO InventoryProduct (
+                id, name, manufacturer,
+                shelfQuantity, backroomQuantity, minThreshold,
+                purchasePrice, salePrice, status, category_name
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+        PreparedStatement prodStmt = conn.prepareStatement(insertProductSql);
+
+        // 3) Read the CSV, skip header, insert first 10 lines
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
+            String header = reader.readLine(); // skip header
+            String line;
+            int count = 0;
+
+            while (count < 10 && (line = reader.readLine()) != null) {
+                String[] parts = line.split(",", -1);
+                if (parts.length < 3) {
+                    continue; // skip malformed lines
+                }
+
+                // CSV columns: [0] = productName, [1] = productCompanyName, [2] = productCategory
+                String name           = parts[0].trim();
+                String manufacturer   = parts[1].trim();
+                String categoryName   = parts[2].trim();
+
+                // Parse the CSV-ordered ID: we assume the CSV’s first data row corresponds to ID = 0,
+                // second row ID = 1, etc. (or change logic if IDs are actually stored explicitly).
+                // Here we simply use 'count' as the ID. If your CSV has explicit IDs, parse that instead.
+                int id = count;
+
+                // 3.A) Insert category (if not already present)
+                catStmt.setString(1, categoryName);
+                catStmt.executeUpdate();
+
+                // 3.B) Insert InventoryProduct with dummy values:
+                prodStmt.setInt    (1, id);
+                prodStmt.setString (2, name);
+                prodStmt.setString (3, manufacturer);
+                prodStmt.setInt    (4, 10);       // shelfQuantity
+                prodStmt.setInt    (5, 5);        // backroomQuantity
+                prodStmt.setInt    (6, 3);        // minThreshold
+                prodStmt.setDouble (7, 1.00);     // purchasePrice
+                prodStmt.setDouble (8, 1.50);     // salePrice
+                prodStmt.setString (9, "DAMAGED");     // status
+                prodStmt.setString (10, categoryName);
+                prodStmt.executeUpdate();
+
+                count++;
+            }
+        } finally {
+            catStmt.close();
+            prodStmt.close();
+        }
+    }
+
+    /**
      * Deletes all rows from each Suppliers‐related table, in dependency order.
      */
     private static void clearAllSuppliersTables(Connection conn) throws SQLException {
@@ -147,7 +230,7 @@ public class CsvToDatabaseImporter {
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    // 1) PRODUCTS
+    // 1) SUPPLIERS: PRODUCTS
     // ────────────────────────────────────────────────────────────────────────────
     private static void importProducts(Connection conn, String csvPath) throws SQLException, IOException {
         String insertProductSql = """
@@ -178,12 +261,12 @@ public class CsvToDatabaseImporter {
 
                 nextId++;
             }
-            System.out.println("Imported products from " + csvPath);
+            System.out.println("Imported suppliers’ products from " + csvPath);
         }
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    // 2) SUPPLIERS
+    // 2) SUPPLIERS: SUPPLIERS
     // ────────────────────────────────────────────────────────────────────────────
     private static void importSuppliers(Connection conn, String csvPath) throws SQLException, IOException {
         String insertSupplierSql = """
@@ -237,7 +320,7 @@ public class CsvToDatabaseImporter {
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    // 3) ORDERS + ORDER_PRODUCT_DATA
+    // 3) SUPPLIERS: ORDERS + ORDER_PRODUCT_DATA
     // ────────────────────────────────────────────────────────────────────────────
     private static void importOrdersAndOrderProductData(Connection conn, String csvPath) throws SQLException, IOException {
         String insertOrderSql = """
@@ -322,7 +405,7 @@ public class CsvToDatabaseImporter {
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    // 4) CONTRACTS + SUPPLY_CONTRACT_PRODUCT_DATA
+    // 4) SUPPLIERS: CONTRACTS + SUPPLY_CONTRACT_PRODUCT_DATA
     // ────────────────────────────────────────────────────────────────────────────
     private static void importContracts(Connection conn, String csvPath) throws SQLException, IOException {
         String insertContractSql = """

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>SuppliersModule</artifactId>
+    <packaging>jar</packaging>
+    <name>SuppliersModule</name>
+    <!--
+      You do NOT need a <parent> tag here.
+      This minimal POM simply tells Maven, “Yes, I’m a module, build me.”
+    -->
+    <dependencies>
+        <!-- If you ever write JUnit tests in SuppliersModule, add:
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <scope>test</scope>
+        </dependency>
+        -->
+        <!-- …and any other external dependencies SuppliersModule needs. -->
+    </dependencies>
+</project>
