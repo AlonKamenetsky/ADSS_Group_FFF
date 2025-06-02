@@ -23,6 +23,7 @@ import HR.Mapper.ShiftTemplateMapper;
 import HR.Mapper.WeeklyShiftsScheduleMapper;
 import Util.Database;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -276,5 +277,10 @@ public class ShiftService {
                 .map(ShiftMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    public String getShiftIdByDateAndTime(Date date, String time) {
+        return shiftDAO.getShiftIdByDateAndTime(date, time);
+    }
+
 }
 
