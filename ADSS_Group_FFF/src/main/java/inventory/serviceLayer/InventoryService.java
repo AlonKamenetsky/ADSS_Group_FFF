@@ -191,6 +191,7 @@ public class InventoryService implements InternalInventoryInterface {
                 category
         );
         productDAO.save(product);
+        checkAndReorderLowStockItems();
     }
 
     /**
@@ -394,13 +395,13 @@ public class InventoryService implements InternalInventoryInterface {
         for (InventoryProduct product : allProducts) {
             int totalQty = product.getShelfQuantity() + product.getBackroomQuantity();
             if (totalQty < product.getMinThreshold()) {
-                int reorderAmount = // e.g. twice the minThreshold minus current
-                        product.getMinThreshold() * 2 - totalQty;
-                supplierInterface.placeUrgentOrderSingleProduct(product.getId(), reorderAmount);
+                supplierInterface.placeUrgentOrderSingleProduct(product.getId(), lowStockOrderLogic(product));
             }
         }
     }
 
+    private int lowStockOrderLogic(InventoryProduct p)
+    {return p.getMinThreshold()*3;}
 
     public void setSupplierService(SupplierInterface supplierInterface) {
         this.supplierInterface = supplierInterface;
@@ -522,22 +523,7 @@ public class InventoryService implements InternalInventoryInterface {
 
         // 3) Persist the updated quantities
         productDAO.update(product);
-
-        // 4) If either delta was negative (i.e. a “sale” of some kind), check to reorder
-        if (shelfDelta < 0 || backroomDelta < 0) {
-            // We can either reorder if final total < minThreshold,
-            // or just call checkAndReorderLowStockItems() which iterates everything.
-            int totalQty = newShelf + newBackroom;
-            if (totalQty < product.getMinThreshold()) {
-                // Place an urgent order only for this single product:
-                if (supplierInterface != null) {
-                    int reorderAmount = product.getMinThreshold() * 2 - totalQty;
-                    supplierInterface.placeUrgentOrderSingleProduct(product.getId(), reorderAmount);
-                }
-            }
-            // If you prefer to check *every* product in one pass, you can still do:
-            //     checkAndReorderLowStockItems();
-        }
+        checkAndReorderLowStockItems();
     }
 
     /**

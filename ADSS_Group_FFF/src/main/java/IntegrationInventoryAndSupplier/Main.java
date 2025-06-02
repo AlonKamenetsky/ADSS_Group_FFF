@@ -41,8 +41,9 @@ public class Main {
         }
 
         while(true) {
+
             System.out.println("Do you wanna log in as inventory or supplier? (i/s)");
-            String ans = scanner.nextLine().trim();
+             String ans = scanner.nextLine().trim();
             if (ans.equalsIgnoreCase("i")) {
                 InventoryCLI inventoryCLI = new InventoryCLI();
                 System.out.println("Logging in as inventory");

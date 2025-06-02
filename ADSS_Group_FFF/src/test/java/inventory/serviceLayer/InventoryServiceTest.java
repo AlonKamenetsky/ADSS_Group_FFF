@@ -1,16 +1,11 @@
-package inventory;
+package inventory.serviceLayer;
 
 import inventory.domainLayer.*;
-import inventory.serviceLayer.InventoryService;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 import org.junit.jupiter.api.BeforeEach;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 
 
 public class InventoryServiceTest {

@@ -377,7 +377,7 @@ public class SupplierCLI {
         System.out.println("Enter order status: ");
         int status = readInt();
 
-        HashMap<Integer, Integer> map = serviceController.updateOrderStatus(orderID, status);
+        HashMap<Integer, Integer> map = serviceController.  updateOrderStatus(orderID, status);
         if (map != null)
             System.out.println("Order items retrived!");
     }
