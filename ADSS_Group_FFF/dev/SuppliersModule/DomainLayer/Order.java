@@ -6,12 +6,10 @@ import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 public class Order {
@@ -27,13 +25,25 @@ public class Order {
 
     SupplyMethod supplyMethod;
 
-    ArrayList<OrderProductData> productArrayList; // [ProductID, Product_Amount
+    ArrayList<OrderProductData> productArrayList;
 
     OrderStatus orderStatus;
 
     OrderDTO orderDTO;
 
-    public Order(int orderID, int supplierID, ArrayList<OrderProductData> dataList, double totalOrderValue, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+    // -------------------------------------------------------------------------
+    // Constructor used when creating a brand‐new Order
+    // -------------------------------------------------------------------------
+    public Order(int orderID,
+                 int supplierID,
+                 ArrayList<OrderProductData> dataList,
+                 double totalOrderValue,
+                 Date creationDate,
+                 Date deliveryDate,
+                 DeliveringMethod deliveringMethod,
+                 SupplyMethod supplyMethod,
+                 ContactInfo supplierContactInfo) {
+
         this.orderID = orderID;
         this.supplierID = supplierID;
         this.supplierContactInfo = supplierContactInfo;
@@ -45,41 +55,46 @@ public class Order {
         this.supplyMethod = supplyMethod;
         this.orderStatus = OrderStatus.IN_PROCESS;
 
-        this.orderDTO = new OrderDTO(orderID, supplierID, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name,
-                                        deliveringMethod.toString(), orderDate.toString(), deliveryDate.toString(), totalPrice ,orderStatus.toString(), supplyMethod.toString());
-    }
-
-    private Date ParaseDate(String date) {
-        DateTimeFormatter baseFmt =
-                DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", java.util.Locale.ENGLISH);
-
-        LocalDateTime ldt = LocalDateTime.parse(
-                date.replace(" IDT", ""),   // "Mon Jun 02 04:22:43 2025"
-                baseFmt
+        // Build the DTO by converting these fields back into Strings.
+        // Note: Date.toString() will produce something like "Mon Jun 02 00:00:00 IDT 2025",
+        // but when the DTO is saved to the DB (via your importer) you will store "dd/MM/yyyy" instead.
+        this.orderDTO = new OrderDTO(
+                orderID,
+                supplierID,
+                supplierContactInfo.phoneNumber,
+                supplierContactInfo.address,
+                supplierContactInfo.email,
+                supplierContactInfo.name,
+                deliveringMethod.toString(),
+                // We’ll convert these Dates into "dd/MM/yyyy":
+                formatDate(orderDate),
+                formatDate(supplyDate),
+                totalPrice,
+                orderStatus.toString(),
+                supplyMethod.toString()
         );
-
-        /* 2. Re-attach the real zone you want (Israel) */
-        ZoneId israel = ZoneId.of("Asia/Jerusalem");          // or ZoneId.systemDefault()
-        ZonedDateTime zdt = ldt.atZone(israel);
-
-        /* 3. Convert to legacy java.util.Date if you must */
-        Date result = Date.from(zdt.toInstant());
-
-        return result;
     }
 
+    // -------------------------------------------------------------------------
+    // Constructor used when reading an existing OrderDTO from the database
+    // -------------------------------------------------------------------------
     public Order(OrderDTO orderDTO) {
         this.orderID = orderDTO.orderID;
         this.supplierID = orderDTO.supplierID;
 
-        ContactInfo contactInfo = new ContactInfo(orderDTO.phoneNumber, orderDTO.physicalAddress, orderDTO.emailAddress, orderDTO.contactName);
+        ContactInfo contactInfo = new ContactInfo(
+                orderDTO.phoneNumber,
+                orderDTO.physicalAddress,
+                orderDTO.emailAddress,
+                orderDTO.contactName
+        );
         this.supplierContactInfo = contactInfo;
 
         this.deliveringMethod = DeliveringMethod.valueOf(orderDTO.deliveryMethod);
 
-        this.orderDate = this.ParaseDate(orderDTO.orderDate);
-
-        this.supplyDate = this.ParaseDate(orderDTO.deliveryDate);
+        // Now parse the "dd/MM/yyyy" strings back into Date
+        this.orderDate = ParaseDate(orderDTO.orderDate);
+        this.supplyDate = ParaseDate(orderDTO.deliveryDate);
 
         this.totalPrice = orderDTO.totalPrice;
 
@@ -92,41 +107,57 @@ public class Order {
         this.orderDTO = orderDTO;
     }
 
+    // -------------------------------------------------------------------------
+    // 1) Helper to format a java.util.Date into "dd/MM/yyyy"
+    //    (used when building a new OrderDTO)
+    // -------------------------------------------------------------------------
+    private static String formatDate(Date date) {
+        // Convert java.util.Date → LocalDate at system default zone,
+        // then format as "dd/MM/yyyy".
+        LocalDate ld = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return ld.format(fmt);
+    }
+
+    // -------------------------------------------------------------------------
+    // 2) Parse a "dd/MM/yyyy" string into java.util.Date at midnight Asia/Jerusalem
+    // -------------------------------------------------------------------------
+    private Date ParaseDate(String date) {
+        // date is expected to be "dd/MM/yyyy", e.g. "07/04/2025".
+        DateTimeFormatter dmy = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate ld = LocalDate.parse(date, dmy);
+
+        // Attach Israel time‐zone at start of day:
+        ZoneId israel = ZoneId.of("Asia/Jerusalem");
+        ZonedDateTime zdt = ld.atStartOfDay(israel);
+        return Date.from(zdt.toInstant());
+    }
+
+    // -------------------------------------------------------------------------
+    // Getters / Setters
+    // -------------------------------------------------------------------------
     public int getOrderID() { return orderID; }
-    public int getSupplierID(){
-        return supplierID;
-    }
-    public ContactInfo getOrderContactInfo() {
-        return supplierContactInfo;
-    }
-    public Date getOrderDate() {
-        return orderDate;
-    }
-    public Date getSupplyDate() {
-        return supplyDate;
-    }
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-    public SupplyMethod getSupplyMethod() {
-        return supplyMethod;
-    }
-    public ArrayList<OrderProductData> getProductArrayList() {
-        return productArrayList;
-    }
+    public int getSupplierID() { return supplierID; }
+    public ContactInfo getOrderContactInfo() { return supplierContactInfo; }
+    public Date getOrderDate() { return orderDate; }
+    public Date getSupplyDate() { return supplyDate; }
+    public double getTotalPrice() { return totalPrice; }
+    public SupplyMethod getSupplyMethod() { return supplyMethod; }
+    public ArrayList<OrderProductData> getProductArrayList() { return productArrayList; }
+    public OrderStatus getOrderStatus() { return orderStatus; }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setProductArrayList(ArrayList<OrderProductData> productArrayList){
+    public void setProductArrayList(ArrayList<OrderProductData> productArrayList) {
         this.productArrayList = productArrayList;
     }
-    public void addOrderProductData(OrderProductData orderProductData){
-        if (productArrayList == null)
+    public void addOrderProductData(OrderProductData orderProductData) {
+        if (productArrayList == null) {
             productArrayList = new ArrayList<>();
+        }
         this.productArrayList.add(orderProductData);
     }
+
     public void setSupplierContactInfo(ContactInfo supplierContactInfo) {
         this.supplierContactInfo = supplierContactInfo;
         this.orderDTO.phoneNumber = supplierContactInfo.phoneNumber;
@@ -134,22 +165,27 @@ public class Order {
         this.orderDTO.emailAddress = supplierContactInfo.email;
         this.orderDTO.contactName = supplierContactInfo.name;
     }
+
     public void setSupplyMethod(SupplyMethod supplyMethod) {
         this.supplyMethod = supplyMethod;
         this.orderDTO.supplyMethod = supplyMethod.toString();
     }
+
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
-        this.orderDTO.orderDate = orderDate.toString();
+        this.orderDTO.orderDate = formatDate(orderDate);
     }
+
     public void setSupplyDate(Date supplyDate) {
         this.supplyDate = supplyDate;
-        this.orderDTO.deliveryDate = supplyDate.toString();
+        this.orderDTO.deliveryDate = formatDate(supplyDate);
     }
+
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
         this.orderDTO.totalPrice = totalPrice;
     }
+
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
         this.orderDTO.orderStatus = orderStatus.toString();
@@ -169,7 +205,7 @@ public class Order {
         sb.append("  Order Status: ").append(orderStatus).append("\n");
         sb.append("  Products:\n");
         for (OrderProductData productData : productArrayList) {
-            sb.append(productData);
+            sb.append("    ").append(productData).append("\n");
         }
         sb.append("}");
         return sb.toString();

@@ -5,14 +5,14 @@ import java.util.*;
 import SuppliersModule.ServiceLayer.ServiceController;
 
 
-public class CLI {
+public class SupplierCLI {
     ServiceController serviceController;
     Scanner sc;
    boolean dataRead;
 
-    public CLI() {
+    public SupplierCLI() {
         this.sc = new Scanner(System.in);
-        this.serviceController = new ServiceController();
+        this.serviceController = ServiceController.getInstance();
         dataRead = false;
     }
 
@@ -707,6 +707,7 @@ public class CLI {
             switch (userInput) {
                 case 0:
                     if(!dataRead) {
+//                        boolean success = serviceController.loadData();
                         dataRead = true;
                     }
                     else
@@ -733,7 +734,7 @@ public class CLI {
                     chooseOrderOption(userInput);
                     break;
                 case 5:
-                    System.out.println("Bye Bye!");
+                    System.out.println("Logging out Supplier returning to main menu");
                     System.exit(0);
                 default:
                     System.out.println("Invalid option, please choose again");

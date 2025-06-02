@@ -2,6 +2,7 @@ package SuppliersModule.ServiceLayer;
 
 import IntegrationInventoryAndSupplier.MutualProduct;
 import IntegrationInventoryAndSupplier.SupplierInterface;
+import SuppliersModule.DataLayer.DbController;
 import SuppliersModule.DomainLayer.Enums.*;
 import inventory.serviceLayer.InventoryService;
 
@@ -296,5 +297,7 @@ public class ServiceController implements SupplierInterface {
     public String[] getAllScheduledOrdersAsString() {
         return this.supplierService.getAllScheduledOrdersAsString();
     }
-
+//    public boolean loadData(){
+//        return DbController.loadDate();
+//    }
 }

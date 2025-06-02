@@ -21,7 +21,7 @@ public final class Database {
             try (Statement stmt = conn.createStatement()) {
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS products (
-                                id INTEGER PRIMARY KEY,
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 name TEXT NOT NULL,
                                 company_name TEXT,
                                 producs_category TEXT
@@ -31,7 +31,7 @@ public final class Database {
                 // Create orders table
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS orders (
-                                id INTEGER PRIMARY KEY,
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 supplier_id INTEGER NOT NULL,
                                 delivering_method TEXT NOT NULL,
                                 order_date TEXT NOT NULL,
@@ -58,7 +58,7 @@ public final class Database {
                         """);
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS suppliers (
-                                id INTEGER PRIMARY KEY,
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 name TEXT NOT NULL,
                                 product_category TEXT NOT NULL,
                                 delivering_method TEXT NOT NULL,

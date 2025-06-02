@@ -11,19 +11,19 @@ public class InventoryCLI {
     private final InventoryService service;
     private final Scanner scanner = new Scanner(System.in);
 
-    public InventoryCLI(InventoryService service) {
-        this.service = service;
+    public InventoryCLI() {
+        this.service = InventoryService.getInstance();
     }
 
     public void run() {
         System.out.println("=== Welcome to Inventory CLI ===");
 
         // One-time sample data load prompt
-        System.out.print("Load sample data? (y/n): ");
-        if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
-//            AppInitializer.loadSampleData(service);
-            System.out.println("Sample data loaded.");
-        }
+//        System.out.print("Load sample data? (y/n): ");
+//        if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
+////            AppInitializer.loadSampleData(service);
+//            System.out.println("Sample data loaded.");
+//        }
 
         boolean exit = false;
         while (!exit) {
@@ -44,8 +44,8 @@ public class InventoryCLI {
                 default -> System.out.println("Invalid option.");
             }
         }
+        System.out.println("Logging out Inventory returning to main menu");
 
-        System.out.println("Goodbye!");
     }
 
 
