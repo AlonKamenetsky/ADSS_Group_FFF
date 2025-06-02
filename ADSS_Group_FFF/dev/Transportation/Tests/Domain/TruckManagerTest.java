@@ -2,13 +2,17 @@ package Transportation.Tests.Domain;
 
 import Transportation.Domain.TruckManager;
 import Transportation.DTO.TruckDTO;
+import org.junit.jupiter.api.TestInstance;
 import Transportation.Domain.Repositories.TruckRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import javax.management.InstanceAlreadyExistsException;
 import java.util.List;
@@ -18,6 +22,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExtendWith(MockitoExtension.class)
 public class TruckManagerTest {
 
@@ -31,6 +37,7 @@ public class TruckManagerTest {
 
     @BeforeEach
     void setup() {
+        Mockito.reset(repository);
         truckDTO = new TruckDTO(1, "Medium", "123-ABC", "Volvo", 3000, 8000, true);
     }
 
@@ -47,9 +54,7 @@ public class TruckManagerTest {
     void addTruck_alreadyExists_throwsException() throws Exception {
         when(repository.findTruckByLicense("123-ABC")).thenReturn(Optional.of(truckDTO));
 
-        assertThrows(InstanceAlreadyExistsException.class, () -> {
-            manager.addTruck("Medium", "123-ABC", "Volvo", 3000, 8000);
-        });
+        assertThrows(InstanceAlreadyExistsException.class, () -> manager.addTruck("Medium", "123-ABC", "Volvo", 3000, 8000));
     }
 
     @Test
@@ -116,8 +121,7 @@ public class TruckManagerTest {
 
     @Test
     void getTruckIdByLicense_notFound_throws() throws Exception {
-        when(repository.findTruckByLicense("123-ABC")).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () -> manager.getTruckIdByLicense("123-ABC"));
+        when(repository.findTruckByLicense("123-ABB")).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> manager.getTruckIdByLicense("123-ABB"));
     }
 }

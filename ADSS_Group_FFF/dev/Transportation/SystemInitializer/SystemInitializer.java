@@ -50,6 +50,6 @@ public class SystemInitializer {
         }
 
         // === Transportation Menu ===
-        return new TransportationMenu( truckService, taskService, zoneService, siteService, siteZoneService, itemService);
+        return new TransportationMenu(truckService, taskService, zoneService, siteService, siteZoneService, itemService);
     }
 }

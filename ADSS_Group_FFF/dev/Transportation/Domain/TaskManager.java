@@ -13,7 +13,6 @@ import java.util.*;
 
 public class TaskManager {
     private final SiteManager siteManager;
-    private final DriverManager driverManager;
     private final TruckManager truckManager;
     private final ItemManager itemManager;
     private final TransportationDocRepository docRepository;
@@ -25,16 +24,14 @@ public class TaskManager {
         taskRepository = new TransportationTaskRepositoryImpli(new SiteRepositoryImpli());
         itemManager = new ItemManager();
         siteManager = new SiteManager();
-        driverManager = new DriverManager();
         truckManager = new TruckManager();
         this.employeeProvider = employeeProvider;
     }
 
-    public TaskManager(TransportationDocRepository docRepo, TransportationTaskRepository taskRepo, SiteManager siteManager, DriverManager driverManager, TruckManager truckManager, ItemManager itemManager, EmployeeProvider employeeProvider) {
+    public TaskManager(TransportationDocRepository docRepo, TransportationTaskRepository taskRepo, SiteManager siteManager, TruckManager truckManager, ItemManager itemManager, EmployeeProvider employeeProvider) {
         this.docRepository = docRepo;
         this.taskRepository = taskRepo;
         this.siteManager = siteManager;
-        this.driverManager = driverManager;
         this.truckManager = truckManager;
         this.itemManager = itemManager;
         this.employeeProvider = employeeProvider;
@@ -116,17 +113,18 @@ public class TaskManager {
             }
 
             // assign warehouse worker
-//            boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
-//
-//            if (!availableWarehouseWorker) {
-//                throw new NoSuchElementException();
-//            }
+            boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
+
+            if (!availableWarehouseWorker) {
+                throw new NoSuchElementException();
+            }
 
             // All good → assign
-            taskRepository.assignDriverToTask(task.get().taskId(), availableDrivers.getFirst().getId());
+            Employee driverToAssign = availableDrivers.get(0);
+            taskRepository.assignDriverToTask(task.get().taskId(), driverToAssign.getId());
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
-            // add availability setter for driver to false
+            employeeProvider.setAvailabilityDriver(driverToAssign, false);
             return true;
         } else {
             throw new NoSuchElementException();

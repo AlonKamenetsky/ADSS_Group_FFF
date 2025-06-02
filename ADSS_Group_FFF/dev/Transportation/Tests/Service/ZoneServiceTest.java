@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -32,7 +31,7 @@ class ZoneServiceTest {
 
     @Test
     void addZone_Success() throws Exception {
-        doNothing().when(zoneManager).addZone("north");
+        when(zoneManager.addZone("north")).thenReturn(new ZoneDTO(1, "North", null));
         zoneService.AddZone("north");
         verify(zoneManager).addZone("north");
     }
@@ -59,9 +58,9 @@ class ZoneServiceTest {
 
     @Test
     void updateZone_Success() throws Exception {
-        ZoneDTO mockZone = new ZoneDTO(1, "old", new ArrayList<>(Arrays.asList("site1")));
+        ZoneDTO mockZone = new ZoneDTO(1, "old", new ArrayList<>(List.of("site1")));
         when(zoneManager.findZoneByName("old")).thenReturn(Optional.of(mockZone));
-        ZoneDTO updated = new ZoneDTO(1, "new",new ArrayList<>(Arrays.asList("site1")));
+        ZoneDTO updated = new ZoneDTO(1, "new",new ArrayList<>(List.of("site1")));
         when(zoneManager.modifyZone(updated)).thenReturn(updated);
 
         ZoneDTO result = zoneService.UpdateZone("old", "new");
@@ -80,4 +79,3 @@ class ZoneServiceTest {
         assertTrue(zoneService.viewAllZones().isEmpty());
     }
 }
-

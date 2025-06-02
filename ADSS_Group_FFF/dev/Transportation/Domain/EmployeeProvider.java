@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface EmployeeProvider {
     List<Employee> findAvailableDrivers(String licenseType, Date date, Shift.ShiftTime shiftTime);
-    //boolean findAvailableWarehouseWorkers(Date date, Shift.ShiftTime shiftTime);
+    boolean findAvailableWarehouseWorkers(Date date, Shift.ShiftTime shiftTime);
+    void setAvailabilityDriver(Employee emp, boolean status);
 }

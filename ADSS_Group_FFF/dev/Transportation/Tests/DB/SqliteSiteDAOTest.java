@@ -4,6 +4,7 @@ import Transportation.DataAccess.SqliteSiteDAO;
 import Transportation.DTO.SiteDTO;
 import Util.Database;
 import org.junit.jupiter.api.*;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,17 +26,19 @@ public class SqliteSiteDAOTest {
         Connection conn = Database.getConnection();
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("DROP TABLE IF EXISTS sites");
-            stmt.execute("stmt.execute(\n" +
-                    "    \"CREATE TABLE sites (\" +\n" +
-                    "    \"site_id INTEGER PRIMARY KEY AUTOINCREMENT, \" +\n" +
-                    "    \"address TEXT NOT NULL, \" +\n" +
-                    "    \"contact_name TEXT NOT NULL, \" +\n" +
-                    "    \"phone_number TEXT NOT NULL, \" +\n" +
-                    "    \"zone_id INTEGER NOT NULL)\"\n" +
-                    ");");
+            stmt.execute("""
+            CREATE TABLE sites (
+                site_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                address TEXT NOT NULL,
+                contact_name TEXT NOT NULL,
+                phone_number TEXT NOT NULL,
+                zone_id INTEGER NOT NULL
+            )
+        """);
         }
         siteDAO = new SqliteSiteDAO();
     }
+
 
     @BeforeEach
     void resetTable() throws SQLException {
@@ -96,4 +99,3 @@ public class SqliteSiteDAOTest {
         }
     }
 }
-

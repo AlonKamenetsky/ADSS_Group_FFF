@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.NoSuchElementException;

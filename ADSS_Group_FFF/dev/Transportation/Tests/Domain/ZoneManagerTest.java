@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -47,11 +48,8 @@ public class ZoneManagerTest {
                 .thenReturn(Optional.of(new ZoneDTO(99, zoneName,null)));
 
         // act & assert
-        Exception ex = assertThrows(Exception.class, () -> {
-            zoneManager.addZone(zoneName);
-        });
+        assertThrows(InstanceAlreadyExistsException.class, () -> zoneManager.addZone(zoneName));
 
-        assertEquals("Zone already exists", ex.getMessage());
         verify(zoneRepository, never()).addZone(anyString());
     }
 }

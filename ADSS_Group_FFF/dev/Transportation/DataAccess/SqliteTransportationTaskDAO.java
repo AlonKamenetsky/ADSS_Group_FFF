@@ -37,7 +37,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
 
     @Override
     public void delete(int taskId) throws SQLException {
-        String sql = "DELETE FROM transportation_tasks WHERE taskId = ?";
+        String sql = "DELETE FROM transportation_tasks WHERE task_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, taskId);
             ps.executeUpdate();

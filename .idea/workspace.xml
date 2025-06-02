@@ -10,30 +10,63 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="added tempItemsList &amp; tempitemList in itemRepoImpli">
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/DriverInfoDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/EmployeeDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/RoleDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftAssignmentDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftTemplateDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/SwapRequestDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/UserDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/WeeklyAvailabilityDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/WeeklyShiftsScheduleDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/DriverInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/EmployeeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/RoleMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/ShiftAssignmentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/ShiftMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/ShiftTemplateMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/SwapRequestMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/UserMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/WeeklyAvailabilityMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/WeeklyShiftsScheduleMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteItemDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteTruckDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/ZoneServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/SwapDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/SwapDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/DriverInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Domain/DriverInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/DriverMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/DriverMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/EmployeeInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/EmployeeInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/HRInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/HRInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/LoginScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/LoginScreen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/RoleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteTransportationTaskDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteTransportationTaskDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteTruckDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteTruckDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/DocItemsInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/EmployeeProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/EmployeeProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/LicenseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/LicenseMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/LicenseType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TaskManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TaskManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/DriverService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/HREmployeeAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/HREmployeeAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/SystemInitializer/SystemInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/SystemInitializer/SystemInitializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteSiteDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteSiteDAOTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteTaskDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/DB/SqliteTaskDAOTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/SiteManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/SiteManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/SiteZoneManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/SiteZoneManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/TaskManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/TaskManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/TruckManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/TruckManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/ZoneManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Domain/ZoneManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/ItemServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/ItemServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/SiteServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/SiteServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/TruckServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/TruckServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Tests/Service/ZoneSeriveTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeeDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeeDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/EmployeesRepo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RoleDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RoleDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/RolesRepo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftAssignmentDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftAssignmentDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/ShiftDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/DataAccess/SwapDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Employee.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Role.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Shift$ShiftTime.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/Shift.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/ShiftAssignment.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/SwapRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/User.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/HR/Domain/WeeklyAvailability.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ADSS_Group_FFF/META-INF/MANIFEST.MF" beforeDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <option name="SHOW_DIALOG" value="false" />
@@ -64,8 +97,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/AlonKamenetsky/ADSS_Group_FFF&quot;,
-    &quot;accountId&quot;: &quot;bc718521-e57e-4e94-9b11-1267093979ac&quot;
+    &quot;url&quot;: &quot;https://github.com/AlonKamenetsky/ADSS_Group_FFF.git&quot;,
+    &quot;accountId&quot;: &quot;126e6967-9d0b-4d68-ac10-c3440b0ce3ab&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -99,6 +132,7 @@
     &quot;JUnit.TaskManagerTest.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.TaskManagerTest.testAddTask_NoSite_ThrowsException.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.TaskManagerTest.testAddTask_Success.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.TruckManagerTest.addTruck_success.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.TruckManagerTest.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.Unnamed.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.ZoneManagerTest (1).executor&quot;: &quot;Run&quot;,
@@ -133,7 +167,7 @@
       <recent name="C:\Users\lidor\IdeaProjects\TransportationModule\ADSS_Group_FFF\dev\HR" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.SqliteZoneDAOTest.findById_ReturnsZone">
+  <component name="RunManager" selected="JUnit.SqliteSiteDAOTest">
     <configuration name="SqliteSiteDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ADSS_Group_FFF" />
       <extension name="coverage">
@@ -160,6 +194,22 @@
       <option name="PACKAGE_NAME" value="Transportation.Tests.DB" />
       <option name="MAIN_CLASS_NAME" value="Transportation.Tests.DB.SqliteZoneDAOTest" />
       <option name="METHOD_NAME" value="findById_ReturnsZone" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TruckManagerTest.addTruck_success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Transportation.Tests.Domain.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Transportation.Tests.Domain" />
+      <option name="MAIN_CLASS_NAME" value="Transportation.Tests.Domain.TruckManagerTest" />
+      <option name="METHOD_NAME" value="addTruck_success" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -197,18 +247,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.TruckManagerTest.addTruck_success" />
         <item itemvalue="JUnit.SqliteZoneDAOTest.findById_ReturnsZone" />
         <item itemvalue="JUnit.SqliteSiteDAOTest" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

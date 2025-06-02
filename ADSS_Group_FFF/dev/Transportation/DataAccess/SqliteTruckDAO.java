@@ -56,7 +56,7 @@ public class SqliteTruckDAO implements TruckDAO {
 
     @Override
     public void setAvailability(int truckId, boolean status) throws SQLException{
-        String sql = "UPDATE trucks SET is_free = ? WHERE truckId = ?";
+        String sql = "UPDATE trucks SET is_free = ? WHERE truck_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setBoolean(1, status);
             ps.setInt(2, truckId);
