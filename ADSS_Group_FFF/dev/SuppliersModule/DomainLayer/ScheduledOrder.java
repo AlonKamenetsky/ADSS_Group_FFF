@@ -1,7 +1,10 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.ScheduledOrderDataDTO;
+import SuppliersModule.DataLayer.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.WeekDay;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +22,7 @@ public class ScheduledOrder {
 
         this.productsData = new HashSet<>();
         this.productsData.addAll(productsData);
+
     }
 
     public ScheduledOrder(int supplierID, WeekDay day) {
@@ -54,6 +58,19 @@ public class ScheduledOrder {
     }
 
     public void addProductsData(Set<OrderProductData> productsData) {
+
         this.productsData.addAll(productsData);
+    }
+
+    public void Insert() {
+        for (OrderProductData odp : productsData) {
+            ScheduledOrderDataDTO scheduledOrderDataDTO = new ScheduledOrderDataDTO(supplierID, day.toString(), odp.getProductID(), odp.getProductQuantity());
+            scheduledOrderDataDTO.Insert();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Day:" + this.day + " Products: " + this.productsData.toString();
     }
 }

@@ -6,7 +6,9 @@ import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +49,25 @@ public class Order {
                                         deliveringMethod.toString(), orderDate.toString(), deliveryDate.toString(), totalPrice ,orderStatus.toString(), supplyMethod.toString());
     }
 
+    private Date ParaseDate(String date) {
+        DateTimeFormatter baseFmt =
+                DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", java.util.Locale.ENGLISH);
+
+        LocalDateTime ldt = LocalDateTime.parse(
+                date.replace(" IDT", ""),   // "Mon Jun 02 04:22:43 2025"
+                baseFmt
+        );
+
+        /* 2. Re-attach the real zone you want (Israel) */
+        ZoneId israel = ZoneId.of("Asia/Jerusalem");          // or ZoneId.systemDefault()
+        ZonedDateTime zdt = ldt.atZone(israel);
+
+        /* 3. Convert to legacy java.util.Date if you must */
+        Date result = Date.from(zdt.toInstant());
+
+        return result;
+    }
+
     public Order(OrderDTO orderDTO) {
         this.orderID = orderDTO.orderID;
         this.supplierID = orderDTO.supplierID;
@@ -56,11 +77,9 @@ public class Order {
 
         this.deliveringMethod = DeliveringMethod.valueOf(orderDTO.deliveryMethod);
 
-        LocalDate localDate = LocalDate.parse(orderDTO.orderDate, DateTimeFormatter.ISO_LOCAL_DATE);
-        this.orderDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        this.orderDate = this.ParaseDate(orderDTO.orderDate);
 
-        localDate = LocalDate.parse(orderDTO.deliveryDate, DateTimeFormatter.ISO_LOCAL_DATE);
-        this.supplyDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());;
+        this.supplyDate = this.ParaseDate(orderDTO.deliveryDate);
 
         this.totalPrice = orderDTO.totalPrice;
 
@@ -73,8 +92,9 @@ public class Order {
         this.orderDTO = orderDTO;
     }
 
+    public int getOrderID() { return orderID; }
     public int getSupplierID(){
-        return orderID;
+        return supplierID;
     }
     public ContactInfo getOrderContactInfo() {
         return supplierContactInfo;
@@ -94,10 +114,17 @@ public class Order {
     public ArrayList<OrderProductData> getProductArrayList() {
         return productArrayList;
     }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
     public void setProductArrayList(ArrayList<OrderProductData> productArrayList){
         this.productArrayList = productArrayList;
     }
     public void addOrderProductData(OrderProductData orderProductData){
+        if (productArrayList == null)
+            productArrayList = new ArrayList<>();
         this.productArrayList.add(orderProductData);
     }
     public void setSupplierContactInfo(ContactInfo supplierContactInfo) {
@@ -139,6 +166,7 @@ public class Order {
         sb.append("  Supply Date: ").append(supplyDate).append("\n");
         sb.append("  Supply Method: ").append(supplyMethod).append("\n");
         sb.append("  Total Price: ").append(String.format("%.2f", totalPrice)).append("\n");
+        sb.append("  Order Status: ").append(orderStatus).append("\n");
         sb.append("  Products:\n");
         for (OrderProductData productData : productArrayList) {
             sb.append(productData);

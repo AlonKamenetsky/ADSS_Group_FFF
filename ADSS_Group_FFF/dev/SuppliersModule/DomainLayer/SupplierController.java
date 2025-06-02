@@ -1,9 +1,7 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.SupplierDaysDTO;
+import SuppliersModule.DataLayer.*;
 import SuppliersModule.DomainLayer.Enums.*;
-import SuppliersModule.DataLayer.SupplierControllerDTO;
-import SuppliersModule.DataLayer.SupplierDTO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,27 +33,38 @@ public class SupplierController {
             PaymentInfo supplierPaymentInfo = new PaymentInfo(dto.bankAccount, PaymentMethod.valueOf(dto.paymentMethod));
 
             Supplier supplier = null;
-            if (SupplyMethod.valueOf(dto.supplyMethod) == SupplyMethod.ON_DEMAND)
+            if (SupplyMethod.valueOf(dto.supplyMethod) == SupplyMethod.ON_DEMAND) {
                 supplier = new OnDemandSupplier(dto.supplierID, dto.supplierName, ProductCategory.valueOf(dto.productCategory), DeliveringMethod.valueOf(dto.deliveryMethod), supplierContactInfo, supplierPaymentInfo);
+                for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(dto.supplierID))
+                    supplier.addSupplierContract(supplyContract);
+            }
             else if (SupplyMethod.valueOf(dto.supplyMethod) == SupplyMethod.SCHEDULED) {
                 ArrayList<SupplierDaysDTO> supplierDaysDTOList = supplierControllerDTO.getSupplierDaysOfSupplier(dto);
 
                 EnumSet<WeekDay> days = EnumSet.noneOf(WeekDay.class);
-                ArrayList<ScheduledOrder> scheduledOrders = new ArrayList<>();
                 for (SupplierDaysDTO supplierDaysDTO : supplierDaysDTOList) {
                     days.add(WeekDay.valueOf(supplierDaysDTO.day));
-                    scheduledOrders.add(new ScheduledOrder(dto.supplierID, WeekDay.valueOf(supplierDaysDTO.day)));
                 }
 
                 supplier = new ScheduledSupplier(dto.supplierID, dto.supplierName, ProductCategory.valueOf(dto.productCategory), DeliveringMethod.valueOf(dto.deliveryMethod), supplierContactInfo, supplierPaymentInfo, days);
-                for (ScheduledOrder scheduledOrder : scheduledOrders) {
-                    ScheduledSupplier scheduledSupplier = (ScheduledSupplier)supplier;
-                    scheduledSupplier.addScheduledOrder(scheduledOrder.getDay(), scheduledOrder);
-                }
-            }
 
-            for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(dto.supplierID))
-                supplier.addSupplierContract(supplyContract);
+                for (SupplyContract supplyContract : this.supplyContractController.getAllSupplierContracts(dto.supplierID))
+                    supplier.addSupplierContract(supplyContract);
+
+                for (SupplierDaysDTO supplierDaysDTO : supplierDaysDTOList)
+                    for (ScheduledOrderDataDTO scheduledOrderDataDTO : this.supplierControllerDTO.getAllScheduledOrderDataOfSupplier(supplierDaysDTO)) {
+                        int[] data = {scheduledOrderDataDTO.productID, scheduledOrderDataDTO.productQuantity};
+                        ArrayList<int[]> dataList = new ArrayList<>();
+                        dataList.add(data);
+
+                        ArrayList<OrderProductData> OrderProductData = buildProductDataArray(dataList, supplier.getSupplierContracts());
+                        ScheduledOrder scheduledOrder = new ScheduledOrder(supplier.getSupplierId(), WeekDay.valueOf(scheduledOrderDataDTO.day),OrderProductData);
+
+                        ScheduledSupplier scheduledSupplier = (ScheduledSupplier)supplier;
+                        scheduledSupplier.addScheduledOrder(WeekDay.valueOf(scheduledOrderDataDTO.day), scheduledOrder);
+                    }
+
+            }
 
             this.numberOfSuppliers++;
             this.suppliersArrayList.add(supplier);
@@ -72,24 +81,17 @@ public class SupplierController {
 
         Supplier supplier = null;
         if (supplyMethod == SupplyMethod.ON_DEMAND)
-            supplier = new OnDemandSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
-        else if (supplyMethod == SupplyMethod.SCHEDULED)
-            supplier = new ScheduledSupplier(this.numberOfSuppliers++, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo, supplyDays);
+            supplier = new OnDemandSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
+        else if (supplyMethod == SupplyMethod.SCHEDULED) {
+            supplier = new ScheduledSupplier(this.numberOfSuppliers, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo, supplyDays);
+            for (SupplierDaysDTO dto : ((ScheduledSupplier)supplier).supplierDaysDTOS)
+                dto.Insert();
+        }
 
         this.suppliersArrayList.add(supplier);
-        supplier.supplierDTO.Insert();
+        this.numberOfSuppliers++;
 
-        if (supplyMethod == SupplyMethod.SCHEDULED) {
-            ScheduledSupplier scheduledSupplier = (ScheduledSupplier)supplier;
-            for (Map.Entry<WeekDay, ScheduledOrder> entry: scheduledSupplier.getScheduledOrders().entrySet()) {
-                WeekDay day = entry.getKey();
-                ScheduledOrder scheduledOrder = entry.getValue();
-                for (OrderProductData orderProductData : scheduledOrder.getProductsData()) {
-                    SupplierDaysDTO dto = new SupplierDaysDTO(scheduledSupplier.getSupplierId(), day.toString(), orderProductData.getProductID(), orderProductData.getProductQuantity(), orderProductData.getProductQuantity());
-                    dto.Insert();
-                }
-            }
-        }
+        supplier.supplierDTO.Insert();
 
         return supplier.getSupplierId();
     }
@@ -102,11 +104,11 @@ public class SupplierController {
         return null;
     }
 
-    private Supplier getSupplierByProductsPrice(ArrayList<int[]> dataList) {
+    private Supplier getSupplierByProductsPrice(ArrayList<int[]> dataList, SupplyMethod neededSupplyMethod) {
         Supplier cheapestSupplier = null;
-        double cheapestPrice = 0;
+        double cheapestPrice = Integer.MAX_VALUE;
         for (Supplier supplier : this.suppliersArrayList) {
-            if (supplier.getSupplyMethod() != SupplyMethod.SCHEDULED)
+            if (supplier.getSupplyMethod() != neededSupplyMethod)
                 continue;
             ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();
             ArrayList<OrderProductData> orderProductData = buildProductDataArray(dataList, supplyContracts);
@@ -132,6 +134,10 @@ public class SupplierController {
             return false;
 
         supplier.supplierDTO.Delete();
+        if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED)
+            for (SupplierDaysDTO dto : ((ScheduledSupplier)supplier).supplierDaysDTOS)
+                dto.Insert();
+
         this.supplyContractController.removeAllSupplierContracts(supplierID);
         this.orderController.removeAllSupplierOrders(supplierID);
 
@@ -301,7 +307,7 @@ public class SupplierController {
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
-        Supplier supplier = this.getSupplierByProductsPrice(dataList);
+        Supplier supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.ON_DEMAND);
         if (supplier == null)
             return false;
 
@@ -316,7 +322,7 @@ public class SupplierController {
     }
 
     public boolean registerNewScheduledOrder(WeekDay day, ArrayList<int[]> dataList) {
-        Supplier supplier = this.getSupplierByProductsPrice(dataList);
+        Supplier supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.SCHEDULED);
         if (supplier == null)
             return false;
 
@@ -324,6 +330,7 @@ public class SupplierController {
         ArrayList<OrderProductData> orderProductData = buildProductDataArray(dataList, supplyContracts);
 
         ScheduledOrder scheduledOrder = new ScheduledOrder(supplier.supplierId, day, orderProductData);
+        scheduledOrder.Insert();
 
         ScheduledSupplier scheduledSupplier = ((ScheduledSupplier)supplier);
         scheduledSupplier.addScheduledOrder(day, scheduledOrder);
@@ -376,6 +383,17 @@ public class SupplierController {
 
     public String[] getAllOrdersAsString() {
         return this.orderController.getAllOrdersAsString();
+    }
+
+    public String[] getAllScheduledOrdersAsString() {
+        ArrayList<String> results = new ArrayList<>();
+        for (Supplier supplier : this.suppliersArrayList)
+            if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED) {
+                ScheduledSupplier ScheduledSupplier = (ScheduledSupplier)supplier;
+                results.add(ScheduledSupplier.getScheduledOrders().toString());
+            }
+
+        return results.toArray(new String[results.size()]);
     }
 
 }

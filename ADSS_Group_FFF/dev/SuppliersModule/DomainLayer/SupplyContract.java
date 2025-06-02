@@ -38,11 +38,12 @@ public class SupplyContract {
       this.supplyContractProductsDataArray.add(data);
    }
 
-   public int getcontractID() {
+   public int getContractID() {
       return contractID;
    }
-   public void setcontractID(int contractID) {
-      this.contractID = contractID;
+
+   public int getSupplierID() {
+      return supplierID;
    }
 
    public ArrayList<SupplyContractProductData> getSupplyContractProductData() {

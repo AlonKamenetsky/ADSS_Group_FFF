@@ -37,24 +37,28 @@ public class OrderProductData {
     }
     public void setOrderID(int orderID) {
         this.orderID = orderID;
+        this.orderProductDataDTO.orderID = orderID;
     }
     public int getProductID() {
         return productID;
     }
     public void setProductID(int productID) {
         this.productID = productID;
+        this.orderProductDataDTO.productID = productID;
     }
     public int getProductQuantity() {
         return productQuantity;
     }
     public void setProductQuantity(int productQuantity) {
         this.productQuantity = productQuantity;
+        this.orderProductDataDTO.productQuantity = productQuantity;
     }
     public double getProductPrice() {
         return productPrice;
     }
     public void setProductPrice(int productPrice) {
         this.productPrice = productPrice;
+        this.orderProductDataDTO.productPrice = productPrice;
     }
     public double getTotalPrice() {
         return this.productPrice * this.productQuantity;

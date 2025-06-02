@@ -1,5 +1,6 @@
 package SuppliersModule.PresentationLayer;
 
+import java.time.Instant;
 import java.util.*;
 import SuppliersModule.ServiceLayer.ServiceController;
 
@@ -267,7 +268,7 @@ public class CLI {
 
     private void registerNewOrder() {
         ArrayList<int[]> dataArray = new ArrayList<>();
-        Date today = new Date();
+        Date today = Date.from(Instant.now());
 
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
@@ -279,7 +280,8 @@ public class CLI {
             int data[] = {productID, quantity};
             dataArray.add(data);
         }
-        System.out.println("enter delivery date");
+
+        System.out.println("enter delivery date: (Enter T for tomorrow)");
         String deliveryDate = sc.nextLine();
         if (serviceController.registerNewOrder(dataArray, today, deliveryDate)) {
             System.out.println("Order registered successfully.");
@@ -315,6 +317,7 @@ public class CLI {
         int orderID = readInt();
         if(!serviceController.orderExists(orderID)) {
             System.out.println("Order does not exist.");
+            return;
         }
         System.out.println("What do you want to update?");
         printOrderUpdateOption();
@@ -452,7 +455,10 @@ public class CLI {
             System.out.println(orderString);
     }
 
-
+    private void printAllScheduledOrders() {
+        for (String orderString :this.serviceController.getAllScheduledOrdersAsString())
+            System.out.println(orderString);
+    }
 
     // ------------------- CLI print Functions -------------------
 
@@ -503,7 +509,8 @@ public class CLI {
         System.out.println("4. Delete order");
         System.out.println("5. print order");
         System.out.println("6. print all orders");
-        System.out.println("7. Exit");
+        System.out.println("7. print all scheduled orders");
+        System.out.println("8. Exit");
     }
 
     private void printOrderUpdateOption() {
@@ -631,6 +638,9 @@ public class CLI {
                 printAllOrders();
                 break;
             case 7:
+                printAllScheduledOrders();
+                break;
+            case 8:
                 return;
         }
     }

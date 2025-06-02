@@ -7,12 +7,20 @@ import inventory.serviceLayer.InventoryService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 public class ServiceController implements SupplierInterface {
-    private static final ServiceController instance = new ServiceController();
-    private static final InventoryService inventoryService = InventoryService.getInstance();
+    private static class ServiceControllerHelper {
+        private static final ServiceController INSTANCE = new ServiceController();
+    }
 
+    public static ServiceController getInstance() {
+        return ServiceControllerHelper.INSTANCE;
+    }
+
+    private static final InventoryService inventoryService = InventoryService.getInstance();
 
     private SupplierService supplierService;
     private ProductService productService;
@@ -20,9 +28,6 @@ public class ServiceController implements SupplierInterface {
     public ServiceController() {
         this.supplierService = new SupplierService();
         this.productService = new ProductService();
-    }
-    public static ServiceController GetInstance() {
-        return instance;
     }
 
     // --------------------------- SHARED FUNCTIONS ---------------------------
@@ -216,11 +221,17 @@ public class ServiceController implements SupplierInterface {
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
-        Date deliveryDateAsDate = this.validateOrderDated(deliveryDate);
+        Date deliveryDateAsDate;
+        if (deliveryDate.equalsIgnoreCase("t"))
+            deliveryDateAsDate = Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        else
+            deliveryDateAsDate = this.validateOrderDated(deliveryDate);
+
         if (deliveryDateAsDate == null)
             return false;
         if (deliveryDateAsDate.before(creationDate))
             return false;
+
         return this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate);
     }
 
@@ -280,6 +291,10 @@ public class ServiceController implements SupplierInterface {
 
     public String[] getAllOrdersAsString() {
         return this.supplierService.getAllOrdersAsString();
+    }
+
+    public String[] getAllScheduledOrdersAsString() {
+        return this.supplierService.getAllScheduledOrdersAsString();
     }
 
 }

@@ -31,10 +31,12 @@ public class SupplyContractProductData {
         this.supplyContractProductDataDTO = supplyContractProductDataDTO;
     }
 
-    public String toString() {
-        return String.format("productID: %d\tPrice: %.2f\tQuantity For Discount: %d\tDiscount Percentage: %.2f",productID, productPrice, quantityForDiscount, discountPercentage);
+    public int getContractID() {
+        return contractID;
     }
-
+    public void setContractID(int contractID) {
+        this.contractID = contractID;
+    }
     public int getProductID() {
         return productID;
     }
@@ -60,4 +62,7 @@ public class SupplyContractProductData {
         this.discountPercentage = discountPercentage;
     }
 
+    public String toString() {
+        return String.format("ContractID: %d productID: %d Price: %.2f Quantity For Discount: %d Discount Percentage: %.2f", contractID,productID, productPrice, quantityForDiscount, discountPercentage);
+    }
 }

@@ -1,5 +1,7 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.ScheduledOrderDataDTO;
+import SuppliersModule.DataLayer.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
@@ -9,13 +11,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.*;
 
 public class ScheduledSupplier extends Supplier {
     private EnumSet<WeekDay> supplyDays;
+
     private HashMap<WeekDay,ScheduledOrder> scheduledOrders;
+
+    public ArrayList<SupplierDaysDTO> supplierDaysDTOS;
 
     public ScheduledSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo, EnumSet<WeekDay> supplyDays) {
         super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContactInfo, supplierPaymentInfo);
@@ -24,6 +27,11 @@ public class ScheduledSupplier extends Supplier {
         this.supplyDays = supplyDays;
 
         this.scheduledOrders = new HashMap<>();
+
+        this.supplierDaysDTOS = new ArrayList<>();
+
+        for (WeekDay day : supplyDays)
+            this.supplierDaysDTOS.add(new SupplierDaysDTO(supplierId, day.toString()));
     }
 
     @Override
@@ -56,7 +64,7 @@ public class ScheduledSupplier extends Supplier {
 
     @Override
     public String toString() {
-        return super.toString() + "\nAvailable days: " + this.supplyDays;
+        return super.toString() + "\nAvailable days: " + this.supplyDays + "\nScheduled orders: " + this.scheduledOrders;
     }
 
     public static Date getNearestWeekdayDate(WeekDay targetDay) {

@@ -1,5 +1,7 @@
 package SuppliersModule.DataLayer;
 
+import SuppliersModule.DomainLayer.ScheduledOrder;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +19,7 @@ public class OrderControllerDTO extends DbController {
 
     private OrderControllerDTO() {
         super();
-        this.orders               = new ArrayList<>();
+        this.orders = new ArrayList<>();
         this.orderProductDataList = new ArrayList<>();
     }
 
@@ -165,9 +167,7 @@ public class OrderControllerDTO extends DbController {
     public ArrayList<OrderProductDataDTO> getOrderProductDataByOrderID(OrderDTO orderDTO) {
         ArrayList<OrderProductDataDTO> result = new ArrayList<>();
 
-        String sql = String.format("SELECT * FROM %s WHERE %s = ?",
-                this.orderProductDataTableName,
-                OrderProductDataDTO.ORDER_ID_COLUMN_NAME);
+        String sql = String.format("SELECT * FROM %s WHERE %s = ?", this.orderProductDataTableName, OrderProductDataDTO.ORDER_ID_COLUMN_NAME);
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
             pstmt.setInt(1, orderDTO.orderID);
@@ -229,9 +229,7 @@ public class OrderControllerDTO extends DbController {
         }
     }
 
-    /**
-     * Delete ALL product rows for a specific order (helper wrapper)
-     */
+
     public int deleteAllOrderProductData(int orderID) {
         String sql = "DELETE FROM " + this.orderProductDataTableName + " WHERE " + OrderProductDataDTO.ORDER_ID_COLUMN_NAME + " = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

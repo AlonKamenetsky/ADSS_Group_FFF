@@ -18,12 +18,13 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class OrderController {
-    int orderID;
+    int numOfOrders = 0;
     ArrayList<Order> ordersArrayList;
+
     OrderControllerDTO orderControllerDTO;
 
     public OrderController() {
-        this.orderID = 0;
+        this.numOfOrders = 0;
 
         this.ordersArrayList = new ArrayList<>();
 
@@ -34,6 +35,7 @@ public class OrderController {
                 order.addOrderProductData(pdDTO.convertDTOToEntity());
 
             ordersArrayList.add(order);
+            this.numOfOrders++;
         }
     }
 
@@ -82,15 +84,6 @@ public class OrderController {
     }
 
     public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, ArrayList<SupplyContract> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
-        ArrayList<OrderProductData> orderProductDataList = buildProductDataArray(dataList, supplyContracts);
-        if (orderProductDataList == null)
-            return false;
-
-        for (OrderProductData orderProductData : orderProductDataList)
-            orderProductData.setOrderID(orderID);
-
-        double totalOrderValue = calculateTotalPrice(orderProductDataList);
-
         if (creationDate == null) {
             LocalDate today = LocalDate.now();
             creationDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -99,15 +92,24 @@ public class OrderController {
 
         }
 
-        Order order = new Order(orderID, supplierId, orderProductDataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
+        ArrayList<OrderProductData> orderProductDataList = buildProductDataArray(dataList, supplyContracts);
+        if (orderProductDataList == null)
+            return false;
+
+        for (OrderProductData orderProductData : orderProductDataList) {
+            orderProductData.setOrderID(numOfOrders);
+            orderProductData.orderProductDataDTO.Insert();
+        }
+
+        double totalOrderValue = calculateTotalPrice(orderProductDataList);
+
+        Order order = new Order(numOfOrders, supplierId, orderProductDataList, totalOrderValue, creationDate, deliveryDate, deliveringMethod, supplyMethod, supplierContactInfo);
 
         this.orderControllerDTO.insertOrder(order.orderDTO);
-        for (OrderProductData orderProductData : orderProductDataList)
-            orderProductData.orderProductDataDTO.Insert();
 
         ordersArrayList.add(order);
 
-        this.orderID++;
+        this.numOfOrders++;
         return true;
     }
 

@@ -147,6 +147,10 @@ public class SupplierService {
         return this.supplierController.getAllOrdersAsString();
     }
 
+    public String[] getAllScheduledOrdersAsString() {
+        return this.supplierController.getAllScheduledOrdersAsString();
+    }
+
     public boolean orderExists(int orderID) {
         return this.supplierController.orderExists(orderID);
     }

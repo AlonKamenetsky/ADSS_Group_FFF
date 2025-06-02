@@ -12,14 +12,18 @@ public class SupplierControllerDTO extends DbController {
 
     private String suppliersTableName = "suppliers";
     private String suppliersDaysTableName = "suppliers_days";
+    private final String scheduledOrderProductDataTableName = "scheduled_order_data";
+
 
     private ArrayList<SupplierDTO> suppliers;
     private ArrayList<SupplierDaysDTO> suppliersDays;
+    private ArrayList<ScheduledOrderDataDTO> scheduledOrderDataList;
 
     public SupplierControllerDTO() {
         super();
         this.suppliers = new ArrayList<>();
         this.suppliersDays = new ArrayList<>();
+        this.scheduledOrderDataList = new ArrayList<>();
     }
 
     public static SupplierControllerDTO getInstance() {
@@ -113,7 +117,7 @@ public class SupplierControllerDTO extends DbController {
     }
 
     public ArrayList<SupplierDaysDTO> getSupplierDaysOfSupplier(SupplierDTO supplier) {
-        String sql = "SELECT * FROM " + this.suppliersDaysTableName + " WHERE " + supplier.ID_COLUMN_NAME + "= ?" ;
+        String sql = "SELECT * FROM " + this.suppliersDaysTableName + " WHERE " + SupplierDaysDTO.ID_COLUMN_NAME + "= ?" ;
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
             pstmt.setInt(1, supplier.supplierID);
@@ -122,10 +126,7 @@ public class SupplierControllerDTO extends DbController {
                 while (rs.next()) {
                     SupplierDaysDTO supplierDaysDTO = new SupplierDaysDTO(
                             rs.getInt(SupplierDaysDTO.ID_COLUMN_NAME),
-                            rs.getString(SupplierDaysDTO.DAY_COLUMN_NAME),
-                            rs.getInt(SupplierDaysDTO.PRODUCT_ID_COLUMN_NAME),
-                            rs.getInt(SupplierDaysDTO.PRODUCT_QUANTITY_COLUMN_NAME),
-                            rs.getDouble(SupplierDaysDTO.PRODUCT_PRICE_COLUMN_NAME));
+                            rs.getString(SupplierDaysDTO.DAY_COLUMN_NAME));
 
                     suppliersDays.add(supplierDaysDTO);
                 }
@@ -142,7 +143,7 @@ public class SupplierControllerDTO extends DbController {
 
     public void insertSupplierDays(SupplierDaysDTO supplierDays) {
         String sql = String.format(
-                "INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
+                "INSERT INTO %s (%s, %s) VALUES (?, ?)",
                 this.suppliersDaysTableName,
                 SupplierDaysDTO.ID_COLUMN_NAME,
                 SupplierDaysDTO.DAY_COLUMN_NAME
@@ -151,9 +152,6 @@ public class SupplierControllerDTO extends DbController {
         try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
             pstmt.setInt(1, supplierDays.supplierID);
             pstmt.setString(2, supplierDays.day);
-            pstmt.setInt(3, supplierDays.productID);
-            pstmt.setInt(3, supplierDays.productQuantity);
-            pstmt.setDouble(4, supplierDays.productPrice);
 
             int result = pstmt.executeUpdate();
         }
@@ -174,5 +172,104 @@ public class SupplierControllerDTO extends DbController {
         }
 
         this.suppliers.removeIf(s -> s.supplierID == supplier.supplierID);
+    }
+
+    public ArrayList<ScheduledOrderDataDTO> getAllScheduledOrderData(SupplierDaysDTO supplierDaysDTO) {
+        ArrayList<ScheduledOrderDataDTO> result = new ArrayList<>();
+
+        String sql = String.format("SELECT * FROM %s", this.scheduledOrderProductDataTableName);
+
+        try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
+            pstmt.setInt(1, supplierDaysDTO.supplierID);
+            pstmt.setString(1, supplierDaysDTO.day);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    ScheduledOrderDataDTO data = new ScheduledOrderDataDTO(
+                            rs.getInt(ScheduledOrderDataDTO.ID_COLUMN_NAME),
+                            rs.getString(ScheduledOrderDataDTO.DAY_COLUMN_NAME),
+                            rs.getInt(ScheduledOrderDataDTO.PRODUCT_ID_COLUMN_NAME),
+                            rs.getInt(ScheduledOrderDataDTO.PRODUCT_QUANTITY_COLUMN_NAME));
+
+                    result.add(data);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return result;
+    }
+
+    public ArrayList<ScheduledOrderDataDTO> getAllScheduledOrderDataOfSupplier(SupplierDaysDTO supplierDaysDTO) {
+        ArrayList<ScheduledOrderDataDTO> result = new ArrayList<>();
+
+        String sql = String.format("SELECT * FROM %s WHERE %s = ? AND %s = ?", this.scheduledOrderProductDataTableName,
+                ScheduledOrderDataDTO.ID_COLUMN_NAME, ScheduledOrderDataDTO.DAY_COLUMN_NAME);
+
+        try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
+            pstmt.setInt(1, supplierDaysDTO.supplierID);
+            pstmt.setString(2, supplierDaysDTO.day);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    ScheduledOrderDataDTO data = new ScheduledOrderDataDTO(
+                            rs.getInt(ScheduledOrderDataDTO.ID_COLUMN_NAME),
+                            rs.getString(ScheduledOrderDataDTO.DAY_COLUMN_NAME),
+                            rs.getInt(ScheduledOrderDataDTO.PRODUCT_ID_COLUMN_NAME),
+                            rs.getInt(ScheduledOrderDataDTO.PRODUCT_QUANTITY_COLUMN_NAME));
+
+                    result.add(data);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return result;
+    }
+
+    public void insertScheduledOrderData(ScheduledOrderDataDTO dto) {
+        String sql = String.format(
+                "INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
+                this.scheduledOrderProductDataTableName,
+                ScheduledOrderDataDTO.ID_COLUMN_NAME,
+                ScheduledOrderDataDTO.DAY_COLUMN_NAME,
+                ScheduledOrderDataDTO.PRODUCT_ID_COLUMN_NAME,
+                ScheduledOrderDataDTO.PRODUCT_QUANTITY_COLUMN_NAME
+        );
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt   (1, dto.supplierID);
+            ps.setString(2, dto.day);
+            ps.setInt   (3, dto.productID);
+            ps.setInt   (4, dto.productQuantity);
+
+            int affected = ps.executeUpdate();
+            if (affected != 1)
+                throw new SQLException("Failed inserting scheduled-order data");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        this.scheduledOrderDataList.add(dto);
+    }
+
+    public int deleteScheduledOrderData(ScheduledOrderDataDTO dto) {
+        String sql = String.format(
+                "DELETE FROM %s WHERE %s = ? AND %s = ? AND %s = ?",
+                this.scheduledOrderProductDataTableName,
+                ScheduledOrderDataDTO.ID_COLUMN_NAME,
+                ScheduledOrderDataDTO.DAY_COLUMN_NAME,
+                ScheduledOrderDataDTO.PRODUCT_ID_COLUMN_NAME
+        );
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt   (1, dto.supplierID);
+            ps.setString(2, dto.day);
+            ps.setInt   (3, dto.productID);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
     }
 }
