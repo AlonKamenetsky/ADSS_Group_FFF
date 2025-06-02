@@ -230,4 +230,20 @@ public class ShiftDAOImpl implements ShiftDAO {
         Date employmentDate = rs.getDate("employment_date");
         return new Employee(id, new ArrayList<>(), name, password, bankAccount, salary, employmentDate);
     }
+    public List<Shift> getShiftsByEmployeeId(String employeeId) {
+        List<Shift> shifts = new ArrayList<>();
+        String sql = "SELECT s.* FROM shifts s " +
+                     "JOIN shift_assignments sa ON s.id = sa.shift_id " +
+                     "WHERE sa.employee_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, employeeId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                shifts.add(mapToShift(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Query shifts by employee failed", e);
+        }
+        return shifts;
+    }
 }

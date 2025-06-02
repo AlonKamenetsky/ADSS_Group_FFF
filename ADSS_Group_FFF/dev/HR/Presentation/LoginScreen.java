@@ -95,10 +95,9 @@ public class LoginScreen {
             // dispatch to the correct interface
             if (currentRole.getName().equals("HR")) {
                 HRInterface hr = new HRInterface(currentUser.getId());
-                hr.setCurrentUserRole(currentRole);
                 hr.managerMainMenu(scanner);
             } else {
-                EmployeeInterface ui = new EmployeeInterface(currentUser);
+                EmployeeInterface ui = new EmployeeInterface(currentUser.getId());
                 ui.employeeMainMenu(scanner);
             }
 

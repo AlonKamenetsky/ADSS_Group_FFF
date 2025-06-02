@@ -7,4 +7,5 @@ public interface SwapDAO {
     void insert(SwapRequest request);
     void delete(int requestId);
     List<SwapRequest> selectAll(); // all pending
+    SwapRequest selectById(int requestId); // get by ID, if needed
 }

@@ -21,7 +21,7 @@ public interface ShiftDAO {
     Optional<Shift> getCurrentShift(); // <-- Implement this
     WeeklyShiftsSchedule getSchedule(); // <-- Optional based on your architecture
     List<Employee> findAssignedEmployees(String shiftId);
-
     boolean isWarehouseEmployeeAssigned(String shiftId);
+    List<Shift> getShiftsByEmployeeId(String employeeId);
 }
 

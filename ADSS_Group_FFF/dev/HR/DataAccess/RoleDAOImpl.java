@@ -38,19 +38,6 @@ public class RoleDAOImpl implements RoleDAO {
     }
 
     @Override
-    public Role selectByName(String roleName) {
-        String sql = "SELECT * FROM roles WHERE name = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, roleName);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return new Role(rs.getString("name"));
-        } catch (SQLException e) {
-            throw new RuntimeException("Select role failed", e);
-        }
-        return null;
-    }
-
-    @Override
     public List<Role> selectAll() {
         List<Role> roles = new ArrayList<>();
         String sql = "SELECT * FROM roles";

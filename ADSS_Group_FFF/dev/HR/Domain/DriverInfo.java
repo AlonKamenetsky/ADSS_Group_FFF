@@ -19,7 +19,7 @@ public class DriverInfo {
         this.licenseType = licenseType;
     }
 
-    public void setLicenses(ArrayList<LicenseType> licenseTypes) {
+    public void setLicenses(List<LicenseType> licenseTypes) {
         this.licenseType = licenseTypes;
     }
 

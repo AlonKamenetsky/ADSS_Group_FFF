@@ -4,6 +4,7 @@ import java.util.Scanner;
 import HR.Presentation.DemoDataLoader;
 import HR.Presentation.LoginScreen;
 import HR.Presentation.PresentationUtils;
+import HR.Service.EmployeeService;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
@@ -34,8 +35,7 @@ public class Main {
 
         // 2) Launch the login/UI loop
         Scanner scanner = new Scanner(System.in);
-        LoginScreen login = new LoginScreen(
-                EmployeesRepo.getInstance().getEmployees());
+        LoginScreen login = new LoginScreen(EmployeeService.getInstance().getEmployees());
         login.run(scanner);
 
         // 3) Clean up and exit

@@ -82,4 +82,13 @@ public class ShiftTemplateDAOImpl implements ShiftTemplateDAO {
         }
         return templates;
     }
+    @Override
+    public void deleteAll() {
+        try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM ShiftTemplates")) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete all shift templates", e);
+        }
+    }
+
 }

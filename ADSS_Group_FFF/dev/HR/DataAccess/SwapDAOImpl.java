@@ -65,4 +65,19 @@ public class SwapDAOImpl implements SwapDAO {
 
         return new SwapRequest(id, employee, shift, role);
     }
+
+    @Override
+    public SwapRequest selectById(int requestId) {
+        String sql = "SELECT * FROM swap_requests WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, requestId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return map(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Select swap request by ID failed", e);
+        }
+        return null;
+    }
 }
