@@ -37,7 +37,7 @@ public class SystemInitializer {
                         validChoice = true;
                         break;
                     case "N":
-                        dbInit.loadTransportaionFakeData();
+                        dbInit.loadTransportationFakeData();
                         dbInit.loadItems();
                         validChoice = true;
                         break;

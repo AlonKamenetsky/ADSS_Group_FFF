@@ -11,7 +11,7 @@ import Transportation.DataAccess.*;
 import Transportation.DTO.*;
 
 public class DatabaseInitializer {
-    public  void loadTransportaionFakeData() throws SQLException {
+    public  void loadTransportationFakeData() throws SQLException {
         SqliteSiteDAO siteDAO = new SqliteSiteDAO();
         SqliteZoneDAO zoneDAO = new SqliteZoneDAO();
         SqliteTransportationTaskDAO taskDAO = new SqliteTransportationTaskDAO();
