@@ -17,7 +17,7 @@ public class Main {
 
         System.out.println("testing main");
         InventoryService inventoryService = InventoryService.getInstance();
-//        ServiceController serviceController = ServiceController.GetInstance();
+        SupplierInterface serviceController = ServiceController.getInstance();
         InventoryCLI inventoryCLI = new InventoryCLI(inventoryService);
         inventoryCLI.run();
 

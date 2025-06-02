@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface SupplierInterface {
 
-    static ServiceController GetInstance() {
-        return null;
-    }
+//    static ServiceController GetInstance() {
+//        return null;
+//    }
 
     // What about Add product?
 

@@ -15,7 +15,7 @@ import java.sql.Statement;
  */
 public class DatabaseManager {
     // This will create the file "inventory.db" in dev/inventory when you first connect.
-    private static final String JDBC_URL = "jdbc:sqlite:dev/inventory/inventory.db";
+    private static final String JDBC_URL = "jdbc:sqlite:data/inventoryDatabase.db";
 
     private static DatabaseManager instance = null;
     private final Connection connection;

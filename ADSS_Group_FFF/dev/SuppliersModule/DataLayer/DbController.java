@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public abstract class DbController {
-    private static final String DB_NAME = "SuppliersDatabase.db";
+    private static final String DB_NAME = "data/SuppliersDatabase.db";
     private static final String DB_URL = "jdbc:sqlite:";
 
     protected Connection connection;
