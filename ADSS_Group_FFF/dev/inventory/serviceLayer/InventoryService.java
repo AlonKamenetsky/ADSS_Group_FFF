@@ -230,21 +230,6 @@ public class InventoryService implements InternalInventoryInterface {
         productDAO.update(updated);
     }
 
-    /**
-     * Adjust (add/subtract) shelf or backroom quantity for a product by its ID.
-     * Then persist that change.
-     */
-    public void adjustProductQuantity(int id, int shelfDelta, int backroomDelta) {
-        InventoryProduct p = productDAO.findById(id);
-        if (p == null) {
-            throw new IllegalArgumentException("Product with ID=" + id + " not found.");
-        }
-        int newShelf = p.getShelfQuantity() + shelfDelta;
-        int newBackroom = p.getBackroomQuantity() + backroomDelta;
-        p.setShelfQuantity(newShelf);
-        p.setBackroomQuantity(newBackroom);
-        productDAO.update(p);
-    }
 
 
     // ─────────────────────────────────────────────────────────────────
@@ -466,8 +451,7 @@ public class InventoryService implements InternalInventoryInterface {
      * category is in filterCategories (if non-null) AND whose status is statusFilter (if non-null).
      * Persist the report and return it.
      */
-    public InventoryReport generateReport(String reportId,
-                                          List<Category> filterCategories,
+    public InventoryReport generateReport(List<Category> filterCategories,
                                           ItemStatus statusFilter) {
         // 1) Fetch every product from the DAO
         List<InventoryProduct> allProducts = productDAO.findAll();
@@ -487,7 +471,7 @@ public class InventoryService implements InternalInventoryInterface {
                 .toList();
 
         // 3) Create a new InventoryReport domain object
-        InventoryReport report = new InventoryReport(reportId, new Date(), filtered);
+        InventoryReport report = new InventoryReport(getNextReportId(), new Date(), filtered);
 
         // 4) Persist the report via the DAO
         reportDAO.save(report);
@@ -495,6 +479,28 @@ public class InventoryService implements InternalInventoryInterface {
         // 5) Return it
         return report;
     }
+
+    /**
+     * Returns the next numeric report‐ID as a String, based on what's already in the DB.
+     * Any non‐numeric IDs are skipped. If there are no existing reports, returns "1".
+     */
+    private String getNextReportId() {
+        List<InventoryReport> existing = reportDAO.findAll();
+        int max = 0;
+        for (InventoryReport r : existing) {
+            try {
+                int n = Integer.parseInt(r.getId());
+                if (n > max) {
+                    max = n;
+                }
+            } catch (NumberFormatException e) {
+                // ignore any IDs that are not pure integers
+            }
+        }
+        return String.valueOf(max + 1);
+    }
+
+
 
 
     /**

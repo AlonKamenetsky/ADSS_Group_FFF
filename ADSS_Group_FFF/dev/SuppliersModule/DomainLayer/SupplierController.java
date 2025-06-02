@@ -385,15 +385,18 @@ public class SupplierController {
         return this.orderController.getAllOrdersAsString();
     }
 
-    public String[] getAllScheduledOrdersAsString() {
-        ArrayList<String> results = new ArrayList<>();
-        for (Supplier supplier : this.suppliersArrayList)
-            if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED) {
-                ScheduledSupplier ScheduledSupplier = (ScheduledSupplier)supplier;
-                results.add(ScheduledSupplier.getScheduledOrders().toString());
-            }
+     public String[] getAllScheduledOrdersAsString() {
+         ArrayList<String> results = new ArrayList<>();
+         for (Supplier supplier : this.suppliersArrayList)
+             if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED) {
+                 ScheduledSupplier ScheduledSupplier = (ScheduledSupplier) supplier;
+                 String res = ScheduledSupplier.getScheduledOrders().toString();
+                 if (res.equals("{}"))
+                     continue;
+                 results.add(ScheduledSupplier.getScheduledOrders().toString());
+             }
 
-        return results.toArray(new String[results.size()]);
+         return results.toArray(new String[results.size()]);
+     }
+
     }
-
-}

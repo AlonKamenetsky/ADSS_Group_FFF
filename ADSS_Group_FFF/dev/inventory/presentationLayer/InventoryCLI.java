@@ -104,18 +104,71 @@ public class InventoryCLI {
         }
     }
 
+    // ────────────── in InventoryCLI.java ──────────────
+
     private void generateReport() {
-        System.out.print("Enter report ID: ");
-        String id = scanner.nextLine().trim();
+        // 1) Fetch and display all existing categories
+        List<Category> allCats = service.getAllCategories();
+        List<Category> filterCategories = null;
+
+        if (!allCats.isEmpty()) {
+            System.out.println("Available categories:");
+            for (int i = 0; i < allCats.size(); i++) {
+                System.out.printf("  %2d) %s%n", i + 1, allCats.get(i).getName());
+            }
+
+            System.out.print("Filter by categories? (y/n): ");
+            String catChoice = scanner.nextLine().trim();
+            if (catChoice.equalsIgnoreCase("y")) {
+                System.out.print("Enter comma-separated numbers of categories to filter: ");
+                String line = scanner.nextLine().trim();
+                String[] tokens = line.split(",");
+                filterCategories = new ArrayList<>();
+
+                for (String tok : tokens) {
+                    try {
+                        int idx = Integer.parseInt(tok.trim()) - 1;
+                        if (idx >= 0 && idx < allCats.size()) {
+                            filterCategories.add(allCats.get(idx));
+                        } else {
+                            System.out.println("  Ignoring invalid category number: " + (idx + 1));
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("  Ignoring invalid input: " + tok.trim());
+                    }
+                }
+
+                if (filterCategories.isEmpty()) {
+                    System.out.println("No valid categories selected; no category filter will be applied.");
+                    filterCategories = null;
+                }
+            }
+        } else {
+            System.out.println("(No categories defined yet—skipping category filter.)");
+        }
+
+        // 2) Prompt for status filter
         System.out.print("Filter by status? (y/n): ");
         ItemStatus status = null;
         if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
             System.out.print("Enter status (OK, DAMAGED, EXPIRED): ");
-            status = ItemStatus.valueOf(scanner.nextLine().trim().toUpperCase());
+            String statusInput = scanner.nextLine().trim().toUpperCase();
+            try {
+                status = ItemStatus.valueOf(statusInput);
+            } catch (IllegalArgumentException ex) {
+                System.out.println("Invalid status '" + statusInput + "'. No status filter will be applied.");
+                status = null;
+            }
         }
-        InventoryReport report = service.generateReport(id, null, status);
-        System.out.println(report.toString());
+
+        // 3) Call service.generateReport(...) — it auto-generates the next ID internally
+        InventoryReport report = service.generateReport(filterCategories, status);
+
+        // 4) Show results
+        System.out.println("Generated report with ID = " + report.getId());
+        System.out.println(report);
     }
+
 
     private void addNewProduct() {
         // 1) Fetch available products from the supplier
