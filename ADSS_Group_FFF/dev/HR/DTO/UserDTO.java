@@ -11,6 +11,12 @@ public class UserDTO {
 
     public UserDTO() { }
 
+    public UserDTO(String id,String password, String name, List<RoleDTO> roles) {
+        this.id = id;
+        this.name = name;
+        this.roles = roles;
+    }
+
     public UserDTO(String id, String name, List<RoleDTO> roles) {
         this.id = id;
         this.name = name;
@@ -40,4 +46,5 @@ public class UserDTO {
     public void setRoles(List<RoleDTO> roles) {
         this.roles = roles;
     }
+
 }

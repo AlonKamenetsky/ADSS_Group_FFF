@@ -1,12 +1,14 @@
 package HR.Domain;
 
+import Transportation.Domain.LicenseMapper;
+import Transportation.Domain.LicenseType;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DriverInfo {
     private final String employeeId;
     private List<LicenseType> licenseType;
-    private boolean isAvaiable;
 
     public enum LicenseType {
         B, C, C1;
@@ -17,11 +19,7 @@ public class DriverInfo {
         this.licenseType = licenseType;
     }
 
-    public boolean getAvailable() { return isAvaiable; }
-
-    public void setAvaiable(boolean status) { isAvaiable = status;}
-
-    public void setLicenses(ArrayList<LicenseType> licenseTypes) {
+    public void setLicenses(List<LicenseType> licenseTypes) {
         this.licenseType = licenseTypes;
     }
 

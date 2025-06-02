@@ -6,10 +6,7 @@ import java.util.List;
 public interface RoleDAO {
     void insert(Role role);
     void delete(String roleName);
-    Role selectByName(String roleName);
     List<Role> selectAll();
-
     List<Role> findAll();
-
     Role findByName(String name);
 }

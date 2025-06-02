@@ -6,4 +6,5 @@ import java.util.List;
 public interface ShiftTemplateDAO {
     void insert(ShiftTemplate template);
     List<ShiftTemplate> selectAll();
+    void deleteAll();
 }
