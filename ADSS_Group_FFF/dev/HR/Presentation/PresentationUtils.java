@@ -37,7 +37,7 @@ public class PresentationUtils {
             typewriterPrint("  None", 20);
         } else {
             for (RoleDTO role : dto.getRoles()) {
-                typewriterPrint("  - " + role, 20);
+                typewriterPrint("  - " + role.getName(), 20);
             }
         }
         typewriterPrint("Bank Account: " + dto.getBankAccount(), 20);

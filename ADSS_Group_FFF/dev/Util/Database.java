@@ -1,5 +1,8 @@
 package Util;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 
 public final class Database {
@@ -8,6 +11,12 @@ public final class Database {
 
     static {
         try {
+
+            Path dbFile = Paths.get("SuperLee.db");
+            if (Files.exists(dbFile)) {
+                Files.delete(dbFile);
+            }
+
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(DB_URL);
 
@@ -66,6 +75,7 @@ public final class Database {
                     CREATE TABLE IF NOT EXISTS transportation_tasks (
                         task_id               INTEGER PRIMARY KEY AUTOINCREMENT,
                         truck_id              INTEGER,
+                        truck_license_number TEXT    NOT NULL,                                        
                         task_date             TEXT    NOT NULL,
                         departure_time        TEXT    NOT NULL,
                         source_site_id        INTEGER NOT NULL,

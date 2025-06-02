@@ -28,4 +28,8 @@ public class User {
     public void setPassword(String number) {
         this.password = number;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

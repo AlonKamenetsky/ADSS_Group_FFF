@@ -1,9 +1,6 @@
 package HR.Presentation;
 
-import HR.DTO.EmployeeDTO;
-import HR.DTO.RoleDTO;
-import HR.DTO.ShiftDTO;
-import HR.DTO.SwapRequestDTO;
+import HR.DTO.*;
 import HR.Service.EmployeeService;
 import HR.Service.RoleService;
 import HR.Service.ShiftService;
@@ -212,7 +209,7 @@ public class HRInterface {
 
         if (rolesList.isEmpty()) {
             PresentationUtils.typewriterPrint("No roles selected. Adding employee without roles.", 20);
-            EmployeeDTO baseDto = new EmployeeDTO();
+            CreateEmployeeDTO baseDto = new CreateEmployeeDTO();
             baseDto.setId(id);
             baseDto.setName(name);
             baseDto.setBankAccount(bankAccount);
@@ -267,7 +264,7 @@ public class HRInterface {
                 return;
             }
 
-            EmployeeDTO newDto = new EmployeeDTO();
+            CreateEmployeeDTO newDto = new CreateEmployeeDTO();
             newDto.setId(id);
             newDto.setName(name);
             newDto.setBankAccount(bankAccount);
@@ -283,7 +280,7 @@ public class HRInterface {
             employeeService.addEmployee(newDto, licenseEnums);
             employeeService.setPassword(id, password);
         } else {
-            EmployeeDTO newDto = new EmployeeDTO();
+            CreateEmployeeDTO newDto = new CreateEmployeeDTO();
             newDto.setId(id);
             newDto.setName(name);
             newDto.setBankAccount(bankAccount);

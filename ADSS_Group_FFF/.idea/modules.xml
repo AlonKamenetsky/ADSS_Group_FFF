@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ADSS_Group_FFF.iml" filepath="$PROJECT_DIR$/ADSS_Group_FFF.iml" />
+      <module fileurl="file://$PROJECT_DIR$/adss-group.iml" filepath="$PROJECT_DIR$/adss-group.iml" />
     </modules>
   </component>
 </project>

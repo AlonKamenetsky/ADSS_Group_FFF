@@ -1,11 +1,13 @@
 package HR.Presentation;
 
+import HR.DTO.CreateEmployeeDTO;
 import HR.DTO.EmployeeDTO;
 import HR.DTO.RoleDTO;
 import HR.DTO.ShiftTemplateDTO;
 import HR.Service.EmployeeService;
 import HR.Service.RoleService;
 import HR.Service.ShiftService;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -26,7 +28,7 @@ public class DemoDataLoader {
                             roleService.addRole(dto);
                         });
 
-                // 2) Fetch RoleDTOs (previous code used domain Role; now we use RoleDTO)
+                // 2) Fetch RoleDTOs
                 RoleDTO hrRoleDto        = roleService.getRoleByName("HR");
                 RoleDTO cashierRoleDto   = roleService.getRoleByName("Cashier");
                 RoleDTO warehouseRoleDto = roleService.getRoleByName("Warehouse");
@@ -39,38 +41,47 @@ public class DemoDataLoader {
                 df.setLenient(false);
                 Date hireDate = df.parse("2020-01-01");
 
-                // 4a) Build EmployeeDTO #1 (ID = "1", roles = ["Shift Manager","Cashier"])
-                EmployeeDTO dto1 = new EmployeeDTO();
-                dto1.setId("1");
-                dto1.setName("Dana");
-                dto1.setRoles(Arrays.asList(shiftMgrRoleDto, cashierRoleDto));
-                employeeService.setPassword("1", "123");
-                dto1.setBankAccount("IL123BANK");
-                dto1.setSalary(5000f);
-                dto1.setEmploymentDate(hireDate);
-                employeeService.addEmployee(dto1);
+                // 4a) Build and insert Employee #1 (ID = "1", roles = ["Shift Manager","Cashier"])
+                CreateEmployeeDTO create1 = new CreateEmployeeDTO();
+                create1.setId("1");
+                create1.setName("Dana");
+                create1.setRoles(Arrays.asList(shiftMgrRoleDto, cashierRoleDto));
+                create1.setRawPassword("123");
+                create1.setBankAccount("IL123BANK");
+                create1.setSalary(5000f);
+                create1.setEmploymentDate(hireDate);
+                create1.setAvailabilityThisWeek(null);
+                create1.setAvailabilityNextWeek(null);
+                create1.setHolidays(null);
+                employeeService.addEmployee(create1);
 
-                // 4b) Build EmployeeDTO #2 (ID = "2", roles = ["Warehouse","Cashier"])
-                EmployeeDTO dto2 = new EmployeeDTO();
-                dto2.setId("2");
-                dto2.setName("John");
-                dto2.setRoles(Arrays.asList(warehouseRoleDto, cashierRoleDto));
-                employeeService.setPassword("2", "456");
-                dto2.setBankAccount("IL456BANK");
-                dto2.setSalary(4500f);
-                dto2.setEmploymentDate(hireDate);
-                employeeService.addEmployee(dto2);
+                // 4b) Build and insert Employee #2 (ID = "2", roles = ["Warehouse","Cashier"])
+                CreateEmployeeDTO create2 = new CreateEmployeeDTO();
+                create2.setId("2");
+                create2.setName("John");
+                create2.setRoles(Arrays.asList(warehouseRoleDto, cashierRoleDto));
+                create2.setRawPassword("456");
+                create2.setBankAccount("IL456BANK");
+                create2.setSalary(4500f);
+                create2.setEmploymentDate(hireDate);
+                create2.setAvailabilityThisWeek(null);
+                create2.setAvailabilityNextWeek(null);
+                create2.setHolidays(null);
+                employeeService.addEmployee(create2);
 
-                // 4c) Build EmployeeDTO #3 (ID = "hr", roles = ["HR"])
-                EmployeeDTO dtoHR = new EmployeeDTO();
-                dtoHR.setId("hr");
-                dtoHR.setName("HR Manager");
-                dtoHR.setRoles(Collections.singletonList(hrRoleDto));
-                employeeService.setPassword("hr", "123");
-                dtoHR.setBankAccount("IL456BANK");
-                dtoHR.setSalary(4500f);
-                dtoHR.setEmploymentDate(hireDate);
-                employeeService.addEmployee(dtoHR);
+                // 4c) Build and insert Employee #3 (ID = "hr", roles = ["HR"])
+                CreateEmployeeDTO createHR = new CreateEmployeeDTO();
+                createHR.setId("hr");
+                createHR.setName("HR Manager");
+                createHR.setRoles(Collections.singletonList(hrRoleDto));
+                createHR.setRawPassword("123");
+                createHR.setBankAccount("IL456BANK");
+                createHR.setSalary(4500f);
+                createHR.setEmploymentDate(hireDate);
+                createHR.setAvailabilityThisWeek(null);
+                createHR.setAvailabilityNextWeek(null);
+                createHR.setHolidays(null);
+                employeeService.addEmployee(createHR);
 
                 // 5) Define recurring‐shift templates
                 for (DayOfWeek dow : DayOfWeek.values()) {
@@ -87,56 +98,8 @@ public class DemoDataLoader {
                     shiftService.addTemplate(eveningTpl);
                 }
 
-                // 6) Bootstrap the rolling schedule based on current time
-                //    Note: your service now returns DTOs, but the underlying domain schedule reset logic
-                //    still needs a domain object. If ShiftService.getSchedule() now returns WeeklyShiftsScheduleDTO,
-                //    you'd need a separate domain‐aware method. For now, assume getSchedule() returns domain schedule:
-                // WeeklyShiftsSchedule domainSchedule = shiftService.getScheduleDomain();
-                // The rest remains the same. If your service no longer exposes domain schedule,
-                // you would need to adjust this block accordingly.
-
-                // Example (pseudo‐code):
-                /*
-                LocalDate today     = LocalDate.now(ZoneId.systemDefault());
-                LocalDate saturday  = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
-                LocalDateTime cutoff= saturday.atTime(18, 0);
-                LocalDateTime now   = LocalDateTime.now(ZoneId.systemDefault());
-
-                if (!now.isBefore(cutoff)) {
-                    domainSchedule.resetNextWeek(
-                        shiftService.getTemplates()
-                                    .stream()
-                                    .map(HR.Mapper.ShiftTemplateMapper::fromDTO)
-                                    .collect(Collectors.toList()),
-                        saturday
-                    );
-                    domainSchedule.swapWeeks();
-                    domainSchedule.resetNextWeek(
-                        shiftService.getTemplates()
-                                    .stream()
-                                    .map(HR.Mapper.ShiftTemplateMapper::fromDTO)
-                                    .collect(Collectors.toList()),
-                        saturday.plusDays(7)
-                    );
-                } else {
-                    LocalDate prevSat = saturday.minusDays(7);
-                    domainSchedule.resetNextWeek(
-                        shiftService.getTemplates()
-                                    .stream()
-                                    .map(HR.Mapper.ShiftTemplateMapper::fromDTO)
-                                    .collect(Collectors.toList()),
-                        prevSat
-                    );
-                    domainSchedule.swapWeeks();
-                    domainSchedule.resetNextWeek(
-                        shiftService.getTemplates()
-                                    .stream()
-                                    .map(HR.Mapper.ShiftTemplateMapper::fromDTO)
-                                    .collect(Collectors.toList()),
-                        saturday
-                    );
-                }
-                */
+                // 6) (Optional) Bootstrap the rolling schedule based on current time
+                //    If your ShiftService has domain‐aware methods, insert them here. Otherwise, skip.
 
                 PresentationUtils.typewriterPrint(
                         "Example data and recurring-shift templates loaded successfully.",
@@ -145,7 +108,7 @@ public class DemoDataLoader {
                 break;
 
             case 0:
-                // Minimal “zero” seed: only add HR role and then prompt for initial HR user details
+                // Minimal “zero” seed: only add HR role, then prompt for initial HR user
                 roleService.addRole(new RoleDTO("HR"));
 
                 for (DayOfWeek dow : DayOfWeek.values()) {
@@ -162,7 +125,7 @@ public class DemoDataLoader {
                     shiftService.addTemplate(eveningTpl);
                 }
 
-                // Same bootstrap logic as above for schedule…
+                // Same bootstrap logic as above for schedule, if needed…
 
                 Scanner scanner = new Scanner(System.in);
                 String newId, newName, newPw, newBankAccount;
@@ -222,21 +185,20 @@ public class DemoDataLoader {
                     }
                 }
 
-                // Build RoleDTO list for HR
-                List<RoleDTO> hrRolesDto = Collections.singletonList(
-                        roleService.getRoleByName("HR")
-                );
+                // Build CreateEmployeeDTO for the initial HR user
+                CreateEmployeeDTO createHr0 = new CreateEmployeeDTO();
+                createHr0.setId(newId);
+                createHr0.setName(newName);
+                createHr0.setRoles(Collections.singletonList(roleService.getRoleByName("HR")));
+                createHr0.setRawPassword(newPw);
+                createHr0.setBankAccount(newBankAccount);
+                createHr0.setSalary(newSalary);
+                createHr0.setEmploymentDate(newEmpDate);
+                createHr0.setAvailabilityThisWeek(null);
+                createHr0.setAvailabilityNextWeek(null);
+                createHr0.setHolidays(null);
 
-                // Build EmployeeDTO and add
-                EmployeeDTO newHrDto = new EmployeeDTO();
-                newHrDto.setId(newId);
-                newHrDto.setName(newName);
-                employeeService.setPassword(newId, newPw);
-                newHrDto.setBankAccount(newBankAccount);
-                newHrDto.setSalary(newSalary);
-                newHrDto.setEmploymentDate(newEmpDate);
-                newHrDto.setRoles(hrRolesDto);
-                employeeService.addEmployee(newHrDto);
+                employeeService.addEmployee(createHr0);
 
                 PresentationUtils.typewriterPrint("Initial HR user created.", 20);
                 break;
