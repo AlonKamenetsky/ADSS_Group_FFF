@@ -246,4 +246,20 @@ public class ShiftDAOImpl implements ShiftDAO {
         }
         return shifts;
     }
+    @Override
+    public String getShiftIdByDateAndTime(Date date, String time) {
+        String sql = "SELECT id FROM shifts WHERE date = ? AND time = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setDate(1, new java.sql.Date(date.getTime()));
+            stmt.setString(2, time); // e.g., "Morning" or "Evening"
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("id");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to retrieve shift ID", e);
+        }
+        return null;
+    }
+
 }

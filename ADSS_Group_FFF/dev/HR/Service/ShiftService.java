@@ -17,7 +17,6 @@ import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Domain.ShiftTemplate;
 import HR.Domain.WeeklyShiftsSchedule;
-import HR.Mapper.EmployeeMapper;
 import HR.Mapper.RoleMapper;
 import HR.Mapper.ShiftMapper;
 import HR.Mapper.ShiftTemplateMapper;
@@ -278,3 +277,4 @@ public class ShiftService {
                 .collect(Collectors.toList());
     }
 }
+

@@ -1,9 +1,5 @@
 package HR.Domain;
 
-import Transportation.Domain.LicenseMapper;
-import Transportation.Domain.LicenseType;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class DriverInfo {
@@ -11,7 +7,7 @@ public class DriverInfo {
     private List<LicenseType> licenseType;
 
     public enum LicenseType {
-        B, C, C1;
+        B, C, C1
     }
 
     public DriverInfo(String employeeId, List<LicenseType> licenseType) {

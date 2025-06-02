@@ -1,14 +1,14 @@
+
 package HR.DataAccess;
 
-import HR.DataAccess.SwapDAO;
 import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Domain.SwapRequest;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Date;
 
 public class SwapDAOImpl implements SwapDAO {
 
@@ -57,15 +57,6 @@ public class SwapDAOImpl implements SwapDAO {
         return list;
     }
 
-    private SwapRequest map(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id");
-        Employee employee = EmployeesRepo.getInstance().getEmployeeById(rs.getString("requester_id"));
-        Shift shift = ShiftsRepo.getInstance().getShiftByID(rs.getString("shift_id"));
-        Role role = RolesRepo.getInstance().getRoleByName(rs.getString("role_name"));
-
-        return new SwapRequest(id, employee, shift, role);
-    }
-
     @Override
     public SwapRequest selectById(int requestId) {
         String sql = "SELECT * FROM swap_requests WHERE id = ?";
@@ -79,5 +70,19 @@ public class SwapDAOImpl implements SwapDAO {
             throw new RuntimeException("Select swap request by ID failed", e);
         }
         return null;
+    }
+
+    private SwapRequest map(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        String employeeId = rs.getString("requester_id");
+        String shiftId = rs.getString("shift_id");
+        String roleName = rs.getString("role_name");
+
+        // Lightweight placeholders
+        Employee employee = new Employee(employeeId, null, null, null, null, 0f, new Date());
+        Shift shift = new Shift(shiftId, new Date(), Shift.ShiftTime.Morning, new HashMap<>(), new HashMap<>());
+        Role role = new Role(roleName);
+
+        return new SwapRequest(id, employee, shift, role);
     }
 }
