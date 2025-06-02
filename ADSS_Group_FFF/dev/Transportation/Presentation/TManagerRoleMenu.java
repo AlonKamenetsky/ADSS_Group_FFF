@@ -22,11 +22,11 @@ public class TManagerRoleMenu {
         while (true) {
             System.out.println("""
                     What would you like to use?
-                    1. Driver Menu
-                    2. Truck Menu
-                    3. Task Menu
-                    4. Site Menu
-                    5. Zone Menu
+                    
+                    1. Truck Menu
+                    2. Task Menu
+                    3. Site Menu
+                    4. Zone Menu
                     0. Logout""");
             String choiceManager = input.nextLine();
             switch (choiceManager) {
