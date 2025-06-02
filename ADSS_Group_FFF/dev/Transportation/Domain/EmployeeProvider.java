@@ -1,13 +1,13 @@
 package Transportation.Domain;
 
-import HR.Domain.Employee;
+import HR.DTO.EmployeeDTO;
 import HR.Domain.Shift;
 
 import java.util.Date;
 import java.util.List;
 
 public interface EmployeeProvider {
-    List<Employee> findAvailableDrivers(String licenseType, Date date, Shift.ShiftTime shiftTime);
+    List<EmployeeDTO> findAvailableDrivers(String licenseType, Date date, String shiftTime);
     boolean findAvailableWarehouseWorkers(Date date, Shift.ShiftTime shiftTime);
-    void setAvailabilityDriver(Employee emp, boolean status);
-}
+    String getShiftIdByDateTime(Date date, String time);
+    }

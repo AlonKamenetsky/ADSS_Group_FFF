@@ -1,5 +1,3 @@
-package Transportation;
-
 import Transportation.Presentation.TransportationMenu;
 import Transportation.SystemInitializer.SystemInitializer;
 

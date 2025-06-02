@@ -263,14 +263,4 @@ public class EmployeeService {
         }
         return dto.getAvailabilityThisWeek();
     }
-
-    public void setAvailability(Employee driver, boolean status) {
-        DriverInfo driverInfo = getDriverInfo(driver);
-        if (driverInfo != null) {
-            driverInfo.setAvaiable(status);
-            driverInfoDAO.update(driverInfo);
-        } else {
-            throw new IllegalArgumentException("Employee is not a driver or has no driver info.");
-        }
-    }
 }

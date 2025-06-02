@@ -1,6 +1,6 @@
 package Transportation.Domain;
 
-import HR.Domain.Employee;
+import HR.DTO.EmployeeDTO;
 import HR.Domain.Shift;
 import Transportation.DTO.*;
 import Transportation.Domain.Repositories.*;
@@ -51,7 +51,7 @@ public class TaskManager {
         Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, sourceSiteId);
         if (task.isPresent()) {
             // free truck and driver
-            if(!task.get().truckLicenseNumber().isEmpty() && !task.get().driverId().isEmpty()) {
+            if (!task.get().truckLicenseNumber().isEmpty() && !task.get().driverId().isEmpty()) {
                 // driverManager.setDriverAvailability(driverManager.getDriverId(), true);
                 truckManager.setTruckAvailability(truckManager.getTruckIdByLicense(task.get().truckLicenseNumber()), true);
             }
@@ -98,36 +98,49 @@ public class TaskManager {
         if (task.isPresent()) {
             Optional<TruckDTO> nextAvailableTruck = truckManager.getNextTruckAvailable(task.get().weightBeforeLeaving());
             if (nextAvailableTruck.isEmpty()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No truck available for this task");
             }
 
             String licenseTypeNeeded = LicenseMapper.getRequiredLicense(TruckType.fromString(nextAvailableTruck.get().truckType())).toString();
             Shift.ShiftTime shiftTime = Shift.fromTime(taskDeparture);
             Date shiftDate = java.sql.Date.valueOf(taskDate);
 
-            // needs to be DTOs for employees
-            List<Employee> availableDrivers = employeeProvider.findAvailableDrivers(licenseTypeNeeded, shiftDate, shiftTime);
+            List<EmployeeDTO> availableDrivers = employeeProvider.findAvailableDrivers(licenseTypeNeeded, shiftDate, taskDeparture.toString());
 
             if (availableDrivers.isEmpty()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No drivers available for this task");
             }
 
             // assign warehouse worker
             boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
 
             if (!availableWarehouseWorker) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No warehouse workers available for this task");
             }
 
             // All good → assign
-            Employee driverToAssign = availableDrivers.get(0);
-            taskRepository.assignDriverToTask(task.get().taskId(), driverToAssign.getId());
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
-            employeeProvider.setAvailabilityDriver(driverToAssign, false);
+
+            String shiftId = employeeProvider.getShiftIdByDateTime(shiftDate, taskDeparture.toString());
+            int counter = availableDrivers.size();
+            while (!availableDrivers.isEmpty()) {
+                EmployeeDTO driverToAssign = availableDrivers.get(0);
+
+                if (!taskRepository.hasOccupiedDriver(shiftId, driverToAssign.getId())) {
+                    taskRepository.addOccupiedDriver(shiftId, driverToAssign.getId());
+                    taskRepository.assignDriverToTask(task.get().taskId(), driverToAssign.getId());
+                    break;
+                }
+                if (counter == 0) {
+                    throw new NoSuchElementException("No drivers available for this task");
+                }
+                counter--;
+            }
+
             return true;
         } else {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("This task isn't available");
         }
     }
 

@@ -49,4 +49,7 @@ public class DatabaseInitializer {
         ItemDTO item2 = itemDAO.insert(new ItemDTO(2,"CHICKEN",2F));
         ItemDTO item3 = itemDAO.insert(new ItemDTO(3,"SUGAR",1F));
     }
+
+    public void loadHRData() throws SQLException {
+    }
 }

@@ -1,5 +1,6 @@
 package Transportation.Domain.Repositories;
 
+import Transportation.DTO.DriverAvailabilityDTO;
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.DataAccess.SqliteTransportationTaskDAO;
 import Transportation.DataAccess.TransportationTaskDAO;
@@ -152,6 +153,22 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
         }
         return taskDAO.assignDriver(taskId, driverId);
     }
+
+    @Override
+    public DriverAvailabilityDTO addOccupiedDriver(String shiftId, String driverId) throws SQLException {
+        return taskDAO.addOccupiedDriver(shiftId, driverId);
+    }
+
+    @Override
+    public void removeOccupiedDriver(String shiftId, String driverId) throws SQLException {
+        taskDAO.removeOccupiedDriver(shiftId, driverId);
+    }
+
+    @Override
+    public boolean hasOccupiedDriver(String shiftId, String driverId) throws SQLException {
+        return taskDAO.hasOccupiedDriver(shiftId, driverId);
+    }
+
 
     //helper methods
 

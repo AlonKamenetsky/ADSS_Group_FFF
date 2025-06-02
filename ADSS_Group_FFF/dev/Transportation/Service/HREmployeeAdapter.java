@@ -1,7 +1,7 @@
 package Transportation.Service;
 
-import HR.Domain.DriverInfo;
-import HR.Domain.Employee;
+import HR.DTO.EmployeeDTO;
+import HR.DTO.ShiftDTO;
 import HR.Domain.Shift;
 import HR.Service.EmployeeService;
 import HR.Service.ShiftService;
@@ -16,27 +16,26 @@ public class HREmployeeAdapter implements EmployeeProvider {
     private final ShiftService shiftService = ShiftService.getInstance();
 
     @Override
-    public List<Employee> findAvailableDrivers(String licenseType, Date date, Shift.ShiftTime shiftTime) {
-        return employeeService.findAvailableDrivers(DriverInfo.LicenseType.valueOf(licenseType), date, shiftTime);
+    public List<EmployeeDTO> findAvailableDrivers(String licenseType, Date date, String shiftTime) {
+        return employeeService.findAvailableDrivers(licenseType, date, shiftTime);
     }
 
     @Override
     public boolean findAvailableWarehouseWorkers(Date date, Shift.ShiftTime shiftTime) {
         // find shiftId based on two params
         String shiftId = "";
-        List<Shift> allShiftsDate = shiftService.getShiftsForDate(date.toInstant()
+        List<ShiftDTO> allShiftsDate = shiftService.getShiftsForDate(date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate());
-        for (Shift s : allShiftsDate) {
+        for (ShiftDTO s : allShiftsDate) {
             if(s.getType() == shiftTime) {
-                 shiftId = s.getID();
+                 shiftId = s.getId();
             }
         }
         return shiftService.isWarehouseAssigned(shiftId);
     }
 
-    @Override
-    public void setAvailabilityDriver(Employee emp, boolean status) {
-        employeeService.setAvailability(emp, status);
+    public String getShiftIdByDateTime(Date date, String time) {
+        return shiftService.getShiftIdByDateAndTime((java.sql.Date) date, time);
     }
 }

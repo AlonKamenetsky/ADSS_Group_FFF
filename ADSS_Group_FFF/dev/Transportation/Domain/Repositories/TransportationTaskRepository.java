@@ -1,5 +1,6 @@
 package Transportation.Domain.Repositories;
 
+import Transportation.DTO.DriverAvailabilityDTO;
 import Transportation.DTO.TransportationTaskDTO;
 
 import java.sql.SQLException;
@@ -21,5 +22,7 @@ public interface TransportationTaskRepository {
     TransportationTaskDTO updateWeight(int taskId, float weight) throws SQLException;
     TransportationTaskDTO assignTruckToTask(int taskId, String truckLicenseNumber) throws SQLException;
     TransportationTaskDTO assignDriverToTask(int taskId, String driverId) throws SQLException;
-
+    DriverAvailabilityDTO addOccupiedDriver(String shiftId, String driverId) throws SQLException;
+    void removeOccupiedDriver(String shiftId, String driverId) throws SQLException;
+    boolean hasOccupiedDriver(String shiftId, String driverId) throws SQLException;
 }

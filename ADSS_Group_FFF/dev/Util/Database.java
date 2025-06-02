@@ -95,6 +95,16 @@ public final class Database {
                         FOREIGN KEY (site_id) REFERENCES sites(site_id)
                     );
                 """);
+                st.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS drivers_in_tasks (
+                        shift_id       TEXT NOT NULL,
+                        driver_id      TEXT NOT NULL,
+                        PRIMARY KEY (shift_id, driver_id),
+                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
+                        FOREIGN KEY (driver_id) REFERENCES employees(id)
+                    );
+                """);
+
 
                 // HR Tables:
                 st.executeUpdate("""
@@ -189,6 +199,7 @@ public final class Database {
 
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ExceptionInInitializerError(e);
         }
     }
