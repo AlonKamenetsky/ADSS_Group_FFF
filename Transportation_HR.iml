@@ -3,13 +3,12 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/HR/tests/ServiceTests" />
-      <excludeFolder url="file://$MODULE_DIR$/IntegrationTests" />
-      <excludeFolder url="file://$MODULE_DIR$/Transportation/Tests" />
+      <sourceFolder url="file://$MODULE_DIR$/ADSS_Group_FFF/dev" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/ADSS_Group_FFF/dev/HR/tests" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-api:5.10.0" level="project" />
     <orderEntry type="module-library">
       <library name="JUnit5.8.1">
         <CLASSES>
@@ -26,5 +25,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.42.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.mockito:mockito-junit-jupiter:5.12.0" level="project" />
+    <orderEntry type="library" name="Maven: org.mockito:mockito-core:5.12.0" level="project" />
   </component>
 </module>
