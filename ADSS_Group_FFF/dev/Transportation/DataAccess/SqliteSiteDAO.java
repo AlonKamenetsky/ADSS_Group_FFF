@@ -74,7 +74,7 @@ public class SqliteSiteDAO implements SiteDAO {
 
     @Override
     public Optional<SiteDTO> findByAddress(String address) throws SQLException {
-        String sql = "SELECT site_id, address, contact_name, phone_number, zone_id FROM sites WHERE address = ?";
+        String sql = "SELECT site_id, address, contact_name, phone_number, zone_id FROM sites WHERE address = ? COLLATE NOCASE";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, address);
             try (ResultSet rs = ps.executeQuery()) {

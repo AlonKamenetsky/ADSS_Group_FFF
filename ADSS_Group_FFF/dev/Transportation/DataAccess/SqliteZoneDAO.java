@@ -17,9 +17,13 @@ public class SqliteZoneDAO implements ZoneDAO {
                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, zone.zoneName());
             ps.executeUpdate();
+
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
-                return new ZoneDTO(keys.getInt(1), zone.zoneName(), new ArrayList<>());
+                if (keys.next()) {
+                    return new ZoneDTO(keys.getInt(1), zone.zoneName(), new ArrayList<>());
+                } else {
+                    throw new SQLException("Failed to retrieve generated zone ID.");
+                }
             }
         }
     }
@@ -33,6 +37,7 @@ public class SqliteZoneDAO implements ZoneDAO {
         }
     }
 
+    @Override
     public ZoneDTO update(ZoneDTO zone) throws SQLException {
         String sql = "UPDATE zones SET zone_name = ? WHERE zone_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
@@ -49,20 +54,21 @@ public class SqliteZoneDAO implements ZoneDAO {
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, zoneId);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next()
-                        ? Optional.of(new ZoneDTO(
-                        rs.getInt("zone_id"),
-                        rs.getString("zone_name"),
-                        getSitesForZone(zoneId)
-                ))
-                        : Optional.empty();
+                if (rs.next()) {
+                    return Optional.of(new ZoneDTO(
+                            rs.getInt("zone_id"),
+                            rs.getString("zone_name"),
+                            getSitesForZone(zoneId)
+                    ));
+                }
+                return Optional.empty();
             }
         }
     }
 
     @Override
     public Optional<ZoneDTO> findByName(String zoneName) throws SQLException {
-        String sql = "SELECT zone_id, zone_name FROM zones WHERE zone_name = ?";
+        String sql = "SELECT zone_id, zone_name FROM zones WHERE LOWER(zone_name) = LOWER(?)";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, zoneName);
             try (ResultSet rs = ps.executeQuery()) {
@@ -100,8 +106,7 @@ public class SqliteZoneDAO implements ZoneDAO {
         return list;
     }
 
-
-    // helper method retrieving sites by zone
+    // helper method retrieving site addresses by zone
     private ArrayList<String> getSitesForZone(int zoneId) throws SQLException {
         String sql = "SELECT address FROM sites WHERE zone_id = ?";
         ArrayList<String> siteAddresses = new ArrayList<>();

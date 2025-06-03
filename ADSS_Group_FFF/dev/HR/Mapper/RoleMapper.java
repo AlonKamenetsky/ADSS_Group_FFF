@@ -1,4 +1,3 @@
-// File: HR/Mapper/RoleMapper.java
 package HR.Mapper;
 
 import HR.Domain.Role;

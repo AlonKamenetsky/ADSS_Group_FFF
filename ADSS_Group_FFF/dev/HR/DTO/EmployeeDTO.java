@@ -1,4 +1,3 @@
-// File: EmployeeDTO.java
 package HR.DTO;
 
 import java.util.Date;

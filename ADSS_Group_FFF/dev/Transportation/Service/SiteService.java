@@ -16,10 +16,6 @@ public class SiteService {
         this.siteManager = new SiteManager();
     }
 
-    public SiteService(SiteManager siteManager) {
-        this.siteManager = siteManager;
-    }
-
     public SiteDTO addSite(String _address, String _contactName, String _phoneNumber) throws NullPointerException, IllegalArgumentException, NoSuchElementException, InstanceAlreadyExistsException {
         if (_address == null || _contactName == null || _phoneNumber == null) {
             throw new NullPointerException();

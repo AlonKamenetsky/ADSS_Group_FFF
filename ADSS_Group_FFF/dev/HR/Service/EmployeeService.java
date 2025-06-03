@@ -10,15 +10,19 @@ import HR.DataAccess.ShiftDAOImpl;
 import HR.Domain.DriverInfo;
 import HR.Domain.Employee;
 import HR.Domain.Shift;
+import HR.Domain.WeeklyAvailability;
 import HR.Mapper.DriverInfoMapper;
 import HR.Mapper.EmployeeMapper;
 import HR.Mapper.ShiftMapper;
 import Util.Database;
 
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+
 
 public class EmployeeService {
 
@@ -372,24 +376,67 @@ public class EmployeeService {
             Date date,
             String shiftTimeString
     ) {
-        DriverInfo.LicenseType licenseType = DriverInfo.LicenseType.valueOf(
-                licenseTypeString.trim().toUpperCase()
-        );
-        Shift.ShiftTime shiftTime = Shift.ShiftTime.valueOf(
-                shiftTimeString.trim().toUpperCase()
-        );
+        // 1) Parse the desired license and shift‐time enums
+        DriverInfo.LicenseType requiredLicense = DriverInfo.LicenseType
+                .valueOf(licenseTypeString.trim().toUpperCase());
+        Shift.ShiftTime requiredShift;
+        try {
+            LocalTime parsedTime = LocalTime.parse(shiftTimeString.trim());  // e.g. "10:10"
+            requiredShift = Shift.fromTime(parsedTime);
+            if (requiredShift == null) {
+                throw new IllegalArgumentException("No shift assigned at " + shiftTimeString);
+            }
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException("Invalid time format: " + shiftTimeString);
+        }
 
+        // Convert the java.sql.Date → LocalDate for holiday comparison
+        LocalDate targetDay = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        // 2) Grab all employees from the DAO
         List<Employee> allEmps = employeeDAO.selectAll();
+
         return allEmps.stream()
+                // a) Must have the “Driver” role
                 .filter(emp -> emp.getRoles().stream()
                         .anyMatch(r -> r.getName().equalsIgnoreCase("Driver")))
+                // b) Must have the required license in driver_info
                 .filter(emp -> {
                     DriverInfo di = driverInfoDAO.getByEmployeeId(emp.getId());
-                    return di != null && di.getLicenses().contains(licenseType);
+                    return di != null && di.getLicenses().contains(requiredLicense);
                 })
-                .filter(emp -> !emp.getHolidays().contains(date))
-                .filter(emp -> emp.getAvailabilityThisWeek().isEmpty()
-                        || emp.isAvailable(date, shiftTime))
+                // c) Must not be on holiday (compare just the LocalDate)
+                .filter(emp -> {
+                    for (Date hol : emp.getHolidays()) {
+                        LocalDate holDay = hol.toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+                        if (holDay.equals(targetDay)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
+                // d) Must be available this week for (date, shift) OR have no constraints
+                .filter(emp -> {
+                    List<WeeklyAvailability> slots = emp.getAvailabilityThisWeek();
+                    if (slots.isEmpty()) {
+                        // “no availability constraints” means “available”
+                        return true;
+                    }
+                    // Otherwise check if any WeeklyAvailability matches both day and time
+                    for (WeeklyAvailability wa : slots) {
+                        LocalDate waDay = targetDay; // we already have targetDay
+                        DayOfWeek dow = targetDay.getDayOfWeek();
+                        if (wa.getDay() == dow && wa.getTime() == requiredShift) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                // e) Map the domain Employee → EmployeeDTO
                 .map(EmployeeMapper::toDTO)
                 .toList();
     }

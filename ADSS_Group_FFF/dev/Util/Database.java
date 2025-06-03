@@ -78,10 +78,10 @@ public final class Database {
                         truck_license_number TEXT    NOT NULL,                                        
                         task_date             TEXT    NOT NULL,
                         departure_time        TEXT    NOT NULL,
-                        source_site_id        INTEGER NOT NULL,
+                        source_site_address        TEXT NOT NULL,
                         weight_before_leaving REAL    NOT NULL,
                         driver_id             TEXT,
-                        FOREIGN KEY (source_site_id) REFERENCES sites(site_id),
+                        FOREIGN KEY (source_site_address) REFERENCES sites(address),
                         FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
                     );
                 """);

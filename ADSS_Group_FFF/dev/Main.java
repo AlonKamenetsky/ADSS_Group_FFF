@@ -2,7 +2,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Scanner;
 
-import HR.Presentation.DemoDataLoader;
 import HR.Presentation.LoginScreen;
 import HR.Presentation.PresentationUtils;
 import HR.Service.UserService;
@@ -10,7 +9,6 @@ import Util.DatabaseInitializer;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
-        int demoData = 0;
         DatabaseInitializer dbInit = new DatabaseInitializer();
 
         try {
@@ -22,18 +20,17 @@ public class Main {
                 input = scanner.nextLine().trim();
             }
             if (input.equalsIgnoreCase("yes")) {
-                demoData = 1;
                 // loading Transportation data
                 dbInit.loadTransportationFakeData();
                 dbInit.loadItems();
-
+                dbInit.InitializeFullHRData();
                 PresentationUtils.typewriterPrint("Initializing demo data..", 20);
             } else {
                 // loading just items for create a task
                 dbInit.loadItems();
+                dbInit.InitializePartHRData();
                 PresentationUtils.typewriterPrint("Initializing new system..", 20);
             }
-            DemoDataLoader.initializeExampleData(demoData);
 
 
 

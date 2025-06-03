@@ -112,6 +112,7 @@ public class TruckMenu {
             return;
         }
         try {
+            System.out.println("trying to add");
             TrucksHandler.AddTruck(inputTruckType, inputLicenseNumber, inputModel, inputNetWeight, inputMaxWeight);
             System.out.println("Truck added successfully.");
         } catch (NullPointerException n) {

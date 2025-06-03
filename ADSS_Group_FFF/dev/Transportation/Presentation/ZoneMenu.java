@@ -176,21 +176,26 @@ public class ZoneMenu {
     }
 
     private void viewAllZones() {
-        List<ZoneDTO> allZones = zonesHandler.viewAllZones();
-        StringBuilder sb = new StringBuilder("All Zones:\n");
+        try {
+            List<ZoneDTO> allZones = zonesHandler.viewAllZones();
+            StringBuilder sb = new StringBuilder("All Zones:\n");
 
-        for (ZoneDTO zone : allZones) {
-            ZoneDTO zonePopulated = siteZoneHandler.getZoneWithSites(zone.zoneName());
-            sb.append(String.format("Zone Name: %s\nSites Mapped:\n", zonePopulated.zoneName()));
+            for (ZoneDTO zone : allZones) {
+                ZoneDTO zonePopulated = siteZoneHandler.getZoneWithSites(zone.zoneName());
+                sb.append(String.format("Zone Name: %s\nSites Mapped:\n", zonePopulated.zoneName()));
 
-            int counter = 1;
-            for (String siteAddress : zonePopulated.sitesRelated()) {
-                sb.append(String.format("  %d. %s\n", counter++, siteAddress));
+                int counter = 1;
+                for (String siteAddress : zonePopulated.sitesRelated()) {
+                    sb.append(String.format("  %d. %s\n", counter++, siteAddress));
+                }
+
+                sb.append("----------------------\n");
             }
 
-            sb.append("----------------------\n");
+            System.out.println(sb);
         }
-
-        System.out.println(sb);
+        catch (NoSuchElementException e) {
+            System.out.println("No zones found");
+        }
     }
 }

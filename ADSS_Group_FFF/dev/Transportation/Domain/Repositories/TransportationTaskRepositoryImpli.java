@@ -18,13 +18,11 @@ import java.util.stream.Collectors;
 public class TransportationTaskRepositoryImpli implements TransportationTaskRepository {
 
     private final TransportationTaskDAO taskDAO;
-    private final ArrayList<TransportationTask> tempTasksList;
     private final SiteRepository siteRepository;
 
 
     public TransportationTaskRepositoryImpli(SiteRepository siteRepository) {
         taskDAO = new SqliteTransportationTaskDAO();
-        tempTasksList = new ArrayList<>();
         this.siteRepository = siteRepository;
     }
 
@@ -41,116 +39,59 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
                 "",
                 0
         );
-        TransportationTaskDTO insertedTask = taskDAO.insert(newTask);
-        Site taskSite = siteRepository.fromSiteDTO(siteRepository.findBySiteAddress(insertedTask.sourceSiteAddress()).get());
-        tempTasksList.add(new TransportationTask(insertedTask.taskId(), insertedTask.taskDate(), insertedTask.departureTime(), taskSite));
-        return insertedTask;
+        return taskDAO.insert(newTask);
     }
 
 
     @Override
     public void deleteTask(int taskId) throws SQLException {
-        if (!tempTasksList.isEmpty()) {
-            tempTasksList.remove(findTaskInListId(taskId));
-        }
         taskDAO.delete(taskId);
 
     }
 
     @Override
     public Optional<TransportationTaskDTO> findTask(int taskId) throws SQLException {
-        TransportationTask task = findTaskInListId(taskId);
-        if (task != null) {
-            return Optional.of(toDTO(task));
-        }
+
         return taskDAO.findById(taskId);
     }
 
     @Override
-    public Optional<TransportationTaskDTO> findTaskByDateTimeAndSource(LocalDate taskDate, LocalTime departureTime, int sourceSiteId) throws SQLException {
-        if (!tempTasksList.isEmpty()) {
-            TransportationTask task = findTaskInList(taskDate, departureTime, sourceSiteId);
-            if (task != null) {
-                return Optional.of(toDTO(task));
-            }
-        }
-        return taskDAO.findByDateTimeAndSource(taskDate, departureTime, sourceSiteId);
+    public Optional<TransportationTaskDTO> findTaskByDateTimeAndSource(LocalDate taskDate, LocalTime departureTime, String sourceSiteAddress) throws SQLException {
+        return taskDAO.findByDateTimeAndSource(taskDate, departureTime, sourceSiteAddress);
     }
 
     @Override
     public List<TransportationTaskDTO> getAllTasks() throws SQLException {
-        if (!tempTasksList.isEmpty()) {
-            List<TransportationTaskDTO> returnedList = new ArrayList<>();
-            for (TransportationTask task : tempTasksList) {
-                returnedList.add(toDTO(task));
-            }
-            return returnedList;
-        }
         return taskDAO.findAll();
     }
 
     @Override
-    public List<TransportationTaskDTO> findTaskBySourceAddress(int sourceSiteId) throws SQLException {
-        if (!tempTasksList.isEmpty()) {
-            List<TransportationTaskDTO> returnedList = new ArrayList<>();
-            List<TransportationTask> tasks = findTaskInListSource(sourceSiteId);
-            if (tasks != null) {
-                for (TransportationTask task : tasks) {
-                    returnedList.add(toDTO(task));
-                }
-            }
-            return returnedList;
-        }
-        return taskDAO.findBySourceAddress(sourceSiteId);
+    public List<TransportationTaskDTO> findTaskBySourceAddress(String sourceSiteAddress) throws SQLException {
+        return taskDAO.findBySourceAddress(sourceSiteAddress);
     }
 
     @Override
     public boolean hasDestination(int taskId, int siteId) throws SQLException {
-        if (!tempTasksList.isEmpty()) {
-            TransportationTask task = findTaskInListId(taskId);
-            if (task != null) {
-                String siteAddress = siteRepository.findSite(siteId).get().siteAddress();
-                return task.hasDestination(siteAddress);
-            }
-        }
         return taskDAO.hasDestination(taskId, siteId);
     }
 
     @Override
     public TransportationTaskDTO addDestination(int taskId, int destinationSiteId) throws SQLException {
-        if (!tempTasksList.isEmpty()) {
-            TransportationTask task = findTaskInListId(taskId);
-            Site site = siteRepository.fromSiteDTO(siteRepository.findSite(destinationSiteId).get());
-            if (task != null) {
-                task.addDestination(site);
-                return toDTO(task);
-            }
-        }
         return taskDAO.addDestination(taskId, destinationSiteId);
     }
 
     @Override
     public TransportationTaskDTO updateWeight(int taskId, float weight) throws SQLException {
-        TransportationTask task = findTaskInListId(taskId);
-        if (task != null) {
-            task.setWeightBeforeLeaving(weight);
-        }
         return taskDAO.updateWeight(taskId, weight);
     }
 
     public TransportationTaskDTO assignTruckToTask(int taskId, String truckLicenseNumber) throws SQLException {
-        TransportationTask task = findTaskInListId(taskId);
-        if (task != null) {
-            task.assignTruck(truckLicenseNumber);
-        }
+
         return taskDAO.assignTruck(taskId, truckLicenseNumber);
     }
 
     public TransportationTaskDTO assignDriverToTask(int taskId, String driverId) throws SQLException {
-        TransportationTask task = findTaskInListId(taskId);
-        if (task != null) {
-            task.assignDriver(driverId);
-        }
+
         return taskDAO.assignDriver(taskId, driverId);
     }
 
@@ -172,36 +113,6 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
 
     //helper methods
 
-    private TransportationTask findTaskInListId(int taskId) {
-        for (TransportationTask task : tempTasksList) {
-            if (task.getTaskId() == taskId) {
-                return task;
-            }
-        }
-        return null;
-    }
-
-    private List<TransportationTask> findTaskInListSource(int sourceSiteId) throws SQLException {
-        List<TransportationTask> returnedList = new ArrayList<>();
-        for (TransportationTask task : tempTasksList) {
-            int taskSiteId = siteRepository.findBySiteAddress(task.getTaskSourceAddress()).get().siteId();
-            if (taskSiteId == sourceSiteId) {
-                returnedList.add(task);
-            }
-            return returnedList;
-        }
-        return null;
-    }
-
-    private TransportationTask findTaskInList(LocalDate taskDate, LocalTime departureTime, int sourceSiteId) throws SQLException {
-        for (TransportationTask task : tempTasksList) {
-            int taskSiteId = siteRepository.findBySiteAddress(task.getTaskSourceAddress()).get().siteId();
-            if (task.getTaskDate() == taskDate && task.getDepartureTime() == departureTime && taskSiteId == sourceSiteId) {
-                return task;
-            }
-        }
-        return null;
-    }
 
     private TransportationTaskDTO toDTO(TransportationTask task) {
         return new TransportationTaskDTO(
@@ -217,5 +128,4 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
                 task.getWeightBeforeLeaving()
         );
     }
-
 }

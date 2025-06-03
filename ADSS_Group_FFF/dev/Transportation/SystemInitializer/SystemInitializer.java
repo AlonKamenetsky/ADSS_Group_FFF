@@ -3,10 +3,6 @@ package Transportation.SystemInitializer;
 import Transportation.Domain.*;
 import Transportation.Presentation.TransportationMenu;
 import Transportation.Service.*;
-import Util.DatabaseInitializer;
-
-import java.sql.SQLException;
-import java.util.Scanner;
 
 public class SystemInitializer {
     public static TransportationMenu buildApplication() {

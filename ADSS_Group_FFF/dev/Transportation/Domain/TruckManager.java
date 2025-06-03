@@ -18,7 +18,7 @@ public class TruckManager {
 
 
     public void addTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws SQLException, InstanceAlreadyExistsException {
-        if (getTruckById(getTruckIdByLicense(licenseNumber)).isEmpty()) {
+        if (truckRepository.findTruckByLicense(licenseNumber).isEmpty()) {
             truckRepository.addTruck(truckType, licenseNumber, model, netWeight, maxWeight, true);
         } else {
             throw new InstanceAlreadyExistsException();

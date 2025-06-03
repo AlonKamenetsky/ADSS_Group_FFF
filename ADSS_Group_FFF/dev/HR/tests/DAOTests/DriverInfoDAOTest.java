@@ -5,12 +5,15 @@ import HR.DataAccess.DriverInfoDAOImpl;
 import HR.Domain.DriverInfo;
 import HR.Domain.DriverInfo.LicenseType;
 import Util.Database;
-import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.List;
 
+import org.junit.jupiter.api.*;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DriverInfoDAOTest {
@@ -26,43 +29,49 @@ public class DriverInfoDAOTest {
 
     @BeforeEach
     public void cleanUp() {
-        try {
-            conn.createStatement().execute("DELETE FROM DriverInfo"); // adjust if table name differs
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("DELETE FROM DriverInfo"); // adjust table name if different
         } catch (Exception e) {
-            throw new RuntimeException("Failed to clean DriverInfo table", e);
+            fail("Failed to clean DriverInfo table: " + e.getMessage());
         }
     }
 
     @Test
-    public void testInsertAndGetByEmployeeId() {
-        DriverInfo info = new DriverInfo("emp100", List.of(LicenseType.B, LicenseType.C));
-        driverInfoDAO.insert(info);
+    public void testInsertAndGetDriverInfo() {
+        String empId = "EMP123";
+        List<LicenseType> licenses = List.of(LicenseType.B, LicenseType.C);
+        DriverInfo info = new DriverInfo(empId, licenses);
 
-        DriverInfo retrieved = driverInfoDAO.getByEmployeeId("emp100");
-        assertNotNull(retrieved);
-        assertEquals(2, retrieved.getLicenses().size());
-        assertTrue(retrieved.getLicenses().contains(LicenseType.B));
+        driverInfoDAO.insert(info);
+        DriverInfo loaded = driverInfoDAO.getByEmployeeId(empId);
+
+        assertNotNull(loaded);
+        assertEquals(empId, loaded.getEmployeeId());
+        assertEquals(licenses.size(), loaded.getLicenses().size());
+        assertTrue(loaded.getLicenses().containsAll(licenses));
     }
 
     @Test
-    public void testUpdateLicenseTypes() {
-        DriverInfo info = new DriverInfo("emp200", List.of(LicenseType.B));
-        driverInfoDAO.insert(info);
+    public void testUpdateDriverInfo() {
+        String empId = "EMP124";
+        driverInfoDAO.insert(new DriverInfo(empId, List.of(LicenseType.B)));
 
-        info.setLicenses(List.of(LicenseType.C, LicenseType.C1));
-        driverInfoDAO.update(info);
+        DriverInfo updated = new DriverInfo(empId, List.of(LicenseType.C1));
+        driverInfoDAO.update(updated);
 
-        DriverInfo updated = driverInfoDAO.getByEmployeeId("emp200");
-        assertEquals(2, updated.getLicenses().size());
-        assertTrue(updated.getLicenses().contains(LicenseType.C1));
+        DriverInfo result = driverInfoDAO.getByEmployeeId(empId);
+        assertNotNull(result);
+        assertEquals(1, result.getLicenses().size());
+        assertTrue(result.getLicenses().contains(LicenseType.C1));
     }
 
     @Test
     public void testDeleteDriverInfo() {
-        DriverInfo info = new DriverInfo("emp300", List.of(LicenseType.C));
-        driverInfoDAO.insert(info);
+        String empId = "EMP125";
+        driverInfoDAO.insert(new DriverInfo(empId, List.of(LicenseType.C)));
+        driverInfoDAO.delete(empId);
 
-        driverInfoDAO.delete("emp300");
-        assertNull(driverInfoDAO.getByEmployeeId("emp300"));
+        DriverInfo deleted = driverInfoDAO.getByEmployeeId(empId);
+        assertNull(deleted);
     }
 }

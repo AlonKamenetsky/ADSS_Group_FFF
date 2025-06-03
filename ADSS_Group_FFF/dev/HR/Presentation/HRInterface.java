@@ -1,6 +1,7 @@
 package HR.Presentation;
 
 import HR.DTO.*;
+import HR.Domain.ShiftAssignment;
 import HR.Service.EmployeeService;
 import HR.Service.RoleService;
 import HR.Service.ShiftService;
@@ -9,6 +10,7 @@ import HR.Presentation.PresentationUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.*;
 
 public class HRInterface {
@@ -524,18 +526,24 @@ public class HRInterface {
             return;
         }
 
+        // 1) Fetch “this week” shifts via ShiftService (returns ShiftDTOs)
         List<ShiftDTO> shifts = shiftService.getCurrentWeekShifts();
+        List<EmployeeDTO> employees = employeeService.getEmployees();
+
         if (shifts.isEmpty()) {
             PresentationUtils.typewriterPrint("No shifts scheduled for this week.", 20);
             return;
         }
 
+        // 2) Display available shifts
         PresentationUtils.typewriterPrint("Available Shifts:", 20);
         for (int i = 0; i < shifts.size(); i++) {
             ShiftDTO s = shifts.get(i);
+            String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(s.getDate());
             PresentationUtils.typewriterPrint(
-                    (i + 1) + ". " + s.getId() + " on " +
-                            new SimpleDateFormat("yyyy-MM-dd").format(s.getDate()), 20);
+                    (i + 1) + ". " + s.getId() + " on " + dateStr + " (" + s.getType() + ")",
+                    20
+            );
         }
         PresentationUtils.typewriterPrint("Select shift:", 20);
         int shiftIndex = scanner.nextInt() - 1;
@@ -546,21 +554,203 @@ public class HRInterface {
         }
         ShiftDTO shiftDto = shifts.get(shiftIndex);
 
-        Map<String, Integer> requiredCounts = new HashMap<>();
-        List<RoleDTO> allRolesDto = roleService.getRoles();
-        for (RoleDTO rDto : allRolesDto) {
-            String rn = rDto.getName();
-            if (rn.equalsIgnoreCase("Shift Manager") || rn.equalsIgnoreCase("HR Manager")) {
+        // 3) Repeatedly assign employees until all roles are filled or user quits
+        boolean exitLoop = false;
+        while (!exitLoop) {
+            // 3a) Build a map: roleName -> List of employeeIds already assigned
+            Map<String, List<String>> assignedMap = new HashMap<>();
+            for (ShiftAssignmentDTO sa : shiftDto.getAssignedEmployees()) {
+                String roleName = sa.getRoleName();
+                String empId = sa.getEmployeeId();
+                assignedMap.computeIfAbsent(roleName, k -> new ArrayList<>()).add(empId);
+            }
+
+            Map<String, Integer> requiredCounts = shiftDto.getRequiredCounts();
+
+            // Check if all roles have been assigned fully
+            boolean allComplete = true;
+            for (String roleName : requiredCounts.keySet()) {
+                int required = requiredCounts.get(roleName);
+                int assigned = assignedMap.getOrDefault(roleName, Collections.emptyList()).size();
+                if (assigned < required) {
+                    allComplete = false;
+                    break;
+                }
+            }
+            if (allComplete) {
+                PresentationUtils.typewriterPrint(
+                        "All roles for shift " + shiftDto.getId() + " have been fully assigned.",
+                        20
+                );
+                break;
+            }
+
+            // 3b) Show current status for each role
+            PresentationUtils.typewriterPrint(
+                    "\nRole assignment status for shift " + shiftDto.getId() + ":",
+                    20
+            );
+            List<String> rolesList = new ArrayList<>(requiredCounts.keySet());
+            for (int i = 0; i < rolesList.size(); i++) {
+                String roleName = rolesList.get(i);
+                int required = requiredCounts.get(roleName);
+                int assigned = assignedMap.getOrDefault(roleName, Collections.emptyList()).size();
+                int missing = required - assigned;
+                String status = (missing == 0) ? "Full" : "Missing: " + missing;
+                PresentationUtils.typewriterPrint(
+                        (i + 1) + ". " + roleName + " (" + status + ")",
+                        20
+                );
+            }
+            PresentationUtils.typewriterPrint("0. Quit assignment for this shift", 20);
+
+            PresentationUtils.typewriterPrint(
+                    "Enter the number corresponding to the role you want to fill:",
+                    20
+            );
+            int roleChoice = scanner.nextInt() - 1;
+            scanner.nextLine();
+            if (roleChoice == -1) {
+                // User entered 0
+                exitLoop = true;
+                break;
+            }
+            if (roleChoice < 0 || roleChoice >= rolesList.size()) {
+                PresentationUtils.typewriterPrint("Invalid role selection.", 20);
                 continue;
             }
+
+            String selectedRoleName = rolesList.get(roleChoice);
+            int requiredForRole = requiredCounts.get(selectedRoleName);
+            int assignedForRole = assignedMap.getOrDefault(selectedRoleName, Collections.emptyList()).size();
+            if (assignedForRole >= requiredForRole) {
+                PresentationUtils.typewriterPrint(
+                        "This role has already been fully assigned.",
+                        20
+                );
+                continue;
+            }
+
+            // 3c) Build list of qualified EmployeeDTOs
+            List<EmployeeDTO> qualifiedEmployees = new ArrayList<>();
+            for (EmployeeDTO e : employees) {
+                // (i) Must have the selected role
+                boolean hasRole = e.getRoles().stream()
+                        .anyMatch(rdto -> rdto.getName().equalsIgnoreCase(selectedRoleName));
+                if (!hasRole) {
+                    continue;
+                }
+
+                // (ii) Not already assigned to this shift under that role
+                List<String> assignedIds = assignedMap.getOrDefault(selectedRoleName, Collections.emptyList());
+                if (assignedIds.contains(e.getId())) {
+                    continue;
+                }
+
+                // (iii) Not on vacation on this shift’s date
+                boolean onVacation = false;
+                if (e.getHolidays() != null) {
+                    for (Date vacDate : e.getHolidays()) {
+                        if (vacDate.equals(shiftDto.getDate())) {
+                            onVacation = true;
+                            break;
+                        }
+                    }
+                }
+                if (onVacation) {
+                    continue;
+                }
+
+                // (iv) Check availability for this week
+                List<WeeklyAvailabilityDTO> availThisWeek = e.getAvailabilityThisWeek();
+                if (availThisWeek == null || availThisWeek.isEmpty()) {
+                    // no availability constraints ⇒ eligible
+                    qualifiedEmployees.add(e);
+                } else {
+                    // must have at least one matching slot
+                    boolean available = false;
+                    DayOfWeek shiftDay = shiftDto.getDate().toInstant()
+                            .atZone(java.time.ZoneId.systemDefault())
+                            .getDayOfWeek();
+                    for (WeeklyAvailabilityDTO waDto : availThisWeek) {
+                        if (waDto.getDay() == shiftDay
+                                && waDto.getTime().equals(shiftDto.getType()))
+                        {
+                            available = true;
+                            break;
+                        }
+                    }
+                    if (available) {
+                        qualifiedEmployees.add(e);
+                    }
+                }
+            }
+
+            if (qualifiedEmployees.isEmpty()) {
+                PresentationUtils.typewriterPrint(
+                        "No qualified employees available for role " + selectedRoleName,
+                        20
+                );
+                continue;
+            }
+
+            // 3d) Display qualified employees
             PresentationUtils.typewriterPrint(
-                    "Required # for role " + rn + ":", 20);
-            int cnt = scanner.nextInt();
+                    "Qualified Employees for role " + selectedRoleName + ":",
+                    20
+            );
+            for (int i = 0; i < qualifiedEmployees.size(); i++) {
+                PresentationUtils.typewriterPrint(
+                        (i + 1) + ". " + qualifiedEmployees.get(i).getName(),
+                        20
+                );
+            }
+            PresentationUtils.typewriterPrint("Select employee to assign:", 20);
+            int employeeIndex = scanner.nextInt() - 1;
             scanner.nextLine();
-            requiredCounts.put(rn, cnt);
+            if (employeeIndex < 0 || employeeIndex >= qualifiedEmployees.size()) {
+                PresentationUtils.typewriterPrint("Invalid employee selection.", 20);
+                continue;
+            }
+
+            EmployeeDTO selectedEmployee = qualifiedEmployees.get(employeeIndex);
+
+            // 3e) Use ShiftService to assign
+            shiftService.assignEmployeeToShift(
+                    shiftDto.getId(),
+                    selectedEmployee.getId(),
+                    selectedRoleName
+            );
+
+            // 3f) Refresh the ShiftDTO’s assignments
+            shiftDto = shiftService.getShiftById(shiftDto.getId());
         }
 
-        shiftService.configureShiftRoles(shiftDto.getId(), requiredCounts);
+        // 4) After exiting the loop, print final status
+        PresentationUtils.typewriterPrint(
+                "\nFinal shift completion status for shift " + shiftDto.getId() + ":",
+                20
+        );
+        Map<String, Integer> finalRequired = shiftDto.getRequiredCounts();
+
+        // Rebuild a final assignedMap from ShiftAssignmentDTO list
+        Map<String, List<String>> finalAssignedMap = new HashMap<>();
+        for (ShiftAssignmentDTO sa : shiftDto.getAssignedEmployees()) {
+            String roleName = sa.getRoleName();
+            String empId = sa.getEmployeeId();
+            finalAssignedMap.computeIfAbsent(roleName, k -> new ArrayList<>()).add(empId);
+        }
+
+        for (String roleName : finalRequired.keySet()) {
+            int req = finalRequired.get(roleName);
+            int asg = finalAssignedMap.getOrDefault(roleName, Collections.emptyList()).size();
+            int missing = req - asg;
+            String status = (missing == 0) ? "Full" : "Missing " + missing + " employee(s).";
+            PresentationUtils.typewriterPrint(
+                    "Role " + roleName + ": " + status,
+                    20
+            );
+        }
     }
 
     private void configureShiftRoles(Scanner scanner) {

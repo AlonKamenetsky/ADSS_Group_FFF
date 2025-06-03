@@ -7,7 +7,6 @@ import Transportation.DataAccess.ItemsListDAO;
 import Transportation.DataAccess.SqliteItemDAO;
 import Transportation.DataAccess.SqliteItemsListDAO;
 import Transportation.Domain.Item;
-import Transportation.Domain.ItemsList;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -16,56 +15,34 @@ public class ItemRepositoryImpli implements ItemRepository {
 
     private final ItemDAO itemDAO;
     private final ItemsListDAO listDAO;
-    private final ArrayList<Item> tempItemList;
-    private final ArrayList<ItemsList> tempItemsList;
 
     public ItemRepositoryImpli() {
         this.itemDAO = new SqliteItemDAO();
         this.listDAO = new SqliteItemsListDAO();
-        this.tempItemList = new ArrayList<>();
-        this.tempItemsList = new ArrayList<>();
         }
 
     @Override
     public ItemDTO addItem(String name,float weight) throws SQLException {
-        ItemDTO insertedItemDTO = itemDAO.insert(new ItemDTO(null,name,weight));
-        tempItemList.add(new Item(insertedItemDTO.itemId(),name, weight));
-        return insertedItemDTO;
+        return itemDAO.insert(new ItemDTO(null,name,weight));
     }
 
     @Override
     public List<ItemDTO> getAllItems() throws SQLException {
-        if (!tempItemList.isEmpty()) {
-            List<ItemDTO> returnedList = new ArrayList<>();
-            for (Item currItem : tempItemList) {
-                returnedList.add(toDTO(currItem));
-            }
-            return returnedList;
-        } else {
-            return itemDAO.findAll();
-        }
+        return itemDAO.findAll();
     }
 
     @Override
     public Optional<ItemDTO> findItem(int itemId) throws SQLException {
-        for (Item currItem : tempItemList) {
-            if (currItem.getItemId() == itemId) {
-                return Optional.of(toDTO(currItem));
-            }
-        }
         return itemDAO.findById(itemId);
     }
 
     @Override
     public int makeList(HashMap<String, Integer> itemsInList) throws SQLException {
         int listId = listDAO.createEmptyList();
-        ItemsList itemsList = new ItemsList(listId);
         for (HashMap.Entry<String, Integer> entry : itemsInList.entrySet()) {
             Optional<ItemDTO> maybeItem = itemDAO.findByName(entry.getKey());
             if (maybeItem.isPresent()) {
                 int currItemId = maybeItem.get().itemId();
-                Item chosenItem = new Item(currItemId, maybeItem.get().itemName(), maybeItem.get().itemWeight());
-                itemsList.addItemToList(chosenItem, entry.getValue());
                 listDAO.addItemToList(listId, currItemId, entry.getValue());
             }
         }
@@ -73,27 +50,11 @@ public class ItemRepositoryImpli implements ItemRepository {
     }
 
     public float findWeightList(int itemsListId) throws SQLException {
-        for (ItemsList currItemsList : tempItemsList) {
-            if (currItemsList.getListId() == itemsListId) {
-                currItemsList.getListWeight();
-            }
-        }
         return listDAO.findWeight(itemsListId);
     }
 
     @Override
     public ItemsListDTO getItemsList(int itemsListId) throws SQLException {
-        for (ItemsList currItemsList : tempItemsList) {
-            if (currItemsList.getListId() == itemsListId) {
-                Map<Integer, Integer> result = new HashMap<>();
-                for (Map.Entry<Item, Integer> entry : currItemsList.getItemsMap().entrySet()) {
-                    Item item = entry.getKey();
-                    int quantity = entry.getValue();
-                    result.put(item.getItemId(), quantity);
-                }
-                return new ItemsListDTO(itemsListId, result);
-            }
-        }
         return listDAO.findItemListByID(itemsListId);
     }
 
@@ -102,11 +63,6 @@ public class ItemRepositoryImpli implements ItemRepository {
 
     @Override
     public void delete(int itemId) throws SQLException {
-        for (Item i : tempItemList) {
-            if (i.getItemId() == itemId) {
-                tempItemList.remove(i);
-            }
-        }
         itemDAO.delete(itemId);
     }
 

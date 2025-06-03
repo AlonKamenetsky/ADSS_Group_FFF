@@ -53,7 +53,7 @@ public class ItemService {
         }
         try {
             ItemDTO itemDTO = itemManager.getItemByName(itemName);
-            return itemManager.doesItemExist(itemDTO.itemId());
+            return itemDTO != null;
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");
         }
