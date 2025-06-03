@@ -13,6 +13,7 @@ import HR.Mapper.WeeklyShiftsScheduleMapper;
 import Util.Database;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -213,8 +214,25 @@ public class ShiftService {
     }
 
     public String getShiftIdByDateAndTime(java.sql.Date date, String time) {
-        return shiftDAO.getShiftIdByDateAndTime(date, time);
+        LocalTime time1 = LocalTime.parse(time);
+        Shift.ShiftTime time2 = fromTime(time1);
+        return shiftDAO.getShiftIdByDateAndTime(date, time2.toString());
     }
 
+    public  Shift.ShiftTime fromTime(LocalTime time) {
+        LocalTime startMorning = LocalTime.of(8, 0);    // 08:00
+        LocalTime endMorning = LocalTime.of(17, 0);     // 17:00 (start of evening)
+
+        if (!time.isBefore(startMorning) && time.isBefore(endMorning)) {
+            return Shift.ShiftTime.Morning;
+        }
+
+        if (!time.isBefore(endMorning)) {
+            return Shift.ShiftTime.Evening;
+        }
+
+        // 00:00 to 07:59 — closed
+        return null;
+    }
 }
 

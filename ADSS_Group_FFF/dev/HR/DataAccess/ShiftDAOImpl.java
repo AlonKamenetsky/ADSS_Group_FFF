@@ -317,6 +317,7 @@ public class ShiftDAOImpl implements ShiftDAO {
         // 3) Normalize the 'time' string (trim whitespace)
         String normalizedTime = time.trim();
 
+
         // 4) Use a case‐insensitive comparison on the "time" column
         String sql = """
         SELECT id
