@@ -24,7 +24,7 @@ class TruckServiceTest {
 
     @BeforeEach
     void setUp() {
-        truckService = new TruckService(truckManager);
+        truckService = new TruckService();
     }
 
     @Test
