@@ -26,7 +26,7 @@ public class TaskMenu {
         input = new Scanner(System.in);
     }
 
-    public void show()  {
+    public void show() {
         while (true) {
             System.out.println("""
                     === Task Management ===
@@ -104,6 +104,9 @@ public class TaskMenu {
             return;
         } catch (NoSuchElementException e) {
             System.out.println("Site doesn't exist.");
+            return;
+        } catch (IllegalArgumentException f) {
+            System.out.println(f.getMessage());
             return;
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
@@ -200,8 +203,9 @@ public class TaskMenu {
 
         } catch (NoSuchElementException n) {
             System.out.println("""
-                    Adding task not successful: """ + n.getMessage() + """
-                    Consider choosing fewer items or removing destination sites.
+                    Adding task not successful:
+                    """ + n.getMessage() + """
+                    \nConsider choosing fewer items or removing destination sites.
                     Task is deleted for now. Thank you and sorry!""");
             try {
                 TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
@@ -211,8 +215,7 @@ public class TaskMenu {
         }
     }
 
-
-        private void viewTaskBySourceSite() {
+    private void viewTaskBySourceSite() {
         System.out.println("Enter a site address:");
         String siteAddress = input.nextLine();
         System.out.println(TasksHandler.getTasksBySourceAddress(siteAddress));

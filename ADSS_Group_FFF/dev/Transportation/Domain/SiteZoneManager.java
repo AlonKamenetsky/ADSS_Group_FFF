@@ -18,6 +18,12 @@ public class SiteZoneManager {
         this.zoneManager = new ZoneManager();
     }
 
+    // for mock tests
+    public SiteZoneManager(SiteManager siteManager1, ZoneManager zoneManager1) {
+        this.siteManager = siteManager1;
+        this.zoneManager = zoneManager1;
+    }
+
     public SiteDTO mapSiteToZone(SiteDTO site, int zoneId) throws SQLException {
         return siteManager.mapSiteToZone(site, zoneId);
     }

@@ -52,7 +52,7 @@ public class ItemService {
             return false;
         }
         try {
-            ItemDTO itemDTO = itemManager.getItemByName(itemName);
+            ItemDTO itemDTO = itemManager.getItemByName(itemName.toLowerCase());
             return itemDTO != null;
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");

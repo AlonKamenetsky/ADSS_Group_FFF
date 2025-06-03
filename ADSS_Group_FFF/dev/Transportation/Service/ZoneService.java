@@ -16,6 +16,11 @@ public class ZoneService {
         this.zoneManager = new ZoneManager();
     }
 
+    //for mock tests
+    public ZoneService(ZoneManager zoneManager1) {
+        this.zoneManager = zoneManager1;
+    }
+
     public void AddZone(String _zoneName) throws NullPointerException, InstanceAlreadyExistsException {
         if (_zoneName == null) {
             throw new NullPointerException();

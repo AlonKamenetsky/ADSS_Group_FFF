@@ -16,6 +16,11 @@ public class SiteService {
         this.siteManager = new SiteManager();
     }
 
+    //for mock tests
+    public SiteService(SiteManager siteManager1) {
+        this.siteManager = siteManager1;
+    }
+
     public SiteDTO addSite(String _address, String _contactName, String _phoneNumber) throws NullPointerException, IllegalArgumentException, NoSuchElementException, InstanceAlreadyExistsException {
         if (_address == null || _contactName == null || _phoneNumber == null) {
             throw new NullPointerException();
@@ -40,7 +45,7 @@ public class SiteService {
                 throw new NoSuchElementException();
             }
 
-            int siteId = maybeSite.get().zoneId();
+            int siteId = maybeSite.get().siteId();
             siteManager.removeSite(siteId);
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");

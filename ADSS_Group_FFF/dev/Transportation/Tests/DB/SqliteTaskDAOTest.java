@@ -42,11 +42,11 @@ public class SqliteTaskDAOTest {
                     "task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "task_date TEXT NOT NULL, " +
                     "departure_time TEXT NOT NULL, " +
-                    "source_site_id INTEGER NOT NULL, " +
+                    "source_site_address TEXT NOT NULL, " +
                     "driver_id TEXT, " +
                     "truck_license_number TEXT, " +
                     "weight_before_leaving REAL, " +
-                    "FOREIGN KEY(source_site_id) REFERENCES sites(site_id))");
+                    "FOREIGN KEY(source_site_address) REFERENCES sites(address))");
             stmt.execute("CREATE TABLE transportation_task_destinations (" +
                     "task_id INTEGER NOT NULL, " +
                     "site_id INTEGER NOT NULL)");

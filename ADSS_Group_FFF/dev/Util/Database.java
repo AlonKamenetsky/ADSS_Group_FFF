@@ -75,7 +75,7 @@ public final class Database {
                     CREATE TABLE IF NOT EXISTS transportation_tasks (
                         task_id               INTEGER PRIMARY KEY AUTOINCREMENT,
                         truck_id              INTEGER,
-                        truck_license_number TEXT    NOT NULL,                                        
+                        truck_license_number TEXT    NOT NULL,
                         task_date             TEXT    NOT NULL,
                         departure_time        TEXT    NOT NULL,
                         source_site_address        TEXT NOT NULL,
@@ -138,16 +138,6 @@ public final class Database {
                         role_name TEXT NOT NULL,
                         PRIMARY KEY (employee_id, role_name),
                         FOREIGN KEY (employee_id) REFERENCES employees(id),
-                        FOREIGN KEY (role_name) REFERENCES roles(name)
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS shift_role_requirements (
-                        shift_id       TEXT    NOT NULL,
-                        role_name      TEXT    NOT NULL,
-                        required_count INTEGER NOT NULL,
-                        PRIMARY KEY (shift_id, role_name),
-                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
                         FOREIGN KEY (role_name) REFERENCES roles(name)
                     );
                 """);

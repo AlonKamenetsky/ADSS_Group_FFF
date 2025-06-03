@@ -28,6 +28,14 @@ public class TaskManager {
         this.employeeProvider = employeeProvider;
     }
 
+    public TaskManager(SiteManager siteManager, TruckManager truckManager, ItemManager itemManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, EmployeeProvider employeeProvider) {
+        this.siteManager = siteManager;
+        this.truckManager = truckManager;
+        this.itemManager = itemManager;
+        this.docRepository = docRepository;
+        this.taskRepository = taskRepository;
+        this.employeeProvider = employeeProvider;
+    }
 
     public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
         Optional<SiteDTO> site = siteManager.findSiteByAddress(taskSourceSite);
@@ -42,7 +50,6 @@ public class TaskManager {
         if (task.isPresent()) {
             // free truck and driver
             if (!task.get().truckLicenseNumber().isEmpty() && !task.get().driverId().isEmpty()) {
-                // driverManager.setDriverAvailability(driverManager.getDriverId(), true);
                 truckManager.setTruckAvailability(truckManager.getTruckIdByLicense(task.get().truckLicenseNumber()), true);
             }
             taskRepository.deleteTask(task.get().taskId());
@@ -53,15 +60,12 @@ public class TaskManager {
     public void addDocToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite,
                              String destinationSite, HashMap<String, Integer> itemsChosen) throws SQLException {
         int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
-        System.out.println("source site id: " + sourceSiteId);
         Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, taskSourceSite);
         if (task.isPresent()) {
             //Create itemList and push it to database
             int listId = itemManager.makeList(itemsChosen);
-            System.out.println("list id: " + listId);
             //Create doc (creating mapping between list and destination) and push it to database
             int destinationSiteId = siteManager.findSiteByAddress(destinationSite).get().siteId();
-            System.out.println("destination site id: " + destinationSiteId);
             docRepository.createDoc(task.get().taskId(), destinationSiteId, listId);
             //Phase add doc to task and add mapping to database
             taskRepository.addDestination(task.get().taskId(), destinationSiteId);

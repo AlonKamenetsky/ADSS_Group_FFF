@@ -9,8 +9,11 @@ import Transportation.Domain.Repositories.TransportationTaskRepository;
 import Transportation.Service.HREmployeeAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,6 +22,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExtendWith(MockitoExtension.class)
 class TaskManagerTest {
     private TaskManager taskManager;
@@ -36,7 +41,7 @@ class TaskManagerTest {
         itemManager = mock(ItemManager.class);
         EmployeeProvider adapter = mock(HREmployeeAdapter.class);
 
-        taskManager = new TaskManager(adapter);
+        taskManager = new TaskManager(siteManager, truckManager, itemManager, docRepo, taskRepo, adapter);
     }
 
     @Test
