@@ -36,7 +36,7 @@ class TaskManagerTest {
         itemManager = mock(ItemManager.class);
         EmployeeProvider adapter = mock(HREmployeeAdapter.class);
 
-        taskManager = new TaskManager(docRepo, taskRepo, siteManager, truckManager, itemManager, adapter);
+        taskManager = new TaskManager(adapter);
     }
 
     @Test
@@ -52,7 +52,7 @@ class TaskManagerTest {
 
         when(siteManager.findSiteByAddress(source)).thenReturn(Optional.of(sourceSite));
         when(siteManager.findSiteByAddress(dest)).thenReturn(Optional.of(destSite));
-        when(taskRepo.findTaskByDateTimeAndSource(date, time, 1)).thenReturn(Optional.of(taskDTO));
+        when(taskRepo.findTaskByDateTimeAndSource(date, time, source)).thenReturn(Optional.of(taskDTO));
         when(itemManager.makeList(any())).thenReturn(100);
 
         HashMap<String, Integer> items = new HashMap<>();
@@ -76,7 +76,7 @@ class TaskManagerTest {
         TransportationDocDTO doc = new TransportationDocDTO(101, 10, 20, 1);
 
         when(siteManager.findSiteByAddress(source)).thenReturn(Optional.of(sourceSite));
-        when(taskRepo.findTaskByDateTimeAndSource(date, time, 10)).thenReturn(Optional.of(taskDTO));
+        when(taskRepo.findTaskByDateTimeAndSource(date, time, source)).thenReturn(Optional.of(taskDTO));
         when(docRepo.findDocByTaskId(taskId)).thenReturn(List.of(doc));
         when(docRepo.findDocItemsListId(doc.docId())).thenReturn(20);
         when(itemManager.findWeightList(20)).thenReturn(100.0f);

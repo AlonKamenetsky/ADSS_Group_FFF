@@ -1,4 +1,3 @@
-// File: DriverInfoDTO.java
 package HR.DTO;
 
 import java.util.List;

@@ -9,6 +9,7 @@ import HR.Domain.WeeklyShiftsSchedule;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 public class ShiftDAOImpl implements ShiftDAO {
@@ -133,9 +134,22 @@ public class ShiftDAOImpl implements ShiftDAO {
 
     @Override
     public Optional<Shift> getCurrentShift() {
-        return selectAll().stream().findFirst();
-    }
+        // 1) Figure out the "current" ShiftTime bucket (Morning, Evening, or null)
+        LocalTime now = LocalTime.now();
+        Shift.ShiftTime bucket = Shift.fromTime(now);
+        if (bucket == null) {
+            // before 08:00 → no active shift
+            return Optional.empty();
+        }
 
+        // 2) Construct today’s date‐string + bucket name to match the shift‐ID format
+        LocalDate today = LocalDate.now();
+        String shiftId = today.toString() + "-" + bucket.name();
+
+        // 3) Load that exact shift row (if it exists)
+        Shift s = selectById(shiftId);
+        return Optional.ofNullable(s);
+    }
     @Override
     public WeeklyShiftsSchedule getSchedule() {
         WeeklyShiftsSchedule schedule = new WeeklyShiftsSchedule();

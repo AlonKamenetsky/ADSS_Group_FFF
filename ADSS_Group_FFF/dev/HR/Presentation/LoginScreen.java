@@ -7,6 +7,8 @@ import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.User;
 import HR.Service.UserService;
+import Transportation.Presentation.TransportationMenu;
+import Transportation.SystemInitializer.SystemInitializer;
 
 public class LoginScreen {
     private final UserService userService;
@@ -84,13 +86,19 @@ public class LoginScreen {
         while (true) {
             if (!login(scanner)) break;
 
-            // Dispatch to the correct interface
-            if (currentRole.getName().equalsIgnoreCase("HR")) {
-                HRInterface hr = new HRInterface(currentUser.getId());
-                hr.managerMainMenu(scanner);
-            } else {
-                EmployeeInterface ui = new EmployeeInterface(currentUser.getId());
-                ui.employeeMainMenu(scanner);
+            switch (currentRole.getName()){
+                case("HR"):
+                    HRInterface hr = new HRInterface(currentUser.getId());
+                    hr.managerMainMenu(scanner);
+                    break;
+                case ("Transportation Manager"):
+                    TransportationMenu menu = SystemInitializer.buildApplication();
+                    menu.show();
+                    break;
+                default:
+                    EmployeeInterface ui = new EmployeeInterface(currentUser.getId());
+                    ui.employeeMainMenu(scanner);
+                    break;
             }
 
             // Ask to switch user

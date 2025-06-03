@@ -9,38 +9,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="modified tests">
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/adss-group.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DTO/DriverAvailabilityDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ADSS_Group_FFF_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ADSS_Group_FFF_jar2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ADSS_Group_FFF_jar3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="for checkout">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/ADSS_Group_FFF.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DAOTests/DriverInfoDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/DAOTests/DriverInfoDAOTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteTransportationTaskDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/SqliteTransportationTaskDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/TransportationTaskDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/DataAccess/TransportationTaskDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/DocItemsInfo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/EmployeeProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/EmployeeProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TaskManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Domain/TaskManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/HREmployeeAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/Service/HREmployeeAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Transportation/TransportationMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/TransportationMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/HR_UML.drawio.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/docs/HR_UML.drawio.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/devHR_UML.drawio.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/devUML.drawio.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/instructions.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/members_id" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HR_ass1Fix.zip" beforeDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <list id="8383c5b0-e5f7-45d1-8cd2-5e4673af62c7" name="Changes by taeer" comment="" />
@@ -59,7 +36,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="HR" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -83,7 +60,7 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2vV500Yi3ID85UNUviSSlfp7jNK" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+  <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -130,9 +107,9 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "SDKs",
+    "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.4816092",
+    "project.structure.side.proportion": "0.2",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "reference.settings.project.maven.testRunning",
     "vue.rearranger.settings.migration": "true"
@@ -157,6 +134,14 @@
         <item itemvalue="Application.TransportationMain" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

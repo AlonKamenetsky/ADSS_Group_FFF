@@ -27,7 +27,7 @@ class SiteServiceTest {
 
     @BeforeEach
     void setUp() {
-        siteService = new SiteService(siteManager);
+        siteService = new SiteService();
     }
 
     @Test

@@ -12,12 +12,16 @@ import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import Transportation.Service.TaskService;
+
 
 public class EmployeeInterface {
     private final String employeeId;
     private final EmployeeService employeeService = EmployeeService.getInstance();
     private final ShiftService shiftService       = ShiftService.getInstance();
     private final SwapService swapService         = SwapService.getInstance();
+    private final TaskService taskService = new TaskService();
+
 
     public EmployeeInterface(String employeeId) {
         this.employeeId = employeeId;
@@ -37,7 +41,10 @@ public class EmployeeInterface {
             PresentationUtils.typewriterPrint("8. Cancel Swap Request", 20);
             PresentationUtils.typewriterPrint("9. Add Vacation", 20);
             PresentationUtils.typewriterPrint("10. View Vacation Dates", 20);
-            PresentationUtils.typewriterPrint("11. Exit", 20);
+            PresentationUtils.typewriterPrint("11. View My Transportation Tasks (DRIVER ONLY)", 20);
+            PresentationUtils.typewriterPrint("12. Exit", 20);
+
+
 
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -52,7 +59,10 @@ public class EmployeeInterface {
                 case 8 -> cancelSwapRequest(scanner);
                 case 9 -> addVacation(scanner);
                 case 10 -> viewHolidays();
-                case 11 -> exit = true;
+                case 11 -> viewMyTasks();
+                case 12 -> exit = true;
+
+
                 default -> PresentationUtils.typewriterPrint("Invalid choice.", 20);
             }
         }
@@ -297,4 +307,35 @@ public class EmployeeInterface {
             }
         }
     }
+
+    public void viewMyTasks() {
+        if(!employeeService.isDriver(employeeId)) {
+            PresentationUtils.typewriterPrint("Only Drivers are able to access this method.", 20);
+            return;
+        }
+        PresentationUtils.typewriterPrint("\nTransportation Tasks Assigned to You:", 20);
+        // Just fetch all tasks and filter for this driver
+        String allTasks;
+        try {
+            allTasks = taskService.getAllTasksString();
+        } catch (RuntimeException e) {
+            PresentationUtils.typewriterPrint("Failed to retrieve tasks: " + e.getMessage(), 20);
+            return;
+        }
+
+        String[] tasks = allTasks.split("----------------------");
+        boolean found = false;
+        for (String task : tasks) {
+            if (task.contains("Driver Assigned: " + employeeId)) {
+                System.out.println(task.strip());
+                System.out.println("----------------------");
+                found = true;
+            }
+        }
+
+        if (!found) {
+            PresentationUtils.typewriterPrint("No tasks currently assigned to you.", 20);
+        }
+    }
+
 }

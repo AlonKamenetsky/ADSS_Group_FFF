@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="adss2025_v02:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/adss2025_v02_jar</output-path>
+    <root id="archive" name="ADSS_Group_FFF.jar">
+      <element id="module-output" name="ADSS_Group_FFF" />
+      <element id="library" level="project" name="release" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -12,7 +12,7 @@ public class SqliteItemDAO implements ItemDAO {
 
     @Override
     public List<ItemDTO> findAll() throws SQLException {
-        String sql = "SELECT item_id, item_name, weight FROM items ORDER BY item_id";
+        String sql = "SELECT item_id, item_name, weight FROM items";
         try (Statement st = Database.getConnection().createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             List<ItemDTO> list = new ArrayList<>();
@@ -44,7 +44,7 @@ public class SqliteItemDAO implements ItemDAO {
 
     @Override
     public Optional<ItemDTO> findByName(String name) throws SQLException {
-        String sql = "SELECT item_id, item_name, weight FROM items WHERE item_name = ?";
+        String sql = "SELECT item_id, item_name, weight FROM items WHERE item_name = ? COLLATE NOCASE";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {

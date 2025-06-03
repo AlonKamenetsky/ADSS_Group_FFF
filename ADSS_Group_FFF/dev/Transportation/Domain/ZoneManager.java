@@ -43,12 +43,6 @@ public class ZoneManager {
         return zoneRepo.updateZone(updatedZone);
     }
 
-    // just use DTO.isEmpty()
-//    public boolean doesZoneExist(String zoneName) {
-//        int zoneId = getZoneByName(zoneName.toLowerCase()).getZoneId();
-//        return allZones.containsKey(zoneId);
-//    }
-
     public List<ZoneDTO> getAllZones() throws SQLException {
         return zoneRepo.getAllZones();
     }

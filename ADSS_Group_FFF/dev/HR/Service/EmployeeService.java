@@ -1,9 +1,6 @@
 package HR.Service;
 
-import HR.DTO.DriverInfoDTO;
-import HR.DTO.EmployeeDTO;
-import HR.DTO.WeeklyAvailabilityDTO;
-import HR.DTO.ShiftDTO;
+import HR.DTO.*;
 import HR.DataAccess.DriverInfoDAO;
 import HR.DataAccess.DriverInfoDAOImpl;
 import HR.DataAccess.EmployeeDAO;
@@ -13,14 +10,19 @@ import HR.DataAccess.ShiftDAOImpl;
 import HR.Domain.DriverInfo;
 import HR.Domain.Employee;
 import HR.Domain.Shift;
+import HR.Domain.WeeklyAvailability;
 import HR.Mapper.DriverInfoMapper;
 import HR.Mapper.EmployeeMapper;
 import HR.Mapper.ShiftMapper;
 import Util.Database;
 
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
+
 
 public class EmployeeService {
 
@@ -43,7 +45,8 @@ public class EmployeeService {
         return instance;
     }
 
-    /*** 1. Basic Employee CRUD (DTO-based) ***/
+    /*** 1. ---- READ operations ---- ***/
+
     public List<EmployeeDTO> getEmployees() {
         return employeeDAO.selectAll()
                 .stream()
@@ -57,41 +60,219 @@ public class EmployeeService {
         return (e == null ? null : EmployeeMapper.toDTO(e));
     }
 
-    public void addEmployee(EmployeeDTO dto) {
-        if (dto == null) throw new IllegalArgumentException("EmployeeDTO must not be null");
-        Employee e = EmployeeMapper.fromDTO(dto);
-        employeeDAO.insert(e);
-    }
+    /*** 2. ---- CREATE operations ---- ***/
 
-    public void addEmployee(EmployeeDTO dto, List<DriverInfo.LicenseType> licenseTypes) {
-        if (dto == null) throw new IllegalArgumentException("EmployeeDTO must not be null");
-        if (licenseTypes == null || licenseTypes.isEmpty()) {
-            throw new IllegalArgumentException("Driver must have at least one LicenseType");
+    /**
+     * Adds a non‐driver employee.  Use this when the new employee does not need any licenses.
+     */
+    public void addEmployee(CreateEmployeeDTO createDto) {
+        if (createDto == null) {
+            throw new IllegalArgumentException("CreateEmployeeDTO must not be null");
         }
-        Employee e = EmployeeMapper.fromDTO(dto);
+        if (createDto.getRawPassword() == null || createDto.getRawPassword().isBlank()) {
+            throw new IllegalArgumentException("New employee must have a non‐empty rawPassword");
+        }
+
+        // 1) Build domain Employee (password = null for now)
+        Employee e = new Employee(
+                createDto.getId(),
+                createDto.getRoles().stream()
+                        .map(rdto -> new HR.Domain.Role(rdto.getName()))
+                        .toList(),
+                createDto.getName(),
+                null,
+                createDto.getBankAccount(),
+                createDto.getSalary(),
+                createDto.getEmploymentDate()
+        );
+
+        // 2) Hash & set password
+        String hashed = hashPassword(createDto.getRawPassword());
+        e.setPassword(hashed);
+
+        // 3) Populate availabilityThisWeek
+        if (createDto.getAvailabilityThisWeek() != null) {
+            for (var waDto : createDto.getAvailabilityThisWeek()) {
+                e.getAvailabilityThisWeek().add(
+                        new HR.Domain.WeeklyAvailability(waDto.getDay(), waDto.getTime())
+                );
+            }
+        }
+
+        // 4) Populate availabilityNextWeek
+        if (createDto.getAvailabilityNextWeek() != null) {
+            for (var waDto : createDto.getAvailabilityNextWeek()) {
+                e.getAvailabilityNextWeek().add(
+                        new HR.Domain.WeeklyAvailability(waDto.getDay(), waDto.getTime())
+                );
+            }
+        }
+
+        // 5) Populate holidays
+        if (createDto.getHolidays() != null) {
+            e.getHolidays().addAll(createDto.getHolidays());
+        }
+
+        // 6) Insert into employees table
         employeeDAO.insert(e);
-        DriverInfo di = new DriverInfo(e.getId(), licenseTypes);
-        driverInfoDAO.insert(di);
     }
 
+    /**
+     * Adds a new employee who is also a driver.  The extra licenseTypes list
+     * will be stored in DriverInfo after the Employee row is created.
+     */
+    public void addEmployee(CreateEmployeeDTO createDto, List<DriverInfo.LicenseType> licenseTypes) {
+        if (createDto == null) {
+            throw new IllegalArgumentException("CreateEmployeeDTO must not be null");
+        }
+        if (createDto.getRawPassword() == null || createDto.getRawPassword().isBlank()) {
+            throw new IllegalArgumentException("New driver must have a non‐empty rawPassword");
+        }
+        if (licenseTypes == null || licenseTypes.isEmpty()) {
+            throw new IllegalArgumentException("Driver must have at least one license type");
+        }
+
+        // 1) Build domain Employee (password = null for now)
+        Employee e = new Employee(
+                createDto.getId(),
+                createDto.getRoles().stream()
+                        .map(rdto -> new HR.Domain.Role(rdto.getName()))
+                        .toList(),
+                createDto.getName(),
+                null,
+                createDto.getBankAccount(),
+                createDto.getSalary(),
+                createDto.getEmploymentDate()
+        );
+
+        // 2) Hash & set password
+        String hashed = hashPassword(createDto.getRawPassword());
+        e.setPassword(hashed);
+
+        // 3) Populate availabilityThisWeek
+        if (createDto.getAvailabilityThisWeek() != null) {
+            for (var waDto : createDto.getAvailabilityThisWeek()) {
+                e.getAvailabilityThisWeek().add(
+                        new HR.Domain.WeeklyAvailability(waDto.getDay(), waDto.getTime())
+                );
+            }
+        }
+
+        // 4) Populate availabilityNextWeek
+        if (createDto.getAvailabilityNextWeek() != null) {
+            for (var waDto : createDto.getAvailabilityNextWeek()) {
+                e.getAvailabilityNextWeek().add(
+                        new HR.Domain.WeeklyAvailability(waDto.getDay(), waDto.getTime())
+                );
+            }
+        }
+
+        // 5) Populate holidays
+        if (createDto.getHolidays() != null) {
+            e.getHolidays().addAll(createDto.getHolidays());
+        }
+
+        // 6) Insert into employees table
+        employeeDAO.insert(e);
+
+        // 7) Insert driver-specific licenses into driver_info table
+        if (!licenseTypes.isEmpty()) {
+            if (driverInfoDAO.getByEmployeeId(e.getId()) == null) {
+                DriverInfo di = new DriverInfo(e.getId(), licenseTypes);
+                driverInfoDAO.insert(di);
+            } else {
+                // Optional: update the licenses instead if it already exists
+                System.out.println("DriverInfo already exists for employee " + e.getId());
+            }
+        }
+
+    }
+
+    /*** 3. ---- UPDATE an existing employee (do not overwrite password) ---- ***/
     public void updateEmployee(EmployeeDTO dto) {
-        if (dto == null) throw new IllegalArgumentException("EmployeeDTO must not be null");
-        Employee updated = EmployeeMapper.fromDTO(dto);
-        employeeDAO.update(updated);
+        if (dto == null) {
+            throw new IllegalArgumentException("EmployeeDTO must not be null");
+        }
+
+        // 1) Fetch existing Employee from DB (so we keep their password)
+        Employee existing = employeeDAO.selectById(dto.getId());
+        if (existing == null) {
+            throw new IllegalArgumentException("No employee with ID " + dto.getId());
+        }
+
+        // 2) Overwrite only non‐password fields
+        existing.setName(dto.getName());
+        existing.setBankAccount(dto.getBankAccount());
+        existing.setSalary(dto.getSalary());
+        existing.setEmploymentDate(dto.getEmploymentDate());
+
+        // Update roles
+        existing.getRoles().clear();
+        dto.getRoles().forEach(rdto ->
+                existing.getRoles().add(new HR.Domain.Role(rdto.getName()))
+        );
+
+        // Update availabilityThisWeek
+        existing.getAvailabilityThisWeek().clear();
+        if (dto.getAvailabilityThisWeek() != null) {
+            for (var waDto : dto.getAvailabilityThisWeek()) {
+                existing.getAvailabilityThisWeek().add(
+                        new HR.Domain.WeeklyAvailability(waDto.getDay(), waDto.getTime())
+                );
+            }
+        }
+
+        // Update availabilityNextWeek
+        existing.getAvailabilityNextWeek().clear();
+        if (dto.getAvailabilityNextWeek() != null) {
+            for (var waDto : dto.getAvailabilityNextWeek()) {
+                existing.getAvailabilityNextWeek().add(
+                        new HR.Domain.WeeklyAvailability(waDto.getDay(), waDto.getTime())
+                );
+            }
+        }
+
+        // Update holidays
+        existing.getHolidays().clear();
+        if (dto.getHolidays() != null) {
+            existing.getHolidays().addAll(dto.getHolidays());
+        }
+
+        // 3) Persist changes (password field remains unchanged)
+        employeeDAO.update(existing);
     }
 
+    /*** 4. ---- DELETE employee (and driver info if present) ---- ***/
     public void removeEmployee(String id) {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("Employee ID must not be null/empty");
         }
-        DriverInfo existing = driverInfoDAO.getByEmployeeId(id);
-        if (existing != null) {
+        DriverInfo existingDriver = driverInfoDAO.getByEmployeeId(id);
+        if (existingDriver != null) {
             driverInfoDAO.delete(id);
         }
         employeeDAO.delete(id);
     }
 
-    /*** 2. Driver-info management (DTO-based) ***/
+    /*** 5. ---- Password‐only update helper ---- ***/
+    public void setPassword(String employeeId, String newRawPassword) {
+        if (employeeId == null || employeeId.isEmpty()) {
+            throw new IllegalArgumentException("Employee ID must not be null or empty");
+        }
+        if (newRawPassword == null || newRawPassword.isBlank()) {
+            throw new IllegalArgumentException("New password must not be null or blank");
+        }
+
+        // Fetch domain Employee, set new password, update:
+        Employee domainEmp = employeeDAO.selectById(employeeId);
+        if (domainEmp == null) {
+            throw new IllegalArgumentException("No employee with ID " + employeeId);
+        }
+        domainEmp.setPassword(hashPassword(newRawPassword));
+        employeeDAO.update(domainEmp);
+    }
+
+    /*** 6. ---- Driver‐info management ---- ***/
     public void updateDriverInfo(DriverInfoDTO dto) {
         if (dto == null) throw new IllegalArgumentException("DriverInfoDTO must not be null");
         String empId = dto.getEmployeeId();
@@ -99,7 +280,6 @@ public class EmployeeService {
             throw new IllegalArgumentException("DriverInfoDTO must carry a valid employeeId");
         }
 
-        // Convert List<String> → List<LicenseType>
         List<DriverInfo.LicenseType> newLicenses = dto.getLicenseType().stream()
                 .map(s -> {
                     try {
@@ -115,16 +295,13 @@ public class EmployeeService {
 
         if (!newLicenses.isEmpty()) {
             if (existing == null) {
-                // Insert new row
                 DriverInfo di = DriverInfoMapper.fromDTO(dto);
                 driverInfoDAO.insert(di);
             } else {
-                // Update existing row
                 existing.setLicenses(newLicenses);
                 driverInfoDAO.update(existing);
             }
         } else {
-            // newLicenses empty ⇒ delete any existing row
             if (existing != null) {
                 driverInfoDAO.delete(empId);
             }
@@ -151,10 +328,10 @@ public class EmployeeService {
         EmployeeDTO dto = getEmployeeById(employeeId);
         if (dto == null) return false;
         return dto.getRoles().stream()
-                .anyMatch(r -> r.equals("Driver"));
+                .anyMatch(r -> r.getName().equalsIgnoreCase("Driver"));
     }
 
-    /*** 3. Availability ***/
+    /*** 7. ---- Availability & Shifts ---- ***/
     public List<WeeklyAvailabilityDTO> getEmployeeAvailabilityNextWeek(String employeeId) {
         EmployeeDTO dto = getEmployeeById(employeeId);
         if (dto == null) return List.of();
@@ -173,13 +350,11 @@ public class EmployeeService {
         updateEmployee(dto);
     }
 
-    /*** 4. Shifts ***/
     public List<ShiftDTO> getEmployeeShifts(String employeeId) {
         List<Shift> shifts = shiftDAO.getShiftsByEmployeeId(employeeId);
         return shifts.stream().map(ShiftMapper::toDTO).toList();
     }
 
-    /*** 5. Holidays/Vacations ***/
     public List<Date> getEmployeeHolidays(String employeeId) {
         EmployeeDTO dto = getEmployeeById(employeeId);
         if (dto == null) {
@@ -204,37 +379,74 @@ public class EmployeeService {
         updateEmployee(dto);
     }
 
-    /*** 6. Finding available drivers ***/
     public List<EmployeeDTO> findAvailableDrivers(
             String licenseTypeString,
             Date date,
             String shiftTimeString
     ) {
-        DriverInfo.LicenseType licenseType = DriverInfo.LicenseType.valueOf(licenseTypeString.trim().toUpperCase());
-        Shift.ShiftTime shiftTime         = Shift.ShiftTime.valueOf(shiftTimeString.trim().toUpperCase());
+        // 1) Parse the desired license and shift‐time enums
+        DriverInfo.LicenseType requiredLicense = DriverInfo.LicenseType
+                .valueOf(licenseTypeString.trim().toUpperCase());
+        Shift.ShiftTime requiredShift;
+        try {
+            LocalTime parsedTime = LocalTime.parse(shiftTimeString.trim());  // e.g. "10:10"
+            requiredShift = Shift.fromTime(parsedTime);
+            if (requiredShift == null) {
+                throw new IllegalArgumentException("No shift assigned at " + shiftTimeString);
+            }
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException("Invalid time format: " + shiftTimeString);
+        }
 
+        // Convert the java.sql.Date → LocalDate for holiday comparison
+        LocalDate targetDay = ((java.sql.Date) date).toLocalDate();
+
+        // 2) Grab all employees from the DAO
         List<Employee> allEmps = employeeDAO.selectAll();
+
         return allEmps.stream()
-                // only employees whose roles include “Driver”
-                .filter(emp -> emp.getRoles()
-                        .stream()
+                // a) Must have the “Driver” role
+                .filter(emp -> emp.getRoles().stream()
                         .anyMatch(r -> r.getName().equalsIgnoreCase("Driver")))
-                // license match
+                // b) Must have the required license in driver_info
                 .filter(emp -> {
                     DriverInfo di = driverInfoDAO.getByEmployeeId(emp.getId());
-                    return di != null && di.getLicenses().contains(licenseType);
+                    return di != null && di.getLicenses().contains(requiredLicense);
                 })
-                // not on holiday
-                .filter(emp -> !emp.getHolidays().contains(date))
-                // is available on that date+shiftTime
-                .filter(emp -> emp.getAvailabilityThisWeek().isEmpty()
-                        || emp.isAvailable(date, shiftTime))
-                // map to DTO
+                // c) Must not be on holiday (compare just the LocalDate)
+                .filter(emp -> {
+                    for (Date hol : emp.getHolidays()) {
+                        LocalDate holDay = hol.toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+                        if (holDay.equals(targetDay)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
+                // d) Must be available this week for (date, shift) OR have no constraints
+                .filter(emp -> {
+                    List<WeeklyAvailability> slots = emp.getAvailabilityThisWeek();
+                    if (slots.isEmpty()) {
+                        // “no availability constraints” means “available”
+                        return true;
+                    }
+                    // Otherwise check if any WeeklyAvailability matches both day and time
+                    for (WeeklyAvailability wa : slots) {
+                        LocalDate waDay = targetDay; // we already have targetDay
+                        DayOfWeek dow = targetDay.getDayOfWeek();
+                        if (wa.getDay() == dow && wa.getTime() == requiredShift) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                // e) Map the domain Employee → EmployeeDTO
                 .map(EmployeeMapper::toDTO)
                 .toList();
     }
 
-    /*** (Optional) 7. Helper for mapping an integer → LicenseType ***/
     public DriverInfo.LicenseType parseLicenseType(Integer type) {
         return switch (type) {
             case 1 -> DriverInfo.LicenseType.B;
@@ -244,20 +456,14 @@ public class EmployeeService {
         };
     }
 
-    public void setPassword(String employeeId, String newPassword) {
-        if (employeeId == null || employeeId.isEmpty()) {
-            throw new IllegalArgumentException("Employee ID must not be null/empty");
-        }
-        Employee domainEmp = employeeDAO.selectById(employeeId);
-        if (domainEmp == null) {
-            throw new IllegalArgumentException("No employee with ID " + employeeId);
-        }
-        domainEmp.setPassword(newPassword);
-        employeeDAO.update(domainEmp);
+    /*** 8. ---- Simple placeholder for password hashing ---- ***/
+    private String hashPassword(String raw) {
+        // Replace this stub with a real hashing function (e.g. BCrypt).
+        return Objects.requireNonNull(raw).trim();
     }
 
     public List<WeeklyAvailabilityDTO> getEmployeeAvailabilityThisWeek(String employeeId) {
-    EmployeeDTO dto = getEmployeeById(employeeId);
+        EmployeeDTO dto = getEmployeeById(employeeId);
         if (dto == null) {
             throw new IllegalArgumentException("No employee with ID " + employeeId);
         }

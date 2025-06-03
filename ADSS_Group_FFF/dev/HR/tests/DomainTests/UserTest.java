@@ -1,24 +1,35 @@
 package HR.tests.DomainTests;
 
-import HR.Domain.Role;
-import HR.Domain.User;
+import HR.Domain.*;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {
 
     @Test
-    void testUserGettersAndSetters() {
-        Role role = new Role("Cashier");
-        User user = new User("1", "Dana", "pass", List.of(role));
-        assertEquals("1", user.getId());
-        assertEquals("Dana", user.getName());
-        assertEquals("pass", user.getPassword());
-        assertEquals(1, user.getRoles().size());
-        assertEquals("Cashier", user.getRoles().get(0).getName());
+    public void constructor_and_getters() {
+        Role r1 = new Role("HR");
+        Role r2 = new Role("Cashier");
+        User u = new User("u1", "Alice", "pwHash", List.of(r1, r2));
 
-        user.setPassword("newpass");
-        assertEquals("newpass", user.getPassword());
+        assertEquals("u1", u.getId());
+        assertEquals("Alice", u.getName());
+        assertEquals("pwHash", u.getPassword());
+        assertEquals(2, u.getRoles().size());
+        assertTrue(u.getRoles().contains(r1));
+        assertTrue(u.getRoles().contains(r2));
+    }
+
+    @Test
+    public void setPassword_and_setName_modifyFields() {
+        User u = new User("u2", "Bob", "initial", List.of(new Role("Cleaner")));
+        u.setPassword("newHash");
+        assertEquals("newHash", u.getPassword());
+
+        u.setName("Bobby");
+        assertEquals("Bobby", u.getName());
     }
 }

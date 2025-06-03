@@ -1,4 +1,3 @@
-// File: HR/Mapper/ShiftAssignmentMapper.java
 package HR.Mapper;
 
 import HR.Domain.Shift;

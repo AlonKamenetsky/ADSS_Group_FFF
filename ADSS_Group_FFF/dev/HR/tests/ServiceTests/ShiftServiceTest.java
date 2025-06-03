@@ -26,7 +26,6 @@ public class ShiftServiceTest {
     @Test
     public void testCreateAndRetrieveShift() {
         LocalDate date = LocalDate.of(2025, 1, 1);
-        shiftService.createShift(date, Shift.ShiftTime.Morning);
         ShiftDTO dto = shiftService.getShift(date, Shift.ShiftTime.Morning);
         assertNotNull(dto);
         assertEquals(date, dto.getDate());

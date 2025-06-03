@@ -62,7 +62,7 @@ public class TaskService {
             LocalTime parsedTime = LocalTime.parse(taskDeparture, timeFormatter);
             taskManager.addDocToTask(parsedDate, parsedTime, taskSourceSite.toLowerCase(), destinationSite.toLowerCase(), itemsChosen);
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error", e);
         }
     }
 

@@ -16,7 +16,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     public TransportationTaskDTO insert(TransportationTaskDTO task) throws SQLException {
         // INSERT
         String sql = """
-                    INSERT INTO transportation_tasks(task_date, departure_time, source_site_id, driver_id, truck_license_number, weight_before_leaving)
+                    INSERT INTO transportation_tasks(task_date, departure_time, source_site_address, driver_id, truck_license_number, weight_before_leaving)
                     VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
@@ -24,7 +24,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, task.taskDate().toString());
             ps.setString(2, task.departureTime().toString());
-            ps.setInt(3, getSiteIdByAddress(task.sourceSiteAddress()));
+            ps.setString(3, task.sourceSiteAddress());
             ps.setString(4, "");
             ps.setString(5, "");
             ps.setFloat(6, -1);
@@ -51,7 +51,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                     SELECT t.task_id, t.task_date, t.departure_time, t.driver_id, t.truck_license_number,
                            t.weight_before_leaving, s.address AS source_address
                     FROM transportation_tasks t
-                    JOIN sites s ON t.source_site_id = s.site_id
+                    JOIN sites s ON t.source_site_address = s.address
                     WHERE t.task_id = ?
                 """;
 
@@ -68,18 +68,18 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     }
 
     @Override
-    public Optional<TransportationTaskDTO> findByDateTimeAndSource(LocalDate taskDate, LocalTime departureTime, int sourceSiteId) throws SQLException {
+    public Optional<TransportationTaskDTO> findByDateTimeAndSource(LocalDate taskDate, LocalTime departureTime, String sourceSiteAddress) throws SQLException {
         String sql = """
                     SELECT t.*, s.address AS source_address
                     FROM transportation_tasks t
-                    JOIN sites s ON t.source_site_id = s.site_id
-                    WHERE t.task_date = ? AND t.departure_time = ? AND t.source_site_id = ?
+                    JOIN sites s ON t.source_site_address = s.address
+                    WHERE t.task_date = ? AND t.departure_time = ? AND t.source_site_address = ? COLLATE NOCASE
                 """;
 
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, taskDate.toString());
             ps.setString(2, departureTime.toString());
-            ps.setInt(3, sourceSiteId);
+            ps.setString(3, sourceSiteAddress);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(buildDTOFromResultSet(rs));
@@ -95,7 +95,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
         String sql = """
                     SELECT t.*, s.address AS source_address
                     FROM transportation_tasks t
-                    JOIN sites s ON t.source_site_id = s.site_id
+                    JOIN sites s ON t.source_site_address = s.address
                     ORDER BY t.task_id
                 """;
 
@@ -111,17 +111,17 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     }
 
     @Override
-    public List<TransportationTaskDTO> findBySourceAddress(int sourceSiteId) throws SQLException {
+    public List<TransportationTaskDTO> findBySourceAddress(String sourceSiteAddress) throws SQLException {
         String sql = """
                     SELECT t.*, s.address AS source_address
                     FROM transportation_tasks t
-                    JOIN sites s ON t.source_site_id = s.site_id
-                    WHERE t.source_site_id = ?
+                    JOIN sites s ON t.source_site_address = s.address
+                    WHERE t.source_site_address = ?
                 """;
 
         List<TransportationTaskDTO> list = new ArrayList<>();
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setInt(1, sourceSiteId);
+            ps.setString(1, sourceSiteAddress);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(buildDTOFromResultSet(rs));
@@ -137,7 +137,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
         String sql = """
                     SELECT t.*, s.address AS source_address
                     FROM transportation_tasks t
-                    JOIN sites s ON t.source_site_id = s.site_id
+                    JOIN sites s ON t.source_site_address = s.address
                     WHERE driver_id = ?
                 """;
 
@@ -274,28 +274,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     }
 
 
-// ----------- Helper Methods -----------
-
-    private void insertDestinations(int taskId, List<String> destinations) throws SQLException {
-        String sql = "INSERT INTO transportation_task_destinations(task_id, site_id) VALUES (?, ?)";
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            for (String address : destinations) {
-                int siteId = getSiteIdByAddress(address);
-                ps.setInt(1, taskId);
-                ps.setInt(2, siteId);
-                ps.addBatch();
-            }
-            ps.executeBatch();
-        }
-    }
-
-    private void deleteDestinations(int taskId) throws SQLException {
-        String sql = "DELETE FROM transportation_task_destinations WHERE task_id = ?";
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setInt(1, taskId);
-            ps.executeUpdate();
-        }
-    }
+// ----------- Helper Methods ----------
 
     private List<String> getDestinationAddresses(int taskId) throws SQLException {
         String sql = """
@@ -323,7 +302,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                 taskId,
                 LocalDate.parse(rs.getString("task_date")),
                 LocalTime.parse(rs.getString("departure_time")),
-                rs.getString("source_site_id"),
+                rs.getString("source_address"),
                 getDestinationAddresses(taskId),
                 rs.getString("driver_id"),
                 rs.getString("truck_license_number"),

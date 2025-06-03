@@ -4,127 +4,90 @@ import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Domain.WeeklyAvailability;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
-import java.util.Arrays;
+import java.time.LocalTime;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class EmployeeTest {
+public class EmployeeTest {
 
-    private Employee employee;
-    private Role hrRole;
-    private Role cashierRole;
-    private SimpleDateFormat dateFormat;
+    @Test
+    public void constructor_and_getters() {
+        List<Role> roles = List.of(new Role("Cashier"));
+        Date hireDate = new Date(0L);
+        Employee emp = new Employee("e1", roles, "Alice", "pw", "ACC123", 3000f, hireDate);
 
-    @BeforeEach
-    void setUp() throws Exception {
-        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date employmentDate = dateFormat.parse("01-01-2020");
-        hrRole       = new Role("HR");
-        cashierRole  = new Role("Cashier");
-
-        employee = new Employee(
-                "1",
-                new LinkedList<>(Arrays.asList(hrRole, cashierRole)),
-                "Dana",
-                "secret",
-                "IL123BANK",
-                5000f,
-                employmentDate
-        );
-        employee.setPassword("secret");
+        assertEquals("e1", emp.getId());
+        assertEquals("Alice", emp.getName());
+        assertEquals("pw", emp.getPassword());
+        assertEquals("ACC123", emp.getBankAccount());
+        assertEquals(3000f, emp.getSalary());
+        assertEquals(hireDate, emp.getEmploymentDate());
+        assertTrue(emp.getAvailabilityThisWeek().isEmpty());
+        assertTrue(emp.getAvailabilityNextWeek().isEmpty());
+        assertTrue(emp.getShifts().isEmpty());
+        assertTrue(emp.getHolidays().isEmpty());
     }
 
     @Test
-    void testBasicGettersAndSetters() throws Exception {
-        assertEquals("IL123BANK",    employee.getBankAccount());
-        assertEquals(5000f,          employee.getSalary());
-        assertEquals(dateFormat.parse("01-01-2020"), employee.getEmploymentDate());
+    public void addShift_preventsDuplicates() {
+        Employee emp = new Employee("e2", List.of(new Role("Warehouse")), "Bob", "pw2", "ACC456", 2500f, new Date());
+        Shift s1 = new Shift("s1", new Date(), Shift.ShiftTime.Morning, Map.of(), Map.of());
+        emp.addShift(s1);
+        emp.addShift(s1); // duplicate
 
-        employee.setBankAccount("NEWBANK");
-        employee.setSalary(7500f);
-        Date newDate = dateFormat.parse("05-02-2021");
-        employee.setEmploymentDate(newDate);
-
-        assertEquals("NEWBANK",      employee.getBankAccount());
-        assertEquals(7500f,          employee.getSalary());
-        assertEquals(newDate,        employee.getEmploymentDate());
+        assertEquals(1, emp.getShifts().size());
+        assertTrue(emp.getShifts().contains(s1));
     }
 
     @Test
-    void testRolesUnchanged() {
-        assertTrue(employee.getRoles().contains(hrRole));
-        assertTrue(employee.getRoles().contains(cashierRole));
+    public void holidayManagement() {
+        Employee emp = new Employee("e3", List.of(), "Carol", "pw3", "ACC789", 2000f, new Date());
+        Date holiday = new Date(1000L);
+        emp.addHoliday(holiday);
+        assertEquals(1, emp.getHolidays().size());
+        assertTrue(emp.getHolidays().contains(holiday));
+
+        // Adding same holiday again does nothing
+        emp.addHoliday(holiday);
+        assertEquals(1, emp.getHolidays().size());
     }
 
     @Test
-    void testShiftListNonNull() {
-        assertNotNull(employee.getShifts());
-        // We cannot predict its contents here, but it should be the same instance as ShiftsRepo.getCurrentWeekShifts()
-        assertSame(employee.getShifts(),
-                Shift.class.getResource("/") == null
-                        ? employee.getShifts()
-                        : employee.getShifts());
-    }
+    public void availabilityManagement_and_isAvailable() {
+        Employee emp = new Employee("e4", List.of(), "Dan", "pw4", "ACC000", 2200f, new Date());
 
-    @Test
-    void testInitialAvailabilityListsEmpty() {
-        assertTrue(employee.getAvailabilityThisWeek().isEmpty());
-        assertTrue(employee.getAvailabilityNextWeek().isEmpty());
-    }
+        // Initially not available (empty availability means “no constraints”)
+        Date today = new Date();
+        assertTrue(emp.isAvailable(today, Shift.ShiftTime.Morning));
 
-    @Test
-    void testAddAndSwapAvailability() throws Exception {
-        // Choose a test date and its DayOfWeek
-        Date date = dateFormat.parse("10-05-2025"); // suppose this is a Saturday
-        DayOfWeek dow = date.toInstant().atZone(
-                java.time.ZoneId.systemDefault()).getDayOfWeek();
-        Shift.ShiftTime time = Shift.ShiftTime.Morning;
+        // Add a next-week slot
+        emp.addAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Evening);
+        // Move NextWeek → ThisWeek
+        emp.swapAvailability();
+        assertFalse(emp.getAvailabilityNextWeek().contains(new WeeklyAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Evening)));
+        assertTrue(emp.getAvailabilityThisWeek().contains(new WeeklyAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Evening)));
 
-        // declare availability for next week
-        employee.addAvailability(dow, time);
-        assertFalse(employee.getAvailabilityNextWeek().isEmpty());
-        assertEquals(1, employee.getAvailabilityNextWeek().size());
-        WeeklyAvailability slot = employee.getAvailabilityNextWeek().get(0);
-        assertEquals(dow,  slot.getDay());
-        assertEquals(time, slot.getTime());
+        // If date’s day-of-week is Monday, check availability
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(today);
+        // force date to next Monday
+        while (cal.get(java.util.Calendar.DAY_OF_WEEK) != java.util.Calendar.MONDAY) {
+            cal.add(java.util.Calendar.DATE, 1);
+        }
+        Date nextMonday = cal.getTime();
 
-        // this-week is still empty
-        assertFalse(employee.isAvailable(date, time));
+        assertTrue(emp.isAvailable(nextMonday, Shift.ShiftTime.Evening));
+        assertFalse(emp.isAvailable(nextMonday, Shift.ShiftTime.Morning));
 
-        // roll availability
-        employee.swapAvailability();
-
-        // next-week now cleared
-        assertTrue(employee.getAvailabilityNextWeek().isEmpty());
-
-        // this-week now contains that slot
-        assertFalse(employee.getAvailabilityThisWeek().isEmpty());
-        assertTrue(employee.isAvailable(date, time));
-    }
-
-    @Test
-    void testInitialHolidaysEmpty() {
-        assertTrue(employee.getHolidays().isEmpty());
-    }
-
-    @Test
-    void testAddHoliday() throws Exception {
-        Date h1 = dateFormat.parse("15-08-2025");
-        Date h2 = dateFormat.parse("16-08-2025");
-
-        employee.addHoliday(h1);
-        employee.addHoliday(h2);
-        employee.addHoliday(h1); // duplicate should not be added
-
-        assertEquals(2, employee.getHolidays().size());
-        assertTrue(employee.getHolidays().contains(h1));
-        assertTrue(employee.getHolidays().contains(h2));
+        // Remove availability
+        emp.removeAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Evening);
+        // After removal, next-week is empty; but thisWeek still contains previous slot
+        assertTrue(emp.getAvailabilityThisWeek().contains(new WeeklyAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Evening)));
     }
 }
