@@ -23,7 +23,7 @@ public interface ShiftDAO {
     List<Employee> findAssignedEmployees(String shiftId);
     boolean isWarehouseEmployeeAssigned(String shiftId);
     List<Shift> getShiftsByEmployeeId(String employeeId);
-    String getShiftIdByDateAndTime(Date date, String time);
+    String getShiftIdByDateAndTime(java.util.Date date, String time);
 
 }
 
