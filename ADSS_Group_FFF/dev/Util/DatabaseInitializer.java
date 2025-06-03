@@ -9,11 +9,14 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import HR.DTO.CreateEmployeeDTO;
-import HR.DTO.RoleDTO;
+import HR.DTO.*;
+import HR.DataAccess.*;
+import HR.DataAccess.RoleDAO;
 import HR.DTO.ShiftTemplateDTO;
 import HR.DataAccess.ShiftDAO;
 import HR.DataAccess.ShiftDAOImpl;
 import HR.Domain.DriverInfo;
+import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Presentation.PresentationUtils;
@@ -235,6 +238,69 @@ public class DatabaseInitializer {
                     requiredCountsE
             );
             shiftDAO.insert(eveningShift);
+        }
+        String specialShiftId = startOfThisWeek.toString() + "-Morning";
+        Shift specialShift = shiftDAO.selectById(specialShiftId);
+        if (specialShift != null) {
+            // We will need DAOs to look up Role/Employee objects:
+            RoleDAO roleDAO = new RoleDAOImpl(conn);
+            EmployeeDAO empDAO = new EmployeeDAOImpl(conn);
+
+            // Fetch the Role instances we care about:
+            Role shiftMgrRole = roleDAO.findByName("Shift Manager");
+            Role warehouseRole = roleDAO.findByName("Warehouse");
+            Role driverRole = roleDAO.findByName("Driver");
+            Role transMgrRole = roleDAO.findByName("Transportation Manager");
+            Role cashierRole = roleDAO.findByName("Cashier");
+
+            // Clear any in-memory required-maps and then populate exactly as requested:
+            specialShift.getRequiredCounts().clear();
+            specialShift.getRequiredRoles().clear();
+
+            //  •  1 Shift Manager
+            specialShift.getRequiredCounts().put(shiftMgrRole, 1);
+            specialShift.getRequiredRoles().put(shiftMgrRole, new ArrayList<>());
+
+            //  •  2 Warehouse
+            specialShift.getRequiredCounts().put(warehouseRole, 2);
+            specialShift.getRequiredRoles().put(warehouseRole, new ArrayList<>());
+
+            //  •  1 Driver
+            specialShift.getRequiredCounts().put(driverRole, 1);
+            specialShift.getRequiredRoles().put(driverRole, new ArrayList<>());
+
+            //  •  1 Transportation Manager
+            specialShift.getRequiredCounts().put(transMgrRole, 1);
+            specialShift.getRequiredRoles().put(transMgrRole, new ArrayList<>());
+
+            //  •  2 Cashier
+            specialShift.getRequiredCounts().put(cashierRole, 2);
+            specialShift.getRequiredRoles().put(cashierRole, new ArrayList<>());
+
+            //
+            // === 3a) Assign “driver2” → Driver ===
+            Employee samWheels = empDAO.selectById("driver2");
+            if (samWheels != null) {
+                specialShift.assignEmployee(samWheels, driverRole);
+            }
+
+            // === 3b) Assign “2” (John) → Warehouse (1 of the 2 slots) ===
+            Employee john = empDAO.selectById("2");
+            if (john != null) {
+                specialShift.assignEmployee(john, warehouseRole);
+            }
+
+            // === 3c) Assign “1” (Dana) → Transportation Manager ===
+            Employee dana = empDAO.selectById("1");
+            if (dana != null) {
+                specialShift.assignEmployee(dana, transMgrRole);
+            }
+
+            // (We have left “Shift Manager” and the second “Warehouse” slot and the two “Cashier” slots unfilled.
+            //  You can fill those later through your UI or service calls.)
+
+            // Finally, persist the three assignments we just made:
+            shiftDAO.update(specialShift);
         }
 
         PresentationUtils.typewriterPrint(

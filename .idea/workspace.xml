@@ -11,13 +11,148 @@
   <component name="ChangeListManager">
     <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="for checkout">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DataAccess/ShiftDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/HRInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Presentation/HRInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SuperLee.db" beforeDir="false" afterPath="$PROJECT_DIR$/SuperLee.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftDAOImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftDAOImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Presentation/HRInterface.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Presentation/HRInterface.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/ShiftService.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/ShiftService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/CreateEmployeeDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/DriverInfoDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/EmployeeDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/RoleDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/ShiftAssignmentDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/ShiftDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/ShiftTemplateDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/SwapRequestDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/UserDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/WeeklyAvailabilityDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DTO/WeeklyShiftsScheduleDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/DriverInfoDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/DriverInfoDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/EmployeeDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/EmployeeDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/RoleDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/RoleDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftAssignmentDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftAssignmentDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftTemplateDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/ShiftTemplateDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/SwapDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/SwapDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/WeeklyAvailabilityDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/DataAccess/WeeklyAvailabilityDAOImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/DriverInfo$LicenseType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/DriverInfo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/Employee.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/Role.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/Shift$ShiftTime.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/Shift.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/ShiftAssignment.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/ShiftTemplate.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/SwapRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/User.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/WeeklyAvailability.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Domain/WeeklyShiftsSchedule.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/DriverInfoMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/EmployeeMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/RoleMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/ShiftAssignmentMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/ShiftMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/ShiftTemplateMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/SwapRequestMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/UserMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/WeeklyAvailabilityMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Mapper/WeeklyShiftsScheduleMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Presentation/EmployeeInterface.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Presentation/HRInterface.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Presentation/LoginScreen.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Presentation/PresentationUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/EmployeeService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/RoleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/ShiftService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/SwapService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/HR/Service/UserService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/DriverAvailabilityDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/ItemDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/ItemsListDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/SiteDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/TransportationDocDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/TransportationTaskDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/TruckDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DTO/ZoneDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/ItemDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/ItemsListDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SiteDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteItemDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteItemsListDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteSiteDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteTransportationDocDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteTransportationTaskDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteTruckDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/SqliteZoneDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/TransportationDocDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/TransportationTaskDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/TruckDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/DataAccess/ZoneDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/EmployeeProvider.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Item.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/ItemManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/ItemsList.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/LicenseMapper$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/LicenseMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/ItemRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/ItemRepositoryImpli.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/SiteRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/SiteRepositoryImpli.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationDocRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationDocRepositoryImpli.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationTaskRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/TruckRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/TruckRepositoryImpli.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/ZoneRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Repositories/ZoneRepositoryImpli.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Site.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/SiteManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/SiteZoneManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/TaskManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/TransportationDoc.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/TransportationTask.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Truck.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/TruckManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/TruckType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/Zone.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Domain/ZoneManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Presentation/SiteMenu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Presentation/TManagerRoleMenu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Presentation/TaskMenu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Presentation/TransportationMenu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Presentation/TruckMenu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Presentation/ZoneMenu.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/HREmployeeAdapter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/ItemService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/SiteService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/SiteZoneService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/TaskService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/TruckService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Service/ZoneService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/SystemInitializer/SystemInitializer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/DB/SqliteItemDAOTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/DB/SqliteSiteDAOTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/DB/SqliteTaskDAOTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/DB/SqliteTruckDAOTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/DB/SqliteZoneDAOTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Domain/SiteManagerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Domain/SiteZoneManagerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Domain/TaskManagerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Domain/TruckManagerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Domain/ZoneManagerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Service/ItemServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Service/SiteServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Service/TaskServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Service/TruckServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Transportation/Tests/Service/ZoneServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Util/Database.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Transportation_HR/Util/DatabaseInitializer.class" beforeDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <list id="8383c5b0-e5f7-45d1-8cd2-5e4673af62c7" name="Changes by taeer" comment="" />
