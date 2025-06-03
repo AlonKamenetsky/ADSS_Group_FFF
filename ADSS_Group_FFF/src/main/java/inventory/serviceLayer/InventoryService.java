@@ -217,7 +217,6 @@ public class InventoryService implements InternalInventoryInterface {
 
     /**
      * Update a product’s basic fields (name, manufacturer, prices, category, etc.)
-     * If you want to adjust just quantity, you can call adjustProductQuantity instead.
      */
     public void updateProduct(InventoryProduct updated) {
         // NOTE: you may want to re‐check that the category still exists, etc.
@@ -358,9 +357,6 @@ public class InventoryService implements InternalInventoryInterface {
         reportDAO.delete(reportId);
     }
 
-    /**
-     * Update an existing report (rarely needed, but included for completeness).
-     */
     public void updateReport(InventoryReport updatedReport) {
         reportDAO.update(updatedReport);
     }

@@ -14,14 +14,12 @@ import java.sql.Statement;
  *    Connection c = DatabaseManager.getInstance().getConnection();
  */
 public class DatabaseManager {
-    // This will create the file "inventory.db" in dev/inventory when you first connect.
     private static final String JDBC_URL = "jdbc:sqlite:data/inventoryDatabase.db";
 
     private static DatabaseManager instance = null;
     private final Connection connection;
 
     private DatabaseManager() throws SQLException {
-        // 1) Load the SQLite JDBC driver (optional but safe)
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
@@ -94,7 +92,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Returns the singleton DatabaseManager (initializing if necessary).
+     * Returns the singleton DatabaseManager
      */
     public static synchronized DatabaseManager getInstance() throws SQLException {
         if (instance == null) {

@@ -460,16 +460,4 @@ public class CsvToDatabaseImporter {
         }
     }
 
-
-    /**
-     * main() delegates to importAll() so you can run this class on its own:
-     *   java SuppliersModule.DataLayer.CsvToDatabaseImporter
-     */
-    public static void main(String[] args) {
-        try {
-            importAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

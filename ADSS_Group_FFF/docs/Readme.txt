@@ -1,8 +1,14 @@
+Alon 213795107
+Eran 207778788
+Stav 207458571
+Daniel 336182621
+
 To use the Inventory and Suppliers Management System, run the program from the generated .jar file.
 Upon launch, a main menu will appear, allowing the user to choose between the Suppliers Module and the Inventory Module.
 Before performing any operations, it is recommended to load sample data from CSV files, which will delete all existing data and populate the database with predefined suppliers,
 products, contracts, and orders.
  The system is entirely menu-driven: users interact with it by entering numbers to navigate between modules and actions. The Suppliers Module offers comprehensive functionality:
+
 
 Add a product → from Suppliers Module, enter 1, then 1.
 Console:
@@ -146,3 +152,135 @@ Console:
 The Inventory Module allows users to manage and update product quantities, change categories, and generate low-stock reports.
 Together, the modules support both manual and automatic order handling, using contract data to automatically select the cheapest supplier for each product,
 providing a complete and interactive logistics system.
+
+
+The Inventory CLI is a simple text-based interface for managing products, categories, and reports in an inventory system. It relies on an underlying InventoryService that handles business logic, and exposes the following core features:
+
+View all products in inventory
+
+View only low-stock items (products whose quantities have fallen below their minimum thresholds)
+
+View all categories (including parent/child relationships)
+
+Update shelf or backroom quantities for a specific item
+
+Mark an item as damaged
+
+Generate a one-time inventory report with optional filters (by category and/or status)
+
+Add a new product (by selecting from a supplier’s catalog, then supplying purchase/sale price and initial quantities)
+
+Add a new category (with optional parent)
+
+Exit the CLI
+
+
+
+Sample Interaction
+Below is a sample session (user input is highlighted in bold):
+
+markdown
+Copy
+Edit
+=== Welcome to Inventory CLI ===
+
+Choose an option:
+1. View Inventory
+2. View Low Stock
+3. View Categories
+4. Update Quantities
+5. Mark Damaged
+6. Generate Report
+7. Add New Product
+8. Add New Category
+9. Exit
+Choice: **3**
+
+(No categories defined yet.)
+
+Choose an option:
+1. View Inventory
+2. View Low Stock
+3. View Categories
+4. Update Quantities
+5. Mark Damaged
+6. Generate Report
+7. Add New Product
+8. Add New Category
+9. Exit
+Choice: **8**
+
+Category name: **Electronics**
+Enter parent category name (or leave blank): **
+
+Category added.
+
+Choose an option:
+1. View Inventory
+2. View Low Stock
+3. View Categories
+4. Update Quantities
+5. Mark Damaged
+6. Generate Report
+7. Add New Product
+8. Add New Category
+9. Exit
+Choice: **3**
+
+Name                 | Parent
+----------------------+----------------------
+Electronics          | None
+
+Choose an option:
+1. View Inventory
+2. View Low Stock
+3. View Categories
+4. Update Quantities
+5. Mark Damaged
+6. Generate Report
+7. Add New Product
+8. Add New Category
+9. Exit
+Choice: **7**
+
+Available supplier products:
+ID    Name                 Manufacturer
+----- -------------------- ---------------
+101   Widget A             Acme Corp
+102   Gizmo B              Gadget Inc
+
+Enter the ID of the product you want to add: **101**
+Enter purchase price for this product: **12.50**
+Enter sale price for this product: **19.99**
+Initial shelf quantity (integer): **10**
+Initial backroom quantity (integer): **20**
+Minimum threshold (integer): **5**
+
+Product added to inventory.
+
+Choose an option:
+1. View Inventory
+2. View Low Stock
+3. View Categories
+4. Update Quantities
+5. Mark Damaged
+6. Generate Report
+7. Add New Product
+8. Add New Category
+9. Exit
+Choice: **1**
+
+ID   | Name      | Manufacturer | Shelf | Backroom | Min | Purchase | Sale  | Status  | Category
+--------------------------------------------------------------------------------------------
+101  | Widget A  | Acme Corp    | 10    | 20       |  5  |   12.50  | 19.99 | NORMAL  | Electronics
+
+Choose an option:
+…  
+Choice: **9**
+
+Logging out Inventory, returning to main menu
+
+
+
+
+

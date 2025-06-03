@@ -1,8 +1,10 @@
 package inventory.presentationLayer;
 
-
 import IntegrationInventoryAndSupplier.MutualProduct;
-import inventory.domainLayer.*;
+import inventory.domainLayer.Category;
+import inventory.domainLayer.InventoryProduct;
+import inventory.domainLayer.InventoryReport;
+import inventory.domainLayer.ItemStatus;
 import inventory.serviceLayer.InventoryService;
 
 import java.util.*;
@@ -17,13 +19,6 @@ public class InventoryCLI {
 
     public void run() {
         System.out.println("=== Welcome to Inventory CLI ===");
-
-        // One-time sample data load prompt
-//        System.out.print("Load sample data? (y/n): ");
-//        if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
-////            AppInitializer.loadSampleData(service);
-//            System.out.println("Sample data loaded.");
-//        }
 
         boolean exit = false;
         while (!exit) {
@@ -40,14 +35,11 @@ public class InventoryCLI {
                 case "7" -> addNewProduct();
                 case "8" -> addNewCategory();
                 case "9" -> exit = true;
-
                 default -> System.out.println("Invalid option.");
             }
         }
-        System.out.println("Logging out Inventory returning to main menu");
-
+        System.out.println("Logging out Inventory, returning to main menu");
     }
-
 
     private void printMenu() {
         System.out.println("\nChoose an option:");
@@ -64,37 +56,71 @@ public class InventoryCLI {
     }
 
     private void listAllItems() {
-        for (InventoryProduct item : service.getAllProducts()) {
-            System.out.println(item);
+        List<InventoryProduct> all = service.getAllProducts();
+        if (all.isEmpty()) {
+            System.out.println("(No products found.)");
+            return;
+        }
+
+        // Print header
+        System.out.println(InventoryProduct.getTableHeader());
+        // Print each product as a row
+        for (InventoryProduct item : all) {
+            System.out.println(item.toRowString());
         }
     }
 
     private void listLowStockItems() {
-        for (InventoryProduct item : service.getLowStockItems()) {
-            System.out.println(item);
+        List<InventoryProduct> low = service.getLowStockItems();
+        if (low.isEmpty()) {
+            System.out.println("(No low-stock items.)");
+            return;
+        }
+
+        // Print header
+        System.out.println(InventoryProduct.getTableHeader());
+        // Print each low-stock product as a row
+        for (InventoryProduct item : low) {
+            System.out.println(item.toRowString());
         }
     }
 
     private void listCategories() {
-        for (Category cat : service.getAllCategories()) {
-            System.out.println(cat);
+        List<Category> allCats = service.getAllCategories();
+        if (allCats.isEmpty()) {
+            System.out.println("(No categories defined yet.)");
+            return;
+        }
+
+        // Print a simple header for categories
+        System.out.printf("%-20s | %-20s%n", "Name", "Parent");
+        System.out.println("----------------------+----------------------");
+        for (Category cat : allCats) {
+            String parentName = cat.getParentCategory() != null
+                    ? cat.getParentCategory().getName()
+                    : "None";
+            System.out.printf("%-20s | %-20s%n", cat.getName(), parentName);
         }
     }
 
     private void updateQuantities() {
         System.out.print("Enter item ID: ");
         int id = Integer.parseInt(scanner.nextLine().trim());
+
         System.out.print("Shelf quantity delta (e.g. +3 or -2): ");
-        int shelf = Integer.parseInt(scanner.nextLine());
+        int shelfDelta = Integer.parseInt(scanner.nextLine().trim());
+
         System.out.print("Backroom quantity delta: ");
-        int backroom = Integer.parseInt(scanner.nextLine());
-        service.updateItemQuantity(id, shelf, backroom);
+        int backroomDelta = Integer.parseInt(scanner.nextLine().trim());
+
+        service.updateItemQuantity(id, shelfDelta, backroomDelta);
         System.out.println("Quantities updated.");
     }
 
     private void markItemAsDamaged() {
         System.out.print("Enter item ID to mark as damaged: ");
         int id = Integer.parseInt(scanner.nextLine().trim());
+
         InventoryProduct item = getProductById(id);
         if (item != null) {
             item.setStatus(ItemStatus.DAMAGED);
@@ -103,8 +129,6 @@ public class InventoryCLI {
             System.out.println("Item not found.");
         }
     }
-
-    // ────────────── in InventoryCLI.java ──────────────
 
     private void generateReport() {
         // 1) Fetch and display all existing categories
@@ -169,7 +193,6 @@ public class InventoryCLI {
         System.out.println(report);
     }
 
-
     private void addNewProduct() {
         // 1) Fetch available products from the supplier
         List<MutualProduct> available = service.getAllAvailableProducts();
@@ -178,9 +201,9 @@ public class InventoryCLI {
             return;
         }
 
-        // 2) Display them in a simple table
-        System.out.println("Available supplier products:");
+        // 2) Display them in a simple table (with headers)
         System.out.printf("%-5s  %-20s  %-15s%n", "ID", "Name", "Manufacturer");
+        System.out.println("-----  --------------------  ---------------");
         for (MutualProduct mp : available) {
             System.out.printf(
                     "%-5d  %-20s  %-15s%n",
@@ -214,7 +237,7 @@ public class InventoryCLI {
         }
 
         // 5) Set Category
-        Category category = new Category(chosenProduct.getProductCategory().toString(),null);
+        Category category = new Category(chosenProduct.getProductCategory().toString(), null);
         if (category == null) {
             System.out.println("Category does not exist. Please add it first or choose an existing one.");
             return;
@@ -293,7 +316,6 @@ public class InventoryCLI {
         }
     }
 
-
     private void addNewCategory() {
         System.out.print("Category name: ");
         String name = scanner.nextLine().trim();
@@ -312,7 +334,8 @@ public class InventoryCLI {
         }
     }
 
-    // Utility lookup methods
+    // ────────── Utility lookup methods ──────────
+
     private InventoryProduct getProductById(int id) {
         for (InventoryProduct product : service.getAllProducts()) {
             if (product.getId() == id) return product;
@@ -326,6 +349,4 @@ public class InventoryCLI {
         }
         return null;
     }
-
 }
-
