@@ -1,19 +1,17 @@
 package HR.DTO;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class EmployeeDTO extends UserDTO {
     private String bankAccount;
     private Float salary;
-    private Date employmentDate;
+    private LocalDate employmentDate;
 
-    // We represent availability lists as DTOs:
     private List<WeeklyAvailabilityDTO> availabilityThisWeek;
     private List<WeeklyAvailabilityDTO> availabilityNextWeek;
 
-    // List of holiday dates (if you want to expose them)
-    private List<Date> holidays;
+    private List<LocalDate> holidays;
 
     public EmployeeDTO() { }
 
@@ -23,10 +21,10 @@ public class EmployeeDTO extends UserDTO {
             List<RoleDTO> roles,
             String bankAccount,
             Float salary,
-            Date employmentDate,
+            LocalDate employmentDate,
             List<WeeklyAvailabilityDTO> availabilityThisWeek,
             List<WeeklyAvailabilityDTO> availabilityNextWeek,
-            List<Date> holidays
+            List<LocalDate> holidays
     ) {
         super(id, name, roles);
         this.bankAccount = bankAccount;
@@ -53,11 +51,11 @@ public class EmployeeDTO extends UserDTO {
         this.salary = salary;
     }
 
-    public Date getEmploymentDate() {
+    public LocalDate getEmploymentDate() {
         return employmentDate;
     }
 
-    public void setEmploymentDate(Date employmentDate) {
+    public void setEmploymentDate(LocalDate employmentDate) {
         this.employmentDate = employmentDate;
     }
 
@@ -77,11 +75,11 @@ public class EmployeeDTO extends UserDTO {
         this.availabilityNextWeek = availabilityNextWeek;
     }
 
-    public List<Date> getHolidays() {
+    public List<LocalDate> getHolidays() {
         return holidays;
     }
 
-    public void setHolidays(List<Date> holidays) {
+    public void setHolidays(List<LocalDate> holidays) {
         this.holidays = holidays;
     }
 }

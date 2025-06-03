@@ -10,30 +10,30 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoleMapperTest {
 
     @Test
-    void testToDTO() {
-        Role domainRole = new Role("Logistics");
-        RoleDTO dto = RoleMapper.toDTO(domainRole);
+    public void testToDTO_withValidRole_returnsCorrectDTO() {
+        Role domain = new Role("Manager");
+        RoleDTO dto = RoleMapper.toDTO(domain);
 
         assertNotNull(dto);
-        assertEquals("Logistics", dto.getName());
+        assertEquals("Manager", dto.getName());
     }
 
     @Test
-    void testToDTO_NullInput() {
+    public void testFromDTO_withValidDTO_returnsCorrectRole() {
+        RoleDTO dto = new RoleDTO("Driver");
+        Role role = RoleMapper.fromDTO(dto);
+
+        assertNotNull(role);
+        assertEquals("Driver", role.getName());
+    }
+
+    @Test
+    public void testToDTO_withNull_returnsNull() {
         assertNull(RoleMapper.toDTO(null));
     }
 
     @Test
-    void testFromDTO() {
-        RoleDTO dto = new RoleDTO("Manager");
-        Role domainRole = RoleMapper.fromDTO(dto);
-
-        assertNotNull(domainRole);
-        assertEquals("Manager", domainRole.getName());
-    }
-
-    @Test
-    void testFromDTO_NullInput() {
+    public void testFromDTO_withNull_returnsNull() {
         assertNull(RoleMapper.fromDTO(null));
     }
 }

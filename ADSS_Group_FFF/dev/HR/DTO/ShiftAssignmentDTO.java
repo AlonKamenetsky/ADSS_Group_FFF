@@ -1,6 +1,10 @@
-// File: ShiftAssignmentDTO.java
 package HR.DTO;
 
+import java.util.Objects;
+
+/**
+ * DTO representing an assignment of an employee to a shift with a specific role.
+ */
 public class ShiftAssignmentDTO {
     private String employeeId;
     private String shiftId;
@@ -36,5 +40,30 @@ public class ShiftAssignmentDTO {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ShiftAssignmentDTO that = (ShiftAssignmentDTO) o;
+        return Objects.equals(employeeId, that.employeeId) &&
+                Objects.equals(shiftId, that.shiftId) &&
+                Objects.equals(roleName, that.roleName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, shiftId, roleName);
+    }
+
+    @Override
+    public String toString() {
+        return "ShiftAssignmentDTO{" +
+                "employeeId='" + employeeId + '\'' +
+                ", shiftId='" + shiftId + '\'' +
+                ", roleName='" + roleName + '\'' +
+                '}';
     }
 }

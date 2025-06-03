@@ -7,10 +7,21 @@ import HR.DTO.EmployeeDTO;
 import HR.DTO.RoleDTO;
 import HR.DTO.WeeklyAvailabilityDTO;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class EmployeeMapper {
+
+    private static LocalDate toLocalDate(Date date) {
+        return date == null ? null : date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private static Date toUtilDate(LocalDate localDate) {
+        return localDate == null ? null : Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
 
     /**
      * Convert a domain Employee → EmployeeDTO (no password ever goes into EmployeeDTO).
@@ -30,7 +41,9 @@ public class EmployeeMapper {
                 .map(wa -> new WeeklyAvailabilityDTO(wa.getDay(), wa.getTime()))
                 .collect(Collectors.toList());
 
-        List<java.util.Date> holidays = e.getHolidays();
+        List<LocalDate> holidays = e.getHolidays().stream()
+                .map(EmployeeMapper::toLocalDate)
+                .collect(Collectors.toList());
 
         return new EmployeeDTO(
                 e.getId(),
@@ -38,7 +51,7 @@ public class EmployeeMapper {
                 roleDtos,
                 e.getBankAccount(),
                 e.getSalary(),
-                e.getEmploymentDate(),
+                toLocalDate(e.getEmploymentDate()),
                 availThisWeek,
                 availNextWeek,
                 holidays
@@ -60,10 +73,10 @@ public class EmployeeMapper {
                 dto.getId(),
                 roles,
                 dto.getName(),
-                null,                // <-- PASSWORD is always null when coming from EmployeeDTO
+                null,
                 dto.getBankAccount(),
                 dto.getSalary(),
-                dto.getEmploymentDate()
+                toUtilDate(dto.getEmploymentDate())
         );
 
         if (dto.getAvailabilityThisWeek() != null) {
@@ -79,7 +92,9 @@ public class EmployeeMapper {
             }
         }
         if (dto.getHolidays() != null) {
-            e.getHolidays().addAll(dto.getHolidays());
+            e.getHolidays().addAll(dto.getHolidays().stream()
+                    .map(EmployeeMapper::toUtilDate)
+                    .collect(Collectors.toList()));
         }
 
         return e;

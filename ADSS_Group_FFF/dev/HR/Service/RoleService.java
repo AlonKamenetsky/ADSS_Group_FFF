@@ -1,29 +1,19 @@
 package HR.Service;
 
 import HR.DTO.RoleDTO;
-import HR.DataAccess.*;
-import HR.Domain.*;
+import HR.DataAccess.RoleDAO;
+import HR.Domain.Role;
 import HR.Mapper.RoleMapper;
-import Util.Database;
 
-import java.sql.Connection;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class RoleService {
-    private static RoleService instance;
+
     private final RoleDAO roleDAO;
 
-    private RoleService() {
-        Connection conn = Database.getConnection();
-        this.roleDAO = new RoleDAOImpl(conn);
-    }
-
-    public static synchronized RoleService getInstance() {
-        if (instance == null) {
-            instance = new RoleService();
-        }
-        return instance;
+    public RoleService(RoleDAO roleDAO) {
+        this.roleDAO = roleDAO;
     }
 
     public void addRole(RoleDTO dto) {
@@ -34,7 +24,6 @@ public class RoleService {
         roleDAO.insert(r);
     }
 
-
     public void removeRole(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Role name must not be null/empty");
@@ -43,7 +32,9 @@ public class RoleService {
     }
 
     public List<RoleDTO> getRoles() {
-        return roleDAO.findAll().stream().map(RoleMapper::toDTO).collect(Collectors.toList());
+        return roleDAO.findAll().stream()
+                .map(RoleMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public RoleDTO getRoleByName(String name) {

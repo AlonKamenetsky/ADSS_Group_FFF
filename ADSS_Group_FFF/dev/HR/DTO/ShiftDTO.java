@@ -1,24 +1,22 @@
-// File: ShiftDTO.java
 package HR.DTO;
 
 import HR.Domain.Shift.ShiftTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 public class ShiftDTO {
     private String id;
-    private Date date;
+    private LocalDate date;
     private ShiftTime type;
     private Map<String, Integer> requiredCounts;
-    // (Map<roleName, count> instead of Map<Role, Integer>)
     private List<ShiftAssignmentDTO> assignedEmployees;
 
     public ShiftDTO() { }
 
     public ShiftDTO(
             String id,
-            Date date,
+            LocalDate date,
             ShiftTime type,
             Map<String, Integer> requiredCounts,
             List<ShiftAssignmentDTO> assignedEmployees
@@ -38,11 +36,11 @@ public class ShiftDTO {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

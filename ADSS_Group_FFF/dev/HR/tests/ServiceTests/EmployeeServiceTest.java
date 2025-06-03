@@ -1,92 +1,95 @@
+
 package HR.tests.ServiceTests;
 
 import HR.DataAccess.EmployeeDAO;
+import HR.DataAccess.DriverInfoDAO;
+import HR.DataAccess.ShiftDAO;
 import HR.Domain.Employee;
-import HR.Domain.Role;
-import HR.Service.EmployeeService;
 import HR.DTO.EmployeeDTO;
-import HR.DTO.RoleDTO;
+import HR.Mapper.EmployeeMapper;
 
+import HR.Service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.mockito.*;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class EmployeeServiceTest {
 
-    private EmployeeDAO mockEmployeeDAO;
-    private EmployeeService employeeService;
+    @Mock private EmployeeDAO employeeDAO;
+    @Mock private DriverInfoDAO driverInfoDAO;
+    @Mock private ShiftDAO shiftDAO;
+
+    @InjectMocks private EmployeeService employeeService;
 
     @BeforeEach
-    public void setUp() {
-        mockEmployeeDAO = mock(EmployeeDAO.class);
-        employeeService = new EmployeeService(mockEmployeeDAO); // assuming constructor injection is possible
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        employeeService = new EmployeeService(employeeDAO, driverInfoDAO, shiftDAO);
     }
 
     @Test
-    public void testAddEmployeeCallsDAO() {
-        RoleDTO roleDto = new RoleDTO("HR");
-        List<RoleDTO> roles = List.of(roleDto);
+    public void testGetEmployeeHolidays_validId_returnsHolidays() {
+        List<LocalDate> holidays = new ArrayList<>();
+        holidays.add(LocalDate.of(2025, 6, 10));
+        EmployeeDTO dto = mock(EmployeeDTO.class);
+        when(dto.getHolidays()).thenReturn(holidays);
 
-        EmployeeDTO dto = new EmployeeDTO(
-                "E001", "Alice", roles,
-                "IL123456", 5000f,
-                new Date(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
-        );
+        Employee domainEmp = mock(Employee.class);
+        when(employeeDAO.selectById("E1")).thenReturn(domainEmp);
+        try (MockedStatic<EmployeeMapper> mockedMapper = mockStatic(EmployeeMapper.class)) {
+            mockedMapper.when(() -> EmployeeMapper.toDTO(domainEmp)).thenReturn(dto);
 
-        employeeService.addEmployee(dto);
+            List<LocalDate> result = employeeService.getEmployeeHolidays("E1");
 
-        ArgumentCaptor<Employee> captor = ArgumentCaptor.forClass(Employee.class);
-        verify(mockEmployeeDAO).insert(captor.capture());
-        assertEquals("Alice", captor.getValue().getName());
+            assertEquals(1, result.size());
+            assertTrue(result.contains(LocalDate.of(2025, 6, 10)));
+        }
     }
 
     @Test
-    public void testGetEmployeeByIdReturnsCorrectData() {
-        Role hrRole = new Role("HR");
-        Employee mockEmployee = new Employee("E001", List.of(hrRole), "Alice", "pass", "IL123456", 5000f, new Date());
+    public void testAddVacation_addsHolidayIfNotPresent() {
+        List<LocalDate> holidays = new ArrayList<>();
+        EmployeeDTO dto = new EmployeeDTO();
+        dto.setHolidays(holidays);
 
-        when(mockEmployeeDAO.selectById("E001")).thenReturn(mockEmployee);
+        Employee domainEmp = mock(Employee.class);
+        when(employeeDAO.selectById("E2")).thenReturn(domainEmp);
+        try (MockedStatic<EmployeeMapper> mockedMapper = mockStatic(EmployeeMapper.class)) {
+            mockedMapper.when(() -> EmployeeMapper.toDTO(domainEmp)).thenReturn(dto);
+            mockedMapper.when(() -> EmployeeMapper.fromDTO(dto)).thenReturn(domainEmp);
 
-        EmployeeDTO dto = employeeService.getEmployeeById("E001");
-        assertNotNull(dto);
-        assertEquals("Alice", dto.getName());
-        assertEquals("IL123456", dto.getBankAccount());
+            LocalDate newHoliday = LocalDate.of(2025, 12, 25);
+
+            employeeService.addVacation("E2", newHoliday);
+
+            assertEquals(1, dto.getHolidays().size());
+            assertEquals(newHoliday, dto.getHolidays().get(0));
+            verify(employeeDAO).update(domainEmp);
+        }
     }
 
     @Test
-    public void testRemoveEmployeeDelegatesToDAO() {
-        employeeService.removeEmployee("E001");
-        verify(mockEmployeeDAO).delete("E001");
+    public void testAddVacation_throwsIfEmployeeNotFound() {
+        when(employeeDAO.selectById("INVALID")).thenReturn(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            employeeService.addVacation("INVALID", LocalDate.now());
+        });
     }
 
     @Test
-    public void testUpdateEmployeeDelegatesToDAO() {
-        RoleDTO roleDto = new RoleDTO("Driver");
-        EmployeeDTO dto = new EmployeeDTO(
-                "E002", "Bob", List.of(roleDto),
-                "BANK2", 6000f,
-                new Date(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
-        );
+    public void testGetEmployeeHolidays_throwsIfEmployeeNotFound() {
+        when(employeeDAO.selectById("INVALID")).thenReturn(null);
 
-        employeeService.updateEmployee(dto);
-        verify(mockEmployeeDAO).update(any(Employee.class));
-    }
-
-    @Test
-    public void testGetAllEmployeesReturnsMappedDTOs() {
-        List<Employee> employees = List.of(
-                new Employee("E003", List.of(new Role("Warehouse")), "Tom", "1234", "BANK3", 3500f, new Date())
-        );
-
-        when(mockEmployeeDAO.selectAll()).thenReturn(employees);
-
-        List<EmployeeDTO> result = employeeService.getEmployees();
-        assertEquals(1, result.size());
-        assertEquals("Tom", result.get(0).getName());
+        assertThrows(IllegalArgumentException.class, () -> {
+            employeeService.getEmployeeHolidays("INVALID");
+        });
     }
 }

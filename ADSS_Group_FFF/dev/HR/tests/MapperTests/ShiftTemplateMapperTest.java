@@ -1,9 +1,10 @@
 package HR.tests.MapperTests;
 
-import HR.Domain.Role;
-import HR.Domain.Shift;
 import HR.Domain.ShiftTemplate;
+import HR.Domain.Role;
+import HR.Domain.Shift.ShiftTime;
 import HR.DTO.ShiftTemplateDTO;
+
 import HR.Mapper.ShiftTemplateMapper;
 import org.junit.jupiter.api.Test;
 
@@ -15,43 +16,63 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ShiftTemplateMapperTest {
 
     @Test
-    public void toDTO_nullReturnsNull() {
+    public void testToDTO_withValidDomain_convertsCorrectly() {
+        // Given a domain ShiftTemplate for MONDAY MORNING
+        ShiftTemplate template = new ShiftTemplate(DayOfWeek.MONDAY, ShiftTime.Morning);
+        // Populate defaultCounts in domain: e.g., Role "Driver" -> 2, Role "Loader" -> 1
+        Role driverRole = new Role("Driver");
+        Role loaderRole = new Role("Loader");
+        template.setDefaultCount(driverRole, 2);
+        template.setDefaultCount(loaderRole, 1);
+
+        // When mapping to DTO
+        ShiftTemplateDTO dto = ShiftTemplateMapper.toDTO(template);
+
+        // Then fields should match
+        assertNotNull(dto);
+        assertEquals(DayOfWeek.MONDAY, dto.getDay());
+        assertEquals(ShiftTime.Morning, dto.getTime());
+
+        Map<String, Integer> defaultCountsDto = dto.getDefaultCounts();
+        assertNotNull(defaultCountsDto);
+        // Should contain "Driver" -> 2 and "Loader" -> 1
+        assertEquals(2, defaultCountsDto.get("Driver"));
+        assertEquals(1, defaultCountsDto.get("Loader"));
+        assertEquals(2, defaultCountsDto.size());
+    }
+
+    @Test
+    public void testToDTO_withNullDomain_returnsNull() {
         assertNull(ShiftTemplateMapper.toDTO(null));
     }
 
     @Test
-    public void fromDTO_nullReturnsNull() {
-        assertNull(ShiftTemplateMapper.fromDTO(null));
+    public void testFromDTO_withValidDTO_convertsCorrectly() {
+        // Given a DTO for TUESDAY EVENING with defaultCounts
+        Map<String, Integer> dtoMap = Map.of(
+                "Manager", 1,
+                "Clerk",   3
+        );
+        ShiftTemplateDTO dto = new ShiftTemplateDTO(DayOfWeek.TUESDAY, ShiftTime.Evening, dtoMap);
+
+        // When mapping to domain
+        ShiftTemplate domain = ShiftTemplateMapper.fromDTO(dto);
+
+        // Then fields should match
+        assertNotNull(domain);
+        assertEquals(DayOfWeek.TUESDAY, domain.getDay());
+        assertEquals(ShiftTime.Evening, domain.getTime());
+
+        Map<Role, Integer> defaultCountsDomain = domain.getDefaultCounts();
+        assertNotNull(defaultCountsDomain);
+        // Should contain a Role("Manager")->1 and Role("Clerk")->3
+        assertEquals(1, defaultCountsDomain.get(new Role("Manager")));
+        assertEquals(3, defaultCountsDomain.get(new Role("Clerk")));
+        assertEquals(2, defaultCountsDomain.size());
     }
 
     @Test
-    public void toDTO_and_fromDTO_roundTrip() {
-        // Arrange: create a ShiftTemplate for Wednesday, Evening, with defaults
-        DayOfWeek day = DayOfWeek.WEDNESDAY;
-        Shift.ShiftTime time = Shift.ShiftTime.Evening;
-        ShiftTemplate template = new ShiftTemplate(day, time);
-        template.setDefaultCount(new Role("Cashier"), 3);
-        template.setDefaultCount(new Role("Cleaner"), 2);
-
-        // Act: map to DTO, then back to domain
-        ShiftTemplateDTO dto = ShiftTemplateMapper.toDTO(template);
-        ShiftTemplate reconstructed = ShiftTemplateMapper.fromDTO(dto);
-
-        // Assert: DTO fields
-        assertNotNull(dto);
-        assertEquals(day, dto.getDay());
-        assertEquals(time, dto.getTime());
-        assertEquals(3, dto.getDefaultCounts().get("Cashier"));
-        assertEquals(2, dto.getDefaultCounts().get("Cleaner"));
-
-        // Round-trip: reconstructed domain
-        assertNotNull(reconstructed);
-        assertEquals(day, reconstructed.getDay());
-        assertEquals(time, reconstructed.getTime());
-
-        // defaultCounts in reconstructed must match
-        Map<Role, Integer> recDefaults = reconstructed.getDefaultCounts();
-        assertEquals(Integer.valueOf(3), recDefaults.get(new Role("Cashier")));
-        assertEquals(Integer.valueOf(2), recDefaults.get(new Role("Cleaner")));
+    public void testFromDTO_withNullDTO_returnsNull() {
+        assertNull(ShiftTemplateMapper.fromDTO(null));
     }
 }

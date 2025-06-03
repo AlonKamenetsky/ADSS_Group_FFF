@@ -1,11 +1,15 @@
 package HR.DTO;
 
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * DTO for carrying driver‐specific license information.
+ * Uses List<String> for licenseType (values: "B", "C", "C1", matching the enum names).
+ */
 public class DriverInfoDTO {
     private String employeeId;
     private List<String> licenseType;
-    // (we use List<String> for licenseType; values: "B", "C", "C1", matching the enum)
 
     public DriverInfoDTO() { }
 
@@ -28,5 +32,28 @@ public class DriverInfoDTO {
 
     public void setLicenseType(List<String> licenseType) {
         this.licenseType = licenseType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DriverInfoDTO that = (DriverInfoDTO) o;
+        return Objects.equals(employeeId, that.employeeId) &&
+                Objects.equals(licenseType, that.licenseType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, licenseType);
+    }
+
+    @Override
+    public String toString() {
+        return "DriverInfoDTO{" +
+                "employeeId='" + employeeId + '\'' +
+                ", licenseType=" + licenseType +
+                '}';
     }
 }

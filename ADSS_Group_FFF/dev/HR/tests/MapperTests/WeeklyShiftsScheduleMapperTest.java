@@ -1,80 +1,106 @@
 package HR.tests.MapperTests;
 
-import HR.Domain.Role;
-import HR.Domain.Shift;
 import HR.Domain.WeeklyShiftsSchedule;
-import HR.DTO.ShiftDTO;
+import HR.Domain.Shift;
 import HR.DTO.WeeklyShiftsScheduleDTO;
-import HR.Mapper.WeeklyShiftsScheduleMapper;
-import org.junit.jupiter.api.Test;
+import HR.DTO.ShiftDTO;
 
-import java.util.Date;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class WeeklyShiftsScheduleMapperTest {
 
     @Test
-    public void toDTO_nullReturnsNull() {
+    public void testToDTO_withValidDomain_convertsListsCorrectly() {
+        // Prepare two mock domain Shifts
+        Shift s1 = mock(Shift.class);
+        Shift s2 = mock(Shift.class);
+
+        // Prepare corresponding ShiftDTOs
+        ShiftDTO dto1 = new ShiftDTO();
+        ShiftDTO dto2 = new ShiftDTO();
+
+        // Mock ShiftMapper.toDTO(...) to return our DTOs
+        try (MockedStatic<ShiftMapper> shiftMapperMock = mockStatic(ShiftMapper.class)) {
+            shiftMapperMock.when(() -> ShiftMapper.toDTO(s1)).thenReturn(dto1);
+            shiftMapperMock.when(() -> ShiftMapper.toDTO(s2)).thenReturn(dto2);
+
+            // Create a domain WeeklyShiftsSchedule and populate its lists
+            WeeklyShiftsSchedule domain = new WeeklyShiftsSchedule();
+            domain.getCurrentWeek().add(s1);
+            domain.getNextWeek().add(s2);
+
+            // When mapping to DTO
+            WeeklyShiftsScheduleDTO resultDto = WeeklyShiftsScheduleMapper.toDTO(domain);
+
+            assertNotNull(resultDto);
+
+            // The currentWeek list in DTO should contain dto1
+            List<ShiftDTO> currentWeekDtos = resultDto.getCurrentWeek();
+            assertNotNull(currentWeekDtos);
+            assertEquals(1, currentWeekDtos.size());
+            assertSame(dto1, currentWeekDtos.get(0));
+
+            // The nextWeek list in DTO should contain dto2
+            List<ShiftDTO> nextWeekDtos = resultDto.getNextWeek();
+            assertNotNull(nextWeekDtos);
+            assertEquals(1, nextWeekDtos.size());
+            assertSame(dto2, nextWeekDtos.get(0));
+        }
+    }
+
+    @Test
+    public void testToDTO_withNullDomain_returnsNull() {
         assertNull(WeeklyShiftsScheduleMapper.toDTO(null));
     }
 
     @Test
-    public void fromDTO_nullReturnsNull() {
-        assertNull(WeeklyShiftsScheduleMapper.fromDTO(null));
+    public void testFromDTO_withValidDTO_convertsListsCorrectly() {
+        // Prepare two ShiftDTOs
+        ShiftDTO dto1 = new ShiftDTO();
+        ShiftDTO dto2 = new ShiftDTO();
+
+        // Prepare two mock domain Shifts to be returned by ShiftMapper.fromDTO
+        Shift s1 = mock(Shift.class);
+        Shift s2 = mock(Shift.class);
+
+        // Mock ShiftMapper.fromDTO(...) to return our domain Shifts
+        try (MockedStatic<ShiftMapper> shiftMapperMock = mockStatic(ShiftMapper.class)) {
+            shiftMapperMock.when(() -> ShiftMapper.fromDTO(dto1)).thenReturn(s1);
+            shiftMapperMock.when(() -> ShiftMapper.fromDTO(dto2)).thenReturn(s2);
+
+            // Create a DTO WeeklyShiftsScheduleDTO and populate its lists
+            WeeklyShiftsScheduleDTO dto = new WeeklyShiftsScheduleDTO(
+                    List.of(dto1),
+                    List.of(dto2)
+            );
+
+            // When mapping to domain
+            WeeklyShiftsSchedule domain = WeeklyShiftsScheduleMapper.fromDTO(dto);
+
+            assertNotNull(domain);
+
+            // The currentWeek list in domain should contain s1
+            List<Shift> currentWeekDomain = domain.getCurrentWeek();
+            assertNotNull(currentWeekDomain);
+            assertEquals(1, currentWeekDomain.size());
+            assertSame(s1, currentWeekDomain.get(0));
+
+            // The nextWeek list in domain should contain s2
+            List<Shift> nextWeekDomain = domain.getNextWeek();
+            assertNotNull(nextWeekDomain);
+            assertEquals(1, nextWeekDomain.size());
+            assertSame(s2, nextWeekDomain.get(0));
+        }
     }
 
     @Test
-    public void toDTO_and_fromDTO_roundTrip() {
-        // Arrange: create a WeeklyShiftsSchedule with one shift in current week and one in next
-        WeeklyShiftsSchedule original = new WeeklyShiftsSchedule();
-
-        // Create two dummy shifts
-        Shift s1 = new Shift(
-                "shiftA",
-                new Date(0),
-                Shift.ShiftTime.Morning,
-                Map.of(),            // requiredRoles
-                Map.of(new Role("Cashier"), 2)
-        );
-        Shift s2 = new Shift(
-                "shiftB",
-                new Date(1000),
-                Shift.ShiftTime.Evening,
-                Map.of(),
-                Map.of(new Role("Cleaner"), 1)
-        );
-
-        // Add s1 to currentWeek, s2 to nextWeek
-        original.getCurrentWeek().add(s1);
-        original.getNextWeek().add(s2);
-
-        // Act: map to DTO, then back to domain
-        WeeklyShiftsScheduleDTO dto = WeeklyShiftsScheduleMapper.toDTO(original);
-        WeeklyShiftsSchedule reconstructed = WeeklyShiftsScheduleMapper.fromDTO(dto);
-
-        // Assert DTO fields
-        assertNotNull(dto);
-        List<ShiftDTO> currDtos = dto.getCurrentWeek();
-        List<ShiftDTO> nextDtos = dto.getNextWeek();
-        assertEquals(1, currDtos.size());
-        assertEquals("shiftA", currDtos.get(0).getId());
-        assertEquals(2, currDtos.get(0).getRequiredCounts().get("Cashier"));
-
-        assertEquals(1, nextDtos.size());
-        assertEquals("shiftB", nextDtos.get(0).getId());
-        assertEquals(1, nextDtos.get(0).getRequiredCounts().get("Cleaner"));
-
-        // Reconstructed domain: check lists
-        assertNotNull(reconstructed);
-        assertEquals(1, reconstructed.getCurrentWeek().size());
-        assertEquals("shiftA", reconstructed.getCurrentWeek().get(0).getID());
-        assertEquals(2, reconstructed.getCurrentWeek().get(0).getRequiredCounts().get(new Role("Cashier")));
-
-        assertEquals(1, reconstructed.getNextWeek().size());
-        assertEquals("shiftB", reconstructed.getNextWeek().get(0).getID());
-        assertEquals(1, reconstructed.getNextWeek().get(0).getRequiredCounts().get(new Role("Cleaner")));
+    public void testFromDTO_withNullDTO_returnsNull() {
+        assertNull(WeeklyShiftsScheduleMapper.fromDTO(null));
     }
 }

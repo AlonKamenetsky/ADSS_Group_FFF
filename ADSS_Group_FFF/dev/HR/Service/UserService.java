@@ -1,36 +1,27 @@
 package HR.Service;
 
 import HR.DataAccess.EmployeeDAO;
-import HR.DataAccess.EmployeeDAOImpl;
 import HR.Domain.Employee;
 import HR.Domain.User;
-import Util.Database;
-
-import java.sql.Connection;
-import java.util.List;
 
 public class UserService {
-    private static UserService instance;
     private final EmployeeDAO employeeDAO;
 
-    private UserService() {
-        Connection conn = Database.getConnection();
-        this.employeeDAO = new EmployeeDAOImpl(conn);
-    }
-
-    public static UserService getInstance() {
-        if (instance == null) {
-            instance = new UserService();
-        }
-        return instance;
+    public UserService(EmployeeDAO employeeDAO) {
+        this.employeeDAO = employeeDAO;
     }
 
     /**
-     * Authenticate user by ID and password. Returns User if valid, or null if not.
+     * Authenticate user by ID and password. Returns User if valid (password matches),
+     * or null otherwise.
      */
     public User authenticate(String id, String password) {
+        if (id == null || id.isBlank() || password == null) {
+            return null;
+        }
+
         Employee user = employeeDAO.selectById(id);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && password.equals(user.getPassword())) {
             return user;
         }
         return null;

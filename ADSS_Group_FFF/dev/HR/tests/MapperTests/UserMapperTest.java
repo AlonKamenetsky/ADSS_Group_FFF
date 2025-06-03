@@ -1,9 +1,10 @@
 package HR.tests.MapperTests;
 
-import HR.Domain.Role;
 import HR.Domain.User;
-import HR.DTO.RoleDTO;
+import HR.Domain.Role;
 import HR.DTO.UserDTO;
+import HR.DTO.RoleDTO;
+
 import HR.Mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 
@@ -14,45 +15,51 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserMapperTest {
 
     @Test
-    public void toDTO_nullReturnsNull() {
-        assertNull(UserMapper.toDTO(null));
-    }
+    public void testToDTO_withValidUser_convertsCorrectly() {
+        Role role1 = new Role("Admin");
+        Role role2 = new Role("User");
+        User user = new User("U1", "Alice", "secret", List.of(role1, role2));
 
-    @Test
-    public void fromDTO_nullReturnsNull() {
-        assertNull(UserMapper.fromDTO(null));
-    }
+        UserDTO dto = UserMapper.toDTO(user);
 
-    @Test
-    public void toDTO_and_fromDTO_roundTrip() {
-        // Arrange: create a User domain object with two roles
-        Role r1 = new Role("HR");
-        Role r2 = new Role("Cashier");
-        User original = new User("u123", "Alice", "secretHash", List.of(r1, r2));
-
-        // Act: map to DTO, then back to domain
-        UserDTO dto = UserMapper.toDTO(original);
-        User reconstructed = UserMapper.fromDTO(dto);
-
-        // Assert DTO fields
         assertNotNull(dto);
-        assertEquals("u123", dto.getId());
+        assertEquals("U1", dto.getId());
         assertEquals("Alice", dto.getName());
+        List<RoleDTO> roles = dto.getRoles();
+        assertNotNull(roles);
+        assertEquals(2, roles.size());
+        assertTrue(roles.stream().anyMatch(r -> r.getName().equals("Admin")));
+        assertTrue(roles.stream().anyMatch(r -> r.getName().equals("User")));
+    }
 
-        List<RoleDTO> roleDtos = dto.getRoles();
-        assertEquals(2, roleDtos.size());
-        assertTrue(roleDtos.stream().anyMatch(rd -> rd.getName().equals("HR")));
-        assertTrue(roleDtos.stream().anyMatch(rd -> rd.getName().equals("Cashier")));
+    @Test
+    public void testToDTO_withNullUser_returnsNull() {
+        UserDTO dto = UserMapper.toDTO(null);
+        assertNull(dto);
+    }
 
-        // Reconstructed domain: password should be null, roles should match names
-        assertNotNull(reconstructed);
-        assertEquals("u123", reconstructed.getId());
-        assertEquals("Alice", reconstructed.getName());
-        assertNull(reconstructed.getPassword());
+    @Test
+    public void testFromDTO_withValidDTO_convertsCorrectly() {
+        RoleDTO rdto1 = new RoleDTO("Manager");
+        RoleDTO rdto2 = new RoleDTO("Clerk");
+        UserDTO dto = new UserDTO("U2", "Bob", List.of(rdto1, rdto2));
 
-        List<Role> recRoles = reconstructed.getRoles();
-        assertEquals(2, recRoles.size());
-        assertTrue(recRoles.stream().anyMatch(r -> r.getName().equals("HR")));
-        assertTrue(recRoles.stream().anyMatch(r -> r.getName().equals("Cashier")));
+        User user = UserMapper.fromDTO(dto);
+
+        assertNotNull(user);
+        assertEquals("U2", user.getId());
+        assertEquals("Bob", user.getName());
+        assertNull(user.getPassword());
+        List<Role> roles = user.getRoles();
+        assertNotNull(roles);
+        assertEquals(2, roles.size());
+        assertTrue(roles.stream().anyMatch(r -> r.getName().equals("Manager")));
+        assertTrue(roles.stream().anyMatch(r -> r.getName().equals("Clerk")));
+    }
+
+    @Test
+    public void testFromDTO_withNullDTO_returnsNull() {
+        User user = UserMapper.fromDTO(null);
+        assertNull(user);
     }
 }

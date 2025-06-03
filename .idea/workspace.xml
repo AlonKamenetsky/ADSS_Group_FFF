@@ -10,14 +10,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="for checkout">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/UserServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/HR_UML.drawio.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/docs/HR_UML.drawio.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/devHR_UML.drawio.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/devUML.drawio.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/instructions.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/docs/members_id" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/HR_ass1Fix.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/CreateEmployeeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/CreateEmployeeDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/DriverInfoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/DriverInfoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/EmployeeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/EmployeeDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftAssignmentDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftAssignmentDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/ShiftDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/SwapRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/SwapRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/WeeklyAvailabilityDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/WeeklyAvailabilityDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/WeeklyShiftsScheduleDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/DTO/WeeklyShiftsScheduleDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/EmployeeMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/EmployeeMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/ShiftMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Mapper/ShiftMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/EmployeeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/RoleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/ShiftService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/SwapService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/Service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/DriverInfoMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/DriverInfoMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/EmployeeMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/EmployeeMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/RoleMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/RoleMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/ShiftAssignmentMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/ShiftAssignmentMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/ShiftMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/ShiftMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/ShiftTemplateMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/ShiftTemplateMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/UserMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/UserMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/WeeklyAvailabilityMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/WeeklyAvailabilityMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/WeeklyShiftsScheduleMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/MapperTests/WeeklyShiftsScheduleMapperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/EmployeeServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/EmployeeServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/RoleServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/ShiftServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/ShiftServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/SwapServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/HR/tests/ServiceTests/SwapServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/ADSS_Group_FFF/dev/Util/DatabaseInitializer.java" afterDir="false" />
     </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <list id="8383c5b0-e5f7-45d1-8cd2-5e4673af62c7" name="Changes by taeer" comment="" />
@@ -74,6 +100,7 @@
     "Application.Unnamed.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JUnit.All in ADSS_Group_FFF.executor": "Run",
+    "JUnit.DriverInfoMapperTest.executor": "Run",
     "JUnit.EmployeeDAOTest.executor": "Run",
     "JUnit.RoleTest.executor": "Run",
     "JUnit.RolesRepoTest.executor": "Run",
@@ -121,7 +148,7 @@
       <recent name="C:\Users\lidor\IdeaProjects\TransportationModule\ADSS_Group_FFF\dev\HR" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.DriverInfoMapperTest">
     <configuration name="TransportationMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TransportationMain" />
       <module name="ADSS_Group_FFF" />
@@ -129,8 +156,24 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="DriverInfoMapperTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="HR.tests.MapperTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="HR.tests.MapperTests" />
+      <option name="MAIN_CLASS_NAME" value="HR.tests.MapperTests.DriverInfoMapperTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.DriverInfoMapperTest" />
         <item itemvalue="Application.TransportationMain" />
       </list>
     </recent_temporary>

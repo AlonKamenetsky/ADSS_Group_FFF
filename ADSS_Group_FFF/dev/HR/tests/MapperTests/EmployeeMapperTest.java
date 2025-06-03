@@ -1,68 +1,68 @@
 package HR.tests.MapperTests;
 
-import HR.Domain.Employee;
-import HR.Domain.Role;
-import HR.Domain.Shift;
-import HR.Domain.WeeklyAvailability;
-import HR.DTO.EmployeeDTO;
-import HR.DTO.RoleDTO;
-import HR.DTO.WeeklyAvailabilityDTO;
+import HR.Domain.*;
+import HR.DTO.*;
 import HR.Mapper.EmployeeMapper;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EmployeeMapperTest {
 
     @Test
-    void testToDTO() {
-        Role role = new Role("HR");
-        WeeklyAvailability avail = new WeeklyAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Morning);
-        Date date = new Date();
-
-        Employee employee = new Employee("123", List.of(role), "Alice", "pw", "123-456", 5000f, date);
-        employee.getAvailabilityThisWeek().add(avail);
-        employee.getAvailabilityNextWeek().add(avail);
-        employee.getHolidays().add(date);
+    public void testToDTO_withValidEmployee_returnsCorrectDTO() {
+        Role role = new Role("Clerk");
+        Employee employee = new Employee("E1", List.of(role), "Alice", "pass",
+                "5678", 6000f, java.sql.Date.valueOf("2022-01-01"));
+        employee.getAvailabilityThisWeek().add(new WeeklyAvailability(DayOfWeek.MONDAY, Shift.ShiftTime.Morning));
+        employee.getAvailabilityNextWeek().add(new WeeklyAvailability(DayOfWeek.TUESDAY, Shift.ShiftTime.Evening));
+        employee.getHolidays().add(java.sql.Date.valueOf("2025-07-01"));
 
         EmployeeDTO dto = EmployeeMapper.toDTO(employee);
 
-        assertEquals("123", dto.getId());
+        assertEquals("E1", dto.getId());
         assertEquals("Alice", dto.getName());
-        assertEquals(1, dto.getRoles().size());
-        assertEquals("HR", dto.getRoles().get(0).getName());
-        assertEquals("123-456", dto.getBankAccount());
-        assertEquals(5000f, dto.getSalary());
-        assertEquals(date, dto.getEmploymentDate());
+        assertEquals("Clerk", dto.getRoles().getFirst().getName());
+        assertEquals(LocalDate.of(2022, 1, 1), dto.getEmploymentDate());
         assertEquals(1, dto.getAvailabilityThisWeek().size());
+        assertEquals(DayOfWeek.MONDAY, dto.getAvailabilityThisWeek().getFirst().getDay());
         assertEquals(1, dto.getAvailabilityNextWeek().size());
-        assertEquals(1, dto.getHolidays().size());
+        assertEquals(DayOfWeek.TUESDAY, dto.getAvailabilityNextWeek().getFirst().getDay());
+        assertEquals(LocalDate.of(2025, 7, 1), dto.getHolidays().getFirst());
     }
 
     @Test
-    void testFromDTO() {
+    public void testFromDTO_withValidDTO_returnsCorrectEmployee() {
         RoleDTO roleDto = new RoleDTO("Driver");
-        WeeklyAvailabilityDTO availDto = new WeeklyAvailabilityDTO(DayOfWeek.TUESDAY, Shift.ShiftTime.Evening);
-        Date date = new Date();
+        WeeklyAvailabilityDTO availThisWeek = new WeeklyAvailabilityDTO(DayOfWeek.WEDNESDAY, Shift.ShiftTime.Morning);
+        WeeklyAvailabilityDTO availNextWeek = new WeeklyAvailabilityDTO(DayOfWeek.THURSDAY, Shift.ShiftTime.Evening);
+        LocalDate holiday = LocalDate.of(2025, 12, 31);
 
-        EmployeeDTO dto = new EmployeeDTO("321", "Bob", List.of(roleDto), "999-888", 6000f, date,
-                List.of(availDto), List.of(availDto), List.of(date));
+        EmployeeDTO dto = new EmployeeDTO("E2", "Bob", List.of(roleDto), "9999",
+                4500f, LocalDate.of(2020, 5, 5), List.of(availThisWeek), List.of(availNextWeek), List.of(holiday));
 
-        Employee employee = EmployeeMapper.fromDTO(dto);
+        Employee emp = EmployeeMapper.fromDTO(dto);
 
-        assertEquals("321", employee.getId());
-        assertEquals("Bob", employee.getName());
-        assertEquals(1, employee.getRoles().size());
-        assertEquals("Driver", employee.getRoles().get(0).getName());
-        assertEquals("999-888", employee.getBankAccount());
-        assertEquals(6000f, employee.getSalary());
-        assertEquals(date, employee.getEmploymentDate());
-        assertEquals(1, employee.getAvailabilityThisWeek().size());
-        assertEquals(1, employee.getAvailabilityNextWeek().size());
-        assertEquals(1, employee.getHolidays().size());
+        assertEquals("E2", emp.getId());
+        assertEquals("Bob", emp.getName());
+        assertEquals("Driver", emp.getRoles().getFirst().getName());
+        assertEquals(java.sql.Date.valueOf("2020-05-05"), emp.getEmploymentDate());
+        assertEquals(DayOfWeek.WEDNESDAY, emp.getAvailabilityThisWeek().getFirst().getDay());
+        assertEquals(DayOfWeek.THURSDAY, emp.getAvailabilityNextWeek().getFirst().getDay());
+        assertEquals(java.sql.Date.valueOf("2025-12-31"), emp.getHolidays().getFirst());
+    }
+
+    @Test
+    public void testToDTO_withNull_returnsNull() {
+        assertNull(EmployeeMapper.toDTO(null));
+    }
+
+    @Test
+    public void testFromDTO_withNull_returnsNull() {
+        assertNull(EmployeeMapper.fromDTO(null));
     }
 }
