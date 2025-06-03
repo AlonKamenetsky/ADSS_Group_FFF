@@ -212,7 +212,7 @@ public class ShiftService {
                 .collect(Collectors.toList());
     }
 
-    public String getShiftIdByDateAndTime(java.util.Date date, String time) {
+    public String getShiftIdByDateAndTime(java.sql.Date date, String time) {
         return shiftDAO.getShiftIdByDateAndTime(date, time);
     }
 
