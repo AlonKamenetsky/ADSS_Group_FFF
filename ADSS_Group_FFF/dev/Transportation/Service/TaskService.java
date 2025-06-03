@@ -100,7 +100,7 @@ public class TaskService {
             return taskManager.assignDriverAndTruckToTask(parsedDate, parsedTime, taskSourceSite.toLowerCase());
         }
         catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error" + e.getMessage());
         }
     }
 

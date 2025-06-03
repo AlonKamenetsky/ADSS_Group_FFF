@@ -109,6 +109,7 @@ public class TaskManager {
             // assign warehouse worker
             boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
 
+
             if (!availableWarehouseWorker) {
                 throw new NoSuchElementException("No warehouse workers available for this task");
             }
@@ -117,7 +118,9 @@ public class TaskManager {
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
 
+
             String shiftId = employeeProvider.getShiftIdByDateTime(shiftDate, taskDeparture.toString());
+
             int counter = availableDrivers.size();
             while (!availableDrivers.isEmpty()) {
                 EmployeeDTO driverToAssign = availableDrivers.get(0);
