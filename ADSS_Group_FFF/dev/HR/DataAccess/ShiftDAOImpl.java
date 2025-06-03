@@ -8,8 +8,10 @@ import HR.Domain.WeeklyShiftsSchedule;
 
 import java.sql.*;
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class ShiftDAOImpl implements ShiftDAO {
@@ -31,24 +33,14 @@ public class ShiftDAOImpl implements ShiftDAO {
         } catch (SQLException e) {
             throw new RuntimeException("Insert failed", e);
         }
-        // Persist assignments + required‐roles immediately
-        update(shift);
+        update(shift); // Persist assignments immediately
     }
 
     @Override
     public void update(Shift shift) {
-        // 1) Persist actual “employee assignments”
         deleteAssignments(shift.getID());
         for (ShiftAssignment assignment : shift.getAssignedEmployees()) {
             insertAssignment(assignment);
-        }
-
-        // 2) Persist “required role counts” into shift_role_requirements
-        deleteRoleRequirements(shift.getID());
-        for (Map.Entry<Role, Integer> entry : shift.getRequiredCounts().entrySet()) {
-            insertRoleRequirement(shift.getID(),
-                    entry.getKey().getName(),
-                    entry.getValue());
         }
     }
 
@@ -74,35 +66,9 @@ public class ShiftDAOImpl implements ShiftDAO {
         }
     }
 
-    private void deleteRoleRequirements(String shiftId) {
-        String sql = "DELETE FROM shift_role_requirements WHERE shift_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, shiftId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Delete role requirements failed", e);
-        }
-    }
-
-    private void insertRoleRequirement(String shiftId, String roleName, int requiredCount) {
-        String sql = """
-            INSERT INTO shift_role_requirements (shift_id, role_name, required_count)
-            VALUES (?, ?, ?)
-        """;
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, shiftId);
-            stmt.setString(2, roleName);
-            stmt.setInt(3, requiredCount);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Insert role requirement failed", e);
-        }
-    }
-
     @Override
     public void delete(String shiftId) {
         deleteAssignments(shiftId);
-        deleteRoleRequirements(shiftId);
         String sql = "DELETE FROM shifts WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, shiftId);
@@ -160,23 +126,58 @@ public class ShiftDAOImpl implements ShiftDAO {
 
     @Override
     public List<Shift> getCurrentWeekShifts() {
-        return selectAll();
+        // Compute Monday and Sunday of the current week
+        LocalDate today = LocalDate.now();
+        // find the Monday of this week:
+        LocalDate monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        // find the Sunday of this week:
+        LocalDate sunday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+        return getShiftsInRange(monday, sunday);
     }
 
     @Override
     public List<Shift> getNextWeekShifts() {
-        return List.of();
+        // Compute Monday and Sunday of next week
+        LocalDate today = LocalDate.now();
+        LocalDate nextWeekMonday = today
+                .with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        LocalDate nextWeekSunday = nextWeekMonday
+                .with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+        return getShiftsInRange(nextWeekMonday, nextWeekSunday);
+    }
+
+    /** Helper: return all shifts whose date is between start (inclusive) and end (inclusive). */
+    private List<Shift> getShiftsInRange(LocalDate start, LocalDate end) {
+        List<Shift> shifts = new ArrayList<>();
+        String sql = "SELECT * FROM shifts WHERE date BETWEEN ? AND ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setDate(1, java.sql.Date.valueOf(start));
+            stmt.setDate(2, java.sql.Date.valueOf(end));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                shifts.add(mapToShift(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Query shifts in date range failed", e);
+        }
+        return shifts;
     }
 
     @Override
     public Optional<Shift> getCurrentShift() {
+        // 1) Figure out the "current" ShiftTime bucket (Morning, Evening, or null)
         LocalTime now = LocalTime.now();
         Shift.ShiftTime bucket = Shift.fromTime(now);
         if (bucket == null) {
+            // before 08:00 → no active shift
             return Optional.empty();
         }
+
+        // 2) Construct today’s date‐string + bucket name to match the shift‐ID format
         LocalDate today = LocalDate.now();
         String shiftId = today.toString() + "-" + bucket.name();
+
+        // 3) Load that exact shift row (if it exists)
         Shift s = selectById(shiftId);
         return Optional.ofNullable(s);
     }
@@ -191,12 +192,9 @@ public class ShiftDAOImpl implements ShiftDAO {
     @Override
     public List<Employee> findAssignedEmployees(String shiftId) {
         List<Employee> employees = new ArrayList<>();
-        String sql = """
-            SELECT e.* 
-              FROM employees e
-              JOIN shift_assignments sa ON e.id = sa.employee_id
-             WHERE sa.shift_id = ?
-        """;
+        String sql = "SELECT e.* FROM employees e " +
+                "JOIN shift_assignments sa ON e.id = sa.employee_id " +
+                "WHERE sa.shift_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, shiftId);
             ResultSet rs = stmt.executeQuery();
@@ -209,15 +207,8 @@ public class ShiftDAOImpl implements ShiftDAO {
         return employees;
     }
 
-    @Override
     public boolean isWarehouseEmployeeAssigned(String shiftId) {
-        String sql = """
-            SELECT 1 
-              FROM shift_assignments 
-             WHERE shift_id = ? 
-               AND role_name = 'Warehouse' 
-             LIMIT 1
-        """;
+        String sql = "SELECT 1 FROM shift_assignments WHERE shift_id = ? AND role_name = 'Warehouse' LIMIT 1";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, shiftId);
             ResultSet rs = stmt.executeQuery();
@@ -229,42 +220,20 @@ public class ShiftDAOImpl implements ShiftDAO {
 
     private Shift mapToShift(ResultSet rs) throws SQLException {
         String id = rs.getString("id");
-        Date   date = rs.getDate("date");
+        Date date = rs.getDate("date");
         Shift.ShiftTime time = Shift.ShiftTime.valueOf(rs.getString("time"));
 
-        // 1) Load “required role counts” from shift_role_requirements:
-        Map<Role, Integer> requiredCounts = new HashMap<>();
         Map<Role, ArrayList<Employee>> requiredRoles = new HashMap<>();
-
-        String sqlReq = """
-            SELECT role_name, required_count 
-              FROM shift_role_requirements 
-             WHERE shift_id = ?
-        """;
-        try (PreparedStatement psReq = connection.prepareStatement(sqlReq)) {
-            psReq.setString(1, id);
-            ResultSet rsReq = psReq.executeQuery();
-            while (rsReq.next()) {
-                String roleName = rsReq.getString("role_name");
-                int    count    = rsReq.getInt("required_count");
-                Role   r        = new Role(roleName);
-                requiredCounts.put(r, count);
-                // start with empty list—will fill in actual assigned employees next
-                requiredRoles.put(r, new ArrayList<>());
-            }
-        }
-
-        // 2) Load “actual assignments,” then populate requiredRoles
+        Map<Role, Integer> requiredCounts = new HashMap<>();
         List<ShiftAssignment> assignments = loadAssignments(id);
+
         for (ShiftAssignment sa : assignments) {
             Role role = sa.getRole();
             Employee emp = mapToEmployeeFromId(sa.getEmployeeId());
-            // If that role wasn't in the requirements table (edge‐case), still put it:
             requiredRoles.computeIfAbsent(role, r -> new ArrayList<>()).add(emp);
-            // (We do NOT override requiredCounts here; requiredCounts are from the requirement table.)
+            requiredCounts.put(role, requiredCounts.getOrDefault(role, 0) + 1);
         }
 
-        // 3) Build the Shift domain object
         Shift shift = new Shift(id, date, time, requiredRoles, requiredCounts);
         shift.getAssignedEmployees().addAll(assignments);
         return shift;
@@ -311,12 +280,9 @@ public class ShiftDAOImpl implements ShiftDAO {
     @Override
     public List<Shift> getShiftsByEmployeeId(String employeeId) {
         List<Shift> shifts = new ArrayList<>();
-        String sql = """
-            SELECT s.*
-              FROM shifts s
-              JOIN shift_assignments sa ON s.id = sa.shift_id
-             WHERE sa.employee_id = ?
-        """;
+        String sql = "SELECT s.* FROM shifts s " +
+                "JOIN shift_assignments sa ON s.id = sa.shift_id " +
+                "WHERE sa.employee_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, employeeId);
             ResultSet rs = stmt.executeQuery();
@@ -334,7 +300,7 @@ public class ShiftDAOImpl implements ShiftDAO {
         String sql = "SELECT id FROM shifts WHERE date = ? AND time = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setDate(1, new java.sql.Date(date.getTime()));
-            stmt.setString(2, time);
+            stmt.setString(2, time); // e.g., "Morning" or "Evening"
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getString("id");

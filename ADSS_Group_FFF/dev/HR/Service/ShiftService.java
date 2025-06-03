@@ -117,16 +117,17 @@ public class ShiftService {
 
         shift.getRequiredCounts().clear();
         shift.getRequiredRoles().clear();
+
         shift.getRequiredCounts().put(managerRole, 1);
         shift.getRequiredRoles().put(managerRole, new ArrayList<>());
+
         shift.getRequiredCounts().put(hrRole, 0);
         shift.getRequiredRoles().put(managerRole, new ArrayList<>());
 
         for (Map.Entry<String, Integer> entry : requiredRoleCounts.entrySet()) {
             String roleName = entry.getKey();
             int    count    = entry.getValue();
-            if (roleName.equalsIgnoreCase("Shift Manager") ||
-                    roleName.equalsIgnoreCase("HR")) {
+            if (roleName.equalsIgnoreCase("Shift Manager") || roleName.equalsIgnoreCase("HR")) {
                 // skip, since we already handled Shift Manager,
                 // and we do not configure “HR Manager” here
                 continue;
