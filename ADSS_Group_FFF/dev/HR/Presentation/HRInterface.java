@@ -5,7 +5,11 @@ import HR.Service.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HRInterface {
     private final String currentUserId;
@@ -639,8 +643,10 @@ public class HRInterface {
                 }
 
                 // (ii) Not already assigned to this shift under that role
-                List<String> assignedIds = assignedMap.getOrDefault(selectedRoleName, Collections.emptyList());
-                if (assignedIds.contains(e.getId())) {
+                Set<String> allAssignedIds = assignedMap.values().stream()
+                        .flatMap(List::stream)
+                        .collect(Collectors.toSet());
+                if (allAssignedIds.contains(e.getId())) {
                     continue;
                 }
 
@@ -769,17 +775,28 @@ public class HRInterface {
             return;
         }
         weekShifts.sort(Comparator.comparing(ShiftDTO::getDate));
+
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < weekShifts.size(); i++) {
             ShiftDTO s = weekShifts.get(i);
-            PresentationUtils.typewriterPrint(
-                    String.format("%d) %s on %s (%s)",
-                            i + 1,
-                            s.getId(),
-                            fmt.format(s.getDate()),
-                            s.getType()
-                    ), 20
+
+            // Convert the java.sql.Date into a java.time.LocalDate:
+            LocalDate localDate = ((java.sql.Date) s.getDate()).toLocalDate();
+
+            // Get the full day‐of‐week name (e.g. "Monday", "Tuesday", etc.):
+            String dayOfWeek = localDate
+                    .getDayOfWeek()
+                    .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+            // Build the string "(DayOfWeek) (ShiftTime) on – (YYYY-MM-DD)":
+            String line = String.format(
+                    "%s %s on – %s",
+                    dayOfWeek,
+                    s.getType(),             // "Morning" or "Evening"
+                    fmt.format(s.getDate())  // still prints "2025-06-09", etc.
             );
+
+            PresentationUtils.typewriterPrint(line, 20);
         }
         PresentationUtils.typewriterPrint("0) Exit", 20);
         PresentationUtils.typewriterPrint("Select shift to configure: ", 20);

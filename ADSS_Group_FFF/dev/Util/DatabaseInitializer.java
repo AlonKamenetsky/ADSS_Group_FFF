@@ -5,14 +5,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import HR.DTO.CreateEmployeeDTO;
-import HR.DTO.RoleDTO;
+import HR.DTO.*;
+import HR.DataAccess.*;
+import HR.DataAccess.RoleDAO;
 import HR.DTO.ShiftTemplateDTO;
 import HR.DataAccess.ShiftDAO;
 import HR.DataAccess.ShiftDAOImpl;
 import HR.Domain.DriverInfo;
+import HR.Domain.Employee;
 import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Presentation.PresentationUtils;
@@ -200,14 +204,18 @@ public class DatabaseInitializer {
         var conn     = Database.getConnection();
         ShiftDAO shiftDAO = new ShiftDAOImpl(conn);
 
+// 1) Figure out “start of this week” as Sunday
         LocalDate today = LocalDate.now();
-        for (int offset = 0; offset < 7; offset++) {
-            LocalDate dateLocal = today.plusDays(offset);
+        LocalDate startOfThisWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+
+// 2) Loop for 14 days (Sunday → the Saturday of next week)
+        for (int offset = 0; offset < 14; offset++) {
+            LocalDate dateLocal = startOfThisWeek.plusDays(offset);
             java.sql.Date sqlDate = java.sql.Date.valueOf(dateLocal);
 
-            // Morning shift
+            // Insert “Morning” shift
             String morningId = dateLocal.toString() + "-Morning";
-            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesM   = new HashMap<>();
+            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesM = new HashMap<>();
             Map<Role, Integer> requiredCountsM = new HashMap<>();
             Shift morningShift = new Shift(
                     morningId,
@@ -218,9 +226,9 @@ public class DatabaseInitializer {
             );
             shiftDAO.insert(morningShift);
 
-            // Evening shift
+            // Insert “Evening” shift
             String eveningId = dateLocal.toString() + "-Evening";
-            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesE   = new HashMap<>();
+            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesE = new HashMap<>();
             Map<Role, Integer> requiredCountsE = new HashMap<>();
             Shift eveningShift = new Shift(
                     eveningId,
@@ -230,6 +238,69 @@ public class DatabaseInitializer {
                     requiredCountsE
             );
             shiftDAO.insert(eveningShift);
+        }
+        String specialShiftId = startOfThisWeek.toString() + "-Morning";
+        Shift specialShift = shiftDAO.selectById(specialShiftId);
+        if (specialShift != null) {
+            // We will need DAOs to look up Role/Employee objects:
+            RoleDAO roleDAO = new RoleDAOImpl(conn);
+            EmployeeDAO empDAO = new EmployeeDAOImpl(conn);
+
+            // Fetch the Role instances we care about:
+            Role shiftMgrRole = roleDAO.findByName("Shift Manager");
+            Role warehouseRole = roleDAO.findByName("Warehouse");
+            Role driverRole = roleDAO.findByName("Driver");
+            Role transMgrRole = roleDAO.findByName("Transportation Manager");
+            Role cashierRole = roleDAO.findByName("Cashier");
+
+            // Clear any in-memory required-maps and then populate exactly as requested:
+            specialShift.getRequiredCounts().clear();
+            specialShift.getRequiredRoles().clear();
+
+            //  •  1 Shift Manager
+            specialShift.getRequiredCounts().put(shiftMgrRole, 1);
+            specialShift.getRequiredRoles().put(shiftMgrRole, new ArrayList<>());
+
+            //  •  2 Warehouse
+            specialShift.getRequiredCounts().put(warehouseRole, 2);
+            specialShift.getRequiredRoles().put(warehouseRole, new ArrayList<>());
+
+            //  •  1 Driver
+            specialShift.getRequiredCounts().put(driverRole, 1);
+            specialShift.getRequiredRoles().put(driverRole, new ArrayList<>());
+
+            //  •  1 Transportation Manager
+            specialShift.getRequiredCounts().put(transMgrRole, 1);
+            specialShift.getRequiredRoles().put(transMgrRole, new ArrayList<>());
+
+            //  •  2 Cashier
+            specialShift.getRequiredCounts().put(cashierRole, 2);
+            specialShift.getRequiredRoles().put(cashierRole, new ArrayList<>());
+
+            //
+            // === 3a) Assign “driver2” → Driver ===
+            Employee samWheels = empDAO.selectById("driver2");
+            if (samWheels != null) {
+                specialShift.assignEmployee(samWheels, driverRole);
+            }
+
+            // === 3b) Assign “2” (John) → Warehouse (1 of the 2 slots) ===
+            Employee john = empDAO.selectById("2");
+            if (john != null) {
+                specialShift.assignEmployee(john, warehouseRole);
+            }
+
+            // === 3c) Assign “1” (Dana) → Transportation Manager ===
+            Employee dana = empDAO.selectById("1");
+            if (dana != null) {
+                specialShift.assignEmployee(dana, transMgrRole);
+            }
+
+            // (We have left “Shift Manager” and the second “Warehouse” slot and the two “Cashier” slots unfilled.
+            //  You can fill those later through your UI or service calls.)
+
+            // Finally, persist the three assignments we just made:
+            shiftDAO.update(specialShift);
         }
 
         PresentationUtils.typewriterPrint(
@@ -265,14 +336,18 @@ public class DatabaseInitializer {
         var conn     = Database.getConnection();
         ShiftDAO shiftDAO = new ShiftDAOImpl(conn);
 
+// 1) Figure out “start of this week” as Sunday
         LocalDate today = LocalDate.now();
-        for (int offset = 0; offset < 7; offset++) {
-            LocalDate dateLocal = today.plusDays(offset);
+        LocalDate startOfThisWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+
+// 2) Loop for 14 days (Sunday → the Saturday of next week)
+        for (int offset = 0; offset < 14; offset++) {
+            LocalDate dateLocal = startOfThisWeek.plusDays(offset);
             java.sql.Date sqlDate = java.sql.Date.valueOf(dateLocal);
 
-            // Morning shift
+            // Insert “Morning” shift
             String morningId = dateLocal.toString() + "-Morning";
-            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesM   = new HashMap<>();
+            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesM = new HashMap<>();
             Map<Role, Integer> requiredCountsM = new HashMap<>();
             Shift morningShift = new Shift(
                     morningId,
@@ -283,9 +358,9 @@ public class DatabaseInitializer {
             );
             shiftDAO.insert(morningShift);
 
-            // Evening shift
+            // Insert “Evening” shift
             String eveningId = dateLocal.toString() + "-Evening";
-            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesE   = new HashMap<>();
+            Map<Role, ArrayList<HR.Domain.Employee>> requiredRolesE = new HashMap<>();
             Map<Role, Integer> requiredCountsE = new HashMap<>();
             Shift eveningShift = new Shift(
                     eveningId,
