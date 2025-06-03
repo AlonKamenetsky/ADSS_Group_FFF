@@ -9,7 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="for checkout" />
+    <list default="true" id="31a9c45c-f247-4545-b1bc-6a98566e6082" name="Changes" comment="for checkout">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <list id="1ad0c119-5295-4007-a3b1-955458086b9c" name="Changes by benbe" comment="Changes by benbe missed from las commit, also changed some files name" />
     <list id="8383c5b0-e5f7-45d1-8cd2-5e4673af62c7" name="Changes by taeer" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -208,7 +210,7 @@
       <workItem from="1748258704798" duration="292000" />
       <workItem from="1748510588742" duration="10047000" />
       <workItem from="1748600993986" duration="12479000" />
-      <workItem from="1748978939748" duration="3383000" />
+      <workItem from="1748978939748" duration="4114000" />
     </task>
     <task id="LOCAL-00001" summary="Domain Layer &amp; Presentation Layer update + skeleton and functionalities&#10;raw interfaces">
       <option name="closed" value="true" />
