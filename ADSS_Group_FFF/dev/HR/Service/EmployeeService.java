@@ -176,8 +176,16 @@ public class EmployeeService {
         employeeDAO.insert(e);
 
         // 7) Insert driver-specific licenses into driver_info table
-        DriverInfo di = new DriverInfo(e.getId(), licenseTypes);
-        driverInfoDAO.insert(di);
+        if (!licenseTypes.isEmpty()) {
+            if (driverInfoDAO.getByEmployeeId(e.getId()) == null) {
+                DriverInfo di = new DriverInfo(e.getId(), licenseTypes);
+                driverInfoDAO.insert(di);
+            } else {
+                // Optional: update the licenses instead if it already exists
+                System.out.println("DriverInfo already exists for employee " + e.getId());
+            }
+        }
+
     }
 
     /*** 3. ---- UPDATE an existing employee (do not overwrite password) ---- ***/
@@ -391,9 +399,7 @@ public class EmployeeService {
         }
 
         // Convert the java.sql.Date → LocalDate for holiday comparison
-        LocalDate targetDay = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+        LocalDate targetDay = ((java.sql.Date) date).toLocalDate();
 
         // 2) Grab all employees from the DAO
         List<Employee> allEmps = employeeDAO.selectAll();

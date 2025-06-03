@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 import HR.DTO.CreateEmployeeDTO;
@@ -13,6 +12,7 @@ import HR.DTO.RoleDTO;
 import HR.DTO.ShiftTemplateDTO;
 import HR.DataAccess.ShiftDAO;
 import HR.DataAccess.ShiftDAOImpl;
+import HR.Domain.DriverInfo;
 import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Presentation.PresentationUtils;
@@ -36,14 +36,14 @@ public class DatabaseInitializer {
 
         //  Adding Sites for Zone 1 (Center)
         SiteDTO site1 = siteDAO.insert(new SiteDTO(null, "bareket 20 shoham", "liel", "0501111111", zone1.zoneId()));
-        SiteDTO site2 = siteDAO.insert(new SiteDTO(null, "tel aviv", "Aaice", "0501234567", zone1.zoneId()));
+        SiteDTO site2 = siteDAO.insert(new SiteDTO(null, "tel aviv", "alice", "0501234567", zone1.zoneId()));
 
         //  Adding Sites for Zone 2 (East)
         SiteDTO site3 = siteDAO.insert(new SiteDTO(null, "yafo 123, jerusalem", "avi", "0509999999", zone2.zoneId()));
         SiteDTO site4 = siteDAO.insert(new SiteDTO(null, "david King Hotel, the dead sea", "nadav", "0508888888", zone2.zoneId()));
 
         //  Adding Sites for Zone 3 (North)
-        SiteDTO site5 = siteDAO.insert(new SiteDTO(null, "ben gurion university", "lidor", "0502222222", zone3.zoneId()));
+        SiteDTO site5 = siteDAO.insert(new SiteDTO(null, "ben gurion university", "shlomi", "0502222222", zone3.zoneId()));
         SiteDTO site6 = siteDAO.insert(new SiteDTO(null, "mini market eilat", "dana", "0507777777", zone3.zoneId()));
 
         //Adding Trucks
@@ -64,31 +64,34 @@ public class DatabaseInitializer {
         RoleService roleService  = RoleService.getInstance();
         EmployeeService employeeService = EmployeeService.getInstance();
         ShiftService shiftService       = ShiftService.getInstance();
+
         // 1) Seed roles
-        Arrays.asList("HR", "Shift Manager", "Cashier", "Warehouse", "Cleaner", "Driver","Transportation Manager")
+        Arrays.asList("HR", "Shift Manager", "Cashier", "Warehouse", "Cleaner", "Driver", "Transportation Manager")
                 .forEach(roleName -> {
                     RoleDTO dto = new RoleDTO(roleName);
                     roleService.addRole(dto);
                 });
 
         // 2) Fetch RoleDTOs
-        RoleDTO hrRoleDto        = roleService.getRoleByName("HR");
-        RoleDTO cashierRoleDto   = roleService.getRoleByName("Cashier");
-        RoleDTO warehouseRoleDto = roleService.getRoleByName("Warehouse");
-        RoleDTO driverRoleDto    = roleService.getRoleByName("Driver");
-        RoleDTO shiftMgrRoleDto  = roleService.getRoleByName("Shift Manager");
-        RoleDTO transportationManagerRoleDto = roleService.getRoleByName("Transportation Manager");
+        RoleDTO hrRoleDto                   = roleService.getRoleByName("HR");
+        RoleDTO cashierRoleDto              = roleService.getRoleByName("Cashier");
+        RoleDTO warehouseRoleDto            = roleService.getRoleByName("Warehouse");
+        RoleDTO driverRoleDto               = roleService.getRoleByName("Driver");
+        RoleDTO shiftMgrRoleDto             = roleService.getRoleByName("Shift Manager");
+        RoleDTO transportationManagerRoleDto= roleService.getRoleByName("Transportation Manager");
 
         // 3) Create hireDate
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         df.setLenient(false);
         Date hireDate = df.parse("2020-01-01");
 
-        // 4a) Build and insert Employee #1 (ID = "1", roles = ["Shift Manager","Cashier"])
+        //
+        // 4a) Non-driver Employee #1 (ID = "1", roles = ["Shift Manager","Cashier","Transportation Manager"])
+        //
         CreateEmployeeDTO create1 = new CreateEmployeeDTO();
         create1.setId("1");
         create1.setName("Dana");
-        create1.setRoles(Arrays.asList(shiftMgrRoleDto, cashierRoleDto,transportationManagerRoleDto));
+        create1.setRoles(Arrays.asList(shiftMgrRoleDto, cashierRoleDto, transportationManagerRoleDto));
         create1.setRawPassword("123");
         create1.setBankAccount("IL123BANK");
         create1.setSalary(5000f);
@@ -96,9 +99,12 @@ public class DatabaseInitializer {
         create1.setAvailabilityThisWeek(null);
         create1.setAvailabilityNextWeek(null);
         create1.setHolidays(null);
+        // No "Driver" role here → call the single‐argument overload
         employeeService.addEmployee(create1);
 
-        // 4b) Build and insert Employee #2 (ID = "2", roles = ["Warehouse","Cashier"])
+        //
+        // 4b) Non-driver Employee #2 (ID = "2", roles = ["Warehouse","Cashier"])
+        //
         CreateEmployeeDTO create2 = new CreateEmployeeDTO();
         create2.setId("2");
         create2.setName("John");
@@ -110,9 +116,12 @@ public class DatabaseInitializer {
         create2.setAvailabilityThisWeek(null);
         create2.setAvailabilityNextWeek(null);
         create2.setHolidays(null);
+        // Still no "Driver" role → same
         employeeService.addEmployee(create2);
 
-        // 4c) Build and insert Employee #3 (ID = "hr", roles = ["HR"])
+        //
+        // 4c) Non-driver Employee #3 (ID = "hr", roles = ["HR"])
+        //
         CreateEmployeeDTO createHR = new CreateEmployeeDTO();
         createHR.setId("hr");
         createHR.setName("HR Manager");
@@ -124,9 +133,53 @@ public class DatabaseInitializer {
         createHR.setAvailabilityThisWeek(null);
         createHR.setAvailabilityNextWeek(null);
         createHR.setHolidays(null);
+        // No "Driver" here either
         employeeService.addEmployee(createHR);
 
+        //
+        // 4d) Driver‐only Employee #4 (ID = "driver1", roles = ["Driver"])
+        //
+        CreateEmployeeDTO createDriver1 = new CreateEmployeeDTO();
+        createDriver1.setId("driver1");
+        createDriver1.setName("Alex Driver");
+        createDriver1.setRoles(Collections.singletonList(driverRoleDto)); // “Driver” role present
+        createDriver1.setRawPassword("driverpass");
+        createDriver1.setBankAccount("IL789BANK");
+        createDriver1.setSalary(4700f);
+        createDriver1.setEmploymentDate(hireDate);
+        createDriver1.setAvailabilityThisWeek(null);
+        createDriver1.setAvailabilityNextWeek(null);
+        createDriver1.setHolidays(null);
+
+        // Because “Driver” is in createDriver1.getRoles(), we call addEmployee(dto, licenses) exactly once:
+        List<DriverInfo.LicenseType> licenses1 = List.of(DriverInfo.LicenseType.B);
+        employeeService.addEmployee(createDriver1, licenses1);
+
+        //
+        // 4e) Driver + Warehouse Employee #5 (ID = "driver2", roles = ["Driver","Warehouse"])
+        //
+        CreateEmployeeDTO createDriver2 = new CreateEmployeeDTO();
+        createDriver2.setId("driver2");
+        createDriver2.setName("Sam Wheels");
+        createDriver2.setRoles(Arrays.asList(driverRoleDto, warehouseRoleDto)); // “Driver” present
+        createDriver2.setRawPassword("truckit");
+        createDriver2.setBankAccount("IL998BANK");
+        createDriver2.setSalary(4900f);
+        createDriver2.setEmploymentDate(hireDate);
+        createDriver2.setAvailabilityThisWeek(null);
+        createDriver2.setAvailabilityNextWeek(null);
+        createDriver2.setHolidays(null);
+
+        // Because “Driver” is in createDriver2.getRoles(), we call the two‐argument overload exactly once:
+        List<DriverInfo.LicenseType> licenses2 = Arrays.asList(
+                DriverInfo.LicenseType.C,
+                DriverInfo.LicenseType.C1
+        );
+        employeeService.addEmployee(createDriver2, licenses2);
+
+        //
         // 5) Define recurring‐shift templates
+        //
         for (DayOfWeek dow : DayOfWeek.values()) {
             ShiftTemplateDTO morningTpl = new ShiftTemplateDTO();
             morningTpl.setDay(dow);
@@ -141,8 +194,9 @@ public class DatabaseInitializer {
             shiftService.addTemplate(eveningTpl);
         }
 
-        // 6) Create one actual Morning and one Evening shift for each of the next 7 days
-        //    (We bypass ShiftService since it has no add‐shift method; use ShiftDAO directly.)
+        //
+        // 6) Create one actual Morning & one Evening shift for each of the next 7 days
+        //
         var conn     = Database.getConnection();
         ShiftDAO shiftDAO = new ShiftDAOImpl(conn);
 
@@ -181,7 +235,8 @@ public class DatabaseInitializer {
         PresentationUtils.typewriterPrint(
                 "Example data, templates, and actual shifts loaded successfully.",
                 20
-        );}
+        );
+    }
 
 
 

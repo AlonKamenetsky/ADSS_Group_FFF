@@ -24,9 +24,7 @@ public class HREmployeeAdapter implements EmployeeProvider {
     public boolean findAvailableWarehouseWorkers(Date date, Shift.ShiftTime shiftTime) {
         // find shiftId based on two params
         String shiftId = "";
-        List<ShiftDTO> allShiftsDate = shiftService.getShiftsForDate(date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate());
+        List<ShiftDTO> allShiftsDate = shiftService.getShiftsForDate(((java.sql.Date) date).toLocalDate());
         for (ShiftDTO s : allShiftsDate) {
             if(s.getType() == shiftTime) {
                  shiftId = s.getId();

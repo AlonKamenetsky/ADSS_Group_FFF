@@ -1,13 +1,7 @@
 package HR.Presentation;
 
 import HR.DTO.*;
-import HR.Domain.ShiftAssignment;
-import HR.Service.EmployeeService;
-import HR.Service.RoleService;
-import HR.Service.ShiftService;
-import HR.Service.SwapService;
-import HR.Presentation.PresentationUtils;
-
+import HR.Service.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -180,7 +174,7 @@ public class HRInterface {
 
         // Show available roles
         List<RoleDTO> allRolesDto = roleService.getRoles();
-        List<RoleDTO> rolesList    = new ArrayList<>();
+        List<RoleDTO> rolesList = new ArrayList<>();
         while (true) {
             PresentationUtils.typewriterPrint("Available Roles:", 20);
             for (int i = 0; i < allRolesDto.size(); i++) {
@@ -200,10 +194,10 @@ public class HRInterface {
                 PresentationUtils.typewriterPrint("Invalid role number.", 20);
                 continue;
             }
-            RoleDTO roleName = allRolesDto.get(roleNum - 1);
-            if (!rolesList.contains(roleName)) {
-                rolesList.add(roleName);
-                PresentationUtils.typewriterPrint("Added role: " + roleName, 20);
+            RoleDTO roleDto = allRolesDto.get(roleNum - 1);
+            if (!rolesList.contains(roleDto)) {
+                rolesList.add(roleDto);
+                PresentationUtils.typewriterPrint("Added role: " + roleDto.getName(), 20);
             } else {
                 PresentationUtils.typewriterPrint("Role already added.", 20);
             }
@@ -214,6 +208,7 @@ public class HRInterface {
             CreateEmployeeDTO baseDto = new CreateEmployeeDTO();
             baseDto.setId(id);
             baseDto.setName(name);
+            baseDto.setRawPassword(password);
             baseDto.setBankAccount(bankAccount);
             baseDto.setSalary(salary);
             baseDto.setEmploymentDate(employmentDate);
@@ -224,7 +219,7 @@ public class HRInterface {
         }
 
         boolean isDriver = rolesList.stream()
-                .anyMatch(rn -> rn.equals("Driver"));
+                .anyMatch(rdto -> rdto.getName().equalsIgnoreCase("Driver"));
 
         if (isDriver) {
             List<String> licenseTypes = new ArrayList<>();
@@ -269,6 +264,7 @@ public class HRInterface {
             CreateEmployeeDTO newDto = new CreateEmployeeDTO();
             newDto.setId(id);
             newDto.setName(name);
+            newDto.setRawPassword(password);         // ← set the rawPassword here
             newDto.setBankAccount(bankAccount);
             newDto.setSalary(salary);
             newDto.setEmploymentDate(employmentDate);
@@ -285,6 +281,7 @@ public class HRInterface {
             CreateEmployeeDTO newDto = new CreateEmployeeDTO();
             newDto.setId(id);
             newDto.setName(name);
+            newDto.setRawPassword(password);         // ← set rawPassword even for non‐driver
             newDto.setBankAccount(bankAccount);
             newDto.setSalary(salary);
             newDto.setEmploymentDate(employmentDate);

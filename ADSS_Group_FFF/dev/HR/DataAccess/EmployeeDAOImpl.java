@@ -3,6 +3,7 @@ package HR.DataAccess;
 import HR.DataAccess.EmployeeDAO;
 import HR.Domain.Employee;
 import HR.Domain.Role;
+import HR.Presentation.PresentationUtils;
 
 import java.sql.*;
 import java.sql.Date;
@@ -31,6 +32,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
             empStmt.executeUpdate();
 
             insertEmployeeRoles(roleStmt, employee);
+            PresentationUtils.typewriterPrint("Added employee successfully",20);
 
         } catch (SQLException e) {
             throw new RuntimeException("Insert employee failed", e);
@@ -55,6 +57,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
             deleteStmt.executeUpdate();
 
             insertEmployeeRoles(insertStmt, employee);
+            PresentationUtils.typewriterPrint("Updated employee successfully",20);
+
 
         } catch (SQLException e) {
             throw new RuntimeException("Update employee failed", e);
@@ -67,6 +71,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, employeeId);
             stmt.executeUpdate();
+            PresentationUtils.typewriterPrint("Removed employee successfully",20);
+
         } catch (SQLException e) {
             throw new RuntimeException("Delete employee failed", e);
         }

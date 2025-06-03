@@ -181,10 +181,11 @@ public final class Database {
                 """);
                 st.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS driver_info (
-                        employee_id TEXT PRIMARY KEY,
-                        license_type TEXT NOT NULL,
-                        FOREIGN KEY (employee_id) REFERENCES employees(id)
-                    );
+                          employee_id TEXT NOT NULL,
+                          license_type TEXT NOT NULL,
+                          PRIMARY KEY (employee_id, license_type),
+                          FOREIGN KEY (employee_id) REFERENCES employees(id)
+                      );
                 """);
 
                 st.executeUpdate("""
