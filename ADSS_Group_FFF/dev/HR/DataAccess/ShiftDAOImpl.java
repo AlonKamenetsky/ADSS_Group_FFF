@@ -303,7 +303,7 @@ public class ShiftDAOImpl implements ShiftDAO {
     }
 
     @Override
-    public String getShiftIdByDateAndTime(Date date, String time) {
+    public String getShiftIdByDateAndTime(java.util.Date date, String time) {
         if (date == null || time == null || time.trim().isEmpty()) {
             return null;
         }
