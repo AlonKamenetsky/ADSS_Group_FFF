@@ -208,9 +208,16 @@ public class ShiftDAOImpl implements ShiftDAO {
     }
 
     public boolean isWarehouseEmployeeAssigned(String shiftId) {
-        String sql = "SELECT 1 FROM shift_assignments WHERE shift_id = ? AND role_name = 'Warehouse' LIMIT 1";
+        String sql = """
+        SELECT 1
+          FROM shift_assignments
+         WHERE shift_id = ?
+           AND lower(trim(role_name)) = lower(trim(?))
+         LIMIT 1
+    """;
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, shiftId);
+            stmt.setString(2, "Warehouse");
             ResultSet rs = stmt.executeQuery();
             return rs.next();
         } catch (SQLException e) {
@@ -297,17 +304,42 @@ public class ShiftDAOImpl implements ShiftDAO {
 
     @Override
     public String getShiftIdByDateAndTime(Date date, String time) {
-        String sql = "SELECT id FROM shifts WHERE date = ? AND time = ?";
+        if (date == null || time == null || time.trim().isEmpty()) {
+            return null;
+        }
+
+        // 1) Convert incoming java.util.Date (which may include a time-of-day) into a pure LocalDate
+        java.time.LocalDate localDate = date.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+
+        // 2) Produce a java.sql.Date at midnight for that LocalDate
+        java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+
+        // 3) Normalize the 'time' string: trim whitespace, and we’ll do a case-insensitive comparison in SQL
+        String normalizedTime = time.trim();
+
+        // 4) Use a case-insensitive match on the "time" column (e.g. “Morning” vs. “morning”)
+        String sql = """
+        SELECT id
+          FROM shifts
+         WHERE date = ?
+           AND LOWER(time) = LOWER(?)
+        """;
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setDate(1, new java.sql.Date(date.getTime()));
-            stmt.setString(2, time); // e.g., "Morning" or "Evening"
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("id");
+            stmt.setDate(1, sqlDate);
+            stmt.setString(2, normalizedTime);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("id");
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to retrieve shift ID", e);
         }
+
         return null;
-    }
+
+}
 }
