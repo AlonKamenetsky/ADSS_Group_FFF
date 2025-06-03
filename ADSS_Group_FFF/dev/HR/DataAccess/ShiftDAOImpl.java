@@ -208,9 +208,16 @@ public class ShiftDAOImpl implements ShiftDAO {
     }
 
     public boolean isWarehouseEmployeeAssigned(String shiftId) {
-        String sql = "SELECT 1 FROM shift_assignments WHERE shift_id = ? AND role_name = 'Warehouse' LIMIT 1";
+        String sql = """
+        SELECT 1
+          FROM shift_assignments
+         WHERE shift_id = ?
+           AND lower(trim(role_name)) = lower(trim(?))
+         LIMIT 1
+    """;
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, shiftId);
+            stmt.setString(2, "Warehouse");
             ResultSet rs = stmt.executeQuery();
             return rs.next();
         } catch (SQLException e) {
