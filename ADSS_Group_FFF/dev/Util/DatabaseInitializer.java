@@ -9,12 +9,10 @@ import java.time.LocalTime;
 import java.util.*;
 
 import HR.DTO.CreateEmployeeDTO;
-import HR.DTO.DriverInfoDTO;
 import HR.DTO.RoleDTO;
 import HR.DTO.ShiftTemplateDTO;
 import HR.DataAccess.ShiftDAO;
 import HR.DataAccess.ShiftDAOImpl;
-import HR.Domain.DriverInfo;
 import HR.Domain.Role;
 import HR.Domain.Shift;
 import HR.Presentation.PresentationUtils;
@@ -104,7 +102,7 @@ public class DatabaseInitializer {
         CreateEmployeeDTO create2 = new CreateEmployeeDTO();
         create2.setId("2");
         create2.setName("John");
-        create2.setRoles(Arrays.asList(warehouseRoleDto, cashierRoleDto, driverRoleDto));
+        create2.setRoles(Arrays.asList(warehouseRoleDto, cashierRoleDto));
         create2.setRawPassword("456");
         create2.setBankAccount("IL456BANK");
         create2.setSalary(4500f);
@@ -113,31 +111,6 @@ public class DatabaseInitializer {
         create2.setAvailabilityNextWeek(null);
         create2.setHolidays(null);
         employeeService.addEmployee(create2);
-        DriverInfoDTO dinfo1 = new DriverInfoDTO();
-        List<String> list1 = new ArrayList<>();
-        list1.add("B");
-        dinfo1.setLicenseType(list1);
-        dinfo1.setEmployeeId("2");
-        employeeService.updateDriverInfo(dinfo1);
-
-        CreateEmployeeDTO create3 = new CreateEmployeeDTO();
-        create2.setId("3");
-        create2.setName("Dave");
-        create2.setRoles(Arrays.asList(driverRoleDto));
-        create2.setRawPassword("456");
-        create2.setBankAccount("IL456BANK");
-        create2.setSalary(4500f);
-        create2.setEmploymentDate(hireDate);
-        create2.setAvailabilityThisWeek(null);
-        create2.setAvailabilityNextWeek(null);
-        create2.setHolidays(null);
-        employeeService.addEmployee(create3);
-        DriverInfoDTO dinfo = new DriverInfoDTO();
-        List<String> list = new ArrayList<>();
-        list.add("B");
-        dinfo.setLicenseType(list);
-        dinfo.setEmployeeId("3");
-        employeeService.updateDriverInfo(dinfo);
 
         // 4c) Build and insert Employee #3 (ID = "hr", roles = ["HR"])
         CreateEmployeeDTO createHR = new CreateEmployeeDTO();
