@@ -4,6 +4,7 @@ import Transportation.DTO.ItemDTO;
 import Transportation.Service.ItemService;
 import Transportation.Service.TaskService;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class TaskMenu {
         input = new Scanner(System.in);
     }
 
-    public void show() {
+    public void show()  {
         while (true) {
             System.out.println("""
                     === Task Management ===
@@ -180,28 +181,38 @@ public class TaskMenu {
             if (!TasksHandler.assignDriverAndTruckToTask(taskDate, taskDeparture, taskSourceSite)) {
                 System.out.println("""
                         Adding task not successful, no drivers or trucks available for this task.
-                        Consider choosing less items or taking off destination sites.
-                        Full list of trucks is available to you in the Truck Menu.
+                        Consider choosing fewer items or removing destination sites.
                         Task is deleted for now. Thank you and sorry!""");
 
                 TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
+                return;
             }
+
+            System.out.println("Added task successfully.");
+
         } catch (ParseException e) {
-            return;
+            System.out.println(e.getMessage());
+            try {
+                TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
+            } catch (Exception ex) {
+                System.out.println("Failed to delete task: " + ex.getMessage());
+            }
+
         } catch (NoSuchElementException n) {
             System.out.println("""
-                        Adding task not successful""" + n.getMessage() + """
-                        Consider choosing less items or taking off destination sites.
-                        Full list of trucks is available to you in the Truck Menu.
-                        Task is deleted for now. Thank you and sorry!""");
-            return;
+                    Adding task not successful: """ + n.getMessage() + """
+                    Consider choosing fewer items or removing destination sites.
+                    Task is deleted for now. Thank you and sorry!""");
+            try {
+                TasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
+            } catch (Exception ex) {
+                System.out.println("Failed to delete task: " + ex.getMessage());
+            }
         }
-
-        System.out.println("Added task successfully.");
     }
 
 
-    private void viewTaskBySourceSite() {
+        private void viewTaskBySourceSite() {
         System.out.println("Enter a site address:");
         String siteAddress = input.nextLine();
         System.out.println(TasksHandler.getTasksBySourceAddress(siteAddress));
