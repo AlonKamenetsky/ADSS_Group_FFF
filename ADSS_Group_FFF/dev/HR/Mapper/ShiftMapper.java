@@ -1,4 +1,3 @@
-// File: HR/Mapper/ShiftMapper.java
 package HR.Mapper;
 
 import HR.Domain.Shift;
@@ -16,15 +15,6 @@ import java.util.stream.Collectors;
 public class ShiftMapper {
     public static ShiftDTO toDTO(Shift s) {
         if (s == null) return null;
-
-        // Domain getters:
-        //    String getID(), Date getDate(), ShiftTime getType()
-        //    Map<Role,List<Employee>> getRequiredRoles()
-        //    Map<Role,Integer> getRequiredCounts()
-        //    List<ShiftAssignment> getAssignedEmployees()
-        //
-        // Our DTO only contains: id, date, type, Map<String,Integer> requiredCounts, List<ShiftAssignmentDTO>
-        // (We’re omitting requiredRoles in the DTO, since DTO earlier did not include it.)
 
         // Convert requiredCounts: Map<Role,Integer> → Map<String,Integer>
         Map<String, Integer> requiredCountsDto = s.getRequiredCounts().entrySet().stream()
@@ -50,26 +40,16 @@ public class ShiftMapper {
     public static Shift fromDTO(ShiftDTO dto) {
         if (dto == null) return null;
 
-        // Domain constructor is:
-        //   public Shift(String ID,
-        //                Date date,
-        //                ShiftTime type,
-        //                Map<Role, List<Employee>> requiredRoles,
-        //                Map<Role, Integer> requiredCounts)
-        //
-        // Our DTO only has requiredCounts (Map<String,Integer>). We’ll pass an empty Map<Role,List<Employee>>
-        // for requiredRoles, and build requiredCounts properly.
-
+        // Convert Map<String,Integer> → Map<Role,Integer>
         Map<Role, Integer> requiredCounts = dto.getRequiredCounts().entrySet().stream()
                 .collect(Collectors.toMap(
                         entry -> new Role(entry.getKey()),
                         Map.Entry::getValue
                 ));
 
-        // For “requiredRoles,” we don’t have that in the DTO. Just pass an empty map:
+        // We don’t know “requiredRoles” yet—DAO will fill that in when reading from the DB
         Map<Role, ArrayList<Employee>> emptyReqRoles = Map.of();
 
-        // Build the base Shift entity
         Shift s = new Shift(
                 dto.getId(),
                 dto.getDate(),
@@ -78,8 +58,7 @@ public class ShiftMapper {
                 requiredCounts
         );
 
-        // Now set “assignedEmployees”: convert each ShiftAssignmentDTO → ShiftAssignment,
-        // then call assignment.setShift(s) (ShiftAssignmentMapper does not set Shift, so do it here).
+        // Now fill assignedEmployees from DTO
         List<ShiftAssignment> assignments = dto.getAssignedEmployees().stream()
                 .map(ShiftAssignmentMapper::fromDTO)
                 .peek(assign -> assign.setShift(s))

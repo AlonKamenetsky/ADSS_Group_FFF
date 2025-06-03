@@ -142,6 +142,16 @@ public final class Database {
                     );
                 """);
                 st.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS shift_role_requirements (
+                        shift_id       TEXT    NOT NULL,
+                        role_name      TEXT    NOT NULL,
+                        required_count INTEGER NOT NULL,
+                        PRIMARY KEY (shift_id, role_name),
+                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
+                        FOREIGN KEY (role_name) REFERENCES roles(name)
+                    );
+                """);
+                st.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS shifts (
                         id TEXT PRIMARY KEY,
                         date DATE NOT NULL,
