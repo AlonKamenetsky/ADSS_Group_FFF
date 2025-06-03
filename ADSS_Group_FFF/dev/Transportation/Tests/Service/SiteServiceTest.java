@@ -5,9 +5,13 @@ import Transportation.Domain.SiteManager;
 import Transportation.Service.SiteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.quality.Strictness;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.sql.SQLException;
 import java.util.Collections;
@@ -17,22 +21,25 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
 
     @Mock
     SiteManager siteManager;
 
+    @InjectMocks
     SiteService siteService;
 
     @BeforeEach
     void setUp() {
-        siteService = new SiteService();
+        siteService = new SiteService(siteManager);
     }
 
     @Test
     void addSite_Success() throws Exception {
-        SiteDTO mockSite = new SiteDTO(1, "test address", "John", "123456", 0);
+        SiteDTO mockSite = new SiteDTO(1, "test address", "John", "123456", -1); // no zone assigned for site
         when(siteManager.addSite("test address", "John", "123456")).thenReturn(mockSite);
 
         SiteDTO result = siteService.addSite("test address", "John", "123456");
@@ -58,10 +65,12 @@ class SiteServiceTest {
 
         siteService.deleteSite("address");
 
-        verify(siteManager).removeSite(42);
+        verify(siteManager).removeSite(1);
     }
 
     @Test
+
+    @MockitoSettings(strictness = Strictness.LENIENT)
     void deleteSite_NoSiteFound_ThrowsException() throws Exception {
         when(siteManager.findSiteByAddress("missing")).thenReturn(Optional.empty());
         assertThrows(NoSuchElementException.class, () -> siteService.deleteSite("missing"));
@@ -78,6 +87,7 @@ class SiteServiceTest {
     }
 
     @Test
+    @MockitoSettings(strictness = Strictness.LENIENT)
     void viewAllSites_ReturnsList() throws SQLException {
         when(siteManager.getAllSites()).thenReturn(Collections.emptyList());
         assertEquals(0, siteService.viewAllSites().size());

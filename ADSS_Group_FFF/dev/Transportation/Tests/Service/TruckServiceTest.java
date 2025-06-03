@@ -24,7 +24,7 @@ class TruckServiceTest {
 
     @BeforeEach
     void setUp() {
-        truckService = new TruckService();
+        truckService = new TruckService(truckManager);
     }
 
     @Test
@@ -54,7 +54,7 @@ class TruckServiceTest {
 
     @Test
     void getTruckByLicenseNumber_ReturnsFormattedString() throws SQLException {
-        TruckDTO mockTruck = new TruckDTO(1, "ABC123", "model", "type", 1000, 5000, true);
+        TruckDTO mockTruck = new TruckDTO(1, "small", "ABC123", "model", 1000, 5000, true);
         when(truckManager.getTruckIdByLicense("ABC123")).thenReturn(1);
         when(truckManager.getTruckById(1)).thenReturn(Optional.of(mockTruck));
 

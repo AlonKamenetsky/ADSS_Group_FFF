@@ -22,6 +22,13 @@ public class SiteZoneService {
         this.zoneManager = new ZoneManager();
     }
 
+    // for mock tests
+    public SiteZoneService(SiteZoneManager siteZoneManager1, SiteManager siteManager1, ZoneManager zoneManager1) {
+        this.siteZoneManager = siteZoneManager1;
+        this.siteManager = siteManager1;
+        this.zoneManager = zoneManager1;
+    }
+
     public SiteDTO addSiteToZone(String siteAddress, String zoneName) throws NoSuchElementException, NullPointerException {
         if (siteAddress == null || zoneName == null) {
             throw new NullPointerException();

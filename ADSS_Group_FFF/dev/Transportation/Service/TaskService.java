@@ -21,6 +21,11 @@ public class TaskService {
         employeeService = EmployeeService.getInstance();
     }
 
+    public TaskService(TaskManager taskManager, EmployeeService employeeService) {
+        this.taskManager = taskManager;
+        this.employeeService = employeeService;
+    }
+
     public TransportationTaskDTO addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException, NoSuchElementException, NullPointerException {
         if (_taskDate == null || _departureTime == null || taskSourceSite == null) {
             throw new NullPointerException();

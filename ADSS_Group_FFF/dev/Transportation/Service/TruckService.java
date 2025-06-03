@@ -15,6 +15,11 @@ public class TruckService {
         this.truckManager = new TruckManager();
     }
 
+    //for mock tests
+    public TruckService(TruckManager truckManager1) {
+        this.truckManager = truckManager1;
+    }
+
     public void AddTruck(String truckType, String licenseNumber, String model, float netWeight, float maxWeight) throws NullPointerException, InstanceAlreadyExistsException {
         if (truckType == null || licenseNumber == null || model == null || netWeight < 0 || maxWeight < 0) {
             throw new NullPointerException();

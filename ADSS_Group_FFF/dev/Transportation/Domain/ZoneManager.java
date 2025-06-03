@@ -17,6 +17,11 @@ public class ZoneManager {
         this.zoneRepo = new ZoneRepositoryImpli();
     }
 
+    //for mock tests
+    public ZoneManager(ZoneRepository zoneRepository) {
+        this.zoneRepo = zoneRepository;
+    }
+
     public ZoneDTO addZone(String _zoneName) throws SQLException, InstanceAlreadyExistsException {
         if(findZoneByName(_zoneName).isPresent()) {
             throw new InstanceAlreadyExistsException();

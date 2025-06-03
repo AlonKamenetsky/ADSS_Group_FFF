@@ -1,13 +1,20 @@
 package Transportation.Tests.Service;
 
-import Transportation.Domain.ItemManager;
+import Transportation.Domain.*;
 import Transportation.DTO.ItemDTO;
+import Transportation.Domain.Repositories.TransportationDocRepository;
+import Transportation.Domain.Repositories.TransportationTaskRepository;
+import Transportation.Service.HREmployeeAdapter;
 import Transportation.Service.ItemService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -16,19 +23,24 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
+    private ItemManager itemManager;
+    private ItemService itemService;
 
-    @Mock
-    ItemManager itemManager;
+    @BeforeEach
+    void setUp() {
+        itemManager = mock(ItemManager.class);
 
-    @InjectMocks
-    ItemService itemService;
+        itemService = new ItemService(itemManager);
+    }
 
     @Test
     void addItem_ValidInput_CallsManager() throws SQLException {
         itemService.addItem("Apple", 1.5f);
-        verify(itemManager).addItem("Apple", 1.5f);
+        verify(itemManager).addItem("apple", 1.5f);
     }
 
     @Test
@@ -66,11 +78,11 @@ public class ItemServiceTest {
 
     @Test
     void doesItemExist_ItemFound_ReturnsTrue() throws SQLException {
-        ItemDTO mockItem = new ItemDTO(10, "Cheese", 0.8f);
-        when(itemManager.getItemByName("Cheese")).thenReturn(mockItem);
+        ItemDTO mockItem = new ItemDTO(10, "cheese", 0.8f);
+        when(itemManager.getItemByName("cheese")).thenReturn(mockItem);
         when(itemManager.doesItemExist(10)).thenReturn(true);
 
-        assertTrue(itemService.doesItemExist("Cheese"));
+        assertTrue(itemService.doesItemExist("cheese"));
     }
 
     @Test
@@ -80,7 +92,7 @@ public class ItemServiceTest {
 
     @Test
     void doesItemExist_ThrowsSQLException_ReturnsRuntimeException() throws SQLException {
-        when(itemManager.getItemByName("Bread")).thenThrow(new SQLException());
+        when(itemManager.getItemByName("bread")).thenThrow(new SQLException());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
                 itemService.doesItemExist("Bread")

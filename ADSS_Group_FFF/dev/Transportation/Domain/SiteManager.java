@@ -17,6 +17,11 @@ public class SiteManager {
         siteRepository = new SiteRepositoryImpli();
     }
 
+    //for mock test
+    public SiteManager(SiteRepository siteRepository1){
+        this.siteRepository = siteRepository1;
+    }
+
     public SiteDTO addSite(String address, String contactName, String phoneNumber) throws SQLException, InstanceAlreadyExistsException {
         if (findSiteByAddress(address).isPresent()) {
             throw new InstanceAlreadyExistsException();

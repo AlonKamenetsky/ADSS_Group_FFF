@@ -26,7 +26,7 @@ class ZoneServiceTest {
 
     @BeforeEach
     void setUp() {
-        zoneService = new ZoneService();
+        zoneService = new ZoneService(zoneManager);
     }
 
     @Test
