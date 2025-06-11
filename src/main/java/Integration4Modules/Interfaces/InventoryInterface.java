@@ -1,6 +1,4 @@
-package IntegrationInventoryAndSupplier;
-
-import inventory.serviceLayer.*;
+package Integration4Modules.Interfaces;
 
 public interface InventoryInterface {
 

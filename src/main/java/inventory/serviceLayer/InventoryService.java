@@ -1,5 +1,7 @@
 package inventory.serviceLayer;
 
+import Integration4Modules.Interfaces.InventoryInterface;
+import Integration4Modules.Interfaces.SupplierInterface;
 import IntegrationInventoryAndSupplier.*;
 import inventory.dataLayer.sqlite.SQLiteCategoryDAO;
 import inventory.dataLayer.sqlite.SQLiteDiscountDAO;

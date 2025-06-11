@@ -1,6 +1,6 @@
-package IntegrationInventoryAndSupplier;
+package Integration4Modules.Interfaces;
 
-import SuppliersModule.ServiceLayer.ServiceController;
+import IntegrationInventoryAndSupplier.MutualProduct;
 
 import java.util.List;
 

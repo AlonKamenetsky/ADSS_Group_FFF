@@ -2,12 +2,8 @@ package inventory.serviceLayer;
 
 // this is for Stav and Blanga's use - not for other's
 
-import IntegrationInventoryAndSupplier.InventoryInterface;
-import IntegrationInventoryAndSupplier.SupplierInterface;
-import inventory.domainLayer.*;
-
-import java.util.Collection;
-import java.util.List;
+import Integration4Modules.Interfaces.InventoryInterface;
+import Integration4Modules.Interfaces.SupplierInterface;
 
 public interface InternalInventoryInterface extends InventoryInterface {
 

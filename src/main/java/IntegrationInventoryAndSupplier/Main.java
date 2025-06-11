@@ -1,5 +1,6 @@
 package IntegrationInventoryAndSupplier;
 
+import Integration4Modules.Interfaces.SupplierInterface;
 import SuppliersModule.DataLayer.CsvToDatabaseImporter;
 import SuppliersModule.PresentationLayer.SupplierCLI;
 import SuppliersModule.ServiceLayer.ServiceController;

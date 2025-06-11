@@ -1,8 +1,7 @@
 package SuppliersModule.ServiceLayer;
 
 import IntegrationInventoryAndSupplier.MutualProduct;
-import IntegrationInventoryAndSupplier.SupplierInterface;
-import SuppliersModule.DataLayer.DbController;
+import Integration4Modules.Interfaces.SupplierInterface;
 import SuppliersModule.DomainLayer.Enums.*;
 import inventory.serviceLayer.InventoryService;
 

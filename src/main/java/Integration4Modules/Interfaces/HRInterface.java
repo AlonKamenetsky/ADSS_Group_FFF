@@ -1,2 +1,5 @@
-package Integration4Modules;public interface HR_Service {
+package Integration4Modules.Interfaces;
+
+public interface HRInterface {
+
 }
