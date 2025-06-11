@@ -1,0 +1,26 @@
+supplyMethod,supplierName,productCategory,supplierDeliveringMethod,phoneNumber,address,email,name,supplierBankAccount,supplierPaymentMethod
+ON_DEMAND,Tavlinim Haaretz,DRIED,SELF_DELIVERING,050-123-4567,Herzl 12 - Tel Aviv,Maya Sharabi,mayasharabi50@gmail.com,IL465320537477560636,CASH
+ON_DEMAND,Ochel Barak,DRINKS,PICK_UP,052-987-6543,Ben Gurion 45 - Ramat Gan,Yarden Alfasi,yardenalfasi89@bezeq.co.il,IL993550774502235239,BANK_TRANSACTION
+SCHEDULED,Yevul Tov,MISCELLANEOUS,SELF_DELIVERING,054-321-7890,Dizengoff 101 - Tel Aviv,Or Mor,ormor28@outlook.com,IL772021117665286881,CHECK
+ON_DEMAND,Shulchan Malachim,MEATS,SELF_DELIVERING,058-246-1357,HaPalmach 17 - Jerusalem,Noa Levi,noalevi92@yahoo.com,IL518206887280589468,CASH
+ON_DEMAND,TzabarFresh,DRINKS,SELF_DELIVERING,053-369-2581,Weizmann 8 - Haifa,Yarden Shalom,yardenshalom95@gmail.com,IL720885086124993885,BANK_TRANSACTION
+ON_DEMAND,Ma’adanot MeHaLev,FROZEN,SELF_DELIVERING,050-741-8529,Jabotinsky 66 - Petah Tikva,Tal Dahan,taldahan21@bezeq.co.il,IL349289282005860133,CHECK
+ON_DEMAND,Ochel Eretz,FRUITS_AND_VEGETABLES,SELF_DELIVERING,052-963-1478,Rothschild 34 - Rishon LeZion,Bar Malka,barmalka62@walla.co.il,IL724271566838799130,CASH
+ON_DEMAND,Adama Supply,MISCELLANEOUS,PICK_UP,054-789-6541,Hativat Golani 22 - Be'er Sheva,Omer Turgeman,omerturgeman81@gmail.com,IL500833116654515807,CASH
+SCHEDULED,Zayit V’Gefen,DRIED,PICK_UP,058-159-7532,Shderot HaNasi 19 - Haifa,Noy Hadad,noyhadad26@walla.co.il,IL578956128229664266,CASH
+ON_DEMAND,Shorashim Foods,FRUITS_AND_VEGETABLES,SELF_DELIVERING,053-852-7416,Yehuda HaMaccabi 73 - Tel Aviv,Shira Avraham,shiraavraham44@gmail.com,IL204933093653561656,BANK_TRANSACTION
+ON_DEMAND,Kerem Shalem,MISCELLANEOUS,SELF_DELIVERING,050-753-1598,Kaplan 4 - Herzliya,Alon Dayan,alondayan93@outlook.com,IL372713787380984180,CHECK
+SCHEDULED,Neta HaOchel,MEATS,SELF_DELIVERING,052-456-1239,Begin 58 - Netanya,Yael Biton,yaelbiton24@bezeq.co.il,IL912020010573298601,CHECK
+ON_DEMAND,Gan Lechem,MEATS,SELF_DELIVERING,054-951-3576,Shlomo HaMelech 20 - Ashdod,Eden Mizrahi,edenmizrahi48@gmail.com,IL601387761106402853,BANK_TRANSACTION
+ON_DEMAND,Hamesh Lachmaniyot,MEATS,SELF_DELIVERING,058-753-4682,Bar Ilan 12 - Bnei Brak,Amit Vaknin,amitvaknin57@yahoo.com,IL743429008089163684,BANK_TRANSACTION
+ON_DEMAND,Sufganiot Express,FRUITS_AND_VEGETABLES,SELF_DELIVERING,053-987-3215,Hillel 31 - Jerusalem,Nadav Zohar,nadavzohar37@bezeq.co.il,IL724356210248447948,CHECK
+SCHEDULED,Tene Ochel,DRINKS,PICK_UP,050-864-2097,Emek Refaim 9 - Jerusalem,Rotem Shitrit,rotemshitrit59@walla.co.il,IL756106089411336013,CASH
+ON_DEMAND,HaMitbah Shelanu,DAIRY,PICK_UP,052-147-8523,Arlozorov 25 - Tel Aviv,Gal BenDavid,galbendavid34@bezeq.co.il,IL196875117184105439,CHECK
+ON_DEMAND,MazonNet,FROZEN,PICK_UP,054-258-9630,Menachem Begin 88 - Holon,Avi Elbaz,avielbaz84@outlook.com,IL558829255471603350,CASH
+SCHEDULED,Simcha Supplies,MEATS,SELF_DELIVERING,058-369-1470,Allenby 120 - Tel Aviv,Itai Cohen,itaicohen88@gmail.com,IL419852502899947301,CASH
+SCHEDULED,Mazon B’racha,FRUITS_AND_VEGETABLES,PICK_UP,053-123-9874,Nordau 16 - Ramat Hasharon,Tamar Natan,tamarnatan16@outlook.com,IL900650928546143099,CASH
+SCHEDULED,Leket & Co.,MISCELLANEOUS,SELF_DELIVERING,050-951-6543,Moshe Dayan 33 - Kiryat Ono,Eli Golan,eligolan35@yahoo.com,IL636090516747093144,BANK_TRANSACTION
+ON_DEMAND,Nes V’Shemen,FRUITS_AND_VEGETABLES,SELF_DELIVERING,052-789-3216,Trumpeldor 7 - Hod HaSharon,Dani Peretz,daniperetz27@gmail.com,IL747254517833351658,BANK_TRANSACTION
+SCHEDULED,FreshTel,FRUITS_AND_VEGETABLES,PICK_UP,054-654-7891,Hahashmonaim 15 - Givatayim,Lior Sabag,liorsabag71@walla.co.il,IL128224367285346158,CASH
+ON_DEMAND,BALAGAN Eats,DRIED,PICK_UP,058-321-4568,HaHistadrut 49 - Ashkelon,Roni Azoulay,roniazoulay12@bezeq.co.il,IL627206133940184388,CHECK
+ON_DEMAND,YallaFood,DRIED,PICK_UP,053-147-9632,Sheshet HaYamim 11 - Eilat,Hadar Baruch,hadarbaruch70@yahoo.com,IL754137101715997587,BANK_TRANSACTION

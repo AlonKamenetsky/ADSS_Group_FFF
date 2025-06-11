@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1400e702-6874-499a-8dc3-6a9d937aac77" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/SuppliersDatabase.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/SuppliersDatabase.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/inventoryDatabase.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/inventoryDatabase.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/inventory/InventoryServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/inventory/serviceLayer/InventoryServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/inventory/InventoryServiceTest.class" beforeDir="false" />
+    </list>
+    <list id="f0412085-c36a-43d2-a7b6-caf7e6f6682e" name="Changes by alonkamenetsky" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/IntegrationInventoryAndSupplier/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/IntegrationInventoryAndSupplier/Main.java" afterDir="false" />
+    </list>
+    <list id="abbd2e8a-afed-4710-836a-73c94fafad8f" name="Changes by Danie" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/SuppliersModule/PresentationLayer/SupplierCLI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SuppliersModule/PresentationLayer/SupplierCLI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/inventory/serviceLayer/InventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/inventory/serviceLayer/InventoryService.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2xyDRHTAaVJy3mdtDuXH4071plf" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Debug",
+    "JUnit.InventoryServiceTest.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "mutualBranch",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="inventory.serviceLayer" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="InventoryServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ADSS_Group_FFF" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="inventory.serviceLayer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="inventory.serviceLayer" />
+      <option name="MAIN_CLASS_NAME" value="inventory.serviceLayer.InventoryServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.InventoryServiceTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1400e702-6874-499a-8dc3-6a9d937aac77" name="Changes" comment="" />
+      <created>1748901413629</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748901413629</updated>
+      <workItem from="1748901415667" duration="3991000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/inventory/serviceLayer/InventoryService.java</url>
+          <line>388</line>
+          <properties class="inventory.serviceLayer.InventoryService" method="checkAndReorderLowStockItems">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

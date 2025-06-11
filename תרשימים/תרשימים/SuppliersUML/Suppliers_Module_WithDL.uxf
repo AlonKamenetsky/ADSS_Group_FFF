@@ -1,0 +1,542 @@
+<diagram program="umletino" version="15.1"><zoom_level>8</zoom_level><element><id>UMLClass</id><coordinates><x>264</x><y>0</y><w>1992</w><h>680</h></coordinates><panel_attributes>Supplier Service Layer
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>696</x><y>32</y><w>1160</w><h>280</h></coordinates><panel_attributes>ServiceController
+--
+supplierService:SupplierService
+productService:ProductService
+--
+
++ registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory): int
++ updateProduct(int productID, String productName, String productCompanyName): boolean
++ deleteProduct(int productID): boolean
++ registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod, String phoneNumber, String address, String email, String contactName, String bankAccount, int paymentMethod, ArrayList&lt;Integer&gt; supplyDays): int
++ updateSupplierName(int supplierID, String supplierName): boolean
++ updateSupplierDeliveringMethod(int supplierID, int deliveringMethod): boolean
++ updateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName): boolean
++ updateSupplierPaymentInfo(int supplierId, String bankAccount, int paymentMethod): boolean
++ deleteSupplier(int supplierID): boolean
++ registerNewContract(int supplierID, ArrayList&lt;int[]&gt; dataList): boolean
++ registerNewOrder(int supplierId, ArrayList&lt;int[]&gt; dataList, Date creationDate, Date deliveryDate): boolean
++ updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName): boolean
++ updateOrderSupplyDate(int orderID, Date supplyDate): boolean
++ updateOrderStatus(int orderID, int orderStatus): boolean
++ addProductsToOrder(int orderID, ArrayList&lt;int[]&gt; dataList): boolean
++ removeProductsFromOrder(int orderID, ArrayList&lt;Integer&gt; dataList): boolean
++ deleteOrder(int orderID): boolean
++ orderExists(int orderID): boolean
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>936</x><y>304</y><w>56</w><h>136</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+Holds 
+and
+Control</panel_attributes><additional_attributes>10;10;10;150</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1312</x><y>384</y><w>744</w><h>256</h></coordinates><panel_attributes>SupplierService
+--
+supplier_controller:SupplierController
+--
+
++ registerNewSupplier(int supplyMethod, String supplierName, int productCategory, int deliveringMethod, String phoneNumber, String address, String email, 
+String contactName, String bankAccount, int paymentMethod, ArrayList&lt;Integer&gt; supplyDays): int
++ updateSupplierName(int supplierID, String supplierName): boolean
++ updateSupplierDeliveringMethod(int supplierID, int deliveringMethod): boolean
++ updateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName): boolean
++ updateSupplierPaymentInfo(int supplierId, String bankAccount, int paymentMethod): boolean
++ deleteSupplier(int supplierID): boolean
++ registerNewContract(int supplierID, ArrayList&lt;int[]&gt; dataList): boolean
++ registerNewOrder(int supplierId, ArrayList&lt;int[]&gt; dataList, Date creationDate, Date deliveryDate): boolean
++ updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName): boolean
++ updateOrderSupplyDate(int orderID, Date supplyDate): boolean
++ updateOrderStatus(int orderID, int orderStatus): boolean
++ addProductsToOrder(int orderID, ArrayList&lt;int[]&gt; dataList): boolean
++ removeProductsFromOrder(int orderID, ArrayList&lt;Integer&gt; dataList): boolean
++ deleteOrder(int orderID): boolean
++ orderExists(int orderID): boolean
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1336</x><y>304</y><w>312</w><h>96</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+Holds and Control</panel_attributes><additional_attributes>10;10;10;50;370;50;370;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>544</x><y>424</y><w>520</w><h>104</h></coordinates><panel_attributes>ProductService
+--
+product_controller:ProductController
+--
+
++ registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory): int
++ updateProduct(int productID, String productName, String productCompanyName): boolean
++ deleteProduct(int productID): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>704</y><w>1992</w><h>1480</h></coordinates><panel_attributes>Supplier Domain Layer
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>368</x><y>840</y><w>528</w><h>80</h></coordinates><panel_attributes>ProductController
+--
++ registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory): int
++ updateProduct(int productID, String productName, String productCompanyName): boolean
++ deleteProduct(int productID): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>960</x><y>1080</y><w>472</w><h>72</h></coordinates><panel_attributes>SupplyContractController
+--
++ registerNewContract(int supplierID, ArrayList&lt;int[]&gt; dataList, SupplyMethod method): SupplyContract
++ removeContractByID(int contractID): boolean
++ removeAllSupplierContracts(int supplierID): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1064</x><y>776</y><w>904</w><h>216</h></coordinates><panel_attributes>SupplierController
+--
++ registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod, String phoneNumber, String address, String email, 
+   String contactName, String bankAccount, PaymentMethod paymentMethod, EnumSet&lt;WeekDay&gt; supplyDays): int
++ deleteSupplier(int supplierID): boolean
++ updateSupplierName(int supplierID, String supplierName): boolean
++ updateSupplierDeliveringMethod(int supplierID, DeliveringMethod deliveringMethod): boolean
++ updateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName): boolean
++ updateSupplierPaymentInfo(int supplierID, String bankAccount, PaymentMethod paymentMethod): boolean
++ registerNewContract(int supplierID, ArrayList&lt;int[]&gt; dataList): boolean
++ registerNewOrder(int supplierId, ArrayList&lt;int[]&gt; dataList, Date creationDate, Date deliveryDate): boolean
++ deleteOrder(int orderID): boolean
++ orderExists(int orderID): boolean
++ updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName): boolean
++ updateOrderSupplyDate(int orderID, Date supplyDate): boolean
++ updateOrderStatus(int orderID, OrderStatus orderStatus): boolean
++ addProductsToOrder(int orderID, ArrayList&lt;int[]&gt; dataList): boolean
++ removeProductsFromOrder(int orderID, ArrayList&lt;Integer&gt; dataList): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1520</x><y>1080</y><w>656</w><h>152</h></coordinates><panel_attributes>OrderController
+--
++ registerNewOrder(int supplierId, ArrayList&lt;int[]&gt; dataList, ArrayList&lt;SupplyContract&gt; supplyContracts, Date creationDate, Date deliveryDate,
+   DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo): boolean
++ deleteOrder(int orderID): boolean
++ removeAllSupplierOrders(int supplierID): boolean
++ orderExists(int orderID): boolean
++ updateOrderContactInfo(int orderID, String phoneNumber, String address, String email, String contactName): boolean
++ updateOrderSupplyDate(int orderID, Date supplyDate): boolean
++ updateOrderStatus(int orderID, OrderStatus orderStatus): boolean
++ addProductsToOrder(int orderID, ArrayList&lt;SupplyContract&gt; supplyContracts, ArrayList&lt;int[]&gt; dataList): boolean
++ removeProductsFromOrder(int orderID, ArrayList&lt;SupplyContract&gt; supplyContracts, ArrayList&lt;Integer&gt; dataList): boolean
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>584</x><y>920</y><w>88</w><h>24</h></coordinates><panel_attributes>- productID:int
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1136</x><y>1152</y><w>120</w><h>24</h></coordinates><panel_attributes>- SupplyContractID:int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1432</x><y>992</y><w>160</w><h>24</h></coordinates><panel_attributes>- supplierID:int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1800</x><y>1232</y><w>96</w><h>24</h></coordinates><panel_attributes>- orderID:int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>904</x><y>1304</y><w>312</w><h>96</h></coordinates><panel_attributes>SupplyContract
+--
+- supplierID:int
+- contractID:int
+- product_argreement_data:ArrayList&lt;SupplyContractProductData&gt;
+--
++ getProductPrice(int productID): double
++ getTotalPrice(): double
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>736</x><y>1216</y><w>144</w><h>72</h></coordinates><panel_attributes>SupplyContractProductData
+--
+- productPrice:double
+- quantityForDiscount: int
+- discountPrecentage:double
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>688</x><y>1328</y><w>232</w><h>40</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1..*
+&lt; Includes
+</panel_attributes><additional_attributes>270;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>800</x><y>1280</y><w>24</w><h>80</h></coordinates><panel_attributes>lt=&lt;..</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>512</x><y>1304</y><w>184</w><h>80</h></coordinates><panel_attributes>Product
+--
+- productID:int
+- productName:String
+- companyName:String
+- productCategory:Products_Category
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1192</x><y>1168</y><w>56</w><h>152</h></coordinates><panel_attributes>lt=-
+m1=0..*
+m2=1
+Holds 
+and
+Control</panel_attributes><additional_attributes>10;170;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>936</y><w>56</w><h>384</h></coordinates><panel_attributes>lt=-
+m1=0..*
+m2=1
+
+
+
+
+
+
+
+
+
+
+Holds 
+and
+Control</panel_attributes><additional_attributes>10;460;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1352</x><y>1304</y><w>240</w><h>240</h></coordinates><panel_attributes>&lt;&lt;Abstract Class&gt;&gt;
+Supplier
+--
+- supplierName:string
+- supplierID:int
+- supplierPaymentInfo:PaymentInfo
+- delivering_Method:Delivering_Method
+- products_Category:Products_Category
+--
++ addOrder(Order order): boolean
++ removeOrder(int orderID): boolean
++ addContract(contract: SupplyContract): boolean
++ removeContract(int contractID): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1584</x><y>1368</y><w>176</w><h>40</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+
+ represented by &gt;</panel_attributes><additional_attributes>10;20;200;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1584</x><y>1456</y><w>176</w><h>40</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+
+ represented by &gt;</panel_attributes><additional_attributes>10;20;200;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1744</x><y>1360</y><w>288</w><h>72</h></coordinates><panel_attributes>ContactInfo
+--
+- contactName : string
+- contactPhone : string
+- contactEmail : string
+- contactAdress : string
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1744</x><y>1448</y><w>288</w><h>56</h></coordinates><panel_attributes>PaymentInfo
+--
+- supplierBankAccount:string
+- supplierPaymentMethod:Payment_Method
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1472</x><y>1616</y><w>224</w><h>72</h></coordinates><panel_attributes>ScheduledSupplier
+--
+- days:ArrayList&lt;Day&gt;
+
+--
++ getNearestWeekdayDate(Day targetDay): Day</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1272</x><y>1616</y><w>168</w><h>56</h></coordinates><panel_attributes>OnDemandSupplier
+--
+- orders:ArrayList&lt;Order&gt;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1768</x><y>1672</y><w>256</w><h>56</h></coordinates><panel_attributes>ScheduledOrder
+--
+- day:Day
+- schedualedProducts:ArrayList&lt;OrderProductData&gt;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1688</x><y>1624</y><w>248</w><h>64</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+</panel_attributes><additional_attributes>10;20;270;20;270;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1464</x><y>1536</y><w>104</w><h>56</h></coordinates><panel_attributes>lt=&lt;&lt;-
+ Supplier Methods</panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>1392</x><y>1560</y><w>96</w><h>72</h></coordinates><panel_attributes></panel_attributes><additional_attributes>100;20;10;20;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1464</x><y>1560</y><w>112</w><h>72</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes>10;20;120;20;120;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1464</x><y>1008</y><w>56</w><h>312</h></coordinates><panel_attributes>lt=-
+m1=0..*
+m2=1
+
+
+Holds 
+and
+Control</panel_attributes><additional_attributes>10;370;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1208</x><y>1320</y><w>160</w><h>40</h></coordinates><panel_attributes>lt=-
+m1=1..*
+m2=1
+  Signed on &gt;</panel_attributes><additional_attributes>10;20;180;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>872</x><y>1840</y><w>216</w><h>80</h></coordinates><panel_attributes>OrderProductData
+--
+- productID: int
+- productAmountToOrder: int
+- productPrice:double
+--
++ getTotalPrice(): double</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1256</x><y>1792</y><w>120</w><h>24</h></coordinates><panel_attributes>producID:int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1376</x><y>1736</y><w>184</w><h>136</h></coordinates><panel_attributes>Order
+--
+- orderID:int
+- supplierID:int
+- orderDate:LocalDate 
+- shipmentDate:LocalDate 
+- orderStatus:Order_Status
+- totalPrice:double
+- supplyingMethod:Supplying_Method
+- deliveyMethod:Delivery_Method
+- supplierContactInfo:ContactInfo
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1552</x><y>1720</y><w>384</w><h>88</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+</panel_attributes><additional_attributes>10;80;440;80;440;10</additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>1792</y><w>656</w><h>32</h></coordinates><panel_attributes>m2=0..*</panel_attributes><additional_attributes>10;10;800;10</additional_attributes></element><element><id>Relation</id><coordinates><x>968</x><y>1792</y><w>24</w><h>64</h></coordinates><panel_attributes>lt=&lt;..</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>1376</y><w>72</w><h>440</h></coordinates><panel_attributes>m1=1..*
+&lt; Includes </panel_attributes><additional_attributes>10;10;10;530</additional_attributes></element><element><id>Relation</id><coordinates><x>1552</x><y>1248</y><w>568</w><h>608</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+Holds 
+and
+Control</panel_attributes><additional_attributes>370;10;370;80;650;80;650;730;10;730</additional_attributes></element><element><id>UMLClass</id><coordinates><x>256</x><y>2216</y><w>2000</w><h>1280</h></coordinates><panel_attributes>Supplier Data Layer
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>488</x><y>2304</y><w>272</w><h>168</h></coordinates><panel_attributes>ProductDTO
+--
++ productId: String
++ product_name: String
++ company_name: String
++ productCategory: String
+_+ ProductIdColumnName : String_
+_+ ProductNameColumnName : String_
+_+ CompanyNameColumnName : String_
+_+ ProductCategoryColumnName : String_
+--
++ Insert()
++ Delete()
+_+ convertReaderToObjectDays(resultSet: ResultSet): DTO_</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>792</x><y>2312</y><w>296</w><h>304</h></coordinates><panel_attributes>OrderDTO
+--
+- order_id: String
+- supplier_id: String
+- shipment_day: String
+- supplying_method: String
+- opening_date: LocalDate
+- shipment_date: LocalDate
+- order_status: String
+- total_price: double
+
+_- OrderIdColumnName : String_
+_- SupplierIdColumnName: String_
+_- ShipmentDayColumnName : String_
+_- SupplyingMethodColumnName : String_
+_- OpeningDateColumnName : String_
+_- ShipmentDateColumnName : String_
+_- OrderStatusColumnName : String_
+_- TotalPriceColumnName : String_
+_- tableName: String_
+--
++ Insert()
++ UpdateTotalPrice(total_price: double)
++ UpdateOrderStatus(order_status: String)
+_+ convertReaderToObjectDays(resultSet: ResultSet): DTO_
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>792</x><y>2632</y><w>304</w><h>160</h></coordinates><panel_attributes>OrderProductDataDTO
+--
+- order_id: String
+- product_id: String
+- quantity: Integer
+_- OrderIdColumnName: String_
+_- ProductIdColumnName: String_
+_- QuantityColumnName: String_
+
+--
++ Insert()
++ Update()
++ Delete()
+_+ convertReaderToObjectOrderProduct(resultSet: ResultSet): DTO_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1520</x><y>2312</y><w>288</w><h>264</h></coordinates><panel_attributes>SupplierDTO
+--
++ name: String
++ private_company_id: String
++ contact_name: String
++ contact_phone: String
++ bank_account: String
++ payment_method: String
++ delivering_Method: String
++ supplying_method: String
+_+ SupplierNameColumnName: String_
+_+ PrivateCompanyIdColumnName: String_
+_+ ContactNameColumnName: String_
+_+ ContactPhoneColumnName: String_
+_+ BankAccountColumnName: String_
+_+ PaymentMethodColumnName: String_
+_+ DeliveringMethodColumnName: String_
+_+ TypeColumnName: String_
+--
++ Insert()
++ Delete()
+_+ convertReaderToObjectDays(resultSet: ResultSet): DTO_</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1848</x><y>2320</y><w>296</w><h>168</h></coordinates><panel_attributes>SupplierContractDTO
+--
++ supplier_id: String
++ contract_id: String
+_+ SupplierIDColumnName: String_
+_+ ContractIDColumnName: String_
+_+ tableName: String_
+--
++ Insert()
+_+ convertReaderToObjectAgreement(resultSet: ResultSet): DTO_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1848</x><y>2504</y><w>296</w><h>192</h></coordinates><panel_attributes>SupplierContractDataDTO
+--
++ supplier_id: String
++ catalog_number: String
++ price: String
++ quantity_for_discount: String
++ discount: String
+_+ SupplierIdColumnName: String_
+_+ CatalogNumberColumnName: String_
+_+ PriceColumnName: String_
+_+ QuantityForDiscountColumnName: String_
+_+ DiscountColumnName: String_
+_+ tableName: String_
+--
++ Insert()
+_+ convertReaderToObjectAgreement(resultSet: ResultSet): DTO_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1192</x><y>2312</y><w>288</w><h>128</h></coordinates><panel_attributes>ScheduledOrder
+--
++ supplier_id: String
++ order_id: String
++ day: String
+_+ SupplierIdColumnName : String_
+_+ DayColumnName: String_
+_+ tableName: String_
+--
++ Insert()
+_+ convertReaderToObjectDays(resultSet: ResultSet): DTO_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1192</x><y>2464</y><w>288</w><h>112</h></coordinates><panel_attributes>SupplierDaysDTO
+--
++ supplier_id: String
++ day: String
+_+ SupplierIdColumnName : String_
+_+ DayColumnName: String_
+_+ tableName: String_
+--
++ Insert()
+_+ convertReaderToObjectDays(resultSet: ResultSet): DTO_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1088</x><y>2872</y><w>320</w><h>64</h></coordinates><panel_attributes>&lt;&lt;Abstract Class&gt;&gt;
+DTO
+--
+# _controller : DbController
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1024</x><y>1864</y><w>464</w><h>464</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>10;560;10;200;550;200;550;10</additional_attributes></element><element><id>Relation</id><coordinates><x>552</x><y>1376</y><w>48</w><h>944</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>10;1160;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1440</x><y>1720</y><w>544</w><h>608</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>10;740;10;410;650;410;650;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1472</x><y>1680</y><w>216</w><h>864</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>10;1050;30;1050;30;490;240;490;240;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1520</x><y>1328</y><w>640</w><h>1000</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>10;1230;10;950;750;950;750;10;90;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1104</x><y>1392</y><w>840</w><h>944</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>1020;1160;1020;900;10;900;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>824</x><y>1280</y><w>1040</w><h>1304</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+Holds</panel_attributes><additional_attributes>1280;1600;1260;1600;1260;1100;10;1100;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>2808</y><w>1560</w><h>32</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;20;1930;20</additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>2464</y><w>24</w><h>376</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;450;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>944</x><y>2784</y><w>24</w><h>56</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1080</x><y>2432</y><w>48</w><h>408</h></coordinates><panel_attributes></panel_attributes><additional_attributes>40;490;40;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1328</x><y>2568</y><w>24</w><h>272</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;320;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1152</x><y>2368</y><w>56</w><h>472</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;570;10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1656</x><y>2568</y><w>24</w><h>272</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;320;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1992</x><y>2688</y><w>24</w><h>152</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;170;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>2136</x><y>2376</y><w>40</w><h>464</h></coordinates><panel_attributes></panel_attributes><additional_attributes>30;560;30;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1240</x><y>2816</y><w>24</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>544</x><y>3000</y><w>320</w><h>160</h></coordinates><panel_attributes>ProductControllerDTO
+--
+_- instance: ProductControllerDTO_
+--
++ getInstance(): ProductControllerDTO
++ selectAllProducts(): ArrayList&lt;ProductDTO&gt;
++ Insert(product: ProductDTO)
++ Delete(product: ProductDTO)
++ deleteAllProducts()
+# convertReaderToObject(resultSet: ResultSet): DTO
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>888</x><y>3000</y><w>320</w><h>160</h></coordinates><panel_attributes>SupplierContractControllerDTO
+--
+_- instance: SupplierContractControllerDTO_
+--
+
++ Insert(order: OrderDTO)
++ Insert(orderProduct: OrderProductDTO)
++ Update(order: OrderDTO)
++ Update(orderProduct: OrderProductDTO)
++ Delete(order: OrderDTO)
++ Delete(orderProduct: OrderProductDTO)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1224</x><y>3000</y><w>320</w><h>160</h></coordinates><panel_attributes>OrderControllerDTO
+--
+_- instance: OrderControllerDTO_
+--
++ getInstance(): OrderControllerDTO
++ selectAllOrders(): ArrayList&lt;OrderDTO&gt;
++ selectOrderProducts(order_id: String): ArrayList&lt;OrderProductDTO&gt;
++ Insert(order: OrderDTO)
++ Insert(orderProduct: OrderProductDTO)
++ Update(order: OrderDTO)
++ Update(orderProduct: OrderProductDTO)
++ Delete(order: OrderDTO)
++ Delete(orderProduct: OrderProductDTO)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1560</x><y>3000</y><w>432</w><h>160</h></coordinates><panel_attributes>SupplierControllerDTO
+--
+_- instance: SupplierControllerDTO_
+--
++ getInstance(): SupplierControllerDTO
++ selectAllSuppliers(): ArrayList&lt;SupplierDTO&gt;
++ selectSupplierAgreementData(supplierId: String): ArrayList&lt;SupplierAgreementDataDTO&gt;
++ selectSupplierDays(supplierId: String): ArrayList&lt;SupplierDaysDTO&gt;
++ Insert(supplier: SupplierDTO)
++ Insert(agreementData: SupplierAgreementDataDTO)
++ Insert(productCategory: SupplierProductCategoryDTO)
++ Insert(supplierDays: SupplierDaysDTO)
++ Update(supplier: SupplierDTO)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>952</x><y>3280</y><w>584</w><h>168</h></coordinates><panel_attributes>&lt;&lt;Abstract Class&gt;&gt;
+DbController
+--
+_- DB_NAME : String_
+_- CONNECTION_STRING : String_
+# connection : Connection
+# tableName : String
+--
++ getConnection(): Connection
++ closeConnection()
++ selectAll(): ArrayList&lt;DTO&gt;
++ select_by_id(supplierId: String, tableName: String, columnName: String, converter: Function&lt;ResultSet, DTO&gt;): ArrayList&lt;DTO&gt;
++ deleteAll(tableName: String)
+# - convertReaderToObject(resultSet: ResultSet): DTO
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>784</x><y>3152</y><w>1008</w><h>88</h></coordinates><panel_attributes>
+</panel_attributes><additional_attributes>10;20;10;80;1240;80;1240;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1240</x><y>3208</y><w>24</w><h>88</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1048</x><y>3152</y><w>24</w><h>80</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1368</x><y>3152</y><w>24</w><h>80</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>504</x><y>2896</y><w>600</w><h>432</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Holds</panel_attributes><additional_attributes>730;10;10;10;10;520;630;520</additional_attributes></element><element><id>Relation</id><coordinates><x>400</x><y>912</y><w>160</w><h>2192</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+
+Holds
+</panel_attributes><additional_attributes>180;2710;10;2710;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>456</x><y>1104</y><w>520</w><h>1912</h></coordinates><panel_attributes>lt=-
+
+Holds</panel_attributes><additional_attributes>620;2370;620;2310;10;2310;10;10;630;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1960</x><y>856</y><w>304</w><h>2248</h></coordinates><panel_attributes>lt=-
+Holds</panel_attributes><additional_attributes>40;2790;330;2790;330;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1448</x><y>1128</y><w>784</w><h>1888</h></coordinates><panel_attributes>lt=-
+Holds</panel_attributes><additional_attributes>10;2340;10;2270;930;2270;930;10;910;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1200</x><y>3632</y><w>96</w><h>32</h></coordinates><panel_attributes>       SQL Tables</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>1176</x><y>3688</y><w>144</w><h>136</h></coordinates><panel_attributes>
+customelement=
+// Text Elemnt
+// DB Symbol
+drawArc(0,0,width,height*2/5,0,180,true) fg=black bg=#222222 //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,0,width,height*2/5,180,180,true) fg=black //Parameters (x, y, width, height, start, extent, open)
+drawRectangle(0,(height+0.5)/5,width,(height)*3/5-1) fg=#929292 bg=#222222 //Parameters (x, y, width, height)
+drawLine(0,height/5,0,height*4/5)fg=black //Parameters (x1, y1, x2, y2) 
+drawLine(width,height/5,width,height*4/5)fg=black //Parameters (x1, y1, x2, y2) 
+drawArc(0,height*1/5,width,height*2/5,180,180,true) fg=black //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,height*2/5,width,height*2/5,180,180,true) fg=black //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,height*3/5,width,height*2/5,180,180,true) fg=black bg=#222222 //Parameters (x, y, width, height, start, extent, open)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1240</x><y>3440</y><w>24</w><h>208</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;240;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>704</y><w>248</w><h>1480</h></coordinates><panel_attributes>Enums
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>752</y><w>168</w><h>136</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Products_Category
+--
+DAIRY_PRODUCTS
+FROZEN_PRODUCTS
+FRUITS_AND_VEGETABLES
+CLEANING_PRODUCTS
+DRINKS
+DRIED_PRODUCTS
+MEATS_PRODUCTS
+MISCELLANEOUS </panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>904</y><w>168</w><h>72</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Supplying_Method
+--
+BY ORDER
+FIXED DAYS
+
+
+
+
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>992</y><w>168</w><h>80</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Payment_Method
+--
+CHECK
+BANK_TRANSITION
+CASH</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>1168</y><w>168</w><h>120</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Day
+--
+SUNDAY
+MONDAY
+TUESDAY
+WEDNESDAY
+THURSDAY
+FRIDAY
+SATURDAY</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>1304</y><w>168</w><h>104</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Order_Status
+--
+RECEIVED
+BEEN PROCESS
+DELIVERED
+ARRIVED
+CANCELLED
+COMPLETED</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>1088</y><w>168</w><h>64</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Delivering_Method
+--
+PICKUP
+DELIVERING</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1616</x><y>632</y><w>48</w><h>160</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+
+Holds
+
+
+
+</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>744</x><y>520</y><w>48</w><h>336</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+
+Holds</panel_attributes><additional_attributes>10;10;10;400</additional_attributes></element></diagram>
