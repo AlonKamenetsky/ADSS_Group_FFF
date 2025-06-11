@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ADSS_Group_FFF" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ADSS_Group_FFF/dev" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/ADSS_Group_FFF/dev/HR/tests" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -54,5 +55,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="release" level="project" />
+    <orderEntry type="library" name="ADSS_Group_FFF" level="project" />
+    <orderEntry type="library" name="Maven: org.mockito:mockito-core:5.12.0" level="project" />
+    <orderEntry type="library" name="Maven: org.mockito:mockito-junit-jupiter:5.12.0" level="project" />
+    <orderEntry type="library" name="Maven: org.mockito:mockito-core:5.12.0" level="project" />
   </component>
 </module>

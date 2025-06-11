@@ -5,19 +5,568 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1400e702-6874-499a-8dc3-6a9d937aac77" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../.idea/artifacts/adss2025_v02_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/artifacts/jar_adss2025_v02_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/libraries/ADSS_Group_FFF.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/libraries/HR_ass1Fix.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/libraries/release.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2025_14_26_[Changes]/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2025_14_26_[Changes]1/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2025_14_26__Changes_.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SuperLee.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/adss-group.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/CreateEmployeeDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/DriverInfoDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/EmployeeDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/RoleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/ShiftAssignmentDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/ShiftDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/ShiftTemplateDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/SwapRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/UserDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/WeeklyAvailabilityDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DTO/WeeklyShiftsScheduleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/DriverInfoDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/DriverInfoDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/EmployeeDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/EmployeeDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/RoleDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/RoleDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/ShiftAssignmentDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/ShiftAssignmentDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/ShiftDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/ShiftDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/ShiftTemplateDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/ShiftTemplateDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/SwapDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/SwapDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/WeeklyAvailabilityDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/DataAccess/WeeklyAvailabilityDAOImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/DriverInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/Employee.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/Shift.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/ShiftAssignment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/ShiftTemplate.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/SwapRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/WeeklyAvailability.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Domain/WeeklyShiftsSchedule.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/DriverInfoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/EmployeeMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/RoleMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/ShiftAssignmentMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/ShiftMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/ShiftTemplateMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/SwapRequestMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/UserMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/WeeklyAvailabilityMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Mapper/WeeklyShiftsScheduleMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Presentation/EmployeeInterface.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Presentation/HRInterface.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Presentation/LoginScreen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Presentation/PresentationUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Service/EmployeeService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Service/RoleService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Service/ShiftService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Service/SwapService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/Service/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/DriverInfoDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/EmployeeDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/RoleDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/ShiftAssignmentDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/ShiftDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/ShiftTemplateDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/SwapDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DAOTests/WeeklyAvailabilityDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/DriverInfoTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/EmployeeTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/RoleTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/ShiftAssignmentTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/ShiftTemplateTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/ShiftTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/SwapRequestTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/UserTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/WeeklyAvailabilityTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/DomainTests/WeeklyShiftsScheduleTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/DriverInfoMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/EmployeeMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/RoleMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/ShiftAssignmentMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/ShiftMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/ShiftTemplateMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/SwapRequestMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/UserMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/WeeklyAvailabilityMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/MapperTests/WeeklyShiftsScheduleMapperTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/PresentationTests/EmployeeInterfaceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/PresentationTests/HRInterfaceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/ServiceTests/EmployeeServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/ServiceTests/RoleServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/ServiceTests/ShiftServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/HR/tests/ServiceTests/SwapServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/IntegrationTests/TransportationToEmployeeHRIntegrationTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/DriverAvailabilityDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/ItemDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/ItemsListDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/SiteDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/TransportationDocDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/TransportationTaskDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/TruckDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DTO/ZoneDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/ItemDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/ItemsListDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SiteDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteItemDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteItemsListDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteSiteDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteTransportationDocDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteTransportationTaskDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteTruckDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/SqliteZoneDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/TransportationDocDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/TransportationTaskDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/TruckDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/DataAccess/ZoneDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/EmployeeProvider.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Item.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/ItemManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/ItemsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/LicenseMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/ItemRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/ItemRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/SiteRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/SiteRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/TransportationDocRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/TransportationDocRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/TransportationTaskRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/TruckRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/TruckRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/ZoneRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Repositories/ZoneRepositoryImpli.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Site.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/SiteManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/SiteZoneManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/TaskManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/TransportationDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/TransportationTask.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Truck.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/TruckManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/TruckType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/Zone.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Domain/ZoneManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Presentation/SiteMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Presentation/TManagerRoleMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Presentation/TaskMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Presentation/TransportationMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Presentation/TruckMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Presentation/ZoneMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/HREmployeeAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/ItemService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/SiteService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/SiteZoneService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/TaskService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/TruckService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Service/ZoneService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/SystemInitializer/SystemInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/DB/SqliteItemDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/DB/SqliteSiteDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/DB/SqliteTaskDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/DB/SqliteTruckDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/DB/SqliteZoneDAOTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Domain/SiteManagerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Domain/SiteZoneManagerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Domain/TaskManagerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Domain/TruckManagerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Domain/ZoneManagerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/MockIntegrationTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Service/ItemServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Service/SiteServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Service/SiteZoneServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Service/TaskServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Service/TruckServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Transportation/Tests/Service/ZoneServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Util/Database.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/Util/DatabaseInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/adss2025_v02.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/dev.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/CreateEmployeeDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/DriverInfoDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/EmployeeDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/RoleDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/ShiftAssignmentDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/ShiftDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/ShiftTemplateDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/SwapRequestDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/UserDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/WeeklyAvailabilityDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DTO/WeeklyShiftsScheduleDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/DriverInfoDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/DriverInfoDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/EmployeeDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/EmployeeDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/RoleDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/RoleDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/ShiftAssignmentDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/ShiftAssignmentDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/ShiftDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/ShiftDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/ShiftTemplateDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/ShiftTemplateDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/SwapDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/SwapDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/WeeklyAvailabilityDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/DataAccess/WeeklyAvailabilityDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/DriverInfo$LicenseType.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/DriverInfo.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/Employee.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/Role.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/Shift$ShiftTime.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/Shift.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/ShiftAssignment.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/ShiftTemplate.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/SwapRequest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/User.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/WeeklyAvailability.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Domain/WeeklyShiftsSchedule.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/DriverInfoMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/EmployeeMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/RoleMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/ShiftAssignmentMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/ShiftMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/ShiftTemplateMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/SwapRequestMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/UserMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/WeeklyAvailabilityMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Mapper/WeeklyShiftsScheduleMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Presentation/EmployeeInterface.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Presentation/HRInterface.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Presentation/LoginScreen.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Presentation/PresentationUtils.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Service/EmployeeService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Service/RoleService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Service/ShiftService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Service/SwapService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/Service/UserService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/DriverInfoDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/EmployeeDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/RoleDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/ShiftAssignmentDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/ShiftDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/ShiftTemplateDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/SwapDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DAOTests/WeeklyAvailabilityDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/DriverInfoTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/EmployeeTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/RoleTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/ShiftAssignmentTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/ShiftTemplateTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/ShiftTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/SwapRequestTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/UserTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/WeeklyAvailabilityTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/DomainTests/WeeklyShiftsScheduleTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/HRIntegrationTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/DriverInfoMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/EmployeeMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/RoleMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/ShiftAssignmentMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/ShiftMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/ShiftTemplateMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/SwapRequestMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/UserMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/WeeklyAvailabilityMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/MapperTests/WeeklyShiftsScheduleMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/PresentationTests/EmployeeInterfaceTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/PresentationTests/HRInterfaceTest$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/PresentationTests/HRInterfaceTest$2.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/HR/tests/PresentationTests/HRInterfaceTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Main.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/DriverAvailabilityDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/ItemDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/ItemsListDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/SiteDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/TransportationDocDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/TransportationTaskDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/TruckDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DTO/ZoneDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/ItemDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/ItemsListDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SiteDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteItemDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteItemsListDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteSiteDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteTransportationDocDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteTransportationTaskDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteTruckDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/SqliteZoneDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/TransportationDocDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/TransportationTaskDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/TruckDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/DataAccess/ZoneDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/EmployeeProvider.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Item.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/ItemManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/ItemsList.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/LicenseMapper$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/LicenseMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/ItemRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/ItemRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/SiteRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/SiteRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/TransportationDocRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/TransportationDocRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/TransportationTaskRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/TruckRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/TruckRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/ZoneRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Repositories/ZoneRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Site.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/SiteManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/SiteZoneManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/TaskManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/TransportationDoc.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/TransportationTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Truck.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/TruckManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/TruckType.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/Zone.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Domain/ZoneManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Presentation/SiteMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Presentation/TManagerRoleMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Presentation/TaskMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Presentation/TransportationMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Presentation/TruckMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Presentation/ZoneMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/HREmployeeAdapter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/ItemService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/SiteService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/SiteZoneService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/TaskService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/TruckService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/Service/ZoneService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Transportation/SystemInitializer/SystemInitializer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Util/Database.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/Util/DatabaseInitializer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dev/out/production/dev/dev.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ADSS-Table 1 (2).pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ADSS-Table 1.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/End to End Tests - HR" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/HR_TransportationUML.drawio.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/HR_UML.drawio.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/README.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/User Requirements.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/instructions (3).pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SuperLee.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Transportation_HR.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/artifacts/ADSS_Group_FFF_jar3/ADSS_Group_FFF.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/artifacts/Transportation_HR_jar/SuperLee.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/artifacts/Transportation_HR_jar/Transportation_HR.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/artifacts/adss2025_v02_jar/ADSS_Group_FFF.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/artifacts/jar_adss2025_v02_jar/ADSS_Group_FFF.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/CreateEmployeeDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/DriverInfoDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/EmployeeDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/RoleDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/ShiftAssignmentDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/ShiftDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/ShiftTemplateDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/SwapRequestDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/UserDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/WeeklyAvailabilityDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DTO/WeeklyShiftsScheduleDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/DriverInfoDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/DriverInfoDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/EmployeeDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/EmployeeDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/RoleDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/RoleDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/ShiftAssignmentDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/ShiftAssignmentDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/ShiftDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/ShiftDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/ShiftTemplateDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/ShiftTemplateDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/SwapDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/SwapDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/WeeklyAvailabilityDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/DataAccess/WeeklyAvailabilityDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/DriverInfo$LicenseType.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/DriverInfo.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/Employee.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/Role.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/Shift$ShiftTime.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/Shift.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/ShiftAssignment.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/ShiftTemplate.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/SwapRequest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/User.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/WeeklyAvailability.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Domain/WeeklyShiftsSchedule.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/DriverInfoMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/EmployeeMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/RoleMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/ShiftAssignmentMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/ShiftMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/ShiftTemplateMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/SwapRequestMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/UserMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/WeeklyAvailabilityMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Mapper/WeeklyShiftsScheduleMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Presentation/EmployeeInterface.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Presentation/HRInterface.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Presentation/LoginScreen.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Presentation/PresentationUtils.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Service/EmployeeService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Service/RoleService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Service/ShiftService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Service/SwapService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/Service/UserService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/DriverInfoDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/EmployeeDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/RoleDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/ShiftAssignmentDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/ShiftDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/ShiftTemplateDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/SwapDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DAOTests/WeeklyAvailabilityDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/DriverInfoTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/EmployeeTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/RoleTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/ShiftAssignmentTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/ShiftTemplateTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/ShiftTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/SwapRequestTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/UserTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/WeeklyAvailabilityTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/DomainTests/WeeklyShiftsScheduleTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/DriverInfoMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/EmployeeMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/RoleMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/ShiftAssignmentMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/ShiftMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/ShiftTemplateMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/SwapRequestMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/UserMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/WeeklyAvailabilityMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/MapperTests/WeeklyShiftsScheduleMapperTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/PresentationTests/EmployeeInterfaceTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/PresentationTests/HRInterfaceTest$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/PresentationTests/HRInterfaceTest$2.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/HR/tests/PresentationTests/HRInterfaceTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Main.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/DriverAvailabilityDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/ItemDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/ItemsListDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/SiteDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/TransportationDocDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/TransportationTaskDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/TruckDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DTO/ZoneDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/ItemDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/ItemsListDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SiteDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteItemDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteItemsListDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteSiteDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteTransportationDocDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteTransportationTaskDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteTruckDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/SqliteZoneDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/TransportationDocDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/TransportationTaskDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/TruckDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/DataAccess/ZoneDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/EmployeeProvider.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Item.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/ItemManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/ItemsList.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/LicenseMapper$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/LicenseMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/ItemRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/ItemRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/SiteRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/SiteRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationDocRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationDocRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationTaskRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/TransportationTaskRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/TruckRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/TruckRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/ZoneRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Repositories/ZoneRepositoryImpli.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Site.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/SiteManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/SiteZoneManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/TaskManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/TransportationDoc.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/TransportationTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Truck.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/TruckManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/TruckType.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/Zone.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Domain/ZoneManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Presentation/SiteMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Presentation/TManagerRoleMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Presentation/TaskMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Presentation/TransportationMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Presentation/TruckMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Presentation/ZoneMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/HREmployeeAdapter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/ItemService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/SiteService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/SiteZoneService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/TaskService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/TruckService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/Service/ZoneService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Transportation/SystemInitializer/SystemInitializer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Util/Database.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/Util/DatabaseInitializer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/dev.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/out/production/dev/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/out/production/dev/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/out/production/dev/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/out/production/dev/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/out/production/dev/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/Transportation_HR/out/production/dev/dev.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ADSS_Group_FFF.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../ADSS_Group_FFF.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/SuppliersDatabase.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/SuppliersDatabase.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/inventoryDatabase.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/inventoryDatabase.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/inventory/InventoryServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/inventory/serviceLayer/InventoryServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/inventory/InventoryServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Instructions.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Instructions.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Readme.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/instructions.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/members_id" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/ADSS_Group_FFF/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/../out/production/ADSS_Group_FFF/META-INF/MANIFEST.MF" afterDir="false" />
     </list>
-    <list id="f0412085-c36a-43d2-a7b6-caf7e6f6682e" name="Changes by alonkamenetsky" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/IntegrationInventoryAndSupplier/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/IntegrationInventoryAndSupplier/Main.java" afterDir="false" />
-    </list>
-    <list id="abbd2e8a-afed-4710-836a-73c94fafad8f" name="Changes by Danie" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/SuppliersModule/PresentationLayer/SupplierCLI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SuppliersModule/PresentationLayer/SupplierCLI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/inventory/serviceLayer/InventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/inventory/serviceLayer/InventoryService.java" afterDir="false" />
-    </list>
+    <list id="f0412085-c36a-43d2-a7b6-caf7e6f6682e" name="Changes by alonkamenetsky" comment="" />
+    <list id="abbd2e8a-afed-4710-836a-73c94fafad8f" name="Changes by Danie" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,10 +575,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 7
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "danielB464646"
+  }
 }]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AlonKamenetsky/ADSS_Group_FFF.git",
+    "accountId": "285ad380-1676-41c4-8f4d-239224740663"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2xyDRHTAaVJy3mdtDuXH4071plf" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -41,7 +602,7 @@
     "JUnit.InventoryServiceTest.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "mutualBranch",
+    "git-widget-placeholder": "Merging main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -82,8 +643,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
-        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.22562.218" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-IU-243.22562.218" />
       </set>
     </attachedChunks>
   </component>
@@ -96,6 +657,7 @@
       <option name="presentableId" value="Default" />
       <updated>1748901413629</updated>
       <workItem from="1748901415667" duration="3991000" />
+      <workItem from="1749646062694" duration="730000" />
     </task>
     <servers />
   </component>
