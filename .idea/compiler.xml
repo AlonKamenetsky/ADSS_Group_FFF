@@ -7,8 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ADSS_Group_FFF" />
-        <module name="adss-group" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="adss-group" target="17" />
+      <module name="transportation-project" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

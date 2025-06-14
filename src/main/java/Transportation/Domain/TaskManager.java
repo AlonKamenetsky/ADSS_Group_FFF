@@ -14,27 +14,27 @@ import java.util.*;
 public class TaskManager {
     private final SiteManager siteManager;
     private final TruckManager truckManager;
-    private final ItemManager itemManager;
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
     private final EmployeeProvider employeeProvider;
+    private final InventoryProvider inventoryProvider;
 
-    public TaskManager(EmployeeProvider employeeProvider) {
+    public TaskManager(EmployeeProvider employeeProvider, InventoryProvider inventoryProvider) {
         docRepository = new TransportationDocRepositoryImpli();
         taskRepository = new TransportationTaskRepositoryImpli(new SiteRepositoryImpli());
-        itemManager = new ItemManager();
         siteManager = new SiteManager();
         truckManager = new TruckManager();
         this.employeeProvider = employeeProvider;
+        this.inventoryProvider = inventoryProvider;
     }
 
-    public TaskManager(SiteManager siteManager, TruckManager truckManager, ItemManager itemManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, EmployeeProvider employeeProvider) {
+    public TaskManager(SiteManager siteManager, TruckManager truckManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, EmployeeProvider employeeProvider, InventoryProvider inventoryProvider) {
         this.siteManager = siteManager;
         this.truckManager = truckManager;
-        this.itemManager = itemManager;
         this.docRepository = docRepository;
         this.taskRepository = taskRepository;
         this.employeeProvider = employeeProvider;
+        this.inventoryProvider = inventoryProvider;
     }
 
     public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
